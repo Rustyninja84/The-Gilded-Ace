@@ -11,7 +11,7 @@
 
     <meta
         name="description"
-        content="Play Blackjack, Slots, Roulette, and Dice at The Gilded Ace."
+        content="Play Blackjack, Slots, Roulette, and High Roll at The Gilded Ace."
     >
 
     <title>
@@ -21,6 +21,11 @@
     <link
         rel="stylesheet"
         href="styles.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="casino-games.css"
     >
 
     <link
@@ -107,7 +112,6 @@
 
                 </div>
 
-
                 <a
                     href="profile.html"
                     class="profile-button"
@@ -141,7 +145,7 @@
 
             <p>
                 Test your luck using fictional Ace Credits.
-                Play bold. Build your legacy.
+                Play bold. Win big. Build your legacy.
             </p>
 
         </div>
@@ -151,7 +155,7 @@
 
 
     <!-- =========================================================
-         CASINO
+         CASINO PAGE
     ========================================================== -->
 
     <main class="casino-page">
@@ -224,6 +228,7 @@
 
                         <p>
                             Beat the dealer without going over 21.
+                            Blackjack pays 3 to 2.
                         </p>
 
                     </div>
@@ -458,13 +463,17 @@
                     </div>
 
 
-                    <button
-                        id="slotSpin"
-                        type="button"
-                        class="casino-primary-button"
-                    >
-                        SPIN
-                    </button>
+                    <div class="casino-action-buttons">
+
+                        <button
+                            id="slotSpin"
+                            type="button"
+                            class="casino-primary-button"
+                        >
+                            SPIN
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -481,7 +490,7 @@
 
 
             <!-- =================================================
-                 NEW LUXURY ROULETTE
+                 ROULETTE
             ================================================== -->
 
             <section
@@ -493,7 +502,7 @@
 
 
                     <!-- =========================================
-                         TOP TITLE
+                         TITLE
                     ========================================== -->
 
                     <div class="roulette-luxury-title">
@@ -522,14 +531,14 @@
                     <div class="roulette-stage-layout">
 
 
-                        <div class="roulette-stage">
+                        <!-- WHEEL -->
 
+                        <div class="roulette-stage">
 
                             <div
                                 id="gildedRouletteWheel"
                                 class="gilded-roulette-wheel"
                             >
-
 
                                 <div
                                     id="rouletteNumberRing"
@@ -551,7 +560,6 @@
 
 
                                 <div class="roulette-inner-ring">
-
 
                                     <div class="roulette-inner-decoration">
 
@@ -577,7 +585,6 @@
 
                                 </div>
 
-
                             </div>
 
 
@@ -588,13 +595,12 @@
                                 PLACE YOUR BET
                             </div>
 
-
                         </div>
 
 
 
                         <!-- =====================================
-                             RECENT RESULTS
+                             LAST RESULTS
                         ====================================== -->
 
                         <aside class="roulette-history">
@@ -624,15 +630,13 @@
 
 
                     <!-- =========================================
-                         BETTING TABLE
+                         BETTING AREA
                     ========================================== -->
 
                     <div class="roulette-betting-floor">
 
 
-                        <!-- =====================================
-                             CONTROLS
-                        ====================================== -->
+                        <!-- LEFT CONTROLS -->
 
                         <div class="roulette-bet-sidebar">
 
@@ -707,7 +711,6 @@
                                 Select a number or outside bet.
                             </div>
 
-
                         </div>
 
 
@@ -726,7 +729,6 @@
 
 
                             <div class="roulette-outside-bets">
-
 
                                 <button
                                     class="luxury-roulette-choice"
@@ -781,44 +783,52 @@
                                     19 TO 36
                                 </button>
 
-
                             </div>
 
-
                         </div>
-
 
                     </div>
 
 
+
                     <!-- =========================================
-                         PAYOUT INFO
+                         PAYOUTS
                     ========================================== -->
 
                     <div class="roulette-payout-strip">
 
                         <span>
                             STRAIGHT NUMBER
-                            <strong>35:1</strong>
+                            <strong>
+                                35:1
+                            </strong>
                         </span>
+
 
                         <span>
                             RED / BLACK
-                            <strong>1:1</strong>
+                            <strong>
+                                1:1
+                            </strong>
                         </span>
+
 
                         <span>
                             ODD / EVEN
-                            <strong>1:1</strong>
+                            <strong>
+                                1:1
+                            </strong>
                         </span>
+
 
                         <span>
                             LOW / HIGH
-                            <strong>1:1</strong>
+                            <strong>
+                                1:1
+                            </strong>
                         </span>
 
                     </div>
-
 
                 </div>
 
@@ -827,7 +837,7 @@
 
 
             <!-- =================================================
-                 DICE
+                 HIGH ROLL / DICE
             ================================================== -->
 
             <section
@@ -844,11 +854,12 @@
                         </span>
 
                         <h2>
-                            Dice
+                            High Roll
                         </h2>
 
                         <p>
                             Roll higher than the house to win.
+                            Ties return your wager.
                         </p>
 
                     </div>
@@ -903,7 +914,6 @@
 
                     </div>
 
-
                 </div>
 
 
@@ -940,13 +950,17 @@
                     </div>
 
 
-                    <button
-                        id="diceRoll"
-                        type="button"
-                        class="casino-primary-button"
-                    >
-                        ROLL
-                    </button>
+                    <div class="casino-action-buttons">
+
+                        <button
+                            id="diceRoll"
+                            type="button"
+                            class="casino-primary-button"
+                        >
+                            ROLL
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -1015,6 +1029,10 @@
                     HOME
                 </a>
 
+                <a href="casino.html">
+                    CASINO
+                </a>
+
                 <a href="store.html">
                     STORE
                 </a>
@@ -1050,6 +1068,7 @@
     ========================================================== -->
 
     <script src="script.js"></script>
+
     <script src="roulette.js"></script>
 
 
