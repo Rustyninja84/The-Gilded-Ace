@@ -1,1171 +1,1851 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
 
-:root {
-    --bg: #050505;
-    --panel: #101010;
-    --panel2: #171717;
+:root{
+    --bg:#050505;
+    --panel:#101010;
+    --panel2:#171717;
 
-    --burg: #520815;
+    --burg:#520815;
 
-    --gold: #d4a632;
-    --gold2: #f3d675;
+    --gold:#d4a632;
+    --gold2:#f3d675;
 
-    --text: #c9c4b9;
-    --muted: #7c776f;
+    --text:#c9c4b9;
+    --muted:#7c776f;
 
-    --border: rgba(212,166,50,.22);
+    --border:rgba(212,166,50,.22);
+
+    --roulette-red:#a5091c;
+    --roulette-black:#101010;
+    --roulette-green:#0b6b3a;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-html {
-    scroll-behavior: smooth;
+
+html{
+    scroll-behavior:smooth;
 }
 
-body {
-    min-height: 100vh;
 
+body{
     background:
         radial-gradient(
-            circle at 50% -10%,
-            rgba(104,6,25,.24),
-            transparent 38%
+            circle at top,
+            rgba(82,8,21,.16),
+            transparent 32%
         ),
-        linear-gradient(
-            #080808,
-            #030303
-        );
+        var(--bg);
 
-    color: #f4efe4;
+    color:var(--text);
 
     font-family:
-        Inter,
+        "Inter",
         Arial,
         sans-serif;
 
-    line-height: 1.6;
+    min-height:100vh;
 }
 
-a {
-    color: inherit;
-    text-decoration: none;
+
+a{
+    color:inherit;
+    text-decoration:none;
 }
+
 
 button,
-input {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-h1,
-h2,
-h3 {
-    font-family:
-        Cinzel,
-        Georgia,
-        serif;
+input{
+    font:inherit;
 }
 
 
-/* ==========================================================
+button{
+    cursor:pointer;
+}
+
+
+img{
+    max-width:100%;
+}
+
+
+
+/* =========================================================
    HEADER
-   ========================================================== */
+   ========================================================= */
 
-.site-header {
-    position: sticky;
+.site-header{
+    position:sticky;
+    top:0;
+    z-index:1000;
 
-    top: 0;
-
-    z-index: 1000;
-
-    background:
-        rgba(5,5,5,.94);
-
-    border-bottom:
-        1px solid var(--border);
+    background:rgba(5,5,5,.94);
 
     backdrop-filter:
-        blur(18px);
+        blur(16px);
+
+    border-bottom:
+        1px solid var(--border);
 }
 
-.nav-container {
-    width:
-        min(1400px,94%);
 
-    min-height: 84px;
+.nav-container{
+    max-width:1450px;
 
-    margin: auto;
+    margin:auto;
 
-    display: flex;
+    padding:
+        14px 28px;
 
-    align-items: center;
+    display:flex;
 
-    justify-content: space-between;
+    align-items:center;
 
-    gap: 24px;
+    gap:28px;
 }
 
-.brand {
-    display: flex;
 
-    align-items: center;
+.brand{
+    display:flex;
 
-    gap: 12px;
+    align-items:center;
+
+    gap:12px;
+
+    flex-shrink:0;
 }
 
-.brand-mark {
-    width: 48px;
 
-    height: 48px;
+.brand-mark{
+    width:42px;
+    height:42px;
 
-    display: grid;
+    display:grid;
+    place-items:center;
 
-    place-items: center;
-
-    border-radius:
-        12px 3px;
+    border:
+        1px solid rgba(243,214,117,.75);
 
     background:
         linear-gradient(
             145deg,
-            var(--gold2),
-            var(--gold),
-            #865d12
+            #f3d675,
+            #d4a632 45%,
+            #6a470b
         );
 
-    color: #120d03;
+    color:#130d03;
 
-    font:
-        900 25px Cinzel;
+    font-family:"Cinzel",serif;
 
-    border:
-        1px solid #f8dd87;
+    font-size:24px;
+
+    font-weight:900;
 }
 
-.brand-text {
-    display: flex;
 
-    flex-direction: column;
+.brand-text{
+    display:flex;
+
+    flex-direction:column;
+
+    line-height:1.05;
 }
 
-.brand-name {
-    color:
-        var(--gold2);
 
-    font:
-        800 14px Cinzel;
+.brand-name{
+    color:#f0d379;
 
-    letter-spacing:
-        1.6px;
+    font-family:"Cinzel",serif;
+
+    font-size:15px;
+
+    font-weight:800;
+
+    letter-spacing:1.6px;
 }
 
-.brand-subtitle {
-    color: #706c64;
 
-    font-size: 8px;
+.brand-subtitle{
+    color:#756f65;
 
-    font-weight: 700;
+    font-size:8px;
 
-    letter-spacing:
-        2.2px;
+    font-weight:700;
+
+    letter-spacing:2px;
+
+    margin-top:4px;
 }
 
-.main-nav {
-    display: flex;
 
-    gap: 24px;
+.main-nav{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    flex:1;
 }
 
-.main-nav a {
-    position: relative;
 
+.main-nav a{
     padding:
-        31px 0;
+        10px 12px;
 
-    color: #8d887f;
+    border-radius:5px;
 
-    font-size: 10px;
+    color:#8a857d;
 
-    font-weight: 800;
+    font-size:10px;
 
-    letter-spacing:
-        1.4px;
+    font-weight:800;
+
+    letter-spacing:1.2px;
+
+    transition:.2s ease;
 }
+
 
 .main-nav a:hover,
-.main-nav a.active {
-    color:
-        var(--gold2);
-}
-
-.main-nav a.active::after {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-
-    right: 0;
-
-    bottom: 20px;
-
-    height: 2px;
+.main-nav a.active{
+    color:#f3d675;
 
     background:
-        var(--gold);
+        rgba(212,166,50,.07);
 }
 
-.nav-account {
-    display: flex;
 
-    align-items: center;
+.nav-account{
+    display:flex;
 
-    gap: 12px;
+    align-items:center;
 
-    font-size: 9px;
+    gap:10px;
 
-    font-weight: 800;
+    color:#777269;
 
-    color: #777;
+    font-size:9px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    white-space:nowrap;
 }
 
-.balance-value {
-    color:
-        var(--gold2);
 
-    margin-left: 5px;
+.balance-value{
+    color:#f3d675;
+
+    font-family:"Cinzel",serif;
+
+    font-size:14px;
+
+    font-weight:800;
+
+    letter-spacing:.5px;
 }
 
-.profile-button {
+
+.profile-button{
+    border:
+        1px solid rgba(212,166,50,.28);
+
     padding:
-        9px 13px;
+        9px 12px;
+
+    border-radius:5px;
+
+    color:#d7c898;
+
+    transition:.2s ease;
+}
+
+
+.profile-button:hover{
+    border-color:#d4a632;
+
+    background:
+        rgba(212,166,50,.08);
+}
+
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.page-hero,
+.hero{
+    position:relative;
+
+    overflow:hidden;
+
+    text-align:center;
+
+    padding:
+        90px 24px 70px;
+
+    border-bottom:
+        1px solid rgba(212,166,50,.12);
+
+    background:
+        radial-gradient(
+            circle at center top,
+            rgba(116,7,29,.32),
+            transparent 48%
+        );
+}
+
+
+.page-hero h1,
+.hero h1{
+    margin-top:10px;
+
+    color:#f2eee4;
+
+    font-family:"Cinzel",serif;
+
+    font-size:
+        clamp(36px,6vw,76px);
+
+    font-weight:700;
+
+    letter-spacing:3px;
+}
+
+
+.page-hero p,
+.hero p{
+    max-width:720px;
+
+    margin:
+        18px auto 0;
+
+    color:#99938a;
+
+    font-size:14px;
+
+    line-height:1.8;
+}
+
+
+.eyebrow{
+    display:inline-block;
+
+    color:#d4a632;
+
+    font-size:10px;
+
+    font-weight:800;
+
+    letter-spacing:3px;
+
+    text-transform:uppercase;
+}
+
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+button,
+.btn{
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    min-height:42px;
+
+    padding:
+        11px 18px;
+
+    border:
+        1px solid #d4a632;
+
+    border-radius:4px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #e0b53f,
+            #b27d15
+        );
+
+    color:#110c03;
+
+    font-size:10px;
+
+    font-weight:900;
+
+    letter-spacing:1.1px;
+
+    text-transform:uppercase;
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease,
+        background .15s ease;
+}
+
+
+button:hover,
+.btn:hover{
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 8px 24px rgba(212,166,50,.15);
+}
+
+
+button:disabled{
+    opacity:.45;
+
+    cursor:not-allowed;
+
+    transform:none;
+}
+
+
+.btn.secondary,
+.bet-row button,
+.roulette-dozens button,
+.roulette-outside-bets button,
+.roulette-number-cell{
+    background:#0d0d0d;
+
+    color:#cfc7b8;
+
+    border:
+        1px solid rgba(212,166,50,.22);
+}
+
+
+.btn.secondary:hover,
+.bet-row button:hover,
+.roulette-dozens button:hover,
+.roulette-outside-bets button:hover{
+    color:#f3d675;
+
+    border-color:
+        rgba(212,166,50,.55);
+
+    background:
+        rgba(212,166,50,.08);
+}
+
+
+
+/* =========================================================
+   PAGE STRUCTURE
+   ========================================================= */
+
+.container{
+    width:min(1180px,calc(100% - 40px));
+
+    margin:auto;
+}
+
+
+.section{
+    padding:
+        58px 0;
+}
+
+
+.section-head{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-end;
+
+    gap:20px;
+
+    margin-bottom:26px;
+}
+
+
+.section-head h2,
+.game-section h2{
+    margin-top:8px;
+
+    color:#eee8dc;
+
+    font-family:"Cinzel",serif;
+
+    font-size:
+        clamp(27px,4vw,43px);
+
+    letter-spacing:1px;
+}
+
+
+.grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:18px;
+}
+
+
+.card{
+    padding:24px;
 
     border:
         1px solid var(--border);
 
-    border-radius: 5px;
-
-    color:
-        var(--gold2);
-}
-
-
-/* ==========================================================
-   HERO
-   ========================================================== */
-
-.page-hero,
-.hero {
-    position: relative;
-
-    overflow: hidden;
-
-    padding:
-        110px 22px 85px;
-
-    text-align: center;
-
-    border-bottom:
-        1px solid
-        rgba(212,166,50,.12);
-
-    background:
-        radial-gradient(
-            ellipse at center top,
-            rgba(110,7,27,.46),
-            transparent 60%
-        );
-}
-
-.page-hero::before,
-.hero::before {
-    content: "♠";
-
-    position: absolute;
-
-    left: 50%;
-
-    top: 50%;
-
-    transform:
-        translate(-50%,-50%);
-
-    font-size:
-        min(500px,60vw);
-
-    color:
-        rgba(212,166,50,.028);
-}
-
-.page-hero > *,
-.hero > * {
-    position: relative;
-}
-
-.eyebrow {
-    display: block;
-
-    color:
-        var(--gold);
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    letter-spacing:
-        3px;
-
-    margin-bottom: 10px;
-}
-
-.page-hero h1,
-.hero h1 {
-    font-size:
-        clamp(
-            46px,
-            7vw,
-            88px
-        );
-
-    line-height: 1;
-
-    color: #f6f0e4;
-}
-
-.page-hero p,
-.hero p {
-    max-width: 720px;
-
-    margin:
-        20px auto 0;
-
-    color: #928d83;
-}
-
-.hero-actions {
-    display: flex;
-
-    justify-content: center;
-
-    gap: 12px;
-
-    flex-wrap: wrap;
-
-    margin-top: 30px;
-}
-
-
-/* ==========================================================
-   BUTTONS
-   ========================================================== */
-
-.btn,
-button {
-    border: 0;
-
-    border-radius: 6px;
-
-    padding:
-        13px 20px;
+    border-radius:8px;
 
     background:
         linear-gradient(
-            var(--gold2),
-            var(--gold),
-            #ad7716
-        );
-
-    color: #140e03;
-
-    font-size: 10px;
-
-    font-weight: 900;
-
-    letter-spacing:
-        1.4px;
-
-    text-transform:
-        uppercase;
-
-    transition:
-        .2s;
-}
-
-.btn:hover,
-button:hover {
-    transform:
-        translateY(-2px);
-
-    filter:
-        brightness(1.08);
-}
-
-.btn.secondary {
-    background:
-        transparent;
-
-    color:
-        var(--gold2);
-
-    border:
-        1px solid
-        var(--gold);
-}
-
-
-/* ==========================================================
-   LAYOUT
-   ========================================================== */
-
-.container {
-    width:
-        min(1250px,92%);
-
-    margin: auto;
-}
-
-.section {
-    padding:
-        70px 0;
-}
-
-.section-head {
-    display: flex;
-
-    justify-content:
-        space-between;
-
-    align-items:
-        end;
-
-    gap: 20px;
-
-    margin-bottom:
-        28px;
-}
-
-.section-head h2 {
-    font-size:
-        clamp(
-            28px,
-            4vw,
-            44px
-        );
-}
-
-.section-head p {
-    color:
-        var(--muted);
-}
-
-.grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(240px,1fr)
-        );
-
-    gap: 18px;
-}
-
-
-/* ==========================================================
-   CARDS
-   ========================================================== */
-
-.card {
-    padding: 26px;
-
-    border:
-        1px solid
-        rgba(212,166,50,.15);
-
-    border-radius: 12px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.025),
-            transparent 35%
-        ),
-        linear-gradient(
-            #131313,
-            #0b0b0b
+            180deg,
+            rgba(23,23,23,.96),
+            rgba(10,10,10,.98)
         );
 
     box-shadow:
-        0 18px 45px
-        rgba(0,0,0,.25);
-
-    transition:
-        .25s;
+        0 18px 50px rgba(0,0,0,.18);
 }
 
-.card:hover {
-    transform:
-        translateY(-5px);
 
-    border-color:
-        rgba(212,166,50,.43);
-}
-
-.card h3 {
+.card h3{
     margin:
-        8px 0;
-}
+        10px 0 8px;
 
-.card p {
-    color:
-        var(--text);
-}
+    color:#ece6dc;
 
-.stat {
-    color:
-        var(--gold2);
+    font-family:"Cinzel",serif;
 
-    font:
-        800 27px Cinzel;
-}
-
-.tag {
-    display: inline-block;
-
-    color:
-        var(--gold);
-
-    font-size: 9px;
-
-    font-weight: 800;
-
-    letter-spacing:
-        2px;
-}
-
-.price {
-    margin-top: 18px;
-
-    color:
-        var(--gold2);
-
-    font:
-        800 22px Cinzel;
+    font-size:18px;
 }
 
 
-/* ==========================================================
-   NOTICE
-   ========================================================== */
+.card p{
+    color:#8d877e;
 
-.notice {
-    padding: 24px;
+    line-height:1.7;
+
+    font-size:13px;
+}
+
+
+.stat{
+    color:#f3d675;
+
+    font-family:"Cinzel",serif;
+
+    font-size:
+        clamp(21px,3vw,34px);
+
+    font-weight:800;
+
+    margin-top:10px;
+}
+
+
+.tag{
+    display:inline-flex;
+
+    color:#d4a632;
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:1.6px;
+
+    text-transform:uppercase;
+}
+
+
+.price{
+    color:#f3d675;
+
+    font-family:"Cinzel",serif;
+
+    font-size:21px;
+
+    font-weight:800;
+
+    margin:
+        18px 0;
+}
+
+
+.notice{
+    padding:20px;
 
     border:
-        1px solid
-        var(--border);
+        1px solid rgba(212,166,50,.18);
 
-    border-left:
-        3px solid
-        var(--gold);
+    border-radius:7px;
 
-    background:
-        rgba(212,166,50,.025);
-
-    color:
-        var(--text);
-}
-
-
-/* ==========================================================
-   TABLES
-   ========================================================== */
-
-table {
-    width: 100%;
-
-    border-collapse:
-        collapse;
-
-    background:
-        #0c0c0c;
-
-    border:
-        1px solid
-        var(--border);
-}
-
-th,
-td {
-    padding: 16px;
-
-    text-align: left;
-
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.05);
-}
-
-th {
-    color: #777;
-
-    font-size: 9px;
-
-    letter-spacing:
-        1.5px;
-}
-
-tbody tr:hover {
     background:
         rgba(212,166,50,.035);
+
+    color:#918b81;
+
+    font-size:12px;
+
+    line-height:1.75;
 }
 
 
-/* ==========================================================
-   CASINO
-   ========================================================== */
-
-.game-tabs {
-    display: flex;
-
-    justify-content: center;
-
-    gap: 8px;
-
-    flex-wrap: wrap;
-
-    padding: 28px;
+.notice h3,
+.notice strong{
+    color:#d9bd65;
 }
 
-.game-section {
-    width:
-        min(1280px,94%);
+
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+table{
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:#0b0b0b;
+
+    border:
+        1px solid rgba(212,166,50,.18);
+}
+
+
+th,
+td{
+    padding:
+        15px 16px;
+
+    border-bottom:
+        1px solid rgba(212,166,50,.1);
+
+    text-align:left;
+}
+
+
+th{
+    color:#c8aa53;
+
+    background:#111;
+
+    font-size:9px;
+
+    letter-spacing:1.5px;
+}
+
+
+td{
+    color:#aaa49a;
+
+    font-size:12px;
+}
+
+
+
+/* =========================================================
+   GAME NAV
+   ========================================================= */
+
+.game-tabs{
+    position:sticky;
+
+    top:71px;
+
+    z-index:100;
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+
+    gap:10px;
+
+    padding:
+        14px 20px;
+
+    background:
+        rgba(6,6,6,.95);
+
+    backdrop-filter:
+        blur(12px);
+
+    border-bottom:
+        1px solid rgba(212,166,50,.12);
+}
+
+
+.game-section{
+    width:min(1180px,calc(100% - 40px));
+
+    margin:auto;
+
+    padding:
+        72px 0;
+
+    border-bottom:
+        1px solid rgba(212,166,50,.1);
+}
+
+
+.game-section > p{
+    max-width:730px;
+
+    margin-top:10px;
+
+    color:#928c82;
+
+    line-height:1.7;
+}
+
+
+.simple-game{
+    max-width:900px;
 
     margin:
-        0 auto 45px;
+        32px auto 0;
 
-    padding: 38px;
+    padding:
+        34px;
+
+    text-align:center;
 
     border:
-        1px solid
-        var(--border);
+        1px solid rgba(212,166,50,.2);
 
-    border-radius: 15px;
+    border-radius:10px;
 
     background:
-        #0c0c0c;
-}
-
-.game-section > p {
-    color:
-        var(--muted);
-}
-
-.simple-game {
-    margin-top: 25px;
-
-    padding: 28px;
-
-    border:
-        1px solid
-        rgba(255,255,255,.05);
-
-    border-radius: 10px;
-
-    text-align: center;
+        radial-gradient(
+            circle at top,
+            rgba(83,8,21,.17),
+            transparent 50%
+        ),
+        #0d0d0d;
 }
 
 
-/* ==========================================================
-   ROULETTE
-   ========================================================== */
 
-.roulette-layout {
-    display: grid;
+/* =========================================================
+   ROULETTE LAYOUT
+   ========================================================= */
+
+.roulette-section{
+    width:min(1320px,calc(100% - 30px));
+}
+
+
+.roulette-layout{
+    display:grid;
 
     grid-template-columns:
-        minmax(480px,1.1fr)
-        minmax(320px,.7fr);
+        minmax(0,1.25fr)
+        minmax(310px,.75fr);
 
-    gap: 45px;
+    gap:32px;
 
-    margin-top: 35px;
+    align-items:center;
 
-    align-items: center;
+    margin-top:36px;
 }
 
-.roulette-stage {
-    display: grid;
 
-    place-items: center;
-}
+.roulette-stage{
+    display:flex;
 
-.roulette-cabinet {
-    position: relative;
+    justify-content:center;
 
-    width:
-        min(560px,82vw);
+    align-items:center;
 
-    aspect-ratio: 1;
+    min-height:650px;
 
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            #24170a,
-            #080604 70%
-        );
-
-    box-shadow:
-        0 0 0 3px #a77b24,
-        0 0 0 10px #171006,
-        0 35px 70px #000;
-}
-
-.roulette-wheel {
-    position: absolute;
-
-    inset: 7%;
-
-    border-radius: 50%;
-
-    background:
-        conic-gradient(
-            #08713a 0 9.73deg,
-            #9f101c 9.73deg 19.46deg,
-            #090909 19.46deg 29.19deg,
-            #9f101c 29.19deg 38.92deg,
-            #090909 38.92deg 48.65deg,
-            #9f101c 48.65deg 58.38deg,
-            #090909 58.38deg 68.11deg,
-            #9f101c 68.11deg 77.84deg,
-            #090909 77.84deg 87.57deg,
-            #9f101c 87.57deg 97.30deg,
-            #090909 97.30deg 107.03deg,
-            #9f101c 107.03deg 116.76deg,
-            #090909 116.76deg 126.49deg,
-            #9f101c 126.49deg 136.22deg,
-            #090909 136.22deg 145.95deg,
-            #9f101c 145.95deg 155.68deg,
-            #090909 155.68deg 165.41deg,
-            #9f101c 165.41deg 175.14deg,
-            #090909 175.14deg 184.87deg,
-            #9f101c 184.87deg 194.60deg,
-            #090909 194.60deg 204.33deg,
-            #9f101c 204.33deg 214.06deg,
-            #090909 214.06deg 223.79deg,
-            #9f101c 223.79deg 233.52deg,
-            #090909 233.52deg 243.25deg,
-            #9f101c 243.25deg 252.98deg,
-            #090909 252.98deg 262.71deg,
-            #9f101c 262.71deg 272.44deg,
-            #090909 272.44deg 282.17deg,
-            #9f101c 282.17deg 291.90deg,
-            #090909 291.90deg 301.63deg,
-            #9f101c 301.63deg 311.36deg,
-            #090909 311.36deg 321.09deg,
-            #9f101c 321.09deg 330.82deg,
-            #090909 330.82deg 340.55deg,
-            #9f101c 340.55deg 350.28deg,
-            #090909 350.28deg 360deg
-        );
-
-    transition:
-        transform
-        7s
-        cubic-bezier(
-            .08,
-            .6,
-            .08,
-            1
-        );
-
-    box-shadow:
-        inset 0 0 40px #000,
-        0 0 0 5px #b38931;
-}
-
-.roulette-wheel::after {
-    content: "A";
-
-    position: absolute;
-
-    inset: 26%;
-
-    display: grid;
-
-    place-items: center;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            #b58224,
-            #281804 65%
-        );
+    padding:28px;
 
     border:
-        6px solid
-        #171006;
+        1px solid rgba(212,166,50,.18);
 
-    box-shadow:
-        0 0 0 3px
-        #c29637;
+    border-radius:16px;
 
-    color:
-        #160f03;
-
-    font:
-        900 48px Cinzel;
-}
-
-.roulette-numbers {
-    position: absolute;
-
-    inset: 0;
-}
-
-.roulette-number {
-    position: absolute;
-
-    left: 50%;
-
-    top: 50%;
-
-    width: 28px;
-
-    height: 46%;
-
-    margin-left: -14px;
-
-    transform-origin:
-        center top;
-
-    display: flex;
-
-    justify-content:
-        center;
-
-    z-index: 4;
-}
-
-.roulette-number span {
-    color: #fff;
-
-    font:
-        900 10px Georgia;
-
-    text-shadow:
-        0 2px 3px #000;
-}
-
-.ball-track {
-    position: absolute;
-
-    inset: 3%;
-
-    border-radius: 50%;
-
-    z-index: 8;
-
-    transition:
-        transform
-        6.2s
-        cubic-bezier(
-            .07,
-            .65,
-            .12,
-            1
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(82,8,21,.24),
+            transparent 55%
+        ),
+        linear-gradient(
+            145deg,
+            #17120c,
+            #080808 45%,
+            #130b06
         );
 
-    pointer-events: none;
+    box-shadow:
+        inset 0 0 70px rgba(0,0,0,.75),
+        0 25px 80px rgba(0,0,0,.4);
 }
 
-.roulette-ball {
-    position: absolute;
 
-    left: 50%;
+.roulette-cabinet{
+    position:relative;
 
-    top: -2px;
+    width:min(620px,86vw);
 
-    width: 14px;
+    aspect-ratio:1;
 
-    height: 14px;
+    display:grid;
+
+    place-items:center;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #4c3110 0 15%,
+            #a87c25 16%,
+            #3e270b 18%,
+            #130d06 55%,
+            #8a5b12 73%,
+            #251404 78%,
+            #9c7020 82%,
+            #1d1004 88%,
+            #050505 100%
+        );
+
+    box-shadow:
+        0 35px 90px rgba(0,0,0,.72),
+        inset 0 0 32px rgba(255,218,112,.16);
+}
+
+
+
+/* =========================================================
+   POINTER
+   ========================================================= */
+
+.roulette-pointer{
+    position:absolute;
+
+    top:-8px;
+
+    left:50%;
 
     transform:
         translateX(-50%);
 
-    border-radius: 50%;
+    z-index:50;
+
+    width:0;
+
+    height:0;
+
+    border-left:
+        15px solid transparent;
+
+    border-right:
+        15px solid transparent;
+
+    border-top:
+        28px solid #f3d675;
+
+    filter:
+        drop-shadow(
+            0 2px 5px rgba(0,0,0,.8)
+        );
+}
+
+
+
+/* =========================================================
+   WHEEL
+   ========================================================= */
+
+.roulette-wheel{
+    position:relative;
+
+    width:84%;
+
+    aspect-ratio:1;
+
+    border-radius:50%;
+
+    overflow:hidden;
+
+    border:
+        8px solid #b98b2e;
+
+    background:#0b0b0b;
+
+    box-shadow:
+        inset 0 0 0 4px #362208,
+        inset 0 0 45px rgba(0,0,0,.75),
+        0 0 0 4px #3d2508;
+
+    transition:
+        transform 6.2s
+        cubic-bezier(.12,.72,.08,1);
+
+    will-change:transform;
+}
+
+
+
+/* =========================================================
+   37 INDIVIDUAL POCKETS
+   ========================================================= */
+
+.roulette-pocket-layer{
+    position:absolute;
+
+    inset:0;
+
+    border-radius:50%;
+
+    overflow:hidden;
+}
+
+
+.roulette-pocket{
+    position:absolute;
+
+    top:0;
+
+    left:50%;
+
+    width:11%;
+
+    height:50%;
+
+    transform-origin:
+        50% 100%;
+
+    clip-path:
+        polygon(
+            50% 0,
+            100% 100%,
+            0 100%
+        );
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:flex-start;
+}
+
+
+.roulette-pocket::after{
+    content:"";
+
+    position:absolute;
+
+    inset:
+        0 1px 0 1px;
+
+    background:
+        rgba(255,255,255,.035);
+
+    border-left:
+        1px solid rgba(243,214,117,.18);
+
+    border-right:
+        1px solid rgba(0,0,0,.45);
+}
+
+
+.roulette-pocket.red{
+    background:
+        linear-gradient(
+            180deg,
+            #c31128,
+            #750411
+        );
+}
+
+
+.roulette-pocket.black{
+    background:
+        linear-gradient(
+            180deg,
+            #181818,
+            #030303
+        );
+}
+
+
+.roulette-pocket.green{
+    background:
+        linear-gradient(
+            180deg,
+            #108e50,
+            #064126
+        );
+}
+
+
+.roulette-pocket-number{
+    position:absolute;
+
+    top:4.2%;
+
+    left:50%;
+
+    z-index:3;
+
+    min-width:24px;
+
+    transform:
+        translateX(-50%);
+
+    color:#f5efe3;
+
+    font-family:"Cinzel",serif;
+
+    font-size:
+        clamp(9px,1.4vw,16px);
+
+    font-weight:900;
+
+    text-align:center;
+
+    text-shadow:
+        0 1px 3px #000;
+}
+
+
+
+/* =========================================================
+   INNER WHEEL
+   ========================================================= */
+
+.roulette-inner-ring{
+    position:absolute;
+
+    inset:24%;
+
+    border-radius:50%;
+
+    border:
+        5px solid #c69a3d;
+
+    background:
+        radial-gradient(
+            circle,
+            #100904 0 34%,
+            #66420d 35% 37%,
+            #150c04 39% 70%,
+            #9b701d 71% 74%,
+            #160c03 76%
+        );
+
+    box-shadow:
+        0 0 0 4px #251405,
+        inset 0 0 28px rgba(0,0,0,.85);
+
+    pointer-events:none;
+}
+
+
+.roulette-center{
+    position:absolute;
+
+    inset:34%;
+
+    border-radius:50%;
+
+    display:grid;
+
+    place-items:center;
+
+    border:
+        3px solid #d1a84a;
+
+    background:
+        radial-gradient(
+            circle,
+            #d3ad55 0 7%,
+            #664212 8% 27%,
+            #1b1005 29% 65%,
+            #b27c22 67% 71%,
+            #140c04 74%
+        );
+
+    box-shadow:
+        inset 0 0 25px rgba(0,0,0,.75);
+
+    pointer-events:none;
+}
+
+
+.roulette-center-logo{
+    width:58px;
+
+    height:58px;
+
+    display:grid;
+
+    place-items:center;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f3d675,
+            #a97517
+        );
+
+    color:#1c1204;
+
+    font-family:"Cinzel",serif;
+
+    font-size:30px;
+
+    font-weight:900;
+
+    box-shadow:
+        0 0 20px rgba(243,214,117,.18);
+}
+
+
+
+/* =========================================================
+   BALL TRACK
+   ========================================================= */
+
+.ball-track{
+    position:absolute;
+
+    width:91%;
+
+    aspect-ratio:1;
+
+    border-radius:50%;
+
+    pointer-events:none;
+
+    transition:
+        transform 6.6s
+        cubic-bezier(.1,.75,.08,1);
+
+    will-change:transform;
+}
+
+
+.roulette-ball{
+    position:absolute;
+
+    top:1%;
+
+    left:50%;
+
+    width:14px;
+
+    height:14px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius:50%;
 
     background:
         radial-gradient(
             circle at 35% 30%,
-            #fff,
-            #ddd 45%,
-            #777
+            white,
+            #dedede 35%,
+            #888
         );
 
+    box-shadow:
+        0 2px 7px rgba(0,0,0,.85),
+        0 0 8px rgba(255,255,255,.35);
+
     transition:
-        top 1.3s ease;
+        top 2.1s ease-in-out;
 }
+
 
 .ball-track.ball-drop
-.roulette-ball {
-    top: 8%;
+.roulette-ball{
+    top:6.8%;
 }
 
-.roulette-controls {
-    padding: 26px;
+
+
+/* =========================================================
+   ROULETTE CONTROLS
+   ========================================================= */
+
+.roulette-controls{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+}
+
+
+.roulette-result{
+    padding:24px;
+
+    text-align:center;
 
     border:
-        1px solid
-        var(--border);
+        1px solid rgba(212,166,50,.28);
 
-    border-radius: 12px;
+    border-radius:9px;
 
     background:
-        #090909;
+        radial-gradient(
+            circle at top,
+            rgba(82,8,21,.26),
+            transparent 60%
+        ),
+        #0d0d0d;
 }
 
-.roulette-result {
-    text-align: center;
 
-    padding: 18px;
+.roulette-result strong{
+    display:block;
+
+    margin-top:10px;
+
+    color:#f3d675;
+
+    font-family:"Cinzel",serif;
+
+    font-size:
+        clamp(22px,4vw,36px);
+
+    letter-spacing:1px;
+}
+
+
+.roulette-selected-card{
+    text-align:center;
+}
+
+
+.roulette-selected-bet{
+    margin-top:10px;
+
+    color:#f3d675;
+
+    font-family:"Cinzel",serif;
+
+    font-size:22px;
+
+    font-weight:800;
+}
+
+
+.roulette-payout{
+    margin-top:6px;
+
+    color:#8c867c;
+
+    font-size:10px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+}
+
+
+.bet-row{
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+    margin-top:14px;
+}
+
+
+.bet-row button.selected,
+.roulette-table button.selected,
+.roulette-number-cell.selected{
+    border-color:#f3d675;
+
+    box-shadow:
+        0 0 0 2px rgba(243,214,117,.18),
+        0 0 18px rgba(212,166,50,.18);
+
+    filter:
+        brightness(1.15);
+}
+
+
+.spin-button{
+    width:100%;
+
+    min-height:58px;
+
+    margin-top:3px;
+
+    font-family:"Cinzel",serif;
+
+    font-size:13px;
+
+    letter-spacing:1.8px;
+}
+
+
+
+/* =========================================================
+   ROULETTE TABLE
+   ========================================================= */
+
+.roulette-table-wrapper{
+    margin-top:50px;
+
+    padding:30px;
 
     border:
-        1px solid
-        var(--border);
+        1px solid rgba(212,166,50,.2);
 
-    border-radius: 8px;
-
-    margin-bottom: 18px;
-}
-
-.roulette-result strong {
-    display: block;
-
-    color:
-        var(--gold2);
-
-    font:
-        900 32px Cinzel;
-}
-
-.bet-row {
-    display: flex;
-
-    gap: 8px;
-
-    flex-wrap: wrap;
-
-    margin:
-        15px 0;
-}
-
-.bet-row button {
-    flex: 1;
-
-    min-width: 90px;
+    border-radius:14px;
 
     background:
-        #161616;
+        linear-gradient(
+            180deg,
+            rgba(14,47,28,.96),
+            rgba(5,22,13,.98)
+        );
 
-    color: #aaa;
+    box-shadow:
+        inset 0 0 50px rgba(0,0,0,.42),
+        0 30px 80px rgba(0,0,0,.25);
+}
+
+
+.roulette-table-title{
+    text-align:center;
+
+    margin-bottom:24px;
+}
+
+
+.roulette-table-title h3{
+    color:#f2ead8;
+
+    font-family:"Cinzel",serif;
+
+    font-size:
+        clamp(22px,4vw,35px);
+
+    margin-top:8px;
+}
+
+
+.roulette-table{
+    display:grid;
+
+    grid-template-columns:
+        74px 1fr;
+
+    gap:6px;
+}
+
+
+.roulette-table-zero{
+    min-height:216px;
+
+    font-family:"Cinzel",serif;
+
+    font-size:26px;
+
+    color:#fff;
+
+    background:
+        linear-gradient(
+            #128150,
+            #075334
+        );
 
     border:
-        1px solid
-        var(--border);
-}
-
-.bet-row button.selected {
-    color:
-        var(--gold2);
-
-    border-color:
-        var(--gold);
-}
-
-.spin-button {
-    width: 100%;
-
-    margin-top: 12px;
+        2px solid rgba(255,255,255,.2);
 }
 
 
-/* ==========================================================
-   LEADERBOARD
-   ========================================================== */
+.roulette-number-grid{
+    display:grid;
 
-.podium {
-    display: grid;
+    grid-template-columns:
+        repeat(12,1fr);
+
+    grid-template-rows:
+        repeat(3,68px);
+
+    grid-auto-flow:column;
+
+    gap:6px;
+}
+
+
+.roulette-number-cell{
+    min-width:0;
+
+    padding:0;
+
+    color:#fff;
+
+    font-family:"Cinzel",serif;
+
+    font-size:18px;
+
+    font-weight:900;
+
+    border:
+        2px solid rgba(255,255,255,.13);
+
+    border-radius:2px;
+
+    text-shadow:
+        0 1px 2px #000;
+}
+
+
+.roulette-number-cell.red{
+    background:
+        linear-gradient(
+            #bd1024,
+            #780615
+        );
+}
+
+
+.roulette-number-cell.black{
+    background:
+        linear-gradient(
+            #202020,
+            #060606
+        );
+}
+
+
+.roulette-dozens{
+    display:grid;
 
     grid-template-columns:
         repeat(3,1fr);
 
-    gap: 16px;
+    gap:6px;
 
-    align-items: end;
+    margin:
+        6px 0 0 80px;
 }
 
-.podium .card {
-    text-align: center;
+
+.roulette-outside-bets{
+    display:grid;
+
+    grid-template-columns:
+        repeat(6,1fr);
+
+    gap:6px;
+
+    margin:
+        6px 0 0 80px;
 }
 
-.podium .first {
-    transform:
-        translateY(-22px);
+
+.roulette-dozens button,
+.roulette-outside-bets button{
+    min-height:52px;
+
+    color:#efe8dc;
+
+    background:
+        rgba(4,24,13,.88);
+
+    border:
+        1px solid rgba(255,255,255,.16);
+}
+
+
+.roulette-red-bet{
+    background:
+        linear-gradient(
+            #ad0d20,
+            #710511
+        ) !important;
+}
+
+
+.roulette-black-bet{
+    background:
+        linear-gradient(
+            #1c1c1c,
+            #050505
+        ) !important;
+}
+
+
+.roulette-payout-notice{
+    margin-top:22px;
+
+    text-align:center;
+
+    background:
+        rgba(0,0,0,.18);
 
     border-color:
-        rgba(243,214,117,.55);
+        rgba(243,214,117,.18);
 }
 
 
-/* ==========================================================
+
+/* =========================================================
+   LEADERBOARD
+   ========================================================= */
+
+.podium{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:18px;
+
+    align-items:end;
+}
+
+
+.podium .first{
+    transform:
+        translateY(-15px);
+
+    border-color:
+        rgba(243,214,117,.5);
+
+    box-shadow:
+        0 0 30px rgba(212,166,50,.08);
+}
+
+
+
+/* =========================================================
    COLLECTION
-   ========================================================== */
+   ========================================================= */
 
-.empty-state {
-    text-align: center;
+.empty-state{
+    text-align:center;
 
     padding:
-        70px 25px;
-}
-
-.empty-state .icon {
-    font-size: 64px;
-
-    color:
-        var(--gold);
+        60px 24px;
 }
 
 
-/* ==========================================================
+.empty-state .icon{
+    color:#d4a632;
+
+    font-size:48px;
+
+    margin-bottom:12px;
+}
+
+
+
+/* =========================================================
    FOOTER
-   ========================================================== */
+   ========================================================= */
 
-footer {
-    margin-top: 70px;
-
+footer{
     padding:
-        45px 20px;
+        32px 20px;
 
-    text-align: center;
+    text-align:center;
 
     border-top:
-        1px solid
-        var(--border);
+        1px solid rgba(212,166,50,.12);
 
-    color: #5e5a53;
+    color:#5f5b54;
 
-    font-size: 10px;
+    font-size:9px;
 
-    letter-spacing:
-        1px;
-}
+    line-height:2;
 
-footer strong {
-    display: block;
-
-    color:
-        var(--gold2);
-
-    font:
-        800 15px Cinzel;
-
-    margin-bottom: 8px;
+    letter-spacing:1.1px;
 }
 
 
-/* ==========================================================
-   TABLET
-   ========================================================== */
+footer strong{
+    display:block;
 
-@media
-(max-width: 1000px) {
+    color:#b99b48;
 
-    .nav-container {
-        flex-wrap: wrap;
+    font-family:"Cinzel",serif;
 
-        justify-content:
-            center;
+    font-size:13px;
 
-        padding:
-            14px 0;
+    letter-spacing:1.5px;
+}
+
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:1100px){
+
+    .nav-container{
+        flex-wrap:wrap;
     }
 
-    .main-nav {
-        order: 3;
 
-        width: 100%;
+    .main-nav{
+        order:3;
 
-        justify-content:
-            center;
+        width:100%;
 
-        flex-wrap: wrap;
+        overflow-x:auto;
+
+        justify-content:flex-start;
     }
 
-    .main-nav a {
-        padding:
-            8px 0 14px;
+
+    .nav-account{
+        margin-left:auto;
     }
 
-    .main-nav a.active::after {
-        bottom: 5px;
+
+    .roulette-layout{
+        grid-template-columns:1fr;
     }
 
-    .roulette-layout {
+
+    .roulette-stage{
+        min-height:auto;
+    }
+
+}
+
+
+@media(max-width:900px){
+
+    .grid{
         grid-template-columns:
-            1fr;
+            repeat(2,minmax(0,1fr));
+    }
+
+
+    .podium{
+        grid-template-columns:1fr;
+    }
+
+
+    .podium .first{
+        transform:none;
+    }
+
+
+    .roulette-number-grid{
+        grid-template-columns:
+            repeat(6,1fr);
+
+        grid-template-rows:
+            repeat(6,58px);
+
+        grid-auto-flow:row;
+    }
+
+
+    .roulette-table{
+        grid-template-columns:
+            60px 1fr;
+    }
+
+
+    .roulette-table-zero{
+        min-height:378px;
+    }
+
+
+    .roulette-dozens,
+    .roulette-outside-bets{
+        margin-left:66px;
+    }
+
+
+    .roulette-outside-bets{
+        grid-template-columns:
+            repeat(3,1fr);
     }
 
 }
 
 
-/* ==========================================================
-   MOBILE
-   ========================================================== */
+@media(max-width:650px){
 
-@media
-(max-width: 700px) {
-
-    .brand-subtitle {
-        display: none;
+    .nav-container{
+        padding:
+            12px 14px;
     }
+
+
+    .brand-subtitle{
+        display:none;
+    }
+
+
+    .nav-account > span:first-child{
+        display:none;
+    }
+
 
     .page-hero,
-    .hero {
+    .hero{
         padding:
-            75px 16px 60px;
+            65px 18px 52px;
     }
 
-    .podium {
+
+    .container,
+    .game-section{
+        width:min(
+            100% - 24px,
+            1180px
+        );
+    }
+
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+
+    .game-tabs{
+        top:118px;
+
+        justify-content:flex-start;
+
+        overflow-x:auto;
+
+        flex-wrap:nowrap;
+    }
+
+
+    .roulette-section{
+        width:min(
+            100% - 16px,
+            1320px
+        );
+    }
+
+
+    .roulette-stage{
+        padding:12px;
+    }
+
+
+    .roulette-cabinet{
+        width:94vw;
+    }
+
+
+    .roulette-center-logo{
+        width:40px;
+        height:40px;
+
+        font-size:22px;
+    }
+
+
+    .roulette-table-wrapper{
+        padding:14px 8px;
+    }
+
+
+    .roulette-table{
         grid-template-columns:
-            1fr;
+            44px 1fr;
+
+        gap:3px;
     }
 
-    .podium .first {
-        transform: none;
+
+    .roulette-number-grid{
+        gap:3px;
+
+        grid-template-columns:
+            repeat(3,1fr);
+
+        grid-template-rows:
+            none;
+
+        grid-auto-flow:row;
     }
 
-    .game-section {
+
+    .roulette-number-cell{
+        min-height:46px;
+
+        font-size:15px;
+    }
+
+
+    .roulette-table-zero{
+        min-height:auto;
+
+        height:100%;
+    }
+
+
+    .roulette-dozens,
+    .roulette-outside-bets{
+        margin-left:47px;
+
+        gap:3px;
+    }
+
+
+    .roulette-dozens{
+        grid-template-columns:1fr;
+    }
+
+
+    .roulette-outside-bets{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+
+    .roulette-dozens button,
+    .roulette-outside-bets button{
+        min-height:46px;
+
         padding:
-            24px 14px;
+            8px 5px;
+
+        font-size:8px;
     }
 
-    .nav-account {
-        width: 100%;
 
-        justify-content:
-            center;
+    .roulette-pocket-number{
+        font-size:8px;
     }
 
 }
