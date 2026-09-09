@@ -9,15 +9,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const DAILY_REWARD = 1000;
     const REWARD_COOLDOWN = 24 * 60 * 60 * 1000;
 
-    const MIN_BET = 100;
-    const MAX_BET = 5000;
-    const BET_STEP = 100;
+    const BALANCE_KEY = "gildedAceBalance";
+    const DAILY_KEY = "gildedAceLastDailyReward";
+    const INVENTORY_KEY = "gildedAceOwnedItems";
 
-    let balance = Number(localStorage.getItem("gildedAceBalance"));
+    const BET_LEVELS = [
+        50,
+        100,
+        250,
+        500,
+        1000,
+        2500,
+        5000
+    ];
 
-    if (!Number.isFinite(balance) || balance < 0) {
-        balance = STARTING_BALANCE;
-        localStorage.setItem("gildedAceBalance", balance);
+
+    /* =========================================================
+       RANDOM NUMBER
+    ========================================================= */
+
+    function randomInt(max) {
+
+        if (max <= 0) {
+            return 0;
+        }
+
+        if (
+            window.crypto &&
+            window.crypto.getRandomValues
+        ) {
+
+            const values =
+                new Uint32Array(1);
+
+            window.crypto.getRandomValues(
+                values
+            );
+
+            return values[0] % max;
+        }
+
+        return Math.floor(
+            Math.random() * max
+        );
     }
 
 
@@ -25,25 +59,83 @@ document.addEventListener("DOMContentLoaded", () => {
        BALANCE
     ========================================================= */
 
-    function formatNumber(value) {
-        return Math.floor(value).toLocaleString();
-    }
+    let balance =
+        Number(
+            localStorage.getItem(
+                BALANCE_KEY
+            )
+        );
 
-    function saveBalance() {
-        balance = Math.max(0, Math.floor(balance));
+    if (
+        !Number.isFinite(balance) ||
+        balance < 0
+    ) {
+
+        balance =
+            STARTING_BALANCE;
 
         localStorage.setItem(
-            "gildedAceBalance",
-            balance
+            BALANCE_KEY,
+            String(balance)
+        );
+    }
+
+
+    function formatNumber(value) {
+
+        return Math.floor(
+            Number(value) || 0
+        ).toLocaleString();
+    }
+
+
+    function getBalance() {
+
+        return balance;
+    }
+
+
+    function setBalance(value) {
+
+        balance =
+            Math.max(
+                0,
+                Math.floor(
+                    Number(value) || 0
+                )
+            );
+
+        localStorage.setItem(
+            BALANCE_KEY,
+            String(balance)
         );
 
         updateBalanceDisplays();
     }
 
+
+    function addBalance(amount) {
+
+        setBalance(
+            balance + Number(amount || 0)
+        );
+    }
+
+
+    function canAfford(amount) {
+
+        return (
+            balance >= Number(amount || 0)
+        );
+    }
+
+
     function updateBalanceDisplays() {
 
         document
-            .querySelectorAll(".balance-value")
+            .querySelectorAll(
+                ".balance-value"
+            )
             .forEach((element) => {
 
                 element.textContent =
@@ -53,7 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document
-            .querySelectorAll(".casino-balance")
+            .querySelectorAll(
+                ".casino-balance"
+            )
             .forEach((element) => {
 
                 element.textContent =
@@ -63,55 +157,75 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         document
-            .querySelectorAll(".credit-balance")
+            .querySelectorAll(
+                ".credit-balance"
+            )
             .forEach((element) => {
 
-                element.innerHTML = `
-                    ${formatNumber(balance)}
-                    <span>AC</span>
-                `;
+                element.innerHTML =
+                    `${formatNumber(balance)} <span>AC</span>`;
 
             });
-
-    }
-
-    function canAfford(amount) {
-        return balance >= amount;
     }
 
 
     /* =========================================================
-       TOAST MESSAGE
+       TOAST
     ========================================================= */
 
-    function showToast(message, type = "gold") {
+    function showToast(
+        message,
+        type = "gold"
+    ) {
 
         const oldToast =
-            document.querySelector(".gilded-toast");
+            document.querySelector(
+                ".gilded-toast"
+            );
 
         if (oldToast) {
             oldToast.remove();
         }
 
+
         const toast =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        toast.className = "gilded-toast";
+        toast.className =
+            "gilded-toast";
 
-        toast.textContent = message;
+        toast.textContent =
+            message;
 
-        let borderColor = "#d6b35a";
-        let textColor = "#d6b35a";
+
+        let borderColor =
+            "#d6b35a";
+
+        let textColor =
+            "#d6b35a";
+
 
         if (type === "success") {
-            borderColor = "#5b936a";
-            textColor = "#7fba8d";
+
+            borderColor =
+                "#5b936a";
+
+            textColor =
+                "#7fba8d";
         }
 
+
         if (type === "error") {
-            borderColor = "#9e4d4d";
-            textColor = "#d47777";
+
+            borderColor =
+                "#9e4d4d";
+
+            textColor =
+                "#d47777";
         }
+
 
         Object.assign(
             toast.style,
@@ -131,25 +245,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 fontSize: "11px",
                 fontWeight: "700",
                 letterSpacing: "1.3px",
-                boxShadow: "0 18px 45px rgba(0,0,0,.55)"
+                boxShadow:
+                    "0 18px 45px rgba(0,0,0,.55)"
             }
         );
 
-        document.body.appendChild(toast);
+
+        document.body.appendChild(
+            toast
+        );
+
 
         setTimeout(() => {
 
             toast.style.transition =
                 "opacity .35s ease";
 
-            toast.style.opacity = "0";
+            toast.style.opacity =
+                "0";
+
 
             setTimeout(() => {
+
                 toast.remove();
+
             }, 350);
 
         }, 2200);
-
     }
 
 
@@ -162,15 +284,16 @@ document.addEventListener("DOMContentLoaded", () => {
             "dailyRewardButton"
         );
 
+
     function getLastRewardTime() {
 
         return Number(
             localStorage.getItem(
-                "gildedAceLastDailyReward"
+                DAILY_KEY
             ) || 0
         );
-
     }
+
 
     function isRewardAvailable() {
 
@@ -182,11 +305,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         return (
-            Date.now() - lastReward >=
+            Date.now() -
+            lastReward >=
             REWARD_COOLDOWN
         );
-
     }
+
 
     function getRewardRemaining() {
 
@@ -197,49 +321,58 @@ document.addEventListener("DOMContentLoaded", () => {
             return 0;
         }
 
-        const nextReward =
-            lastReward + REWARD_COOLDOWN;
-
         return Math.max(
             0,
-            nextReward - Date.now()
+            (
+                lastReward +
+                REWARD_COOLDOWN
+            ) -
+            Date.now()
         );
-
     }
+
 
     function formatCountdown(ms) {
 
-        const totalSeconds =
-            Math.floor(ms / 1000);
+        const seconds =
+            Math.floor(
+                ms / 1000
+            );
 
         const hours =
             Math.floor(
-                totalSeconds / 3600
+                seconds / 3600
             );
 
         const minutes =
             Math.floor(
-                (totalSeconds % 3600) / 60
+                (seconds % 3600) /
+                60
             );
 
-        const seconds =
-            totalSeconds % 60;
+        const remainingSeconds =
+            seconds % 60;
+
 
         return (
-            String(hours).padStart(2, "0") +
+            String(hours)
+                .padStart(2, "0") +
             ":" +
-            String(minutes).padStart(2, "0") +
+            String(minutes)
+                .padStart(2, "0") +
             ":" +
-            String(seconds).padStart(2, "0")
+            String(remainingSeconds)
+                .padStart(2, "0")
         );
-
     }
+
 
     function updateDailyRewardButton() {
 
         if (!dailyRewardButton) {
             return;
         }
+
 
         if (isRewardAvailable()) {
 
@@ -271,10 +404,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             dailyRewardButton.style.cursor =
                 "not-allowed";
-
         }
-
     }
+
 
     if (dailyRewardButton) {
 
@@ -282,41 +414,92 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             () => {
 
-                if (!isRewardAvailable()) {
+                if (
+                    !isRewardAvailable()
+                ) {
                     return;
                 }
 
-                balance += DAILY_REWARD;
 
-                localStorage.setItem(
-                    "gildedAceLastDailyReward",
-                    Date.now()
+                addBalance(
+                    DAILY_REWARD
                 );
 
-                saveBalance();
+
+                localStorage.setItem(
+                    DAILY_KEY,
+                    String(Date.now())
+                );
+
 
                 updateDailyRewardButton();
+
 
                 showToast(
                     `+${formatNumber(DAILY_REWARD)} AC DAILY REWARD`,
                     "success"
                 );
-
             }
         );
 
+
         updateDailyRewardButton();
+
 
         setInterval(
             updateDailyRewardButton,
             1000
         );
-
     }
 
 
     /* =========================================================
-       STORE SYSTEM
+       INVENTORY
+    ========================================================= */
+
+    function getOwnedItems() {
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        INVENTORY_KEY
+                    ) || "[]"
+                );
+
+            return Array.isArray(saved)
+                ? saved
+                : [];
+
+        } catch {
+
+            return [];
+        }
+    }
+
+
+    function saveOwnedItems(items) {
+
+        localStorage.setItem(
+            INVENTORY_KEY,
+            JSON.stringify(items)
+        );
+    }
+
+
+    function playerOwnsItem(itemId) {
+
+        return getOwnedItems()
+            .some(
+                (item) =>
+                    item.id === itemId
+            );
+    }
+
+
+    /* =========================================================
+       STORE
     ========================================================= */
 
     const storeCategoryButtons =
@@ -335,60 +518,10 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    function getOwnedItems() {
-
-        try {
-
-            const saved =
-                JSON.parse(
-                    localStorage.getItem(
-                        "gildedAceOwnedItems"
-                    ) || "[]"
-                );
-
-            return Array.isArray(saved)
-                ? saved
-                : [];
-
-        } catch (error) {
-
-            return [];
-
-        }
-
-    }
-
-
-    function saveOwnedItems(items) {
-
-        localStorage.setItem(
-            "gildedAceOwnedItems",
-            JSON.stringify(items)
-        );
-
-    }
-
-
-    function playerOwnsItem(itemId) {
-
-        const ownedItems =
-            getOwnedItems();
-
-        return ownedItems.some(
-            (item) =>
-                item.id === itemId
-        );
-
-    }
-
-
     function updateStoreButtons() {
 
-        document
-            .querySelectorAll(
-                ".store-product"
-            )
-            .forEach((product) => {
+        storeProducts.forEach(
+            (product) => {
 
                 const itemId =
                     product.dataset.itemId;
@@ -402,6 +535,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+
                 if (
                     playerOwnsItem(itemId)
                 ) {
@@ -409,7 +543,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     button.textContent =
                         "OWNED";
 
-                    button.disabled = true;
+                    button.disabled =
+                        true;
 
                     button.classList.add(
                         "owned"
@@ -420,16 +555,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     button.textContent =
                         "PURCHASE";
 
-                    button.disabled = false;
+                    button.disabled =
+                        false;
 
                     button.classList.remove(
                         "owned"
                     );
-
                 }
-
-            });
-
+            }
+        );
     }
 
 
@@ -438,19 +572,15 @@ document.addEventListener("DOMContentLoaded", () => {
         storeProducts.forEach(
             (product) => {
 
-                const productCategory =
-                    product.dataset.category;
-
                 const show =
                     category === "all" ||
-                    productCategory ===
-                        category;
+                    product.dataset.category ===
+                    category;
 
                 product.classList.toggle(
                     "store-hidden",
                     !show
                 );
-
             }
         );
 
@@ -458,19 +588,17 @@ document.addEventListener("DOMContentLoaded", () => {
         storeSections.forEach(
             (section) => {
 
-                const visibleProducts =
+                const visible =
                     section.querySelectorAll(
                         ".store-product:not(.store-hidden)"
                     );
 
                 section.classList.toggle(
                     "store-hidden",
-                    visibleProducts.length === 0
+                    visible.length === 0
                 );
-
             }
         );
-
     }
 
 
@@ -483,27 +611,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     storeCategoryButtons
                         .forEach(
-                            (item) => {
+                            (otherButton) => {
 
-                                item.classList.remove(
-                                    "active"
-                                );
+                                otherButton
+                                    .classList
+                                    .remove(
+                                        "active"
+                                    );
 
                             }
                         );
+
 
                     button.classList.add(
                         "active"
                     );
 
+
                     filterStore(
                         button.dataset
                             .storeCategory
                     );
-
                 }
             );
-
         }
     );
 
@@ -512,137 +642,727 @@ document.addEventListener("DOMContentLoaded", () => {
         .querySelectorAll(
             ".buy-item-button"
         )
-        .forEach((button) => {
+        .forEach(
+            (button) => {
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    const product =
-                        button.closest(
-                            ".store-product"
+                        const product =
+                            button.closest(
+                                ".store-product"
+                            );
+
+                        if (!product) {
+                            return;
+                        }
+
+
+                        const itemId =
+                            product.dataset
+                                .itemId;
+
+                        const itemName =
+                            product.dataset
+                                .itemName;
+
+                        const category =
+                            product.dataset
+                                .category;
+
+                        const price =
+                            Number(
+                                product.dataset
+                                    .price
+                            );
+
+
+                        if (
+                            !itemId ||
+                            !itemName ||
+                            !Number.isFinite(
+                                price
+                            )
+                        ) {
+
+                            showToast(
+                                "STORE ITEM ERROR",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+
+                        if (
+                            playerOwnsItem(
+                                itemId
+                            )
+                        ) {
+
+                            showToast(
+                                "YOU ALREADY OWN THIS ITEM"
+                            );
+
+                            return;
+                        }
+
+
+                        if (
+                            !canAfford(
+                                price
+                            )
+                        ) {
+
+                            showToast(
+                                `NOT ENOUGH ACE CREDITS — NEED ${formatNumber(price)} AC`,
+                                "error"
+                            );
+
+                            return;
+                        }
+
+
+                        const confirmed =
+                            window.confirm(
+                                `Purchase ${itemName} for ${formatNumber(price)} AC?`
+                            );
+
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+
+                        setBalance(
+                            getBalance() -
+                            price
                         );
 
-                    if (!product) {
-                        return;
-                    }
 
-                    const itemId =
-                        product.dataset.itemId;
+                        const items =
+                            getOwnedItems();
 
-                    const itemName =
-                        product.dataset.itemName;
 
-                    const category =
-                        product.dataset.category;
+                        items.push({
+                            id: itemId,
+                            name: itemName,
+                            category: category,
+                            price: price,
+                            purchasedAt:
+                                new Date()
+                                    .toISOString()
+                        });
 
-                    const price =
-                        Number(
-                            product.dataset.price
+
+                        saveOwnedItems(
+                            items
                         );
 
 
-                    if (
-                        !itemId ||
-                        !itemName ||
-                        !Number.isFinite(price)
-                    ) {
+                        updateStoreButtons();
+
 
                         showToast(
-                            "STORE ITEM ERROR",
-                            "error"
+                            `${itemName.toUpperCase()} PURCHASED`,
+                            "success"
                         );
-
-                        return;
-
                     }
-
-
-                    if (
-                        playerOwnsItem(
-                            itemId
-                        )
-                    ) {
-
-                        showToast(
-                            "YOU ALREADY OWN THIS ITEM"
-                        );
-
-                        return;
-
-                    }
-
-
-                    if (
-                        !canAfford(price)
-                    ) {
-
-                        showToast(
-                            `NOT ENOUGH ACE CREDITS — NEED ${formatNumber(price)} AC`,
-                            "error"
-                        );
-
-                        return;
-
-                    }
-
-
-                    const confirmed =
-                        window.confirm(
-                            `Purchase ${itemName} for ${formatNumber(price)} AC?`
-                        );
-
-                    if (!confirmed) {
-                        return;
-                    }
-
-
-                    balance -= price;
-
-                    saveBalance();
-
-
-                    const ownedItems =
-                        getOwnedItems();
-
-
-                    ownedItems.push({
-                        id: itemId,
-                        name: itemName,
-                        category: category,
-                        price: price,
-                        purchasedAt:
-                            new Date().toISOString()
-                    });
-
-
-                    saveOwnedItems(
-                        ownedItems
-                    );
-
-                    updateStoreButtons();
-
-                    showToast(
-                        `${itemName.toUpperCase()} PURCHASED`,
-                        "success"
-                    );
-
-                }
-            );
-
-        }
-    );
+                );
+            }
+        );
 
 
     if (
-        storeCategoryButtons.length > 0
+        storeCategoryButtons.length
     ) {
 
         updateStoreButtons();
 
         filterStore("all");
-
     }
+
+
+    /* =========================================================
+       COLLECTION
+    ========================================================= */
+
+    const collectionGrid =
+        document.getElementById(
+            "collectionGrid"
+        );
+
+    const collectionEmptyState =
+        document.getElementById(
+            "collectionEmptyState"
+        );
+
+    const collectionOwnedCount =
+        document.getElementById(
+            "collectionOwnedCount"
+        );
+
+    const collectionItemCount =
+        document.getElementById(
+            "collectionItemCount"
+        );
+
+    const collectionValue =
+        document.getElementById(
+            "collectionValue"
+        );
+
+    const collectionHighestPurchase =
+        document.getElementById(
+            "collectionHighestPurchase"
+        );
+
+    const collectionFilters =
+        document.querySelectorAll(
+            ".collection-filter"
+        );
+
+
+    const collectionArt = {
+
+        "gold-profile-frame": "◇",
+        "diamond-nameplate": "♦",
+        "high-roller-title": "★",
+
+        "gilded-watch": "◉",
+        "golden-ace-card": "♠",
+        "diamond-crown": "♛",
+
+        "grand-touring-coupe": "GT",
+        "gilded-supercar": "GA",
+        "executive-limousine": "XL",
+        "private-yacht": "Y",
+        "private-jet": "JET",
+
+        "hotel-suite": "01",
+        "luxury-penthouse": "PH",
+        "private-estate": "EST",
+
+        "gilded-card-back": "A",
+        "gold-blackjack-table": "21",
+        "midnight-roulette": "0",
+
+        "high-roller-membership": "HR",
+        "diamond-club": "♦",
+        "casino-ownership": "♛"
+    };
+
+
+    function getCollectionCategoryName(
+        category
+    ) {
+
+        const names = {
+            profile:
+                "PROFILE COSMETIC",
+
+            collectible:
+                "LUXURY COLLECTIBLE",
+
+            vehicle:
+                "VEHICLE",
+
+            property:
+                "PROPERTY",
+
+            casino:
+                "CASINO COSMETIC",
+
+            prestige:
+                "PRESTIGE"
+        };
+
+
+        return (
+            names[category] ||
+            "COLLECTIBLE"
+        );
+    }
+
+
+    function formatPurchaseDate(
+        dateString
+    ) {
+
+        if (!dateString) {
+            return "DATE UNAVAILABLE";
+        }
+
+
+        const date =
+            new Date(dateString);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return "DATE UNAVAILABLE";
+        }
+
+
+        return date.toLocaleDateString(
+            undefined,
+            {
+                year: "numeric",
+                month: "short",
+                day: "numeric"
+            }
+        );
+    }
+
+
+    function createCollectionCard(
+        item
+    ) {
+
+        const card =
+            document.createElement(
+                "article"
+            );
+
+
+        card.className =
+            "collection-item";
+
+
+        card.dataset
+            .collectionCategory =
+            item.category ||
+            "collectible";
+
+
+        const art =
+            collectionArt[item.id] ||
+            "♠";
+
+
+        const price =
+            Number(item.price) || 0;
+
+
+        const artElement =
+            document.createElement(
+                "div"
+            );
+
+        artElement.className =
+            "collection-item-art";
+
+        artElement.textContent =
+            art;
+
+
+        const details =
+            document.createElement(
+                "div"
+            );
+
+        details.className =
+            "collection-item-details";
+
+
+        const category =
+            document.createElement(
+                "span"
+            );
+
+        category.className =
+            "collection-item-category";
+
+        category.textContent =
+            getCollectionCategoryName(
+                item.category
+            );
+
+
+        const name =
+            document.createElement(
+                "h3"
+            );
+
+        name.className =
+            "collection-item-name";
+
+        name.textContent =
+            item.name ||
+            "Gilded Item";
+
+
+        const date =
+            document.createElement(
+                "div"
+            );
+
+        date.className =
+            "collection-item-date";
+
+        date.textContent =
+            "ACQUIRED " +
+            formatPurchaseDate(
+                item.purchasedAt
+            );
+
+
+        const bottom =
+            document.createElement(
+                "div"
+            );
+
+        bottom.className =
+            "collection-item-bottom";
+
+
+        const priceElement =
+            document.createElement(
+                "span"
+            );
+
+        priceElement.className =
+            "collection-item-price";
+
+        priceElement.textContent =
+            `${formatNumber(price)} AC`;
+
+
+        const owned =
+            document.createElement(
+                "span"
+            );
+
+        owned.className =
+            "collection-owned-badge";
+
+        owned.textContent =
+            "OWNED";
+
+
+        bottom.appendChild(
+            priceElement
+        );
+
+        bottom.appendChild(
+            owned
+        );
+
+
+        details.appendChild(
+            category
+        );
+
+        details.appendChild(
+            name
+        );
+
+        details.appendChild(
+            date
+        );
+
+        details.appendChild(
+            bottom
+        );
+
+
+        card.appendChild(
+            artElement
+        );
+
+        card.appendChild(
+            details
+        );
+
+
+        return card;
+    }
+
+
+    function updateCollectionStatistics(
+        items
+    ) {
+
+        const totalItems =
+            items.length;
+
+
+        const totalValue =
+            items.reduce(
+                (total, item) =>
+                    total +
+                    (
+                        Number(
+                            item.price
+                        ) || 0
+                    ),
+                0
+            );
+
+
+        let highestItem =
+            null;
+
+
+        items.forEach(
+            (item) => {
+
+                if (
+                    !highestItem ||
+                    (
+                        Number(
+                            item.price
+                        ) || 0
+                    ) >
+                    (
+                        Number(
+                            highestItem.price
+                        ) || 0
+                    )
+                ) {
+
+                    highestItem =
+                        item;
+                }
+            }
+        );
+
+
+        if (
+            collectionOwnedCount
+        ) {
+
+            collectionOwnedCount
+                .textContent =
+                formatNumber(
+                    totalItems
+                );
+        }
+
+
+        if (
+            collectionItemCount
+        ) {
+
+            collectionItemCount
+                .textContent =
+                `${formatNumber(totalItems)} ${
+                    totalItems === 1
+                        ? "ITEM"
+                        : "ITEMS"
+                }`;
+        }
+
+
+        if (
+            collectionValue
+        ) {
+
+            collectionValue.textContent =
+                `${formatNumber(totalValue)} AC`;
+        }
+
+
+        if (
+            collectionHighestPurchase
+        ) {
+
+            collectionHighestPurchase
+                .textContent =
+                highestItem
+                    ? highestItem.name
+                    : "—";
+        }
+    }
+
+
+    function filterCollection(
+        category
+    ) {
+
+        if (!collectionGrid) {
+            return;
+        }
+
+
+        const cards =
+            collectionGrid
+                .querySelectorAll(
+                    ".collection-item"
+                );
+
+
+        let visibleItems = 0;
+
+
+        cards.forEach(
+            (card) => {
+
+                const show =
+                    category === "all" ||
+                    card.dataset
+                        .collectionCategory ===
+                    category;
+
+
+                card.classList.toggle(
+                    "collection-hidden",
+                    !show
+                );
+
+
+                if (show) {
+                    visibleItems++;
+                }
+            }
+        );
+
+
+        if (
+            collectionEmptyState
+        ) {
+
+            if (
+                cards.length === 0
+            ) {
+
+                collectionEmptyState
+                    .style.display =
+                    "block";
+
+            } else if (
+                visibleItems === 0
+            ) {
+
+                collectionEmptyState
+                    .style.display =
+                    "block";
+
+                const heading =
+                    collectionEmptyState
+                        .querySelector(
+                            "h2"
+                        );
+
+                const text =
+                    collectionEmptyState
+                        .querySelector(
+                            "p:not(.section-kicker)"
+                        );
+
+
+                if (heading) {
+
+                    heading.textContent =
+                        "NO ITEMS IN THIS CATEGORY";
+                }
+
+
+                if (text) {
+
+                    text.textContent =
+                        "You do not currently own any items in this collection category.";
+                }
+
+            } else {
+
+                collectionEmptyState
+                    .style.display =
+                    "none";
+            }
+        }
+    }
+
+
+    function renderCollection() {
+
+        if (!collectionGrid) {
+            return;
+        }
+
+
+        const items =
+            getOwnedItems();
+
+
+        collectionGrid.innerHTML =
+            "";
+
+
+        items.forEach(
+            (item) => {
+
+                collectionGrid.appendChild(
+                    createCollectionCard(
+                        item
+                    )
+                );
+            }
+        );
+
+
+        updateCollectionStatistics(
+            items
+        );
+
+
+        const active =
+            document.querySelector(
+                ".collection-filter.active"
+            );
+
+
+        const category =
+            active
+                ? active.dataset
+                    .collectionCategory
+                : "all";
+
+
+        filterCollection(
+            category
+        );
+    }
+
+
+    collectionFilters.forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    collectionFilters
+                        .forEach(
+                            (otherButton) => {
+
+                                otherButton
+                                    .classList
+                                    .remove(
+                                        "active"
+                                    );
+                            }
+                        );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    filterCollection(
+                        button.dataset
+                            .collectionCategory
+                    );
+                }
+            );
+        }
+    );
 
 
     /* =========================================================
@@ -659,83 +1379,91 @@ document.addEventListener("DOMContentLoaded", () => {
             ".casino-game-panel"
         );
 
-    function activateGame(gameName) {
 
-        casinoTabs.forEach((tab) => {
+    function activateGame(
+        gameName
+    ) {
 
-            tab.classList.toggle(
-                "active",
-                tab.dataset.game === gameName
-            );
+        casinoTabs.forEach(
+            (tab) => {
 
-        });
-
-        casinoPanels.forEach((panel) => {
-
-            panel.classList.toggle(
-                "active",
-                panel.dataset.gamePanel ===
+                tab.classList.toggle(
+                    "active",
+                    tab.dataset.game ===
                     gameName
-            );
-
-        });
-
-    }
-
-
-    casinoTabs.forEach((tab) => {
-
-        tab.addEventListener(
-            "click",
-            () => {
-
-                const game =
-                    tab.dataset.game;
-
-                activateGame(game);
-
-                history.replaceState(
-                    null,
-                    "",
-                    `#${game}`
                 );
-
             }
         );
 
-    });
+
+        casinoPanels.forEach(
+            (panel) => {
+
+                panel.classList.toggle(
+                    "active",
+                    panel.id === gameName ||
+                    panel.dataset
+                        .gamePanel ===
+                    gameName
+                );
+            }
+        );
+    }
 
 
-    if (window.location.hash) {
+    casinoTabs.forEach(
+        (tab) => {
 
-        const requestedGame =
-            window.location.hash
-                .replace("#", "");
+            tab.addEventListener(
+                "click",
+                () => {
 
-        const validGames = [
-            "blackjack",
-            "slots",
-            "roulette",
-            "dice"
-        ];
+                    const game =
+                        tab.dataset.game;
 
-        if (
-            validGames.includes(
-                requestedGame
-            )
-        ) {
+                    activateGame(
+                        game
+                    );
 
-            activateGame(
-                requestedGame
+
+                    history.replaceState(
+                        null,
+                        "",
+                        `#${game}`
+                    );
+                }
             );
-
         }
+    );
 
+
+    const requestedGame =
+        window.location.hash
+            .replace("#", "");
+
+
+    const validGames = [
+        "blackjack",
+        "slots",
+        "roulette",
+        "dice"
+    ];
+
+
+    if (
+        validGames.includes(
+            requestedGame
+        )
+    ) {
+
+        activateGame(
+            requestedGame
+        );
     }
 
 
     /* =========================================================
-       BET CONTROL
+       BET CONTROLS
     ========================================================= */
 
     function createBetControl(
@@ -760,7 +1488,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 upId
             );
 
-        let bet = startingBet;
+
+        let index =
+            BET_LEVELS.indexOf(
+                startingBet
+            );
+
+
+        if (index < 0) {
+            index = 1;
+        }
 
 
         function update() {
@@ -768,10 +1505,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (display) {
 
                 display.textContent =
-                    `${formatNumber(bet)} AC`;
-
+                    `${formatNumber(BET_LEVELS[index])} AC`;
             }
-
         }
 
 
@@ -781,16 +1516,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 "click",
                 () => {
 
-                    bet = Math.max(
-                        MIN_BET,
-                        bet - BET_STEP
-                    );
+                    index =
+                        Math.max(
+                            0,
+                            index - 1
+                        );
 
                     update();
-
                 }
             );
-
         }
 
 
@@ -800,16 +1534,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 "click",
                 () => {
 
-                    bet = Math.min(
-                        MAX_BET,
-                        bet + BET_STEP
-                    );
+                    index =
+                        Math.min(
+                            BET_LEVELS.length -
+                            1,
+                            index + 1
+                        );
 
                     update();
-
                 }
             );
-
         }
 
 
@@ -819,25 +1553,28 @@ document.addEventListener("DOMContentLoaded", () => {
         return {
 
             getBet() {
-                return bet;
+
+                return BET_LEVELS[
+                    index
+                ];
             },
 
-            setBet(value) {
 
-                bet = Math.max(
-                    MIN_BET,
-                    Math.min(
-                        MAX_BET,
-                        value
-                    )
-                );
+            setDisabled(
+                disabled
+            ) {
 
-                update();
+                if (down) {
+                    down.disabled =
+                        disabled;
+                }
 
+                if (up) {
+                    up.disabled =
+                        disabled;
+                }
             }
-
         };
-
     }
 
 
@@ -853,7 +1590,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (blackjackDeal) {
 
-        const blackjackBetControl =
+        const betControl =
             createBetControl(
                 "blackjackBet",
                 "blackjackBetDown",
@@ -862,42 +1599,42 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const dealerCardsElement =
+        const dealerCards =
             document.getElementById(
                 "dealerCards"
             );
 
-        const playerCardsElement =
+        const playerCards =
             document.getElementById(
                 "playerCards"
             );
 
-        const dealerValueElement =
+        const dealerValue =
             document.getElementById(
                 "dealerValue"
             );
 
-        const playerValueElement =
+        const playerValue =
             document.getElementById(
                 "playerValue"
             );
 
-        const messageElement =
+        const message =
             document.getElementById(
                 "blackjackMessage"
             );
 
-        const hitButton =
+        const hit =
             document.getElementById(
                 "blackjackHit"
             );
 
-        const standButton =
+        const stand =
             document.getElementById(
                 "blackjackStand"
             );
 
-        const doubleButton =
+        const double =
             document.getElementById(
                 "blackjackDouble"
             );
@@ -911,36 +1648,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let roundActive = false;
 
 
-        function shuffleArray(array) {
-
-            for (
-                let i =
-                    array.length - 1;
-                i > 0;
-                i--
-            ) {
-
-                const j =
-                    Math.floor(
-                        Math.random() *
-                        (i + 1)
-                    );
-
-                [
-                    array[i],
-                    array[j]
-                ] = [
-                    array[j],
-                    array[i]
-                ];
-
-            }
-
-            return array;
-
-        }
-
-
         function createDeck() {
 
             const suits = [
@@ -951,7 +1658,6 @@ document.addEventListener("DOMContentLoaded", () => {
             ];
 
             const ranks = [
-                "A",
                 "2",
                 "3",
                 "4",
@@ -963,10 +1669,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 "10",
                 "J",
                 "Q",
-                "K"
+                "K",
+                "A"
             ];
 
-            const newDeck = [];
+
+            const cards = [];
+
 
             suits.forEach(
                 (suit) => {
@@ -974,41 +1683,59 @@ document.addEventListener("DOMContentLoaded", () => {
                     ranks.forEach(
                         (rank) => {
 
-                            newDeck.push({
+                            cards.push({
                                 rank,
                                 suit
                             });
-
                         }
                     );
-
                 }
             );
 
-            return shuffleArray(
-                newDeck
-            );
 
+            for (
+                let i =
+                    cards.length - 1;
+                i > 0;
+                i--
+            ) {
+
+                const j =
+                    randomInt(
+                        i + 1
+                    );
+
+                [
+                    cards[i],
+                    cards[j]
+                ] = [
+                    cards[j],
+                    cards[i]
+                ];
+            }
+
+
+            return cards;
         }
 
 
         function drawCard() {
 
             if (
-                deck.length < 10
+                deck.length === 0
             ) {
 
                 deck =
                     createDeck();
-
             }
 
             return deck.pop();
-
         }
 
 
-        function cardValue(card) {
+        function cardValue(
+            card
+        ) {
 
             if (
                 [
@@ -1021,33 +1748,38 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
 
                 return 10;
-
             }
+
 
             if (
                 card.rank === "A"
             ) {
 
                 return 11;
-
             }
+
 
             return Number(
                 card.rank
             );
-
         }
 
 
-        function handValue(hand) {
+        function handValue(
+            hand
+        ) {
 
-            let value =
+            let total =
                 hand.reduce(
-                    (total, card) =>
-                        total +
+                    (
+                        sum,
+                        card
+                    ) =>
+                        sum +
                         cardValue(card),
                     0
                 );
+
 
             let aces =
                 hand.filter(
@@ -1057,28 +1789,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             while (
-                value > 21 &&
+                total > 21 &&
                 aces > 0
             ) {
 
-                value -= 10;
-
+                total -= 10;
                 aces--;
-
             }
 
-            return value;
 
+            return total;
         }
 
 
-        function isBlackjack(hand) {
+        function isBlackjack(
+            hand
+        ) {
 
             return (
                 hand.length === 2 &&
-                handValue(hand) === 21
+                handValue(hand) ===
+                21
             );
-
         }
 
 
@@ -1087,39 +1819,73 @@ document.addEventListener("DOMContentLoaded", () => {
             hidden = false
         ) {
 
+            const element =
+                document.createElement(
+                    "div"
+                );
+
+
             if (hidden) {
 
-                return `
-                    <div class="playing-card card-back">
-                        <span>A</span>
-                    </div>
-                `;
+                element.className =
+                    "playing-card card-back";
 
+                element.innerHTML =
+                    "<span>A</span>";
+
+                return element;
             }
 
-            const redSuit =
+
+            element.className =
+                "playing-card";
+
+
+            const rank =
+                document.createElement(
+                    "span"
+                );
+
+            rank.className =
+                "card-rank";
+
+            rank.textContent =
+                card.rank;
+
+
+            const suit =
+                document.createElement(
+                    "span"
+                );
+
+            suit.className =
+                "card-suit";
+
+            suit.textContent =
+                card.suit;
+
+
+            if (
                 card.suit === "♥" ||
-                card.suit === "♦";
+                card.suit === "♦"
+            ) {
+
+                suit.classList.add(
+                    "red"
+                );
+            }
 
 
-            return `
-                <div class="playing-card">
+            element.appendChild(
+                rank
+            );
 
-                    <span class="card-rank">
-                        ${card.rank}
-                    </span>
+            element.appendChild(
+                suit
+            );
 
-                    <span class="card-suit ${
-                        redSuit
-                            ? "red"
-                            : ""
-                    }">
-                        ${card.suit}
-                    </span>
 
-                </div>
-            `;
-
+            return element;
         }
 
 
@@ -1127,113 +1893,113 @@ document.addEventListener("DOMContentLoaded", () => {
             hideDealer = true
         ) {
 
-            dealerCardsElement.innerHTML =
-                dealerHand
-                    .map(
-                        (card, index) =>
+            dealerCards.innerHTML =
+                "";
+
+            playerCards.innerHTML =
+                "";
+
+
+            dealerHand.forEach(
+                (card, index) => {
+
+                    dealerCards
+                        .appendChild(
                             renderCard(
                                 card,
                                 hideDealer &&
-                                index === 0
+                                index === 1
                             )
-                    )
-                    .join("");
+                        );
+                }
+            );
 
 
-            playerCardsElement.innerHTML =
-                playerHand
-                    .map(
-                        (card) =>
-                            renderCard(card)
-                    )
-                    .join("");
+            playerHand.forEach(
+                (card) => {
+
+                    playerCards
+                        .appendChild(
+                            renderCard(
+                                card
+                            )
+                        );
+                }
+            );
 
 
-            playerValueElement.textContent =
-                `Your Hand: ${handValue(
-                    playerHand
-                )}`;
+            playerValue.textContent =
+                `Your Hand: ${handValue(playerHand)}`;
 
 
-            if (hideDealer) {
-
-                const visibleCards =
-                    dealerHand.slice(1);
-
-                dealerValueElement.textContent =
-                    `Dealer: ${handValue(
-                        visibleCards
-                    )}`;
-
-            } else {
-
-                dealerValueElement.textContent =
-                    `Dealer: ${handValue(
-                        dealerHand
-                    )}`;
-
-            }
-
+            dealerValue.textContent =
+                hideDealer
+                    ? "Dealer: ?"
+                    : `Dealer: ${handValue(dealerHand)}`;
         }
 
 
-        function setBlackjackMessage(
+        function setMessage(
             text,
             type = ""
         ) {
 
-            messageElement.textContent =
+            message.textContent =
                 text;
 
-            messageElement.className =
+            message.className =
                 "game-message";
 
             if (type) {
 
-                messageElement
-                    .classList
-                    .add(type);
-
+                message.classList.add(
+                    type
+                );
             }
-
         }
 
 
-        function setBlackjackButtons(
+        function setButtons(
             active
         ) {
 
-            hitButton.disabled =
+            hit.disabled =
                 !active;
 
-            standButton.disabled =
+            stand.disabled =
                 !active;
 
-            doubleButton.disabled =
+            double.disabled =
                 !active;
 
             blackjackDeal.disabled =
                 active;
 
+            betControl.setDisabled(
+                active
+            );
         }
 
 
-        function finishBlackjack(
+        function finish(
             result
         ) {
 
-            roundActive = false;
-
-            renderBlackjack(false);
-
-            setBlackjackButtons(false);
-
-            blackjackDeal.disabled =
+            roundActive =
                 false;
+
+            renderBlackjack(
+                false
+            );
+
+            setButtons(
+                false
+            );
 
 
             if (
-                result === "blackjack"
+                result ===
+                "blackjack"
             ) {
 
                 const payout =
@@ -1241,19 +2007,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         currentBet * 2.5
                     );
 
-                balance += payout;
+                addBalance(
+                    payout
+                );
 
-                saveBalance();
-
-                setBlackjackMessage(
-                    `BLACKJACK! You won ${formatNumber(
-                        payout - currentBet
-                    )} AC.`,
+                setMessage(
+                    `BLACKJACK! You won ${formatNumber(payout - currentBet)} AC.`,
                     "win"
                 );
 
                 return;
-
             }
 
 
@@ -1261,20 +2024,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 result === "win"
             ) {
 
-                balance +=
-                    currentBet * 2;
+                addBalance(
+                    currentBet * 2
+                );
 
-                saveBalance();
-
-                setBlackjackMessage(
-                    `You won ${formatNumber(
-                        currentBet
-                    )} AC.`,
+                setMessage(
+                    `You won ${formatNumber(currentBet)} AC.`,
                     "win"
                 );
 
                 return;
-
             }
 
 
@@ -1282,27 +2041,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 result === "push"
             ) {
 
-                balance +=
-                    currentBet;
+                addBalance(
+                    currentBet
+                );
 
-                saveBalance();
-
-                setBlackjackMessage(
+                setMessage(
                     "Push. Your bet was returned."
                 );
 
                 return;
-
             }
 
 
-            setBlackjackMessage(
-                `House wins. You lost ${formatNumber(
-                    currentBet
-                )} AC.`,
+            setMessage(
+                `House wins. You lost ${formatNumber(currentBet)} AC.`,
                 "loss"
             );
-
         }
 
 
@@ -1317,55 +2071,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 dealerHand.push(
                     drawCard()
                 );
-
             }
 
 
-            const playerValue =
+            const playerTotal =
                 handValue(
                     playerHand
                 );
 
-            const dealerValue =
+            const dealerTotal =
                 handValue(
                     dealerHand
                 );
 
 
             if (
-                dealerValue > 21
+                dealerTotal > 21
             ) {
 
-                finishBlackjack(
-                    "win"
-                );
+                finish("win");
 
             } else if (
-                dealerValue >
-                playerValue
+                dealerTotal >
+                playerTotal
             ) {
 
-                finishBlackjack(
-                    "loss"
-                );
+                finish("loss");
 
             } else if (
-                dealerValue <
-                playerValue
+                dealerTotal <
+                playerTotal
             ) {
 
-                finishBlackjack(
-                    "win"
-                );
+                finish("win");
 
             } else {
 
-                finishBlackjack(
-                    "push"
-                );
-
+                finish("push");
             }
-
         }
 
 
@@ -1379,8 +2122,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 currentBet =
-                    blackjackBetControl
-                        .getBet();
+                    betControl.getBet();
 
 
                 if (
@@ -1389,48 +2131,44 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                 ) {
 
-                    setBlackjackMessage(
+                    setMessage(
                         "You do not have enough Ace Credits.",
                         "loss"
                     );
 
                     return;
-
                 }
 
 
-                balance -=
-                    currentBet;
-
-                saveBalance();
+                setBalance(
+                    getBalance() -
+                    currentBet
+                );
 
 
                 deck =
                     createDeck();
-
 
                 playerHand = [
                     drawCard(),
                     drawCard()
                 ];
 
-
                 dealerHand = [
                     drawCard(),
                     drawCard()
                 ];
 
-
-                roundActive = true;
-
-
-                renderBlackjack(true);
-
-                setBlackjackButtons(true);
+                roundActive =
+                    true;
 
 
-                setBlackjackMessage(
-                    "Choose HIT, STAND, or DOUBLE."
+                renderBlackjack(
+                    true
+                );
+
+                setButtons(
+                    true
                 );
 
 
@@ -1450,15 +2188,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     dealerBJ
                 ) {
 
-                    finishBlackjack(
-                        "push"
-                    );
+                    finish("push");
 
                 } else if (
                     playerBJ
                 ) {
 
-                    finishBlackjack(
+                    finish(
                         "blackjack"
                     );
 
@@ -1466,17 +2202,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     dealerBJ
                 ) {
 
-                    finishBlackjack(
-                        "loss"
+                    finish("loss");
+
+                } else {
+
+                    setMessage(
+                        "Choose HIT, STAND, or DOUBLE."
                     );
-
                 }
-
             }
         );
 
 
-        hitButton.addEventListener(
+        hit.addEventListener(
             "click",
             () => {
 
@@ -1490,7 +2228,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                renderBlackjack(true);
+                double.disabled =
+                    true;
+
+
+                renderBlackjack(
+                    true
+                );
 
 
                 const value =
@@ -1499,31 +2243,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
 
-                doubleButton.disabled =
-                    true;
-
-
                 if (
                     value > 21
                 ) {
 
-                    finishBlackjack(
-                        "loss"
-                    );
+                    finish("loss");
 
                 } else if (
                     value === 21
                 ) {
 
                     dealerPlay();
-
                 }
-
             }
         );
 
 
-        standButton.addEventListener(
+        stand.addEventListener(
             "click",
             () => {
 
@@ -1532,12 +2268,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 dealerPlay();
-
             }
         );
 
 
-        doubleButton.addEventListener(
+        double.addEventListener(
             "click",
             () => {
 
@@ -1545,34 +2280,36 @@ document.addEventListener("DOMContentLoaded", () => {
                     !roundActive ||
                     playerHand.length !== 2
                 ) {
-
                     return;
-
                 }
+
+
+                const extraBet =
+                    currentBet;
 
 
                 if (
                     !canAfford(
-                        currentBet
+                        extraBet
                     )
                 ) {
 
-                    setBlackjackMessage(
+                    setMessage(
                         "Not enough Ace Credits to double.",
                         "loss"
                     );
 
                     return;
-
                 }
 
 
-                balance -=
-                    currentBet;
+                setBalance(
+                    getBalance() -
+                    extraBet
+                );
+
 
                 currentBet *= 2;
-
-                saveBalance();
 
 
                 playerHand.push(
@@ -1580,7 +2317,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                renderBlackjack(true);
+                double.disabled =
+                    true;
+
+
+                renderBlackjack(
+                    true
+                );
 
 
                 if (
@@ -1589,20 +2332,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     ) > 21
                 ) {
 
-                    finishBlackjack(
-                        "loss"
-                    );
+                    finish("loss");
 
                     return;
-
                 }
 
 
                 dealerPlay();
-
             }
         );
-
     }
 
 
@@ -1610,15 +2348,15 @@ document.addEventListener("DOMContentLoaded", () => {
        SLOTS
     ========================================================= */
 
-    const slotSpinButton =
+    const slotSpin =
         document.getElementById(
             "slotSpin"
         );
 
 
-    if (slotSpinButton) {
+    if (slotSpin) {
 
-        const slotBetControl =
+        const betControl =
             createBetControl(
                 "slotBet",
                 "slotBetDown",
@@ -1631,16 +2369,18 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById(
                 "slotReel1"
             ),
+
             document.getElementById(
                 "slotReel2"
             ),
+
             document.getElementById(
                 "slotReel3"
             )
         ];
 
 
-        const slotMessage =
+        const message =
             document.getElementById(
                 "slotMessage"
             );
@@ -1659,66 +2399,63 @@ document.addEventListener("DOMContentLoaded", () => {
         function randomSymbol() {
 
             return symbols[
-                Math.floor(
-                    Math.random() *
+                randomInt(
                     symbols.length
                 )
             ];
-
         }
 
 
-        function setSlotMessage(
+        function setMessage(
             text,
             type = ""
         ) {
 
-            slotMessage.textContent =
+            message.textContent =
                 text;
 
-            slotMessage.className =
+            message.className =
                 "game-message";
 
             if (type) {
 
-                slotMessage
-                    .classList
-                    .add(type);
-
+                message.classList.add(
+                    type
+                );
             }
-
         }
 
 
-        slotSpinButton.addEventListener(
+        slotSpin.addEventListener(
             "click",
             () => {
 
                 const bet =
-                    slotBetControl
-                        .getBet();
+                    betControl.getBet();
 
 
                 if (
-                    !canAfford(bet)
+                    !canAfford(
+                        bet
+                    )
                 ) {
 
-                    setSlotMessage(
+                    setMessage(
                         "You do not have enough Ace Credits.",
                         "loss"
                     );
 
                     return;
-
                 }
 
 
-                balance -= bet;
+                setBalance(
+                    getBalance() -
+                    bet
+                );
 
-                saveBalance();
 
-
-                slotSpinButton.disabled =
+                slotSpin.disabled =
                     true;
 
 
@@ -1728,12 +2465,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         reel.classList.add(
                             "spinning"
                         );
-
                     }
                 );
 
 
-                setSlotMessage(
+                setMessage(
                     "Spinning..."
                 );
 
@@ -1747,7 +2483,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                     reel.textContent =
                                         randomSymbol();
-
                                 }
                             );
 
@@ -1764,17 +2499,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
 
 
-                        reels.forEach(
-                            (reel) => {
-
-                                reel.classList.remove(
-                                    "spinning"
-                                );
-
-                            }
-                        );
-
-
                         const result = [
                             randomSymbol(),
                             randomSymbol(),
@@ -1785,9 +2509,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         reels.forEach(
                             (reel, index) => {
 
+                                reel.classList.remove(
+                                    "spinning"
+                                );
+
                                 reel.textContent =
                                     result[index];
-
                             }
                         );
 
@@ -1801,7 +2528,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             result[2] === "7"
                         ) {
 
-                            multiplier = 20;
+                            multiplier = 10;
 
                         } else if (
                             result[0] === "A" &&
@@ -1809,23 +2536,27 @@ document.addEventListener("DOMContentLoaded", () => {
                             result[2] === "A"
                         ) {
 
-                            multiplier = 12;
+                            multiplier = 7;
 
                         } else if (
-                            result[0] === result[1] &&
-                            result[1] === result[2]
+                            result[0] ===
+                            result[1] &&
+                            result[1] ===
+                            result[2]
                         ) {
 
-                            multiplier = 8;
+                            multiplier = 5;
 
                         } else if (
-                            result[0] === result[1] ||
-                            result[1] === result[2] ||
-                            result[0] === result[2]
+                            result[0] ===
+                            result[1] ||
+                            result[1] ===
+                            result[2] ||
+                            result[0] ===
+                            result[2]
                         ) {
 
                             multiplier = 2;
-
                         }
 
 
@@ -1837,40 +2568,34 @@ document.addEventListener("DOMContentLoaded", () => {
                                 bet *
                                 multiplier;
 
-                            balance += payout;
 
-                            saveBalance();
+                            addBalance(
+                                payout
+                            );
 
 
-                            setSlotMessage(
-                                `WIN! ${formatNumber(
-                                    payout
-                                )} AC paid.`,
+                            setMessage(
+                                `WIN! ${formatNumber(payout)} AC paid.`,
                                 "win"
                             );
 
                         } else {
 
-                            setSlotMessage(
-                                `No match. You lost ${formatNumber(
-                                    bet
-                                )} AC.`,
+                            setMessage(
+                                `No match. You lost ${formatNumber(bet)} AC.`,
                                 "loss"
                             );
-
                         }
 
 
-                        slotSpinButton.disabled =
+                        slotSpin.disabled =
                             false;
 
                     },
                     1200
                 );
-
             }
         );
-
     }
 
 
@@ -1878,15 +2603,15 @@ document.addEventListener("DOMContentLoaded", () => {
        ROULETTE
     ========================================================= */
 
-    const rouletteSpinButton =
+    const rouletteSpin =
         document.getElementById(
             "rouletteSpin"
         );
 
 
-    if (rouletteSpinButton) {
+    if (rouletteSpin) {
 
-        const rouletteBetControl =
+        const betControl =
             createBetControl(
                 "rouletteBet",
                 "rouletteBetDown",
@@ -1895,31 +2620,28 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const rouletteChoices =
+        const choices =
             document.querySelectorAll(
                 ".roulette-choice"
             );
 
-
-        const rouletteResult =
+        const result =
             document.getElementById(
                 "rouletteResult"
             );
 
-
-        const rouletteMessage =
+        const message =
             document.getElementById(
                 "rouletteMessage"
             );
 
-
-        const rouletteWheel =
+        const wheel =
             document.querySelector(
                 ".roulette-wheel"
             );
 
 
-        let selectedRouletteBet =
+        let selected =
             null;
 
 
@@ -1933,87 +2655,38 @@ document.addEventListener("DOMContentLoaded", () => {
             ]);
 
 
-        rouletteChoices.forEach(
-            (button) => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        rouletteChoices
-                            .forEach(
-                                (item) => {
-
-                                    item.classList.remove(
-                                        "selected"
-                                    );
-
-                                }
-                            );
-
-
-                        button.classList.add(
-                            "selected"
-                        );
-
-
-                        selectedRouletteBet =
-                            button.dataset
-                                .rouletteChoice;
-
-
-                        rouletteMessage
-                            .className =
-                                "game-message";
-
-
-                        rouletteMessage
-                            .textContent =
-                                `${button.textContent.trim()} selected.`;
-
-                    }
-                );
-
-            }
-        );
-
-
         function rouletteColor(
             number
         ) {
 
-            if (
-                number === 0
-            ) {
-
+            if (number === 0) {
                 return "green";
-
             }
-
 
             if (
                 redNumbers.has(
                     number
                 )
             ) {
-
                 return "red";
-
             }
 
-
             return "black";
-
         }
 
 
-        function rouletteBetWins(
-            selection,
+        function rouletteWins(
+            choice,
             number
         ) {
 
+            if (number === 0) {
+                return false;
+            }
+
+
             if (
-                selection === "red"
+                choice === "red"
             ) {
 
                 return (
@@ -2021,12 +2694,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         number
                     ) === "red"
                 );
-
             }
 
 
             if (
-                selection === "black"
+                choice === "black"
             ) {
 
                 return (
@@ -2034,140 +2706,170 @@ document.addEventListener("DOMContentLoaded", () => {
                         number
                     ) === "black"
                 );
-
             }
 
 
             if (
-                number === 0
-            ) {
-
-                return false;
-
-            }
-
-
-            if (
-                selection === "odd"
+                choice === "odd"
             ) {
 
                 return (
                     number % 2 !== 0
                 );
-
             }
 
 
             if (
-                selection === "even"
+                choice === "even"
             ) {
 
                 return (
                     number % 2 === 0
                 );
-
             }
 
 
             if (
-                selection === "low"
+                choice === "low"
             ) {
 
                 return (
                     number >= 1 &&
                     number <= 18
                 );
-
             }
 
 
             if (
-                selection === "high"
+                choice === "high"
             ) {
 
                 return (
                     number >= 19 &&
                     number <= 36
                 );
-
             }
 
 
             return false;
-
         }
 
 
-        rouletteSpinButton.addEventListener(
+        choices.forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        choices.forEach(
+                            (other) => {
+
+                                other.classList
+                                    .remove(
+                                        "selected"
+                                    );
+                            }
+                        );
+
+
+                        button.classList.add(
+                            "selected"
+                        );
+
+
+                        selected =
+                            button.dataset
+                                .rouletteChoice;
+
+
+                        message.className =
+                            "game-message";
+
+                        message.textContent =
+                            `${button.textContent.trim()} selected.`;
+                    }
+                );
+            }
+        );
+
+
+        rouletteSpin.addEventListener(
             "click",
             () => {
 
-                if (
-                    !selectedRouletteBet
-                ) {
+                if (!selected) {
 
-                    rouletteMessage.textContent =
+                    message.textContent =
                         "Choose RED, BLACK, ODD, EVEN, 1-18, or 19-36 first.";
 
-                    rouletteMessage.className =
+                    message.className =
                         "game-message loss";
 
                     return;
-
                 }
 
 
                 const bet =
-                    rouletteBetControl
-                        .getBet();
+                    betControl.getBet();
 
 
                 if (
-                    !canAfford(bet)
+                    !canAfford(
+                        bet
+                    )
                 ) {
 
-                    rouletteMessage.textContent =
+                    message.textContent =
                         "You do not have enough Ace Credits.";
 
-                    rouletteMessage.className =
+                    message.className =
                         "game-message loss";
 
                     return;
-
                 }
 
 
-                balance -= bet;
-
-                saveBalance();
-
-
-                rouletteSpinButton.disabled =
-                    true;
-
-
-                rouletteWheel.classList.add(
-                    "spinning"
+                setBalance(
+                    getBalance() -
+                    bet
                 );
 
 
-                rouletteMessage.className =
+                rouletteSpin.disabled =
+                    true;
+
+
+                choices.forEach(
+                    (choice) => {
+
+                        choice.disabled =
+                            true;
+                    }
+                );
+
+
+                if (wheel) {
+
+                    wheel.classList.add(
+                        "spinning"
+                    );
+                }
+
+
+                message.className =
                     "game-message";
 
-
-                rouletteMessage.textContent =
+                message.textContent =
                     "Wheel spinning...";
 
 
-                const displayInterval =
+                const animation =
                     setInterval(
                         () => {
 
-                            rouletteResult.textContent =
-                                Math.floor(
-                                    Math.random() *
-                                    37
-                                );
+                            result.textContent =
+                                randomInt(37);
 
                         },
                         80
@@ -2178,21 +2880,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     () => {
 
                         clearInterval(
-                            displayInterval
+                            animation
                         );
 
 
-                        rouletteWheel.classList.remove(
-                            "spinning"
-                        );
+                        if (wheel) {
+
+                            wheel.classList.remove(
+                                "spinning"
+                            );
+                        }
 
 
                         const number =
-                            Math.floor(
-                                Math.random() *
-                                37
-                            );
-
+                            randomInt(37);
 
                         const color =
                             rouletteColor(
@@ -2200,56 +2901,55 @@ document.addEventListener("DOMContentLoaded", () => {
                             );
 
 
-                        rouletteResult.textContent =
+                        result.textContent =
                             number;
 
 
                         if (
-                            rouletteBetWins(
-                                selectedRouletteBet,
+                            rouletteWins(
+                                selected,
                                 number
                             )
                         ) {
 
-                            const payout =
-                                bet * 2;
-
-                            balance += payout;
-
-                            saveBalance();
+                            addBalance(
+                                bet * 2
+                            );
 
 
-                            rouletteMessage.textContent =
-                                `${number} ${color.toUpperCase()} — You won ${formatNumber(
-                                    bet
-                                )} AC.`;
+                            message.textContent =
+                                `${number} ${color.toUpperCase()} — You won ${formatNumber(bet)} AC.`;
 
-                            rouletteMessage.className =
+                            message.className =
                                 "game-message win";
 
                         } else {
 
-                            rouletteMessage.textContent =
-                                `${number} ${color.toUpperCase()} — You lost ${formatNumber(
-                                    bet
-                                )} AC.`;
+                            message.textContent =
+                                `${number} ${color.toUpperCase()} — You lost ${formatNumber(bet)} AC.`;
 
-                            rouletteMessage.className =
+                            message.className =
                                 "game-message loss";
-
                         }
 
 
-                        rouletteSpinButton.disabled =
+                        rouletteSpin.disabled =
                             false;
+
+
+                        choices.forEach(
+                            (choice) => {
+
+                                choice.disabled =
+                                    false;
+                            }
+                        );
 
                     },
                     1500
                 );
-
             }
         );
-
     }
 
 
@@ -2257,15 +2957,15 @@ document.addEventListener("DOMContentLoaded", () => {
        HIGH ROLL
     ========================================================= */
 
-    const diceRollButton =
+    const diceRoll =
         document.getElementById(
             "diceRoll"
         );
 
 
-    if (diceRollButton) {
+    if (diceRoll) {
 
-        const diceBetControl =
+        const betControl =
             createBetControl(
                 "diceBet",
                 "diceBetDown",
@@ -2279,32 +2979,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 "houseDie"
             );
 
-
         const playerDie =
             document.getElementById(
                 "playerDie"
             );
 
-
-        const houseDieValue =
+        const houseValue =
             document.getElementById(
                 "houseDieValue"
             );
 
-
-        const playerDieValue =
+        const playerValue =
             document.getElementById(
                 "playerDieValue"
             );
 
-
-        const diceMessage =
+        const message =
             document.getElementById(
                 "diceMessage"
             );
 
 
-        const diceFaces = [
+        const faces = [
             "⚀",
             "⚁",
             "⚂",
@@ -2314,48 +3010,45 @@ document.addEventListener("DOMContentLoaded", () => {
         ];
 
 
-        function randomDie() {
+        function rollDie() {
 
             return (
-                Math.floor(
-                    Math.random() *
-                    6
-                ) + 1
+                randomInt(6) + 1
             );
-
         }
 
 
-        diceRollButton.addEventListener(
+        diceRoll.addEventListener(
             "click",
             () => {
 
                 const bet =
-                    diceBetControl
-                        .getBet();
+                    betControl.getBet();
 
 
                 if (
-                    !canAfford(bet)
+                    !canAfford(
+                        bet
+                    )
                 ) {
 
-                    diceMessage.textContent =
+                    message.textContent =
                         "You do not have enough Ace Credits.";
 
-                    diceMessage.className =
+                    message.className =
                         "game-message loss";
 
                     return;
-
                 }
 
 
-                balance -= bet;
+                setBalance(
+                    getBalance() -
+                    bet
+                );
 
-                saveBalance();
 
-
-                diceRollButton.disabled =
+                diceRoll.disabled =
                     true;
 
 
@@ -2363,17 +3056,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     "rolling"
                 );
 
-
                 playerDie.classList.add(
                     "rolling"
                 );
 
 
-                diceMessage.className =
+                message.className =
                     "game-message";
 
-
-                diceMessage.textContent =
+                message.textContent =
                     "Rolling...";
 
 
@@ -2382,14 +3073,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         () => {
 
                             houseDie.textContent =
-                                diceFaces[
-                                    randomDie() - 1
+                                faces[
+                                    rollDie() - 1
                                 ];
 
-
                             playerDie.textContent =
-                                diceFaces[
-                                    randomDie() - 1
+                                faces[
+                                    rollDie() - 1
                                 ];
 
                         },
@@ -2409,37 +3099,33 @@ document.addEventListener("DOMContentLoaded", () => {
                             "rolling"
                         );
 
-
                         playerDie.classList.remove(
                             "rolling"
                         );
 
 
                         const house =
-                            randomDie();
-
+                            rollDie();
 
                         const player =
-                            randomDie();
+                            rollDie();
 
 
                         houseDie.textContent =
-                            diceFaces[
+                            faces[
                                 house - 1
                             ];
 
-
                         playerDie.textContent =
-                            diceFaces[
+                            faces[
                                 player - 1
                             ];
 
 
-                        houseDieValue.textContent =
+                        houseValue.textContent =
                             house;
 
-
-                        playerDieValue.textContent =
+                        playerValue.textContent =
                             player;
 
 
@@ -2447,60 +3133,50 @@ document.addEventListener("DOMContentLoaded", () => {
                             player > house
                         ) {
 
-                            const payout =
-                                bet * 2;
-
-                            balance += payout;
-
-                            saveBalance();
+                            addBalance(
+                                bet * 2
+                            );
 
 
-                            diceMessage.textContent =
-                                `You rolled ${player}. House rolled ${house}. You won ${formatNumber(
-                                    bet
-                                )} AC.`;
+                            message.textContent =
+                                `You rolled ${player}. House rolled ${house}. You won ${formatNumber(bet)} AC.`;
 
-                            diceMessage.className =
+                            message.className =
                                 "game-message win";
 
                         } else if (
                             player === house
                         ) {
 
-                            balance += bet;
+                            addBalance(
+                                bet
+                            );
 
-                            saveBalance();
 
-
-                            diceMessage.textContent =
+                            message.textContent =
                                 `Tie at ${player}. Your bet was returned.`;
 
-                            diceMessage.className =
+                            message.className =
                                 "game-message";
 
                         } else {
 
-                            diceMessage.textContent =
-                                `You rolled ${player}. House rolled ${house}. You lost ${formatNumber(
-                                    bet
-                                )} AC.`;
+                            message.textContent =
+                                `You rolled ${player}. House rolled ${house}. You lost ${formatNumber(bet)} AC.`;
 
-                            diceMessage.className =
+                            message.className =
                                 "game-message loss";
-
                         }
 
 
-                        diceRollButton.disabled =
+                        diceRoll.disabled =
                             false;
 
                     },
                     1000
                 );
-
             }
         );
-
     }
 
 
@@ -2509,5 +3185,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ========================================================= */
 
     updateBalanceDisplays();
+
+    renderCollection();
 
 });
