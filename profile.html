@@ -3,14 +3,30 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>The Gilded Ace | Profile</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="styles.css">
+    <meta
+        name="description"
+        content="The Gilded Ace player profile and account."
+    >
+
+    <title>
+        Profile | The Gilded Ace
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles.css"
+    >
 </head>
 
+
 <body>
+
 
     <!-- =========================================================
          HEADER
@@ -20,7 +36,10 @@
 
         <div class="nav-container">
 
-            <a href="index.html" class="brand">
+            <a
+                href="index.html"
+                class="brand"
+            >
 
                 <div class="brand-mark">
                     A
@@ -80,7 +99,11 @@
 
                 </div>
 
-                <a href="profile.html" class="profile-button active">
+
+                <a
+                    href="profile.html"
+                    class="profile-button active"
+                >
                     PROFILE
                 </a>
 
@@ -91,747 +114,1232 @@
     </header>
 
 
-    <!-- =========================================================
-         PROFILE HERO
-    ========================================================== -->
-
-    <section class="profile-page-hero">
-
-        <div class="section-container">
-
-            <p class="section-kicker">
-                THE GILDED ACE MEMBER
-            </p>
-
-            <h1>
-                YOUR PROFILE.
-            </h1>
-
-            <p>
-                Track your fortune, casino performance, collection,
-                achievements, prestige, and progress throughout
-                The Gilded Ace.
-            </p>
-
-        </div>
-
-    </section>
-
 
     <!-- =========================================================
-         PROFILE PAGE
+         ACCOUNT AUTH SCREEN
     ========================================================== -->
 
-    <main class="profile-page">
+    <main
+        id="profileAuthScreen"
+        class="profile-auth-screen"
+    >
 
-        <div class="section-container">
+        <section class="profile-page-hero">
 
+            <div class="section-container">
 
-            <!-- =================================================
-                 PROFILE IDENTITY
-            ================================================== -->
+                <span class="section-kicker">
+                    THE GILDED ACE
+                </span>
 
-            <section class="profile-identity-card">
+                <h1>
+                    MEMBER ACCESS
+                </h1>
 
-                <div class="profile-avatar">
+                <p>
+                    Create your Gilded Ace identity or sign in
+                    to access your personal casino profile.
+                </p>
 
-                    <span id="profileAvatarLetter">
-                        A
-                    </span>
+            </div>
 
-                </div>
-
-
-                <div class="profile-identity-info">
-
-                    <span class="profile-membership">
-                        STANDARD MEMBER
-                    </span>
-
-                    <h2 id="profileUsername">
-                        Gilded Player
-                    </h2>
-
-                    <p>
-                        Member of The Gilded Ace Casino & Social Club.
-                    </p>
-
-                    <div class="profile-tags">
-
-                        <span>
-                            MEMBER
-                        </span>
-
-                        <span>
-                            SEASON 1
-                        </span>
-
-                    </div>
-
-                </div>
+        </section>
 
 
-                <div class="profile-balance-box">
 
-                    <span>
-                        CURRENT BALANCE
-                    </span>
+        <section class="profile-auth-section">
 
-                    <strong class="balance-value">
-                        10,000 AC
-                    </strong>
-
-                </div>
-
-            </section>
+            <div class="section-container">
 
 
-            <!-- =================================================
-                 PROFILE STATS
-            ================================================== -->
-
-            <section class="profile-stat-grid">
-
-                <div class="profile-stat-card">
-
-                    <span>
-                        TOTAL WINS
-                    </span>
-
-                    <strong id="profileTotalWins">
-                        0
-                    </strong>
-
-                    <p>
-                        Casino games won
-                    </p>
-
-                </div>
+                <div class="profile-auth-shell">
 
 
-                <div class="profile-stat-card">
+                    <!-- =========================================
+                         CREATE ACCOUNT
+                    ========================================== -->
 
-                    <span>
-                        TOTAL LOSSES
-                    </span>
-
-                    <strong id="profileTotalLosses">
-                        0
-                    </strong>
-
-                    <p>
-                        Casino games lost
-                    </p>
-
-                </div>
-
-
-                <div class="profile-stat-card">
-
-                    <span>
-                        GAMES PLAYED
-                    </span>
-
-                    <strong id="profileGamesPlayed">
-                        0
-                    </strong>
-
-                    <p>
-                        Total casino rounds
-                    </p>
-
-                </div>
-
-
-                <div class="profile-stat-card">
-
-                    <span>
-                        COLLECTION
-                    </span>
-
-                    <strong id="profileCollectionCount">
-                        0
-                    </strong>
-
-                    <p>
-                        Virtual items owned
-                    </p>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 PROGRESSION
-            ================================================== -->
-
-            <section class="profile-section">
-
-                <div class="profile-section-heading">
-
-                    <div>
+                    <div
+                        id="createAccountPanel"
+                        class="profile-auth-card"
+                    >
 
                         <span class="section-kicker">
-                            CLUB PROGRESSION
+                            NEW MEMBER
                         </span>
 
                         <h2>
-                            MEMBER STATUS
+                            CREATE YOUR ACCOUNT
                         </h2>
 
-                    </div>
-
-                    <span class="profile-tier-label">
-                        STANDARD
-                    </span>
-
-                </div>
+                        <p class="profile-auth-description">
+                            Choose the identity you will use
+                            throughout The Gilded Ace.
+                        </p>
 
 
-                <div class="profile-progress-card">
+                        <div class="profile-form-group">
 
-                    <div class="profile-progress-top">
+                            <label for="createUsername">
+                                USERNAME
+                            </label>
 
-                        <div>
+                            <input
+                                id="createUsername"
+                                type="text"
+                                maxlength="20"
+                                autocomplete="username"
+                                placeholder="Choose a username"
+                            >
 
-                            <span>
-                                CURRENT TIER
-                            </span>
+                            <small>
+                                3–20 characters. Letters,
+                                numbers, underscores, and spaces.
+                            </small>
 
-                            <strong>
-                                STANDARD
-                            </strong>
+                        </div>
+
+
+                        <div class="profile-form-group">
+
+                            <label for="createPassword">
+                                PASSWORD
+                            </label>
+
+                            <input
+                                id="createPassword"
+                                type="password"
+                                autocomplete="new-password"
+                                placeholder="Create a password"
+                            >
+
+                            <small>
+                                Use at least 6 characters.
+                            </small>
 
                         </div>
 
 
-                        <div>
+                        <div class="profile-form-group">
 
-                            <span>
-                                NEXT TIER
-                            </span>
+                            <label for="confirmPassword">
+                                CONFIRM PASSWORD
+                            </label>
 
-                            <strong>
-                                GOLD MEMBER
-                            </strong>
+                            <input
+                                id="confirmPassword"
+                                type="password"
+                                autocomplete="new-password"
+                                placeholder="Confirm your password"
+                            >
 
                         </div>
 
-                    </div>
-
-
-                    <div class="profile-progress-track">
 
                         <div
-                            class="profile-progress-bar"
-                            style="width:10%;"
+                            id="createAccountMessage"
+                            class="profile-form-message"
                         ></div>
 
+
+                        <button
+                            id="createAccountButton"
+                            class="button button-primary profile-auth-submit"
+                            type="button"
+                        >
+                            CREATE ACCOUNT
+                        </button>
+
+
+                        <div class="profile-auth-switch">
+
+                            <span>
+                                Already have an account?
+                            </span>
+
+                            <button
+                                id="showLoginButton"
+                                type="button"
+                            >
+                                SIGN IN
+                            </button>
+
+                        </div>
+
                     </div>
 
 
-                    <div class="profile-progress-bottom">
+
+                    <!-- =========================================
+                         LOGIN
+                    ========================================== -->
+
+                    <div
+                        id="loginPanel"
+                        class="profile-auth-card"
+                        hidden
+                    >
+
+                        <span class="section-kicker">
+                            MEMBER LOGIN
+                        </span>
+
+                        <h2>
+                            WELCOME BACK
+                        </h2>
+
+                        <p class="profile-auth-description">
+                            Sign in to access your balance,
+                            casino history, collection, and status.
+                        </p>
+
+
+                        <div class="profile-form-group">
+
+                            <label for="loginUsername">
+                                USERNAME
+                            </label>
+
+                            <input
+                                id="loginUsername"
+                                type="text"
+                                autocomplete="username"
+                                placeholder="Enter your username"
+                            >
+
+                        </div>
+
+
+                        <div class="profile-form-group">
+
+                            <label for="loginPassword">
+                                PASSWORD
+                            </label>
+
+                            <input
+                                id="loginPassword"
+                                type="password"
+                                autocomplete="current-password"
+                                placeholder="Enter your password"
+                            >
+
+                        </div>
+
+
+                        <div
+                            id="loginMessage"
+                            class="profile-form-message"
+                        ></div>
+
+
+                        <button
+                            id="loginButton"
+                            class="button button-primary profile-auth-submit"
+                            type="button"
+                        >
+                            SIGN IN
+                        </button>
+
+
+                        <div class="profile-auth-switch">
+
+                            <span>
+                                Need an account?
+                            </span>
+
+                            <button
+                                id="showCreateButton"
+                                type="button"
+                            >
+                                CREATE ACCOUNT
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================================================
+         PROFILE DASHBOARD
+    ========================================================== -->
+
+    <div
+        id="profileDashboard"
+        hidden
+    >
+
+
+        <!-- =====================================================
+             PROFILE HERO
+        ====================================================== -->
+
+        <section class="profile-page-hero">
+
+            <div class="section-container">
+
+                <span class="section-kicker">
+                    MEMBER PROFILE
+                </span>
+
+                <h1>
+                    YOUR LEGACY
+                </h1>
+
+                <p>
+                    Track your Ace Credits, casino performance,
+                    collection, achievements, and membership status.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             PROFILE CONTENT
+        ====================================================== -->
+
+        <main class="profile-page">
+
+            <div class="section-container">
+
+
+
+                <!-- =============================================
+                     IDENTITY CARD
+                ============================================== -->
+
+                <section class="profile-identity-card">
+
+
+                    <div
+                        class="profile-avatar"
+                        id="profileAvatarLetter"
+                    >
+                        A
+                    </div>
+
+
+                    <div class="profile-identity-info">
+
+                        <span class="profile-membership">
+                            STANDARD MEMBER
+                        </span>
+
+                        <h2 id="profileUsername">
+                            Gilded Player
+                        </h2>
+
+                        <p>
+                            Member of The Gilded Ace
+                        </p>
+
+
+                        <div class="profile-tags">
+
+                            <span>
+                                PLAY-MONEY MEMBER
+                            </span>
+
+                            <span>
+                                ACTIVE
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-balance-box">
 
                         <span>
+                            CURRENT BALANCE
+                        </span>
+
+                        <strong class="balance-value">
                             10,000 AC
-                        </span>
+                        </strong>
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- =============================================
+                     MAIN STATS
+                ============================================== -->
+
+                <section class="profile-stat-grid">
+
+
+                    <article class="profile-stat-card">
 
                         <span>
-                            100,000 AC
+                            TOTAL WINS
                         </span>
 
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 CASINO PERFORMANCE
-            ================================================== -->
-
-            <section class="profile-section">
-
-                <div class="profile-section-heading">
-
-                    <div>
-
-                        <span class="section-kicker">
-                            PLAYER STATISTICS
-                        </span>
-
-                        <h2>
-                            CASINO PERFORMANCE
-                        </h2>
-
-                    </div>
-
-                </div>
-
-
-                <div class="profile-performance-grid">
-
-
-                    <!-- BLACKJACK -->
-
-                    <div class="profile-game-stat">
-
-                        <div class="profile-game-icon">
-                            ♠
-                        </div>
-
-                        <div>
-
-                            <span>
-                                BLACKJACK
-                            </span>
-
-                            <h3>
-                                Blackjack
-                            </h3>
-
-                        </div>
-
-                        <div class="profile-game-numbers">
-
-                            <div>
-
-                                <span>
-                                    WINS
-                                </span>
-
-                                <strong id="profileBlackjackWins">
-                                    0
-                                </strong>
-
-                            </div>
-
-                            <div>
-
-                                <span>
-                                    PLAYED
-                                </span>
-
-                                <strong id="profileBlackjackPlayed">
-                                    0
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- SLOTS -->
-
-                    <div class="profile-game-stat">
-
-                        <div class="profile-game-icon">
-                            7
-                        </div>
-
-                        <div>
-
-                            <span>
-                                SLOT MACHINE
-                            </span>
-
-                            <h3>
-                                Gilded Slots
-                            </h3>
-
-                        </div>
-
-                        <div class="profile-game-numbers">
-
-                            <div>
-
-                                <span>
-                                    WINS
-                                </span>
-
-                                <strong id="profileSlotsWins">
-                                    0
-                                </strong>
-
-                            </div>
-
-                            <div>
-
-                                <span>
-                                    PLAYED
-                                </span>
-
-                                <strong id="profileSlotsPlayed">
-                                    0
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- ROULETTE -->
-
-                    <div class="profile-game-stat">
-
-                        <div class="profile-game-icon">
-                            ◉
-                        </div>
-
-                        <div>
-
-                            <span>
-                                ROULETTE
-                            </span>
-
-                            <h3>
-                                Roulette
-                            </h3>
-
-                        </div>
-
-                        <div class="profile-game-numbers">
-
-                            <div>
-
-                                <span>
-                                    WINS
-                                </span>
-
-                                <strong id="profileRouletteWins">
-                                    0
-                                </strong>
-
-                            </div>
-
-                            <div>
-
-                                <span>
-                                    PLAYED
-                                </span>
-
-                                <strong id="profileRoulettePlayed">
-                                    0
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- HIGH ROLL -->
-
-                    <div class="profile-game-stat">
-
-                        <div class="profile-game-icon">
-                            ◆
-                        </div>
-
-                        <div>
-
-                            <span>
-                                HIGH ROLL
-                            </span>
-
-                            <h3>
-                                Dice
-                            </h3>
-
-                        </div>
-
-                        <div class="profile-game-numbers">
-
-                            <div>
-
-                                <span>
-                                    WINS
-                                </span>
-
-                                <strong id="profileDiceWins">
-                                    0
-                                </strong>
-
-                            </div>
-
-                            <div>
-
-                                <span>
-                                    PLAYED
-                                </span>
-
-                                <strong id="profileDicePlayed">
-                                    0
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 COLLECTION PREVIEW
-            ================================================== -->
-
-            <section class="profile-section">
-
-                <div class="profile-section-heading">
-
-                    <div>
-
-                        <span class="section-kicker">
-                            THE VAULT
-                        </span>
-
-                        <h2>
-                            YOUR COLLECTION
-                        </h2>
-
-                    </div>
-
-                    <a href="collection.html" class="text-link">
-                        VIEW COLLECTION →
-                    </a>
-
-                </div>
-
-
-                <div class="profile-collection-summary">
-
-                    <div>
-
-                        <span>
-                            ITEMS OWNED
-                        </span>
-
-                        <strong id="profileOwnedItems">
+                        <strong id="profileTotalWins">
                             0
                         </strong>
 
-                    </div>
+                        <p>
+                            Casino victories
+                        </p>
+
+                    </article>
 
 
-                    <div>
-
-                        <span>
-                            COLLECTION VALUE
-                        </span>
-
-                        <strong id="profileCollectionValue">
-                            0 AC
-                        </strong>
-
-                    </div>
-
-
-                    <div>
+                    <article class="profile-stat-card">
 
                         <span>
-                            RAREST ASSET
+                            TOTAL LOSSES
                         </span>
 
-                        <strong id="profileRarestAsset">
-                            —
+                        <strong id="profileTotalLosses">
+                            0
                         </strong>
+
+                        <p>
+                            Recorded losses
+                        </p>
+
+                    </article>
+
+
+                    <article class="profile-stat-card">
+
+                        <span>
+                            GAMES PLAYED
+                        </span>
+
+                        <strong id="profileGamesPlayed">
+                            0
+                        </strong>
+
+                        <p>
+                            Lifetime games
+                        </p>
+
+                    </article>
+
+
+                    <article class="profile-stat-card">
+
+                        <span>
+                            COLLECTION
+                        </span>
+
+                        <strong id="profileCollectionCount">
+                            0
+                        </strong>
+
+                        <p>
+                            Virtual assets owned
+                        </p>
+
+                    </article>
+
+
+                </section>
+
+
+
+                <!-- =============================================
+                     MEMBERSHIP PROGRESSION
+                ============================================== -->
+
+                <section class="profile-section">
+
+                    <div class="profile-section-heading">
+
+                        <div>
+
+                            <span class="section-kicker">
+                                CLUB STATUS
+                            </span>
+
+                            <h2>
+                                Membership Progression
+                            </h2>
+
+                        </div>
+
+
+                        <span class="profile-tier-label">
+                            STANDARD
+                        </span>
 
                     </div>
 
-                </div>
 
-            </section>
+                    <div class="profile-progress-card">
 
 
-            <!-- =================================================
-                 ACHIEVEMENTS
-            ================================================== -->
+                        <div class="profile-progress-top">
 
-            <section class="profile-section">
 
-                <div class="profile-section-heading">
+                            <div>
+
+                                <span>
+                                    CURRENT STATUS
+                                </span>
+
+                                <strong>
+                                    STANDARD
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    NEXT STATUS
+                                </span>
+
+                                <strong>
+                                    GOLD MEMBER
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="profile-progress-track">
+
+                            <div
+                                class="profile-progress-bar"
+                                style="width:10%;"
+                            ></div>
+
+                        </div>
+
+
+                        <div class="profile-progress-bottom">
+
+                            <span>
+                                10,000 AC
+                            </span>
+
+                            <span>
+                                100,000 AC
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     CASINO PERFORMANCE
+                ============================================== -->
+
+                <section class="profile-section">
+
+                    <div class="profile-section-heading">
+
+                        <div>
+
+                            <span class="section-kicker">
+                                CASINO RECORD
+                            </span>
+
+                            <h2>
+                                Game Performance
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-performance-grid">
+
+
+                        <!-- BLACKJACK -->
+
+                        <article class="profile-game-stat">
+
+                            <div class="profile-game-icon">
+                                21
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    TABLE GAME
+                                </span>
+
+                                <h3>
+                                    Blackjack
+                                </h3>
+
+                            </div>
+
+
+                            <div class="profile-game-numbers">
+
+                                <div>
+
+                                    <span>
+                                        WINS
+                                    </span>
+
+                                    <strong id="profileBlackjackWins">
+                                        0
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        PLAYED
+                                    </span>
+
+                                    <strong id="profileBlackjackPlayed">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+
+                        <!-- SLOTS -->
+
+                        <article class="profile-game-stat">
+
+                            <div class="profile-game-icon">
+                                7
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    SLOT GAME
+                                </span>
+
+                                <h3>
+                                    Gilded Slots
+                                </h3>
+
+                            </div>
+
+
+                            <div class="profile-game-numbers">
+
+                                <div>
+
+                                    <span>
+                                        WINS
+                                    </span>
+
+                                    <strong id="profileSlotsWins">
+                                        0
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        PLAYED
+                                    </span>
+
+                                    <strong id="profileSlotsPlayed">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+
+                        <!-- ROULETTE -->
+
+                        <article class="profile-game-stat">
+
+                            <div class="profile-game-icon">
+                                0
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    WHEEL GAME
+                                </span>
+
+                                <h3>
+                                    Roulette
+                                </h3>
+
+                            </div>
+
+
+                            <div class="profile-game-numbers">
+
+                                <div>
+
+                                    <span>
+                                        WINS
+                                    </span>
+
+                                    <strong id="profileRouletteWins">
+                                        0
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        PLAYED
+                                    </span>
+
+                                    <strong id="profileRoulettePlayed">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+
+                        <!-- DICE -->
+
+                        <article class="profile-game-stat">
+
+                            <div class="profile-game-icon">
+                                ♦
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    HIGH ROLL
+                                </span>
+
+                                <h3>
+                                    Dice
+                                </h3>
+
+                            </div>
+
+
+                            <div class="profile-game-numbers">
+
+                                <div>
+
+                                    <span>
+                                        WINS
+                                    </span>
+
+                                    <strong id="profileDiceWins">
+                                        0
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        PLAYED
+                                    </span>
+
+                                    <strong id="profileDicePlayed">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     COLLECTION SUMMARY
+                ============================================== -->
+
+                <section class="profile-section">
+
+                    <div class="profile-section-heading">
+
+                        <div>
+
+                            <span class="section-kicker">
+                                YOUR VAULT
+                            </span>
+
+                            <h2>
+                                Collection Overview
+                            </h2>
+
+                        </div>
+
+
+                        <a
+                            href="collection.html"
+                            class="text-link"
+                        >
+                            OPEN COLLECTION →
+                        </a>
+
+                    </div>
+
+
+                    <div class="profile-collection-summary">
+
+
+                        <div>
+
+                            <span>
+                                ITEMS OWNED
+                            </span>
+
+                            <strong id="profileOwnedItems">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                COLLECTION VALUE
+                            </span>
+
+                            <strong id="profileCollectionValue">
+                                0 AC
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                MOST VALUABLE ASSET
+                            </span>
+
+                            <strong id="profileRarestAsset">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     ACHIEVEMENTS
+                ============================================== -->
+
+                <section class="profile-section">
+
+                    <div class="profile-section-heading">
+
+                        <div>
+
+                            <span class="section-kicker">
+                                LEGACY
+                            </span>
+
+                            <h2>
+                                Achievements
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="achievement-grid">
+
+
+                        <article class="achievement-card unlocked">
+
+                            <div class="achievement-icon">
+                                A
+                            </div>
+
+                            <span>
+                                UNLOCKED
+                            </span>
+
+                            <h3>
+                                Welcome to the Club
+                            </h3>
+
+                            <p>
+                                Create your Gilded Ace profile.
+                            </p>
+
+                        </article>
+
+
+
+                        <article class="achievement-card locked">
+
+                            <div class="achievement-icon">
+                                ★
+                            </div>
+
+                            <span>
+                                LOCKED
+                            </span>
+
+                            <h3>
+                                First Victory
+                            </h3>
+
+                            <p>
+                                Win your first casino game.
+                            </p>
+
+                        </article>
+
+
+
+                        <article class="achievement-card locked">
+
+                            <div class="achievement-icon">
+                                G
+                            </div>
+
+                            <span>
+                                LOCKED
+                            </span>
+
+                            <h3>
+                                Golden Status
+                            </h3>
+
+                            <p>
+                                Reach a balance of
+                                100,000 Ace Credits.
+                            </p>
+
+                        </article>
+
+
+
+                        <article class="achievement-card locked">
+
+                            <div class="achievement-icon">
+                                ♦
+                            </div>
+
+                            <span>
+                                LOCKED
+                            </span>
+
+                            <h3>
+                                Millionaire
+                            </h3>
+
+                            <p>
+                                Reach a balance of
+                                1,000,000 Ace Credits.
+                            </p>
+
+                        </article>
+
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     ACCOUNT MANAGEMENT
+                ============================================== -->
+
+                <section class="profile-section">
+
+                    <div class="profile-section-heading">
+
+                        <div>
+
+                            <span class="section-kicker">
+                                ACCOUNT
+                            </span>
+
+                            <h2>
+                                Account Settings
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-account-management">
+
+
+                        <!-- =====================================
+                             EDIT USERNAME
+                        ====================================== -->
+
+                        <article class="profile-settings-card">
+
+                            <span class="section-kicker">
+                                IDENTITY
+                            </span>
+
+                            <h3>
+                                Change Username
+                            </h3>
+
+                            <p>
+                                Update the name displayed on your
+                                Gilded Ace profile.
+                            </p>
+
+
+                            <div class="profile-form-group">
+
+                                <label for="editUsername">
+                                    NEW USERNAME
+                                </label>
+
+                                <input
+                                    id="editUsername"
+                                    type="text"
+                                    maxlength="20"
+                                    placeholder="New username"
+                                >
+
+                            </div>
+
+
+                            <div
+                                id="editUsernameMessage"
+                                class="profile-form-message"
+                            ></div>
+
+
+                            <button
+                                id="saveUsernameButton"
+                                class="profile-account-action"
+                                type="button"
+                            >
+                                SAVE USERNAME
+                            </button>
+
+                        </article>
+
+
+
+                        <!-- =====================================
+                             CHANGE PASSWORD
+                        ====================================== -->
+
+                        <article class="profile-settings-card">
+
+                            <span class="section-kicker">
+                                SECURITY
+                            </span>
+
+                            <h3>
+                                Change Password
+                            </h3>
+
+                            <p>
+                                Update the password used to access
+                                this local Gilded Ace account.
+                            </p>
+
+
+                            <div class="profile-form-group">
+
+                                <label for="currentPassword">
+                                    CURRENT PASSWORD
+                                </label>
+
+                                <input
+                                    id="currentPassword"
+                                    type="password"
+                                    autocomplete="current-password"
+                                    placeholder="Current password"
+                                >
+
+                            </div>
+
+
+                            <div class="profile-form-group">
+
+                                <label for="newPassword">
+                                    NEW PASSWORD
+                                </label>
+
+                                <input
+                                    id="newPassword"
+                                    type="password"
+                                    autocomplete="new-password"
+                                    placeholder="New password"
+                                >
+
+                            </div>
+
+
+                            <div class="profile-form-group">
+
+                                <label for="confirmNewPassword">
+                                    CONFIRM NEW PASSWORD
+                                </label>
+
+                                <input
+                                    id="confirmNewPassword"
+                                    type="password"
+                                    autocomplete="new-password"
+                                    placeholder="Confirm new password"
+                                >
+
+                            </div>
+
+
+                            <div
+                                id="changePasswordMessage"
+                                class="profile-form-message"
+                            ></div>
+
+
+                            <button
+                                id="changePasswordButton"
+                                class="profile-account-action"
+                                type="button"
+                            >
+                                CHANGE PASSWORD
+                            </button>
+
+                        </article>
+
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     LOGOUT
+                ============================================== -->
+
+                <section class="profile-account-card">
 
                     <div>
 
                         <span class="section-kicker">
-                            CLUB HONORS
+                            MEMBER SESSION
                         </span>
 
                         <h2>
-                            ACHIEVEMENTS
+                            Signed In
                         </h2>
 
-                    </div>
-
-                </div>
-
-
-                <div class="achievement-grid">
-
-
-                    <div class="achievement-card unlocked">
-
-                        <div class="achievement-icon">
-                            A
-                        </div>
-
-                        <span>
-                            MEMBER
-                        </span>
-
-                        <h3>
-                            Welcome to the Club
-                        </h3>
-
                         <p>
-                            Join The Gilded Ace.
+                            Your current profile information,
+                            Ace Credits, casino record, and virtual
+                            collection are stored in this browser
+                            until the full account system is connected.
                         </p>
 
                     </div>
 
 
-                    <div class="achievement-card locked">
+                    <div class="profile-account-actions">
 
-                        <div class="achievement-icon">
-                            ♠
-                        </div>
-
-                        <span>
-                            LOCKED
-                        </span>
-
-                        <h3>
-                            First Victory
-                        </h3>
-
-                        <p>
-                            Win your first casino game.
-                        </p>
+                        <button
+                            id="logoutProfileButton"
+                            class="profile-account-button profile-logout-button"
+                            type="button"
+                        >
+                            LOG OUT
+                        </button>
 
                     </div>
 
-
-                    <div class="achievement-card locked">
-
-                        <div class="achievement-icon">
-                            $
-                        </div>
-
-                        <span>
-                            LOCKED
-                        </span>
-
-                        <h3>
-                            Six Figures
-                        </h3>
-
-                        <p>
-                            Reach a balance of 100,000 AC.
-                        </p>
-
-                    </div>
+                </section>
 
 
-                    <div class="achievement-card locked">
 
-                        <div class="achievement-icon">
-                            ♛
-                        </div>
+                <!-- =============================================
+                     DISCLAIMER
+                ============================================== -->
 
-                        <span>
-                            LOCKED
-                        </span>
+                <section class="profile-disclaimer">
 
-                        <h3>
-                            Millionaire
-                        </h3>
-
-                        <p>
-                            Reach a balance of 1,000,000 AC.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 ACCOUNT
-            ================================================== -->
-
-            <section class="profile-account-card">
-
-                <div>
-
-                    <span class="section-kicker">
-                        ACCOUNT
-                    </span>
-
-                    <h2>
-                        MEMBER ACCOUNT
-                    </h2>
+                    <strong>
+                        PLAY-MONEY ENTERTAINMENT ONLY
+                    </strong>
 
                     <p>
-                        Discord account information and account controls
-                        will appear here once The Gilded Ace account system
-                        is connected.
+                        Ace Credits are fictional virtual currency
+                        with no cash value. They cannot be purchased,
+                        withdrawn, redeemed, or exchanged for
+                        real-world money, goods, services, or prizes.
                     </p>
 
-                </div>
+                </section>
 
 
-                <div class="profile-account-actions">
+            </div>
 
-                    <button
-                        type="button"
-                        class="profile-account-button"
-                        disabled
-                    >
-                        DISCORD NOT CONNECTED
-                    </button>
-
-                </div>
-
-            </section>
+        </main>
 
 
-            <!-- =================================================
-                 DISCLAIMER
-            ================================================== -->
+    </div>
 
-            <section class="profile-disclaimer">
-
-                <strong>
-                    PLAY-MONEY ACCOUNT
-                </strong>
-
-                <p>
-                    All balances, statistics, achievements, ranks,
-                    collectibles, and other assets displayed by
-                    The Gilded Ace are fictional and exist solely
-                    within this social entertainment experience.
-                    Ace Credits have no monetary value.
-                </p>
-
-            </section>
-
-
-        </div>
-
-    </main>
 
 
     <!-- =========================================================
@@ -842,6 +1350,7 @@
 
         <div class="footer-container">
 
+
             <div>
 
                 <div class="footer-brand">
@@ -849,7 +1358,7 @@
                 </div>
 
                 <p>
-                    Play. Win. Build Your Legacy.
+                    PLAY. WIN. BUILD YOUR LEGACY.
                 </p>
 
             </div>
@@ -877,30 +1386,27 @@
                     LEADERBOARD
                 </a>
 
-                <a href="profile.html">
-                    PROFILE
-                </a>
-
             </div>
+
 
         </div>
 
 
         <div class="footer-disclaimer">
 
-            The Gilded Ace uses fictional Ace Credits for
-            entertainment purposes only.
-
-            Ace Credits have no monetary value and cannot be
-            purchased, withdrawn, redeemed, or exchanged for
-            real-world goods or services.
+            THE GILDED ACE IS A PLAY-MONEY
+            CASINO-STYLE SOCIAL EXPERIENCE.
+            ACE CREDITS HAVE NO REAL-WORLD
+            MONETARY VALUE.
 
         </div>
 
     </footer>
 
 
+
     <script src="script.js"></script>
+
 
 </body>
 
