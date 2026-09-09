@@ -1,0 +1,860 @@
+/* =========================================================
+   THE GILDED ACE
+   LUXURY ROULETTE
+========================================================= */
+
+.gilded-roulette{
+    padding:8px 0 30px;
+}
+
+.roulette-luxury-title{
+    margin-bottom:35px;
+}
+
+.roulette-luxury-title h2{
+    margin-top:5px;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:46px;
+    font-weight:400;
+    color:#f3e5bd;
+}
+
+.roulette-luxury-title p{
+    margin-top:8px;
+    color:#939393;
+    line-height:1.7;
+}
+
+
+
+/* =========================================================
+   MAIN ROULETTE AREA
+========================================================= */
+
+.roulette-stage-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 210px;
+    gap:24px;
+    align-items:start;
+}
+
+.roulette-stage{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:680px;
+    padding:40px;
+    overflow:hidden;
+    border:1px solid rgba(214,179,90,.3);
+    background:
+        radial-gradient(circle at center,rgba(132,77,25,.2),transparent 40%),
+        radial-gradient(circle at center,#18110a,#080808 66%);
+    box-shadow:
+        inset 0 0 80px rgba(0,0,0,.9),
+        0 20px 60px rgba(0,0,0,.35);
+}
+
+
+
+/* =========================================================
+   WHEEL BODY
+========================================================= */
+
+.gilded-roulette-wheel{
+    --wheel-size:590px;
+
+    position:relative;
+    width:var(--wheel-size);
+    height:var(--wheel-size);
+    flex:0 0 auto;
+    border-radius:50%;
+    background:#211005;
+    border:8px solid #5d3816;
+    box-shadow:
+        0 0 0 3px #c49a45,
+        0 0 0 11px #40250f,
+        0 0 0 14px #8d642b,
+        0 28px 60px rgba(0,0,0,.7),
+        inset 0 0 40px #000;
+}
+
+.gilded-roulette-wheel::before{
+    content:"";
+    position:absolute;
+    inset:24px;
+    z-index:1;
+    border-radius:50%;
+    border:3px solid #d6b35a;
+    box-shadow:
+        0 0 0 5px #4a290e,
+        inset 0 0 25px #000;
+}
+
+.gilded-roulette-wheel::after{
+    content:"";
+    position:absolute;
+    inset:95px;
+    z-index:3;
+    border-radius:50%;
+    background:
+        repeating-conic-gradient(
+            from 0deg,
+            rgba(214,179,90,.42) 0deg 1deg,
+            transparent 1deg 45deg
+        ),
+        radial-gradient(
+            circle,
+            #44240e 0%,
+            #271207 58%,
+            #120905 100%
+        );
+    border:4px solid #c79e48;
+    box-shadow:
+        inset 0 0 55px #000;
+}
+
+
+
+/* =========================================================
+   NUMBER RING
+========================================================= */
+
+.roulette-number-ring{
+    position:absolute;
+    inset:48px;
+    z-index:4;
+    border-radius:50%;
+}
+
+.roulette-pocket{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:42px;
+    height:78px;
+    margin-left:-21px;
+    margin-top:-39px;
+    transform-origin:21px 39px;
+}
+
+.roulette-pocket-inner{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:39px;
+    height:61px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding-top:6px;
+    border:1px solid rgba(231,198,115,.8);
+    color:#fff;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:17px;
+    font-weight:700;
+    text-shadow:0 1px 2px #000;
+    transform-origin:center;
+    box-shadow:
+        inset 0 0 8px rgba(0,0,0,.7);
+}
+
+.roulette-pocket.red .roulette-pocket-inner{
+    background:linear-gradient(#ad241e,#68120f);
+}
+
+.roulette-pocket.black .roulette-pocket-inner{
+    background:linear-gradient(#1f1f1f,#060606);
+}
+
+.roulette-pocket.green .roulette-pocket-inner{
+    background:linear-gradient(#188b48,#07552c);
+}
+
+
+
+/* =========================================================
+   BALL TRACK
+========================================================= */
+
+.roulette-ball-track{
+    position:absolute;
+    inset:13px;
+    z-index:20;
+    border-radius:50%;
+    pointer-events:none;
+    transform:rotate(0deg);
+}
+
+.roulette-ball{
+    position:absolute;
+    left:50%;
+    top:5px;
+    width:18px;
+    height:18px;
+    margin-left:-9px;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #fff,
+            #e8dfc6 45%,
+            #9a8e72 100%
+        );
+    box-shadow:
+        0 2px 7px #000,
+        0 0 10px rgba(255,255,255,.4);
+}
+
+
+
+/* =========================================================
+   INNER WHEEL
+========================================================= */
+
+.roulette-inner-ring{
+    position:absolute;
+    inset:145px;
+    z-index:8;
+    border-radius:50%;
+    background:
+        radial-gradient(circle,#5e3515 0%,#281207 65%,#100704 100%);
+    border:2px solid #c69c45;
+    box-shadow:
+        inset 0 0 35px #000,
+        0 0 0 3px #3d220d;
+}
+
+.roulette-inner-decoration{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+}
+
+.roulette-inner-decoration span{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:2px;
+    height:50%;
+    background:linear-gradient(#c79e48,transparent);
+    transform-origin:bottom center;
+}
+
+.roulette-inner-decoration span:nth-child(1){
+    transform:translate(-50%,-100%) rotate(0deg);
+}
+
+.roulette-inner-decoration span:nth-child(2){
+    transform:translate(-50%,-100%) rotate(45deg);
+}
+
+.roulette-inner-decoration span:nth-child(3){
+    transform:translate(-50%,-100%) rotate(90deg);
+}
+
+.roulette-inner-decoration span:nth-child(4){
+    transform:translate(-50%,-100%) rotate(135deg);
+}
+
+.roulette-inner-decoration span:nth-child(5){
+    transform:translate(-50%,-100%) rotate(180deg);
+}
+
+.roulette-inner-decoration span:nth-child(6){
+    transform:translate(-50%,-100%) rotate(225deg);
+}
+
+.roulette-inner-decoration span:nth-child(7){
+    transform:translate(-50%,-100%) rotate(270deg);
+}
+
+.roulette-inner-decoration span:nth-child(8){
+    transform:translate(-50%,-100%) rotate(315deg);
+}
+
+.roulette-spindle{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:90px;
+    height:90px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle at 40% 35%,
+            #f5d882,
+            #a87925 40%,
+            #4b2b08 72%
+        );
+    border:3px solid #efce73;
+    box-shadow:
+        0 7px 15px #000,
+        inset 0 0 12px #fff3a7;
+}
+
+.roulette-spindle-top{
+    width:48px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#0b0b0b;
+    color:#d6b35a;
+    border:2px solid #d6b35a;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:23px;
+}
+
+
+
+/* =========================================================
+   SPIN STATUS
+========================================================= */
+
+.roulette-spin-status{
+    width:min(420px,90%);
+    margin-top:34px;
+    padding:18px 20px;
+    text-align:center;
+    border:1px solid #b9913e;
+    background:#090909;
+    color:#ddbd68;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:19px;
+    letter-spacing:2px;
+}
+
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.roulette-history{
+    min-height:680px;
+    padding:25px 18px;
+    border:1px solid rgba(214,179,90,.4);
+    background:
+        linear-gradient(145deg,#0d0d0d,#070707);
+    text-align:center;
+}
+
+.roulette-history-line{
+    height:1px;
+    margin:17px 0 22px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #c9a44e,
+            transparent
+        );
+}
+
+.roulette-history-list{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+}
+
+.roulette-history-number{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    color:#fff;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:17px;
+    border:1px solid #b99748;
+}
+
+.roulette-history-number.red{
+    background:#a11d17;
+}
+
+.roulette-history-number.black{
+    background:#090909;
+}
+
+.roulette-history-number.green{
+    background:#137b40;
+}
+
+.roulette-history-empty{
+    margin-top:25px;
+    color:#666;
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+
+
+/* =========================================================
+   BETTING FLOOR
+========================================================= */
+
+.roulette-betting-floor{
+    margin-top:24px;
+    display:grid;
+    grid-template-columns:250px minmax(0,1fr);
+    gap:28px;
+    padding:26px;
+    border:1px solid rgba(214,179,90,.42);
+    background:
+        radial-gradient(circle at 15% 20%,rgba(214,179,90,.05),transparent 25%),
+        #090909;
+}
+
+.roulette-bet-sidebar{
+    display:flex;
+    flex-direction:column;
+}
+
+.roulette-balance-card{
+    padding:22px 18px;
+    text-align:center;
+    border:1px solid #503d1b;
+    background:#0d0d0d;
+}
+
+.roulette-balance-card span,
+.roulette-current-bet span,
+.roulette-bet-label{
+    color:#a98d50;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.4px;
+}
+
+.roulette-balance-card strong{
+    display:block;
+    margin-top:8px;
+    color:#eed18a;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:24px;
+    font-weight:400;
+}
+
+.roulette-bet-label{
+    margin-top:25px;
+    margin-bottom:8px;
+}
+
+.roulette-luxury-bet-control{
+    display:grid;
+    grid-template-columns:46px 1fr 46px;
+    gap:8px;
+}
+
+.roulette-luxury-bet-control button,
+.roulette-luxury-bet-control strong{
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #61491f;
+    background:#111;
+    color:#e1c474;
+}
+
+.roulette-luxury-bet-control button{
+    cursor:pointer;
+    font-size:21px;
+}
+
+.roulette-luxury-bet-control button:hover{
+    border-color:#d6b35a;
+}
+
+.roulette-current-bet{
+    margin-top:22px;
+    min-height:73px;
+    padding:14px;
+    border:1px solid #2e2e2e;
+    background:#0c0c0c;
+}
+
+.roulette-current-bet strong{
+    display:block;
+    margin-top:7px;
+    color:#e6cc88;
+    font-size:12px;
+}
+
+.roulette-luxury-spin-button{
+    margin-top:20px;
+    min-height:52px;
+    border:1px solid #d0ab53;
+    background:
+        linear-gradient(
+            180deg,
+            #d4b45f,
+            #8c6929
+        );
+    color:#111;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:18px;
+    letter-spacing:2px;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.roulette-luxury-spin-button:hover:not(:disabled){
+    filter:brightness(1.12);
+    transform:translateY(-1px);
+}
+
+.roulette-luxury-spin-button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.roulette-luxury-message{
+    min-height:42px;
+    margin-top:14px;
+    color:#888;
+    font-size:10px;
+    line-height:1.5;
+}
+
+.roulette-luxury-message.win{
+    color:#78b889;
+}
+
+.roulette-luxury-message.loss{
+    color:#d47777;
+}
+
+
+
+/* =========================================================
+   NUMBER BOARD
+========================================================= */
+
+.roulette-table-wrapper{
+    min-width:0;
+}
+
+.roulette-number-board{
+    display:grid;
+    grid-template-columns:66px repeat(12,minmax(47px,1fr));
+    grid-template-rows:repeat(3,58px);
+}
+
+.roulette-board-number{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    border:1px solid #b18e43;
+    color:#fff;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.roulette-board-number.red{
+    background:#971d18;
+}
+
+.roulette-board-number.black{
+    background:#111;
+}
+
+.roulette-board-number.green{
+    background:#12733b;
+}
+
+.roulette-board-number.zero{
+    grid-column:1;
+    grid-row:1 / span 3;
+    font-size:25px;
+}
+
+.roulette-board-number.selected{
+    z-index:5;
+    outline:3px solid #f0d77e;
+    outline-offset:-4px;
+    box-shadow:
+        inset 0 0 20px rgba(255,230,140,.3);
+}
+
+.roulette-board-number:hover{
+    filter:brightness(1.25);
+}
+
+
+
+/* =========================================================
+   OUTSIDE BETS
+========================================================= */
+
+.roulette-outside-bets{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+}
+
+.luxury-roulette-choice{
+    min-height:58px;
+    border:1px solid #b18e43;
+    border-top:none;
+    background:#0c0c0c;
+    color:#e8e8e8;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:13px;
+    cursor:pointer;
+}
+
+.luxury-roulette-choice:hover{
+    background:#171717;
+}
+
+.luxury-roulette-choice.selected{
+    outline:3px solid #f0d77e;
+    outline-offset:-4px;
+}
+
+.roulette-red-choice{
+    background:#771814;
+}
+
+.roulette-black-choice{
+    background:#050505;
+}
+
+
+
+/* =========================================================
+   PAYOUT STRIP
+========================================================= */
+
+.roulette-payout-strip{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    margin-top:20px;
+    border:1px solid #292929;
+}
+
+.roulette-payout-strip span{
+    padding:14px;
+    text-align:center;
+    color:#777;
+    font-size:8px;
+    letter-spacing:1px;
+    border-right:1px solid #292929;
+}
+
+.roulette-payout-strip span:last-child{
+    border-right:none;
+}
+
+.roulette-payout-strip strong{
+    margin-left:6px;
+    color:#d6b35a;
+}
+
+
+
+/* =========================================================
+   WHEEL ANIMATIONS
+========================================================= */
+
+.gilded-roulette-wheel.wheel-spinning{
+    animation:
+        gildedWheelPulse .65s ease-in-out infinite alternate;
+}
+
+@keyframes gildedWheelPulse{
+
+    from{
+        box-shadow:
+            0 0 0 3px #c49a45,
+            0 0 0 11px #40250f,
+            0 0 0 14px #8d642b,
+            0 28px 60px rgba(0,0,0,.7),
+            inset 0 0 40px #000;
+    }
+
+    to{
+        box-shadow:
+            0 0 0 3px #e2c572,
+            0 0 0 11px #5d3514,
+            0 0 0 14px #b88b3b,
+            0 28px 75px rgba(0,0,0,.9),
+            inset 0 0 50px #000;
+    }
+}
+
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1200px){
+
+    .roulette-stage-layout{
+        grid-template-columns:1fr;
+    }
+
+    .roulette-history{
+        min-height:0;
+    }
+
+    .roulette-history-list{
+        flex-direction:row;
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+}
+
+
+@media(max-width:1000px){
+
+    .roulette-betting-floor{
+        grid-template-columns:1fr;
+    }
+
+    .roulette-bet-sidebar{
+        max-width:500px;
+    }
+
+    .roulette-table-wrapper{
+        overflow-x:auto;
+        padding-bottom:8px;
+    }
+
+    .roulette-number-board,
+    .roulette-outside-bets{
+        min-width:720px;
+    }
+
+}
+
+
+@media(max-width:760px){
+
+    .roulette-stage{
+        min-height:560px;
+        padding:30px 15px;
+    }
+
+    .gilded-roulette-wheel{
+        --wheel-size:450px;
+    }
+
+    .roulette-pocket{
+        width:32px;
+        height:62px;
+        margin-left:-16px;
+        margin-top:-31px;
+        transform-origin:16px 31px;
+    }
+
+    .roulette-pocket-inner{
+        width:31px;
+        height:48px;
+        font-size:13px;
+    }
+
+    .roulette-inner-ring{
+        inset:112px;
+    }
+
+    .roulette-spindle{
+        width:70px;
+        height:70px;
+    }
+
+    .roulette-payout-strip{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+
+@media(max-width:520px){
+
+    .roulette-stage{
+        min-height:430px;
+    }
+
+    .gilded-roulette-wheel{
+        --wheel-size:330px;
+        border-width:5px;
+    }
+
+    .gilded-roulette-wheel::before{
+        inset:15px;
+    }
+
+    .gilded-roulette-wheel::after{
+        inset:57px;
+    }
+
+    .roulette-number-ring{
+        inset:27px;
+    }
+
+    .roulette-pocket{
+        width:24px;
+        height:45px;
+        margin-left:-12px;
+        margin-top:-22px;
+        transform-origin:12px 22px;
+    }
+
+    .roulette-pocket-inner{
+        width:23px;
+        height:36px;
+        padding-top:4px;
+        font-size:10px;
+    }
+
+    .roulette-inner-ring{
+        inset:82px;
+    }
+
+    .roulette-spindle{
+        width:55px;
+        height:55px;
+    }
+
+    .roulette-spindle-top{
+        width:31px;
+        height:31px;
+        font-size:15px;
+    }
+
+    .roulette-ball{
+        width:13px;
+        height:13px;
+        margin-left:-6.5px;
+    }
+
+    .roulette-spin-status{
+        margin-top:25px;
+        font-size:14px;
+    }
+
+    .roulette-betting-floor{
+        padding:18px 12px;
+    }
+
+    .roulette-payout-strip{
+        grid-template-columns:1fr;
+    }
+
+}
