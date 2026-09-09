@@ -1,1 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Gilded Ace | Leaderboard</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <header class="site-header">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="brand">
+
+                <div class="brand-mark">
+                    A
+                </div>
+
+                <div class="brand-text">
+
+                    <span class="brand-name">
+                        THE GILDED ACE
+                    </span>
+
+                    <span class="brand-subtitle">
+                        CASINO & SOCIAL CLUB
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <nav class="main-nav">
+
+                <a href="index.html">
+                    HOME
+                </a>
+
+                <a href="casino.html">
+                    CASINO
+                </a>
+
+                <a href="store.html">
+                    STORE
+                </a>
+
+                <a href="collection.html">
+                    COLLECTION
+                </a>
+
+                <a href="leaderboard.html" class="active">
+                    LEADERBOARD
+                </a>
+
+            </nav>
+
+
+            <div class="nav-account">
+
+                <div class="nav-balance">
+
+                    <span class="balance-label">
+                        ACE CREDITS
+                    </span>
+
+                    <span class="balance-value">
+                        10,000 AC
+                    </span>
+
+                </div>
+
+                <a href="profile.html" class="profile-button">
+                    PROFILE
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         LEADERBOARD HERO
+    ========================================================== -->
+
+    <section class="leaderboard-page-hero">
+
+        <div class="section-container">
+
+            <p class="section-kicker">
+                THE GILDED RANKINGS
+            </p>
+
+            <h1>
+                LEADERBOARD.
+            </h1>
+
+            <p>
+                See who has built the largest fortune, earned the
+                highest prestige, and risen to the top of
+                The Gilded Ace.
+            </p>
+
+            <div class="leaderboard-hero-stat">
+
+                <span>
+                    TOP PLAYERS
+                </span>
+
+                <strong>
+                    10
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         LEADERBOARD PAGE
+    ========================================================== -->
+
+    <main class="leaderboard-page">
+
+        <div class="section-container">
+
+
+            <!-- =================================================
+                 TOP THREE
+            ================================================== -->
+
+            <section class="leaderboard-podium">
+
+                <div class="podium-card second-place">
+
+                    <div class="podium-rank">
+                        #2
+                    </div>
+
+                    <div class="podium-avatar">
+                        G
+                    </div>
+
+                    <span class="podium-status">
+                        DIAMOND CLUB
+                    </span>
+
+                    <h2>
+                        GoldenAce
+                    </h2>
+
+                    <strong>
+                        3,850,000 AC
+                    </strong>
+
+                    <span class="podium-wins">
+                        1,842 WINS
+                    </span>
+
+                </div>
+
+
+                <div class="podium-card first-place">
+
+                    <div class="podium-crown">
+                        ♛
+                    </div>
+
+                    <div class="podium-rank">
+                        #1
+                    </div>
+
+                    <div class="podium-avatar">
+                        H
+                    </div>
+
+                    <span class="podium-status">
+                        CASINO OWNER
+                    </span>
+
+                    <h2>
+                        HighRoller
+                    </h2>
+
+                    <strong>
+                        5,250,000 AC
+                    </strong>
+
+                    <span class="podium-wins">
+                        2,315 WINS
+                    </span>
+
+                </div>
+
+
+                <div class="podium-card third-place">
+
+                    <div class="podium-rank">
+                        #3
+                    </div>
+
+                    <div class="podium-avatar">
+                        L
+                    </div>
+
+                    <span class="podium-status">
+                        HIGH ROLLER
+                    </span>
+
+                    <h2>
+                        LuckySeven
+                    </h2>
+
+                    <strong>
+                        2,975,000 AC
+                    </strong>
+
+                    <span class="podium-wins">
+                        1,409 WINS
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 LEADERBOARD FILTERS
+            ================================================== -->
+
+            <section class="leaderboard-filter-nav">
+
+                <button
+                    type="button"
+                    class="leaderboard-filter active"
+                    data-leaderboard-filter="balance"
+                >
+                    HIGHEST BALANCE
+                </button>
+
+                <button
+                    type="button"
+                    class="leaderboard-filter"
+                    data-leaderboard-filter="wins"
+                >
+                    MOST WINS
+                </button>
+
+                <button
+                    type="button"
+                    class="leaderboard-filter"
+                    data-leaderboard-filter="prestige"
+                >
+                    PRESTIGE
+                </button>
+
+            </section>
+
+
+            <!-- =================================================
+                 FULL LEADERBOARD
+            ================================================== -->
+
+            <section class="leaderboard-table">
+
+                <div class="leaderboard-table-row leaderboard-table-header">
+
+                    <span>
+                        RANK
+                    </span>
+
+                    <span>
+                        PLAYER
+                    </span>
+
+                    <span>
+                        STATUS
+                    </span>
+
+                    <span>
+                        WINS
+                    </span>
+
+                    <span>
+                        ACE CREDITS
+                    </span>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank top-rank">
+                        01
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            H
+                        </div>
+
+                        <strong>
+                            HighRoller
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        CASINO OWNER
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        2,315
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        5,250,000 AC
+                    </strong>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank top-rank">
+                        02
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            G
+                        </div>
+
+                        <strong>
+                            GoldenAce
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        DIAMOND CLUB
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        1,842
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        3,850,000 AC
+                    </strong>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank top-rank">
+                        03
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            L
+                        </div>
+
+                        <strong>
+                            LuckySeven
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        HIGH ROLLER
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        1,409
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        2,975,000 AC
+                    </strong>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank">
+                        04
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            D
+                        </div>
+
+                        <strong>
+                            DiamondJack
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        HIGH ROLLER
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        1,214
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        2,450,000 AC
+                    </strong>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank">
+                        05
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            V
+                        </div>
+
+                        <strong>
+                            VelvetKing
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        DIAMOND CLUB
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        1,102
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        1,975,000 AC
+                    </strong>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank">
+                        06
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            B
+                        </div>
+
+                        <strong>
+                            BlackChip
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        VIP
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        985
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        1,625,000 AC
+                    </strong>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank">
+                        07
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            A
+                        </div>
+
+                        <strong>
+                            AceOfSpades
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        VIP
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        864
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        1,340,000 AC
+                    </strong>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank">
+                        08
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            M
+                        </div>
+
+                        <strong>
+                            MidnightAce
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        GOLD MEMBER
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        721
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        975,000 AC
+                    </strong>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank">
+                        09
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            R
+                        </div>
+
+                        <strong>
+                            RoyalFlush
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        GOLD MEMBER
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        648
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        810,000 AC
+                    </strong>
+
+                </div>
+
+
+                <div class="leaderboard-table-row">
+
+                    <span class="leaderboard-rank">
+                        10
+                    </span>
+
+                    <div class="leaderboard-player">
+
+                        <div class="leaderboard-avatar">
+                            C
+                        </div>
+
+                        <strong>
+                            ClubKing
+                        </strong>
+
+                    </div>
+
+                    <span class="leaderboard-status">
+                        STANDARD
+                    </span>
+
+                    <span class="leaderboard-wins">
+                        514
+                    </span>
+
+                    <strong class="leaderboard-credits">
+                        625,000 AC
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 YOUR RANK
+            ================================================== -->
+
+            <section class="your-ranking-card">
+
+                <div>
+
+                    <span class="section-kicker">
+                        YOUR POSITION
+                    </span>
+
+                    <h2>
+                        BUILD YOUR LEGACY.
+                    </h2>
+
+                    <p>
+                        Play casino games, grow your Ace Credit balance,
+                        collect prestige items, and climb the rankings.
+                    </p>
+
+                </div>
+
+                <div class="your-ranking-stats">
+
+                    <div>
+
+                        <span>
+                            CURRENT BALANCE
+                        </span>
+
+                        <strong class="balance-value">
+                            10,000 AC
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            CURRENT RANK
+                        </span>
+
+                        <strong>
+                            UNRANKED
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 DISCLAIMER
+            ================================================== -->
+
+            <section class="leaderboard-disclaimer">
+
+                <strong>
+                    PLAY-MONEY RANKINGS
+                </strong>
+
+                <p>
+                    Leaderboard rankings are based entirely on fictional
+                    Ace Credits and in-game activity. Ace Credits have no
+                    cash value and cannot be purchased, withdrawn, redeemed,
+                    or exchanged for real-world goods, services, prizes,
+                    or money.
+                </p>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer class="site-footer">
+
+        <div class="footer-container">
+
+            <div>
+
+                <div class="footer-brand">
+                    THE GILDED ACE
+                </div>
+
+                <p>
+                    Play. Win. Build Your Legacy.
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <a href="index.html">
+                    HOME
+                </a>
+
+                <a href="casino.html">
+                    CASINO
+                </a>
+
+                <a href="store.html">
+                    STORE
+                </a>
+
+                <a href="collection.html">
+                    COLLECTION
+                </a>
+
+                <a href="leaderboard.html">
+                    LEADERBOARD
+                </a>
+
+                <a href="profile.html">
+                    PROFILE
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-disclaimer">
+
+            The Gilded Ace uses fictional Ace Credits for
+            entertainment purposes only.
+
+            Ace Credits have no monetary value and cannot be
+            purchased, withdrawn, redeemed, or exchanged for
+            real-world goods or services.
+
+        </div>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
