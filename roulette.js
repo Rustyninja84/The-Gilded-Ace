@@ -2,7 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =========================================================
        THE GILDED ACE
-       LUXURY ROULETTE + CASINO TAB SUPPORT
+       LUXURY ROULETTE ONLY
+       
+       IMPORTANT:
+       Casino tabs are controlled by script.js.
+       This file controls ONLY the new roulette game.
     ========================================================= */
 
     const STARTING_BALANCE = 10000;
@@ -26,144 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
         2500,
         5000
     ];
-
-
-    /* =========================================================
-       CASINO GAME TABS
-    ========================================================= */
-
-    const casinoTabs =
-        document.querySelectorAll(
-            ".casino-tab"
-        );
-
-    const casinoPanels =
-        document.querySelectorAll(
-            ".casino-game-panel"
-        );
-
-
-    function openCasinoGame(game) {
-
-        casinoTabs.forEach(
-            tab => {
-
-                const active =
-                    tab.dataset.game ===
-                    game;
-
-                tab.classList.toggle(
-                    "active",
-                    active
-                );
-            }
-        );
-
-
-        casinoPanels.forEach(
-            panel => {
-
-                const active =
-                    panel.id ===
-                    game;
-
-                panel.classList.toggle(
-                    "active",
-                    active
-                );
-
-                /*
-                    Backup display handling in case
-                    the main stylesheet is not applying
-                    the active panel correctly.
-                */
-
-                if (active) {
-
-                    panel.style.display =
-                        "block";
-
-                } else {
-
-                    panel.style.display =
-                        "none";
-                }
-            }
-        );
-
-
-        if (
-            window.location.hash !==
-            "#" + game
-        ) {
-
-            history.replaceState(
-                null,
-                "",
-                "#" + game
-            );
-        }
-    }
-
-
-    casinoTabs.forEach(
-        tab => {
-
-            tab.addEventListener(
-                "click",
-                () => {
-
-                    const game =
-                        tab.dataset.game;
-
-                    if (!game) {
-                        return;
-                    }
-
-                    openCasinoGame(
-                        game
-                    );
-                }
-            );
-        }
-    );
-
-
-    /* =========================================================
-       OPEN GAME FROM URL
-    ========================================================= */
-
-    const requestedGame =
-        window.location.hash
-            .replace("#", "")
-            .toLowerCase();
-
-
-    const validGames = [
-        "blackjack",
-        "slots",
-        "roulette",
-        "dice"
-    ];
-
-
-    if (
-        validGames.includes(
-            requestedGame
-        )
-    ) {
-
-        openCasinoGame(
-            requestedGame
-        );
-
-    } else {
-
-        openCasinoGame(
-            "blackjack"
-        );
-    }
-
 
 
     /* =========================================================
@@ -299,21 +165,24 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    /*
-        If the page does not contain the new
-        roulette system, stop here.
-
-        Casino tabs above will still work.
-    */
+    /* =========================================================
+       STOP IF NEW ROULETTE IS NOT ON PAGE
+    ========================================================= */
 
     if (
         !wheel ||
         !numberRing ||
         !ballTrack ||
         !spinButton ||
+        !betDown ||
+        !betUp ||
+        !betDisplay ||
+        !selectedBetDisplay ||
+        !statusDisplay ||
+        !messageDisplay ||
+        !historyList ||
         !numberBoard
     ) {
-
         return;
     }
 
@@ -334,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       SECURE RANDOM NUMBER
+       RANDOM NUMBER
     ========================================================= */
 
     function randomInt(max) {
@@ -354,10 +223,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     max
                 );
 
-
             const values =
                 new Uint32Array(1);
-
 
             let value;
 
@@ -391,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       ACCOUNT BALANCE STORAGE
+       ACTIVE ACCOUNT
     ========================================================= */
 
     function getActiveAccountId() {
@@ -403,6 +270,10 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+
+    /* =========================================================
+       BALANCE KEY
+    ========================================================= */
 
     function balanceKey() {
 
@@ -424,6 +295,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* =========================================================
+       STATS KEY
+    ========================================================= */
+
     function statsKey() {
 
         const accountId =
@@ -444,6 +319,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* =========================================================
+       GET BALANCE
+    ========================================================= */
+
     function getBalance() {
 
         const stored =
@@ -458,7 +337,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             localStorage.setItem(
                 balanceKey(),
-                STARTING_BALANCE
+                String(
+                    STARTING_BALANCE
+                )
             );
 
             return STARTING_BALANCE;
@@ -476,7 +357,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             localStorage.setItem(
                 balanceKey(),
-                STARTING_BALANCE
+                String(
+                    STARTING_BALANCE
+                )
             );
 
             return STARTING_BALANCE;
@@ -489,7 +372,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function setBalance(value) {
+    /* =========================================================
+       SET BALANCE
+    ========================================================= */
+
+    function setRouletteBalance(value) {
 
         const newBalance =
             Math.max(
@@ -508,14 +395,18 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        updateBalanceDisplays();
+        updateRouletteBalanceDisplays();
 
 
         return newBalance;
     }
 
 
-    function updateBalanceDisplays() {
+    /* =========================================================
+       UPDATE BALANCE DISPLAY
+    ========================================================= */
+
+    function updateRouletteBalanceDisplays() {
 
         const currentBalance =
             getBalance();
@@ -534,12 +425,26 @@ document.addEventListener("DOMContentLoaded", () => {
                         " AC";
                 }
             );
+
+
+        document
+            .querySelectorAll(
+                ".casino-balance"
+            )
+            .forEach(
+                element => {
+
+                    element.textContent =
+                        currentBalance
+                            .toLocaleString() +
+                        " AC";
+                }
+            );
     }
 
 
-
     /* =========================================================
-       STATS
+       DEFAULT STATS
     ========================================================= */
 
     function defaultStats() {
@@ -583,6 +488,10 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
+
+    /* =========================================================
+       GET STATS
+    ========================================================= */
 
     function getStats() {
 
@@ -645,6 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             };
 
+
         } catch {
 
             return defaults;
@@ -652,16 +562,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function saveStats(stats) {
-
-        localStorage.setItem(
-            statsKey(),
-            JSON.stringify(
-                stats
-            )
-        );
-    }
-
+    /* =========================================================
+       SAVE ROULETTE STAT
+    ========================================================= */
 
     function recordRouletteGame(
         result
@@ -683,8 +586,12 @@ document.addEventListener("DOMContentLoaded", () => {
             stats.totalWins++;
 
             stats.roulette.wins++;
+        }
 
-        } else {
+
+        if (
+            result === "loss"
+        ) {
 
             stats.totalLosses++;
 
@@ -692,15 +599,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        saveStats(
-            stats
+        localStorage.setItem(
+            statsKey(),
+            JSON.stringify(
+                stats
+            )
         );
     }
 
 
-
     /* =========================================================
-       ROULETTE COLORS
+       NUMBER COLOR
     ========================================================= */
 
     function rouletteColor(
@@ -727,9 +636,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================================================
-       BUILD WHEEL
+       BUILD NUMBERED WHEEL
     ========================================================= */
 
     function buildWheel() {
@@ -781,15 +689,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     color;
 
 
-                /*
-                    CSS controls wheel size.
-
-                    Instead of relying on a hardcoded
-                    pixel radius from the old version,
-                    position the pockets using a
-                    percentage-based transform.
-                */
-
                 pocket.style.transform =
                     `rotate(${angle}deg) translateY(-245%)`;
 
@@ -819,9 +718,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================================================
-       BUILD ROULETTE TABLE
+       BUILD NUMBER BETTING BOARD
     ========================================================= */
 
     function buildNumberBoard() {
@@ -839,11 +737,14 @@ document.addEventListener("DOMContentLoaded", () => {
         zero.type =
             "button";
 
+
         zero.textContent =
             "0";
 
+
         zero.className =
             "roulette-board-number green zero";
+
 
         zero.dataset.number =
             "0";
@@ -855,7 +756,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-            Standard roulette table:
+            STANDARD ROULETTE LAYOUT
 
             3  6  9  12 ... 36
             2  5  8  11 ... 35
@@ -931,9 +832,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================================================
-       BET SELECTION
+       CLEAR SELECTED BET
     ========================================================= */
 
     function clearSelections() {
@@ -967,6 +867,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* =========================================================
+       SELECT NUMBER
+    ========================================================= */
+
     function selectNumber(
         number,
         button
@@ -987,7 +891,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         selectedBet = {
 
-            type: "number",
+            type:
+                "number",
 
             value:
                 Number(number)
@@ -1009,6 +914,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* =========================================================
+       SELECT OUTSIDE BET
+    ========================================================= */
+
     function selectOutsideBet(
         type,
         button
@@ -1028,7 +937,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         selectedBet = {
-            type: type
+
+            type:
+                type
+
         };
 
 
@@ -1057,7 +969,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         selectedBetDisplay.textContent =
             labels[type] ||
-            type.toUpperCase();
+            String(type)
+                .toUpperCase();
 
 
         messageDisplay.textContent =
@@ -1068,6 +981,10 @@ document.addEventListener("DOMContentLoaded", () => {
             "roulette-luxury-message";
     }
 
+
+    /* =========================================================
+       NUMBER BOARD CLICKS
+    ========================================================= */
 
     numberBoard.addEventListener(
         "click",
@@ -1092,6 +1009,10 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    /* =========================================================
+       OUTSIDE BET CLICKS
+    ========================================================= */
+
     document
         .querySelectorAll(
             ".luxury-roulette-choice"
@@ -1111,7 +1032,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
         );
-
 
 
     /* =========================================================
@@ -1177,9 +1097,8 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-
     /* =========================================================
-       WIN CHECK
+       CHECK WIN
     ========================================================= */
 
     function betWins(
@@ -1196,6 +1115,8 @@ document.addEventListener("DOMContentLoaded", () => {
             Number(number);
 
 
+        /* NUMBER BET */
+
         if (
             bet.type ===
             "number"
@@ -1204,14 +1125,20 @@ document.addEventListener("DOMContentLoaded", () => {
             return (
                 Number(
                     bet.value
-                ) === number
+                ) ===
+                number
             );
         }
 
 
         /*
-            Zero loses all normal
-            even-money outside bets.
+            ZERO LOSES:
+            red
+            black
+            odd
+            even
+            low
+            high
         */
 
         if (
@@ -1304,9 +1231,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================================================
-       PAYOUT MULTIPLIER
+       PAYOUT
     ========================================================= */
 
     function payoutMultiplier(
@@ -1314,9 +1240,10 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
 
         /*
-            Straight-up:
-            35:1 profit + stake returned
-            = 36x total payout.
+            NUMBER:
+            35:1 profit
+            + original bet returned
+            = 36x total returned
         */
 
         if (
@@ -1329,18 +1256,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-            Even-money:
-            1:1 profit + stake returned
-            = 2x total payout.
+            OUTSIDE BET:
+            1:1 profit
+            + original bet returned
+            = 2x total returned
         */
 
         return 2;
     }
 
 
-
     /* =========================================================
-       HISTORY
+       RESULT HISTORY
     ========================================================= */
 
     function addHistoryResult(
@@ -1391,9 +1318,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================================================
-       DISABLE ROULETTE CONTROLS
+       DISABLE ROULETTE ONLY
     ========================================================= */
 
     function disableRouletteControls(
@@ -1403,8 +1329,10 @@ document.addEventListener("DOMContentLoaded", () => {
         spinButton.disabled =
             disabled;
 
+
         betDown.disabled =
             disabled;
+
 
         betUp.disabled =
             disabled;
@@ -1412,7 +1340,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document
             .querySelectorAll(
-                ".roulette-board-number, .luxury-roulette-choice"
+                ".roulette-board-number"
+            )
+            .forEach(
+                button => {
+
+                    button.disabled =
+                        disabled;
+                }
+            );
+
+
+        document
+            .querySelectorAll(
+                ".luxury-roulette-choice"
             )
             .forEach(
                 button => {
@@ -1424,9 +1365,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================================================
-       BALL LANDING POSITION
+       FIND POCKET ANGLE
     ========================================================= */
 
     function getPocketAngle(
@@ -1446,17 +1386,11 @@ document.addEventListener("DOMContentLoaded", () => {
             WHEEL_ORDER.length;
 
 
-        /*
-            Rotate to the center of
-            the selected pocket.
-        */
-
         return (
             index *
             pocketSize
         );
     }
-
 
 
     /* =========================================================
@@ -1481,12 +1415,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     randomInt(4);
 
 
-                /*
-                    Always move forward from the
-                    ball's current position.
-                */
-
-                const currentNormalized =
+                const normalized =
                     (
                         (
                             currentBallRotation %
@@ -1499,14 +1428,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 let delta =
                     pocketAngle -
-                    currentNormalized;
+                    normalized;
 
 
                 if (
                     delta < 0
                 ) {
 
-                    delta += 360;
+                    delta +=
+                        360;
                 }
 
 
@@ -1538,17 +1468,33 @@ document.addEventListener("DOMContentLoaded", () => {
                             },
 
                             {
-                                offset: 0.2,
+                                offset:
+                                    0.20,
 
                                 transform:
-                                    `rotate(${currentBallRotation + ((fullSpins * 360) * 0.45)}deg)`
+                                    `rotate(${
+                                        currentBallRotation +
+                                        (
+                                            fullSpins *
+                                            360 *
+                                            0.45
+                                        )
+                                    }deg)`
                             },
 
                             {
-                                offset: 0.65,
+                                offset:
+                                    0.65,
 
                                 transform:
-                                    `rotate(${currentBallRotation + ((fullSpins * 360) * 0.83)}deg)`
+                                    `rotate(${
+                                        currentBallRotation +
+                                        (
+                                            fullSpins *
+                                            360 *
+                                            0.83
+                                        )
+                                    }deg)`
                             },
 
                             {
@@ -1607,7 +1553,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================================================
        SPIN BUTTON
     ========================================================= */
@@ -1620,6 +1565,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+
+            /* ---------------------------------------------
+               MUST SELECT BET
+            ---------------------------------------------- */
 
             if (!selectedBet) {
 
@@ -1643,6 +1592,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 getBalance();
 
 
+            /* ---------------------------------------------
+               CHECK MONEY
+            ---------------------------------------------- */
+
             if (
                 currentBalance <
                 bet
@@ -1660,6 +1613,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
+            /* ---------------------------------------------
+               BEGIN
+            ---------------------------------------------- */
+
             spinning =
                 true;
 
@@ -1669,14 +1626,18 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            /*
-                Deduct wager before spin.
-            */
+            /* ---------------------------------------------
+               REMOVE BET
+            ---------------------------------------------- */
 
-            setBalance(
+            setRouletteBalance(
                 currentBalance -
                 bet
             );
+
+
+            statusDisplay.textContent =
+                "SPINNING...";
 
 
             messageDisplay.textContent =
@@ -1687,17 +1648,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 "roulette-luxury-message";
 
 
-            statusDisplay.textContent =
-                "SPINNING...";
-
-
-            /*
-                Random result 0–36.
-            */
+            /* ---------------------------------------------
+               PICK WINNER 0-36
+            ---------------------------------------------- */
 
             const winningNumber =
-                randomInt(37);
+                randomInt(
+                    37
+                );
 
+
+            /* ---------------------------------------------
+               ANIMATE TO WINNER
+            ---------------------------------------------- */
 
             await animateBallToNumber(
                 winningNumber
@@ -1710,10 +1673,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
+            /* ---------------------------------------------
+               ADD HISTORY
+            ---------------------------------------------- */
+
             addHistoryResult(
                 winningNumber
             );
 
+
+            /* ---------------------------------------------
+               CHECK WIN
+            ---------------------------------------------- */
 
             const won =
                 betWins(
@@ -1730,14 +1701,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
 
-                const payout =
+                const totalReturned =
                     bet *
                     multiplier;
 
 
-                setBalance(
+                setRouletteBalance(
                     getBalance() +
-                    payout
+                    totalReturned
                 );
 
 
@@ -1752,21 +1723,25 @@ document.addEventListener("DOMContentLoaded", () => {
                     color.toUpperCase();
 
 
+                /* NUMBER WIN */
+
                 if (
                     selectedBet.type ===
                     "number"
                 ) {
 
                     const profit =
-                        payout -
+                        totalReturned -
                         bet;
 
 
                     messageDisplay.textContent =
-                        "STRAIGHT-UP WIN! " +
+                        "STRAIGHT-UP WIN! +" +
                         profit.toLocaleString() +
-                        " AC PROFIT";
+                        " AC";
 
+
+                /* OUTSIDE WIN */
 
                 } else {
 
@@ -1774,14 +1749,19 @@ document.addEventListener("DOMContentLoaded", () => {
                         "WIN! +" +
                         bet.toLocaleString() +
                         " AC";
-
                 }
 
 
                 messageDisplay.className =
                     "roulette-luxury-message win";
 
+
             } else {
+
+
+                /* -----------------------------------------
+                   LOSS
+                ------------------------------------------ */
 
                 recordRouletteGame(
                     "loss"
@@ -1808,6 +1788,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
+            /* ---------------------------------------------
+               FINISH
+            ---------------------------------------------- */
+
             spinning =
                 false;
 
@@ -1817,14 +1801,13 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            updateBalanceDisplays();
+            updateRouletteBalanceDisplays();
         }
     );
 
 
-
     /* =========================================================
-       INITIALIZE ROULETTE
+       START ROULETTE
     ========================================================= */
 
     buildWheel();
@@ -1833,6 +1816,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateBetDisplay();
 
-    updateBalanceDisplays();
+    updateRouletteBalanceDisplays();
 
 });
