@@ -1,18 +1,21 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     /* =========================================================
        THE GILDED ACE
-       GLOBAL PLAY-MONEY SYSTEM
+       ACCOUNT + PLAY-MONEY SYSTEM
     ========================================================= */
 
     const STARTING_BALANCE = 10000;
     const DAILY_REWARD = 1000;
     const REWARD_COOLDOWN = 24 * 60 * 60 * 1000;
 
-    const BALANCE_KEY = "gildedAceBalance";
-    const DAILY_KEY = "gildedAceLastDailyReward";
-    const INVENTORY_KEY = "gildedAceOwnedItems";
-    const STATS_KEY = "gildedAceStats";
+    const ACCOUNTS_KEY = "gildedAceAccounts";
+    const SESSION_KEY = "gildedAceActiveAccountId";
+
+    const LEGACY_BALANCE_KEY = "gildedAceBalance";
+    const LEGACY_DAILY_KEY = "gildedAceLastDailyReward";
+    const LEGACY_INVENTORY_KEY = "gildedAceOwnedItems";
+    const LEGACY_STATS_KEY = "gildedAceStats";
 
     const BET_LEVELS = [
         50,
@@ -26,8 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       RANDOM NUMBER
+       HELPERS
     ========================================================= */
+
+    function formatNumber(value) {
+        return Math.floor(Number(value) || 0).toLocaleString();
+    }
+
 
     function randomInt(max) {
 
@@ -35,15 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
             window.crypto &&
             window.crypto.getRandomValues
         ) {
-
-            const array =
-                new Uint32Array(1);
-
-            window.crypto.getRandomValues(
-                array
-            );
-
-            return array[0] % max;
+            const values = new Uint32Array(1);
+            window.crypto.getRandomValues(values);
+            return values[0] % max;
         }
 
         return Math.floor(
@@ -52,28 +54,406 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* =========================================================
-       NUMBER FORMAT
-    ========================================================= */
+    function escapeText(value) {
 
-    function formatNumber(value) {
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
 
-        return Math.floor(
-            Number(value) || 0
-        ).toLocaleString();
+
+    function setText(id, value) {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+            element.textContent = value;
+        }
     }
 
 
     /* =========================================================
-       BALANCE SYSTEM
+       ACCOUNT STORAGE
     ========================================================= */
 
-    function getBalance() {
+    function getAccounts() {
 
-        const stored =
+        try {
+
+            const value =
+                JSON.parse(
+                    localStorage.getItem(
+                        ACCOUNTS_KEY
+                    ) || "[]"
+                );
+
+            return Array.isArray(value)
+                ? value
+                : [];
+
+        } catch {
+            return [];
+        }
+    }
+
+
+    function saveAccounts(accounts) {
+
+        localStorage.setItem(
+            ACCOUNTS_KEY,
+            JSON.stringify(accounts)
+        );
+    }
+
+
+    function getActiveAccountId() {
+
+        return localStorage.getItem(
+            SESSION_KEY
+        ) || "";
+    }
+
+
+    function setActiveAccountId(id) {
+
+        if (id) {
+
+            localStorage.setItem(
+                SESSION_KEY,
+                id
+            );
+
+        } else {
+
+            localStorage.removeItem(
+                SESSION_KEY
+            );
+        }
+    }
+
+
+    function getActiveAccount() {
+
+        const id =
+            getActiveAccountId();
+
+        if (!id) {
+            return null;
+        }
+
+        return (
+            getAccounts().find(
+                account =>
+                    account.id === id
+            ) || null
+        );
+    }
+
+
+    function accountKey(
+        accountId,
+        type
+    ) {
+
+        return `gildedAce:${accountId}:${type}`;
+    }
+
+
+    function currentKey(type) {
+
+        const account =
+            getActiveAccount();
+
+        if (account) {
+
+            return accountKey(
+                account.id,
+                type
+            );
+        }
+
+        const legacy = {
+            balance: LEGACY_BALANCE_KEY,
+            daily: LEGACY_DAILY_KEY,
+            inventory: LEGACY_INVENTORY_KEY,
+            stats: LEGACY_STATS_KEY
+        };
+
+        return legacy[type];
+    }
+
+
+    /* =========================================================
+       PASSWORD SECURITY
+    ========================================================= */
+
+    function bytesToBase64(bytes) {
+
+        let binary = "";
+
+        bytes.forEach(
+            byte => {
+                binary += String.fromCharCode(byte);
+            }
+        );
+
+        return btoa(binary);
+    }
+
+
+    function base64ToBytes(base64) {
+
+        const binary =
+            atob(base64);
+
+        return Uint8Array.from(
+            binary,
+            character =>
+                character.charCodeAt(0)
+        );
+    }
+
+
+    function createSalt() {
+
+        const salt =
+            new Uint8Array(16);
+
+        crypto.getRandomValues(
+            salt
+        );
+
+        return bytesToBase64(
+            salt
+        );
+    }
+
+
+    async function hashPassword(
+        password,
+        saltBase64
+    ) {
+
+        if (
+            !window.crypto ||
+            !window.crypto.subtle
+        ) {
+            throw new Error(
+                "Secure password hashing is unavailable in this browser."
+            );
+        }
+
+        const encoder =
+            new TextEncoder();
+
+        const passwordKey =
+            await crypto.subtle.importKey(
+                "raw",
+                encoder.encode(password),
+                "PBKDF2",
+                false,
+                [
+                    "deriveBits"
+                ]
+            );
+
+        const salt =
+            base64ToBytes(
+                saltBase64
+            );
+
+        const derivedBits =
+            await crypto.subtle.deriveBits(
+                {
+                    name: "PBKDF2",
+                    salt,
+                    iterations: 120000,
+                    hash: "SHA-256"
+                },
+                passwordKey,
+                256
+            );
+
+        return bytesToBase64(
+            new Uint8Array(
+                derivedBits
+            )
+        );
+    }
+
+
+    async function verifyPassword(
+        password,
+        account
+    ) {
+
+        const hash =
+            await hashPassword(
+                password,
+                account.salt
+            );
+
+        return (
+            hash ===
+            account.passwordHash
+        );
+    }
+
+
+    /* =========================================================
+       USERNAME RULES
+    ========================================================= */
+
+    function cleanUsername(value) {
+
+        return String(
+            value || ""
+        ).trim();
+    }
+
+
+    function normalizeUsername(value) {
+
+        return cleanUsername(
+            value
+        ).toLowerCase();
+    }
+
+
+    function validUsername(username) {
+
+        return /^[A-Za-z0-9_ ]{3,20}$/.test(
+            username
+        );
+    }
+
+
+    function usernameExists(
+        username,
+        ignoreId = ""
+    ) {
+
+        const normalized =
+            normalizeUsername(
+                username
+            );
+
+        return getAccounts().some(
+            account =>
+                account.id !== ignoreId &&
+                account.usernameNormalized ===
+                    normalized
+        );
+    }
+
+
+    /* =========================================================
+       MIGRATE EXISTING PLAYER DATA
+    ========================================================= */
+
+    function migrateGuestDataToAccount(
+        accountId
+    ) {
+
+        const mappings = [
+            {
+                oldKey: LEGACY_BALANCE_KEY,
+                newKey: accountKey(
+                    accountId,
+                    "balance"
+                )
+            },
+            {
+                oldKey: LEGACY_DAILY_KEY,
+                newKey: accountKey(
+                    accountId,
+                    "daily"
+                )
+            },
+            {
+                oldKey: LEGACY_INVENTORY_KEY,
+                newKey: accountKey(
+                    accountId,
+                    "inventory"
+                )
+            },
+            {
+                oldKey: LEGACY_STATS_KEY,
+                newKey: accountKey(
+                    accountId,
+                    "stats"
+                )
+            }
+        ];
+
+        mappings.forEach(
+            mapping => {
+
+                if (
+                    localStorage.getItem(
+                        mapping.newKey
+                    ) !== null
+                ) {
+                    return;
+                }
+
+                const existing =
+                    localStorage.getItem(
+                        mapping.oldKey
+                    );
+
+                if (
+                    existing !== null
+                ) {
+
+                    localStorage.setItem(
+                        mapping.newKey,
+                        existing
+                    );
+                }
+            }
+        );
+
+
+        const balanceKey =
+            accountKey(
+                accountId,
+                "balance"
+            );
+
+        if (
+            localStorage.getItem(
+                balanceKey
+            ) === null
+        ) {
+
+            localStorage.setItem(
+                balanceKey,
+                STARTING_BALANCE
+            );
+        }
+    }
+
+
+    /* =========================================================
+       BALANCE
+    ========================================================= */
+
+    function loadBalance() {
+
+        const key =
+            currentKey(
+                "balance"
+            );
+
+        let stored =
             Number(
                 localStorage.getItem(
-                    BALANCE_KEY
+                    key
                 )
             );
 
@@ -82,12 +462,13 @@ document.addEventListener("DOMContentLoaded", () => {
             stored < 0
         ) {
 
-            localStorage.setItem(
-                BALANCE_KEY,
-                STARTING_BALANCE
-            );
+            stored =
+                STARTING_BALANCE;
 
-            return STARTING_BALANCE;
+            localStorage.setItem(
+                key,
+                stored
+            );
         }
 
         return stored;
@@ -95,7 +476,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     let balance =
-        getBalance();
+        loadBalance();
+
+
+    function updateBalanceDisplays() {
+
+        document
+            .querySelectorAll(
+                ".balance-value"
+            )
+            .forEach(
+                element => {
+
+                    element.textContent =
+                        `${formatNumber(
+                            balance
+                        )} AC`;
+                }
+            );
+
+
+        document
+            .querySelectorAll(
+                ".casino-balance"
+            )
+            .forEach(
+                element => {
+
+                    element.textContent =
+                        `${formatNumber(
+                            balance
+                        )} AC`;
+                }
+            );
+
+
+        document
+            .querySelectorAll(
+                ".credit-balance"
+            )
+            .forEach(
+                element => {
+
+                    element.innerHTML =
+                        `${formatNumber(
+                            balance
+                        )} <span>AC</span>`;
+                }
+            );
+    }
 
 
     function setBalance(value) {
@@ -109,7 +538,9 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
         localStorage.setItem(
-            BALANCE_KEY,
+            currentKey(
+                "balance"
+            ),
             balance
         );
 
@@ -121,7 +552,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function addBalance(amount) {
 
         setBalance(
-            balance + amount
+            balance +
+            Number(amount)
         );
     }
 
@@ -135,51 +567,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function updateBalanceDisplays() {
-
-        document
-            .querySelectorAll(
-                ".balance-value"
-            )
-            .forEach(
-                (element) => {
-
-                    element.textContent =
-                        `${formatNumber(balance)} AC`;
-
-                }
-            );
-
-
-        document
-            .querySelectorAll(
-                ".casino-balance"
-            )
-            .forEach(
-                (element) => {
-
-                    element.textContent =
-                        `${formatNumber(balance)} AC`;
-
-                }
-            );
-
-
-        document
-            .querySelectorAll(
-                ".credit-balance"
-            )
-            .forEach(
-                (element) => {
-
-                    element.innerHTML =
-                        `${formatNumber(balance)} <span>AC</span>`;
-
-                }
-            );
-    }
-
-
     /* =========================================================
        TOAST
     ========================================================= */
@@ -189,13 +576,13 @@ document.addEventListener("DOMContentLoaded", () => {
         type = "gold"
     ) {
 
-        const oldToast =
+        const existing =
             document.querySelector(
                 ".gilded-toast"
             );
 
-        if (oldToast) {
-            oldToast.remove();
+        if (existing) {
+            existing.remove();
         }
 
 
@@ -211,29 +598,29 @@ document.addEventListener("DOMContentLoaded", () => {
             message;
 
 
-        let borderColor =
+        let border =
             "#d6b35a";
 
-        let textColor =
+        let color =
             "#d6b35a";
 
 
         if (type === "success") {
 
-            borderColor =
+            border =
                 "#5b936a";
 
-            textColor =
+            color =
                 "#7fba8d";
         }
 
 
         if (type === "error") {
 
-            borderColor =
+            border =
                 "#9e4d4d";
 
-            textColor =
+            color =
                 "#d47777";
         }
 
@@ -241,52 +628,21 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.assign(
             toast.style,
             {
-
-                position:
-                    "fixed",
-
-                top:
-                    "105px",
-
-                left:
-                    "50%",
-
-                transform:
-                    "translateX(-50%)",
-
-                zIndex:
-                    "99999",
-
-                minWidth:
-                    "260px",
-
-                maxWidth:
-                    "90%",
-
-                padding:
-                    "14px 24px",
-
-                background:
-                    "#111",
-
-                border:
-                    `1px solid ${borderColor}`,
-
-                color:
-                    textColor,
-
-                textAlign:
-                    "center",
-
-                fontSize:
-                    "11px",
-
-                fontWeight:
-                    "700",
-
-                letterSpacing:
-                    "1.3px",
-
+                position: "fixed",
+                top: "105px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: "99999",
+                minWidth: "260px",
+                maxWidth: "90%",
+                padding: "14px 24px",
+                background: "#111",
+                border: `1px solid ${border}`,
+                color: color,
+                textAlign: "center",
+                fontSize: "11px",
+                fontWeight: "700",
+                letterSpacing: "1.3px",
                 boxShadow:
                     "0 18px 45px rgba(0,0,0,.55)"
             }
@@ -322,6 +678,214 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
+       INVENTORY
+    ========================================================= */
+
+    function getOwnedItems() {
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        currentKey(
+                            "inventory"
+                        )
+                    ) || "[]"
+                );
+
+            return Array.isArray(saved)
+                ? saved
+                : [];
+
+        } catch {
+            return [];
+        }
+    }
+
+
+    function saveOwnedItems(items) {
+
+        localStorage.setItem(
+            currentKey(
+                "inventory"
+            ),
+            JSON.stringify(
+                items
+            )
+        );
+
+        renderCollection();
+        updateProfile();
+    }
+
+
+    function playerOwnsItem(
+        itemId
+    ) {
+
+        return getOwnedItems()
+            .some(
+                item =>
+                    item.id === itemId
+            );
+    }
+
+
+    /* =========================================================
+       PLAYER STATISTICS
+    ========================================================= */
+
+    function defaultStats() {
+
+        return {
+            totalWins: 0,
+            totalLosses: 0,
+            gamesPlayed: 0,
+
+            blackjack: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            },
+
+            slots: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            },
+
+            roulette: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            },
+
+            dice: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            }
+        };
+    }
+
+
+    function getStats() {
+
+        const defaults =
+            defaultStats();
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        currentKey(
+                            "stats"
+                        )
+                    ) || "{}"
+                );
+
+            return {
+                totalWins:
+                    Number(
+                        saved.totalWins
+                    ) || 0,
+
+                totalLosses:
+                    Number(
+                        saved.totalLosses
+                    ) || 0,
+
+                gamesPlayed:
+                    Number(
+                        saved.gamesPlayed
+                    ) || 0,
+
+                blackjack: {
+                    ...defaults.blackjack,
+                    ...(saved.blackjack || {})
+                },
+
+                slots: {
+                    ...defaults.slots,
+                    ...(saved.slots || {})
+                },
+
+                roulette: {
+                    ...defaults.roulette,
+                    ...(saved.roulette || {})
+                },
+
+                dice: {
+                    ...defaults.dice,
+                    ...(saved.dice || {})
+                }
+            };
+
+        } catch {
+            return defaults;
+        }
+    }
+
+
+    function saveStats(stats) {
+
+        localStorage.setItem(
+            currentKey(
+                "stats"
+            ),
+            JSON.stringify(
+                stats
+            )
+        );
+
+        updateProfile();
+    }
+
+
+    function recordGame(
+        game,
+        result
+    ) {
+
+        const stats =
+            getStats();
+
+        if (!stats[game]) {
+            return;
+        }
+
+
+        stats.gamesPlayed++;
+        stats[game].played++;
+
+
+        if (
+            result === "win"
+        ) {
+
+            stats.totalWins++;
+            stats[game].wins++;
+        }
+
+
+        if (
+            result === "loss"
+        ) {
+
+            stats.totalLosses++;
+            stats[game].losses++;
+        }
+
+
+        saveStats(
+            stats
+        );
+    }
+
+
+    /* =========================================================
        DAILY REWARD
     ========================================================= */
 
@@ -335,7 +899,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return Number(
             localStorage.getItem(
-                DAILY_KEY
+                currentKey(
+                    "daily"
+                )
             ) || 0
         );
     }
@@ -343,16 +909,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function isRewardAvailable() {
 
-        const lastReward =
+        const previous =
             getLastRewardTime();
 
-        if (!lastReward) {
+        if (!previous) {
             return true;
         }
 
         return (
             Date.now() -
-            lastReward >=
+            previous >=
             REWARD_COOLDOWN
         );
     }
@@ -360,16 +926,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getRewardRemaining() {
 
-        const lastReward =
+        const previous =
             getLastRewardTime();
 
-        if (!lastReward) {
+        if (!previous) {
             return 0;
         }
 
         return Math.max(
             0,
-            lastReward +
+            previous +
             REWARD_COOLDOWN -
             Date.now()
         );
@@ -393,10 +959,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 (
                     seconds %
                     3600
-                ) / 60
+                ) /
+                60
             );
 
-        const remainingSeconds =
+        const remaining =
             seconds % 60;
 
 
@@ -407,7 +974,7 @@ document.addEventListener("DOMContentLoaded", () => {
             String(minutes)
                 .padStart(2, "0") +
             ":" +
-            String(remainingSeconds)
+            String(remaining)
                 .padStart(2, "0")
         );
     }
@@ -420,7 +987,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        if (isRewardAvailable()) {
+        if (
+            isRewardAvailable()
+        ) {
 
             dailyRewardButton.disabled =
                 false;
@@ -457,7 +1026,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                     localStorage.setItem(
-                        DAILY_KEY,
+                        currentKey(
+                            "daily"
+                        ),
                         Date.now()
                     );
 
@@ -476,12 +1047,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         )} AC DAILY REWARD`,
                         "success"
                     );
-
                 }
             );
-
-
-        updateDailyRewardButton();
 
 
         setInterval(
@@ -492,209 +1059,878 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       INVENTORY
+       PROFILE ACCOUNT INTERFACE
     ========================================================= */
 
-    function getOwnedItems() {
+    const profileAuthScreen =
+        document.getElementById(
+            "profileAuthScreen"
+        );
 
-        try {
+    const profileDashboard =
+        document.getElementById(
+            "profileDashboard"
+        );
 
-            const saved =
-                JSON.parse(
-                    localStorage.getItem(
-                        INVENTORY_KEY
-                    ) || "[]"
-                );
+    const createAccountPanel =
+        document.getElementById(
+            "createAccountPanel"
+        );
 
-            return Array.isArray(saved)
-                ? saved
-                : [];
+    const loginPanel =
+        document.getElementById(
+            "loginPanel"
+        );
 
-        } catch {
+    const showLoginButton =
+        document.getElementById(
+            "showLoginButton"
+        );
 
-            return [];
+    const showCreateButton =
+        document.getElementById(
+            "showCreateButton"
+        );
+
+
+    function showCreatePanel() {
+
+        if (createAccountPanel) {
+            createAccountPanel.hidden =
+                false;
+        }
+
+        if (loginPanel) {
+            loginPanel.hidden =
+                true;
         }
     }
 
 
-    function saveOwnedItems(items) {
+    function showLoginPanel() {
 
-        localStorage.setItem(
-            INVENTORY_KEY,
-            JSON.stringify(items)
-        );
+        if (createAccountPanel) {
+            createAccountPanel.hidden =
+                true;
+        }
 
-        renderCollection();
-        updateProfile();
+        if (loginPanel) {
+            loginPanel.hidden =
+                false;
+        }
     }
 
 
-    function playerOwnsItem(itemId) {
+    function renderProfileAccess() {
 
-        return getOwnedItems()
-            .some(
-                item =>
-                    item.id === itemId
+        if (
+            !profileAuthScreen ||
+            !profileDashboard
+        ) {
+            return;
+        }
+
+
+        const account =
+            getActiveAccount();
+
+
+        if (account) {
+
+            profileAuthScreen.hidden =
+                true;
+
+            profileDashboard.hidden =
+                false;
+
+            loadActiveProfileState();
+
+            return;
+        }
+
+
+        profileAuthScreen.hidden =
+            false;
+
+        profileDashboard.hidden =
+            true;
+
+
+        if (
+            getAccounts().length > 0
+        ) {
+
+            showLoginPanel();
+
+        } else {
+
+            showCreatePanel();
+        }
+    }
+
+
+    if (showLoginButton) {
+
+        showLoginButton
+            .addEventListener(
+                "click",
+                showLoginPanel
+            );
+    }
+
+
+    if (showCreateButton) {
+
+        showCreateButton
+            .addEventListener(
+                "click",
+                showCreatePanel
             );
     }
 
 
     /* =========================================================
-       PLAYER STATISTICS
+       CREATE ACCOUNT
     ========================================================= */
 
-    function defaultStats() {
+    const createUsername =
+        document.getElementById(
+            "createUsername"
+        );
 
-        return {
+    const createPassword =
+        document.getElementById(
+            "createPassword"
+        );
 
-            totalWins: 0,
-            totalLosses: 0,
-            gamesPlayed: 0,
+    const confirmPassword =
+        document.getElementById(
+            "confirmPassword"
+        );
 
-            blackjack: {
-                wins: 0,
-                losses: 0,
-                played: 0
-            },
+    const createAccountButton =
+        document.getElementById(
+            "createAccountButton"
+        );
 
-            slots: {
-                wins: 0,
-                losses: 0,
-                played: 0
-            },
-
-            roulette: {
-                wins: 0,
-                losses: 0,
-                played: 0
-            },
-
-            dice: {
-                wins: 0,
-                losses: 0,
-                played: 0
-            }
-
-        };
-    }
+    const createAccountMessage =
+        document.getElementById(
+            "createAccountMessage"
+        );
 
 
-    function getStats() {
+    if (createAccountButton) {
 
-        const defaults =
-            defaultStats();
+        createAccountButton
+            .addEventListener(
+                "click",
+                async () => {
+
+                    const username =
+                        cleanUsername(
+                            createUsername.value
+                        );
+
+                    const password =
+                        createPassword.value;
+
+                    const confirmation =
+                        confirmPassword.value;
 
 
-        try {
-
-            const saved =
-                JSON.parse(
-                    localStorage.getItem(
-                        STATS_KEY
-                    ) || "{}"
-                );
+                    createAccountMessage.textContent =
+                        "";
 
 
-            return {
+                    if (
+                        !validUsername(
+                            username
+                        )
+                    ) {
 
-                totalWins:
-                    Number(
-                        saved.totalWins
-                    ) || 0,
+                        createAccountMessage.textContent =
+                            "Username must be 3–20 characters and contain only letters, numbers, spaces, or underscores.";
 
-                totalLosses:
-                    Number(
-                        saved.totalLosses
-                    ) || 0,
+                        return;
+                    }
 
-                gamesPlayed:
-                    Number(
-                        saved.gamesPlayed
-                    ) || 0,
 
-                blackjack: {
-                    ...defaults.blackjack,
-                    ...saved.blackjack
-                },
+                    if (
+                        usernameExists(
+                            username
+                        )
+                    ) {
 
-                slots: {
-                    ...defaults.slots,
-                    ...saved.slots
-                },
+                        createAccountMessage.textContent =
+                            "That username already exists on this device.";
 
-                roulette: {
-                    ...defaults.roulette,
-                    ...saved.roulette
-                },
+                        return;
+                    }
 
-                dice: {
-                    ...defaults.dice,
-                    ...saved.dice
+
+                    if (
+                        password.length < 6
+                    ) {
+
+                        createAccountMessage.textContent =
+                            "Password must contain at least 6 characters.";
+
+                        return;
+                    }
+
+
+                    if (
+                        password !==
+                        confirmation
+                    ) {
+
+                        createAccountMessage.textContent =
+                            "Passwords do not match.";
+
+                        return;
+                    }
+
+
+                    createAccountButton.disabled =
+                        true;
+
+                    createAccountButton.textContent =
+                        "CREATING ACCOUNT...";
+
+
+                    try {
+
+                        const id =
+                            crypto.randomUUID
+                                ? crypto.randomUUID()
+                                : (
+                                    Date.now().toString(36) +
+                                    Math.random()
+                                        .toString(36)
+                                        .slice(2)
+                                );
+
+
+                        const salt =
+                            createSalt();
+
+
+                        const passwordHash =
+                            await hashPassword(
+                                password,
+                                salt
+                            );
+
+
+                        const account = {
+                            id,
+                            username,
+                            usernameNormalized:
+                                normalizeUsername(
+                                    username
+                                ),
+                            salt,
+                            passwordHash,
+                            createdAt:
+                                new Date()
+                                    .toISOString()
+                        };
+
+
+                        const accounts =
+                            getAccounts();
+
+                        accounts.push(
+                            account
+                        );
+
+                        saveAccounts(
+                            accounts
+                        );
+
+
+                        migrateGuestDataToAccount(
+                            id
+                        );
+
+
+                        setActiveAccountId(
+                            id
+                        );
+
+
+                        createUsername.value =
+                            "";
+
+                        createPassword.value =
+                            "";
+
+                        confirmPassword.value =
+                            "";
+
+
+                        showToast(
+                            "ACCOUNT CREATED",
+                            "success"
+                        );
+
+
+                        renderProfileAccess();
+
+                    } catch (error) {
+
+                        console.error(
+                            "Account creation error:",
+                            error
+                        );
+
+                        createAccountMessage.textContent =
+                            "Account could not be created.";
+
+                    } finally {
+
+                        createAccountButton.disabled =
+                            false;
+
+                        createAccountButton.textContent =
+                            "CREATE ACCOUNT";
+                    }
                 }
-
-            };
-
-        } catch {
-
-            return defaults;
-        }
-    }
-
-
-    function saveStats(stats) {
-
-        localStorage.setItem(
-            STATS_KEY,
-            JSON.stringify(stats)
-        );
-
-        updateProfile();
-    }
-
-
-    function recordGame(
-        game,
-        result
-    ) {
-
-        const stats =
-            getStats();
-
-
-        if (!stats[game]) {
-            return;
-        }
-
-
-        stats.gamesPlayed += 1;
-
-        stats[game].played += 1;
-
-
-        if (result === "win") {
-
-            stats.totalWins += 1;
-
-            stats[game].wins += 1;
-        }
-
-
-        if (result === "loss") {
-
-            stats.totalLosses += 1;
-
-            stats[game].losses += 1;
-        }
-
-
-        saveStats(
-            stats
-        );
+            );
     }
 
 
     /* =========================================================
-       STORE FILTERS
+       LOGIN
+    ========================================================= */
+
+    const loginUsername =
+        document.getElementById(
+            "loginUsername"
+        );
+
+    const loginPassword =
+        document.getElementById(
+            "loginPassword"
+        );
+
+    const loginButton =
+        document.getElementById(
+            "loginButton"
+        );
+
+    const loginMessage =
+        document.getElementById(
+            "loginMessage"
+        );
+
+
+    if (loginButton) {
+
+        loginButton
+            .addEventListener(
+                "click",
+                async () => {
+
+                    const username =
+                        normalizeUsername(
+                            loginUsername.value
+                        );
+
+                    const password =
+                        loginPassword.value;
+
+
+                    loginMessage.textContent =
+                        "";
+
+
+                    const account =
+                        getAccounts().find(
+                            item =>
+                                item.usernameNormalized ===
+                                    username
+                        );
+
+
+                    if (!account) {
+
+                        loginMessage.textContent =
+                            "Username or password is incorrect.";
+
+                        return;
+                    }
+
+
+                    loginButton.disabled =
+                        true;
+
+                    loginButton.textContent =
+                        "SIGNING IN...";
+
+
+                    try {
+
+                        const valid =
+                            await verifyPassword(
+                                password,
+                                account
+                            );
+
+
+                        if (!valid) {
+
+                            loginMessage.textContent =
+                                "Username or password is incorrect.";
+
+                            return;
+                        }
+
+
+                        setActiveAccountId(
+                            account.id
+                        );
+
+
+                        loginPassword.value =
+                            "";
+
+
+                        showToast(
+                            `WELCOME BACK, ${account.username.toUpperCase()}`,
+                            "success"
+                        );
+
+
+                        renderProfileAccess();
+
+                    } catch (error) {
+
+                        console.error(
+                            "Login error:",
+                            error
+                        );
+
+                        loginMessage.textContent =
+                            "Unable to sign in.";
+
+                    } finally {
+
+                        loginButton.disabled =
+                            false;
+
+                        loginButton.textContent =
+                            "SIGN IN";
+                    }
+                }
+            );
+    }
+
+
+    /* =========================================================
+       ENTER KEY LOGIN / CREATE
+    ========================================================= */
+
+    [
+        createUsername,
+        createPassword,
+        confirmPassword
+    ]
+        .filter(Boolean)
+        .forEach(
+            element => {
+
+                element.addEventListener(
+                    "keydown",
+                    event => {
+
+                        if (
+                            event.key ===
+                            "Enter"
+                        ) {
+
+                            createAccountButton?.click();
+                        }
+                    }
+                );
+            }
+        );
+
+
+    [
+        loginUsername,
+        loginPassword
+    ]
+        .filter(Boolean)
+        .forEach(
+            element => {
+
+                element.addEventListener(
+                    "keydown",
+                    event => {
+
+                        if (
+                            event.key ===
+                            "Enter"
+                        ) {
+
+                            loginButton?.click();
+                        }
+                    }
+                );
+            }
+        );
+
+
+    /* =========================================================
+       LOGOUT
+    ========================================================= */
+
+    const logoutProfileButton =
+        document.getElementById(
+            "logoutProfileButton"
+        );
+
+
+    if (logoutProfileButton) {
+
+        logoutProfileButton
+            .addEventListener(
+                "click",
+                () => {
+
+                    setActiveAccountId(
+                        ""
+                    );
+
+
+                    balance =
+                        loadBalance();
+
+
+                    updateBalanceDisplays();
+
+
+                    showToast(
+                        "SIGNED OUT"
+                    );
+
+
+                    renderProfileAccess();
+                }
+            );
+    }
+
+
+    /* =========================================================
+       EDIT USERNAME
+    ========================================================= */
+
+    const editUsername =
+        document.getElementById(
+            "editUsername"
+        );
+
+    const saveUsernameButton =
+        document.getElementById(
+            "saveUsernameButton"
+        );
+
+    const editUsernameMessage =
+        document.getElementById(
+            "editUsernameMessage"
+        );
+
+
+    if (saveUsernameButton) {
+
+        saveUsernameButton
+            .addEventListener(
+                "click",
+                () => {
+
+                    const account =
+                        getActiveAccount();
+
+                    if (!account) {
+                        return;
+                    }
+
+
+                    const username =
+                        cleanUsername(
+                            editUsername.value
+                        );
+
+
+                    editUsernameMessage.textContent =
+                        "";
+
+
+                    if (
+                        !validUsername(
+                            username
+                        )
+                    ) {
+
+                        editUsernameMessage.textContent =
+                            "Username must be 3–20 characters.";
+
+                        return;
+                    }
+
+
+                    if (
+                        usernameExists(
+                            username,
+                            account.id
+                        )
+                    ) {
+
+                        editUsernameMessage.textContent =
+                            "That username is already in use.";
+
+                        return;
+                    }
+
+
+                    const accounts =
+                        getAccounts();
+
+
+                    const index =
+                        accounts.findIndex(
+                            item =>
+                                item.id ===
+                                account.id
+                        );
+
+
+                    if (
+                        index === -1
+                    ) {
+                        return;
+                    }
+
+
+                    accounts[index].username =
+                        username;
+
+                    accounts[index].usernameNormalized =
+                        normalizeUsername(
+                            username
+                        );
+
+
+                    saveAccounts(
+                        accounts
+                    );
+
+
+                    editUsername.value =
+                        "";
+
+
+                    editUsernameMessage.textContent =
+                        "Username updated.";
+
+
+                    updateProfile();
+
+
+                    showToast(
+                        "USERNAME UPDATED",
+                        "success"
+                    );
+                }
+            );
+    }
+
+
+    /* =========================================================
+       CHANGE PASSWORD
+    ========================================================= */
+
+    const currentPassword =
+        document.getElementById(
+            "currentPassword"
+        );
+
+    const newPassword =
+        document.getElementById(
+            "newPassword"
+        );
+
+    const confirmNewPassword =
+        document.getElementById(
+            "confirmNewPassword"
+        );
+
+    const changePasswordButton =
+        document.getElementById(
+            "changePasswordButton"
+        );
+
+    const changePasswordMessage =
+        document.getElementById(
+            "changePasswordMessage"
+        );
+
+
+    if (changePasswordButton) {
+
+        changePasswordButton
+            .addEventListener(
+                "click",
+                async () => {
+
+                    const account =
+                        getActiveAccount();
+
+                    if (!account) {
+                        return;
+                    }
+
+
+                    changePasswordMessage.textContent =
+                        "";
+
+
+                    if (
+                        newPassword.value.length <
+                        6
+                    ) {
+
+                        changePasswordMessage.textContent =
+                            "New password must contain at least 6 characters.";
+
+                        return;
+                    }
+
+
+                    if (
+                        newPassword.value !==
+                        confirmNewPassword.value
+                    ) {
+
+                        changePasswordMessage.textContent =
+                            "New passwords do not match.";
+
+                        return;
+                    }
+
+
+                    changePasswordButton.disabled =
+                        true;
+
+                    changePasswordButton.textContent =
+                        "UPDATING...";
+
+
+                    try {
+
+                        const validCurrent =
+                            await verifyPassword(
+                                currentPassword.value,
+                                account
+                            );
+
+
+                        if (!validCurrent) {
+
+                            changePasswordMessage.textContent =
+                                "Current password is incorrect.";
+
+                            return;
+                        }
+
+
+                        const salt =
+                            createSalt();
+
+
+                        const passwordHash =
+                            await hashPassword(
+                                newPassword.value,
+                                salt
+                            );
+
+
+                        const accounts =
+                            getAccounts();
+
+
+                        const index =
+                            accounts.findIndex(
+                                item =>
+                                    item.id ===
+                                    account.id
+                            );
+
+
+                        if (
+                            index === -1
+                        ) {
+                            return;
+                        }
+
+
+                        accounts[index].salt =
+                            salt;
+
+                        accounts[index].passwordHash =
+                            passwordHash;
+
+
+                        saveAccounts(
+                            accounts
+                        );
+
+
+                        currentPassword.value =
+                            "";
+
+                        newPassword.value =
+                            "";
+
+                        confirmNewPassword.value =
+                            "";
+
+
+                        changePasswordMessage.textContent =
+                            "Password updated successfully.";
+
+
+                        showToast(
+                            "PASSWORD UPDATED",
+                            "success"
+                        );
+
+                    } catch (error) {
+
+                        console.error(
+                            "Password change error:",
+                            error
+                        );
+
+                        changePasswordMessage.textContent =
+                            "Password could not be changed.";
+
+                    } finally {
+
+                        changePasswordButton.disabled =
+                            false;
+
+                        changePasswordButton.textContent =
+                            "CHANGE PASSWORD";
+                    }
+                }
+            );
+    }
+
+
+    /* =========================================================
+       STORE
     ========================================================= */
 
     const storeCategoryButtons =
@@ -702,12 +1938,10 @@ document.addEventListener("DOMContentLoaded", () => {
             ".store-category"
         );
 
-
     const storeProducts =
         document.querySelectorAll(
             ".store-product"
         );
-
 
     const storeSections =
         document.querySelectorAll(
@@ -720,15 +1954,13 @@ document.addEventListener("DOMContentLoaded", () => {
         storeProducts.forEach(
             product => {
 
-                const itemId =
+                const id =
                     product.dataset.itemId;
-
 
                 const button =
                     product.querySelector(
                         ".buy-item-button"
                     );
-
 
                 if (!button) {
                     return;
@@ -737,7 +1969,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (
                     playerOwnsItem(
-                        itemId
+                        id
                     )
                 ) {
 
@@ -763,7 +1995,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         "owned"
                     );
                 }
-
             }
         );
     }
@@ -779,12 +2010,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     product.dataset.category ===
                         category;
 
-
                 product.classList.toggle(
                     "store-hidden",
                     !show
                 );
-
             }
         );
 
@@ -797,12 +2026,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         ".store-product:not(.store-hidden)"
                     );
 
-
                 section.classList.toggle(
                     "store-hidden",
                     visible.length === 0
                 );
-
             }
         );
     }
@@ -823,20 +2050,16 @@ document.addEventListener("DOMContentLoaded", () => {
                                 )
                         );
 
-
                     button.classList.add(
                         "active"
                     );
-
 
                     filterStore(
                         button.dataset
                             .storeCategory
                     );
-
                 }
             );
-
         }
     );
 
@@ -857,31 +2080,23 @@ document.addEventListener("DOMContentLoaded", () => {
                                 ".store-product"
                             );
 
-
                         if (!product) {
                             return;
                         }
 
 
                         const itemId =
-                            product.dataset
-                                .itemId;
-
+                            product.dataset.itemId;
 
                         const itemName =
-                            product.dataset
-                                .itemName;
-
+                            product.dataset.itemName;
 
                         const category =
-                            product.dataset
-                                .category;
-
+                            product.dataset.category;
 
                         const price =
                             Number(
-                                product.dataset
-                                    .price
+                                product.dataset.price
                             );
 
 
@@ -956,23 +2171,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                         owned.push({
-
-                            id:
-                                itemId,
-
-                            name:
-                                itemName,
-
-                            category:
-                                category,
-
-                            price:
-                                price,
-
+                            id: itemId,
+                            name: itemName,
+                            category,
+                            price,
                             purchasedAt:
                                 new Date()
                                     .toISOString()
-
                         });
 
 
@@ -988,24 +2193,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             `${itemName.toUpperCase()} PURCHASED`,
                             "success"
                         );
-
                     }
                 );
-
             }
         );
-
-
-    if (
-        storeCategoryButtons.length
-    ) {
-
-        updateStoreButtons();
-
-        filterStore(
-            "all"
-        );
-    }
 
 
     /* =========================================================
@@ -1017,36 +2208,30 @@ document.addEventListener("DOMContentLoaded", () => {
             "collectionGrid"
         );
 
-
     const collectionEmptyState =
         document.getElementById(
             "collectionEmptyState"
         );
-
 
     const collectionOwnedCount =
         document.getElementById(
             "collectionOwnedCount"
         );
 
-
     const collectionItemCount =
         document.getElementById(
             "collectionItemCount"
         );
-
 
     const collectionValue =
         document.getElementById(
             "collectionValue"
         );
 
-
     const collectionHighestPurchase =
         document.getElementById(
             "collectionHighestPurchase"
         );
-
 
     const collectionFilters =
         document.querySelectorAll(
@@ -1055,96 +2240,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     const collectionArt = {
-
-        "gold-profile-frame":
-            "◇",
-
-        "diamond-nameplate":
-            "♦",
-
-        "high-roller-title":
-            "★",
-
-        "gilded-watch":
-            "◉",
-
-        "golden-ace-card":
-            "♠",
-
-        "diamond-crown":
-            "♛",
-
-        "grand-touring-coupe":
-            "GT",
-
-        "gilded-supercar":
-            "GA",
-
-        "executive-limousine":
-            "XL",
-
-        "private-yacht":
-            "Y",
-
-        "private-jet":
-            "JET",
-
-        "hotel-suite":
-            "01",
-
-        "luxury-penthouse":
-            "PH",
-
-        "private-estate":
-            "EST",
-
-        "gilded-card-back":
-            "A",
-
-        "gold-blackjack-table":
-            "21",
-
-        "midnight-roulette":
-            "0",
-
-        "high-roller-membership":
-            "HR",
-
-        "diamond-club":
-            "♦",
-
-        "casino-ownership":
-            "♛"
-
+        "gold-profile-frame": "◇",
+        "diamond-nameplate": "♦",
+        "high-roller-title": "★",
+        "gilded-watch": "◉",
+        "golden-ace-card": "♠",
+        "diamond-crown": "♛",
+        "grand-touring-coupe": "GT",
+        "gilded-supercar": "GA",
+        "executive-limousine": "XL",
+        "private-yacht": "Y",
+        "private-jet": "JET",
+        "hotel-suite": "01",
+        "luxury-penthouse": "PH",
+        "private-estate": "EST",
+        "gilded-card-back": "A",
+        "gold-blackjack-table": "21",
+        "midnight-roulette": "0",
+        "high-roller-membership": "HR",
+        "diamond-club": "♦",
+        "casino-ownership": "♛"
     };
 
 
-    function getCollectionCategoryName(
+    function collectionCategoryName(
         category
     ) {
 
         const names = {
-
-            profile:
-                "PROFILE COSMETIC",
-
-            collectible:
-                "LUXURY COLLECTIBLE",
-
-            vehicle:
-                "VEHICLE",
-
-            property:
-                "PROPERTY",
-
-            casino:
-                "CASINO COSMETIC",
-
-            prestige:
-                "PRESTIGE"
-
+            profile: "PROFILE COSMETIC",
+            collectible: "LUXURY COLLECTIBLE",
+            vehicle: "VEHICLE",
+            property: "PROPERTY",
+            casino: "CASINO COSMETIC",
+            prestige: "PRESTIGE"
         };
-
 
         return (
             names[category] ||
@@ -1153,67 +2283,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function escapeText(value) {
-
-        return String(
-            value ?? ""
-        )
-            .replaceAll(
-                "&",
-                "&amp;"
-            )
-            .replaceAll(
-                "<",
-                "&lt;"
-            )
-            .replaceAll(
-                ">",
-                "&gt;"
-            )
-            .replaceAll(
-                '"',
-                "&quot;"
-            )
-            .replaceAll(
-                "'",
-                "&#039;"
-            );
-    }
-
-
     function formatPurchaseDate(
         value
     ) {
 
         const date =
-            new Date(
-                value
-            );
-
+            new Date(value);
 
         if (
             Number.isNaN(
                 date.getTime()
             )
         ) {
-
             return "UNKNOWN";
         }
-
 
         return date.toLocaleDateString(
             undefined,
             {
-
-                year:
-                    "numeric",
-
-                month:
-                    "short",
-
-                day:
-                    "numeric"
-
+                year: "numeric",
+                month: "short",
+                day: "numeric"
             }
         );
     }
@@ -1228,10 +2318,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 "article"
             );
 
-
         card.className =
             "collection-item";
-
 
         card.dataset.collectionCategory =
             item.category ||
@@ -1244,7 +2332,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         card.innerHTML = `
-
             <div class="collection-item-art">
                 ${escapeText(art)}
             </div>
@@ -1253,16 +2340,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <span class="collection-item-category">
                     ${escapeText(
-                        getCollectionCategoryName(
+                        collectionCategoryName(
                             item.category
                         )
                     )}
                 </span>
 
                 <h3 class="collection-item-name">
-                    ${escapeText(
-                        item.name
-                    )}
+                    ${escapeText(item.name)}
                 </h3>
 
                 <div class="collection-item-date">
@@ -1289,9 +2374,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
             </div>
-
         `;
-
 
         return card;
     }
@@ -1306,18 +2389,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 (
                     total,
                     item
-                ) => {
-
-                    return (
-                        total +
-                        (
-                            Number(
-                                item.price
-                            ) || 0
-                        )
-                    );
-
-                },
+                ) =>
+                    total +
+                    (
+                        Number(
+                            item.price
+                        ) || 0
+                    ),
                 0
             );
 
@@ -1342,29 +2420,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     highest =
                         item;
                 }
-
             }
         );
 
 
-        if (
-            collectionOwnedCount
-        ) {
-
-            collectionOwnedCount
-                .textContent =
-                formatNumber(
-                    items.length
-                );
-        }
+        setText(
+            "collectionOwnedCount",
+            formatNumber(
+                items.length
+            )
+        );
 
 
-        if (
-            collectionItemCount
-        ) {
+        if (collectionItemCount) {
 
-            collectionItemCount
-                .textContent =
+            collectionItemCount.textContent =
                 `${items.length} ${
                     items.length === 1
                         ? "ITEM"
@@ -1373,12 +2443,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        if (
-            collectionValue
-        ) {
+        if (collectionValue) {
 
-            collectionValue
-                .textContent =
+            collectionValue.textContent =
                 `${formatNumber(
                     totalValue
                 )} AC`;
@@ -1389,8 +2456,7 @@ document.addEventListener("DOMContentLoaded", () => {
             collectionHighestPurchase
         ) {
 
-            collectionHighestPurchase
-                .textContent =
+            collectionHighestPurchase.textContent =
                 highest
                     ? highest.name
                     : "—";
@@ -1427,89 +2493,74 @@ document.addEventListener("DOMContentLoaded", () => {
                         .collectionCategory ===
                         category;
 
-
                 card.classList.toggle(
                     "collection-hidden",
                     !show
                 );
 
-
                 if (show) {
                     visible++;
                 }
-
             }
         );
 
 
-        if (
+        if (!collectionEmptyState) {
+            return;
+        }
+
+
+        const heading =
             collectionEmptyState
+                .querySelector(
+                    "h2"
+                );
+
+        const paragraph =
+            collectionEmptyState
+                .querySelector(
+                    "p:not(.section-kicker)"
+                );
+
+
+        if (
+            cards.length === 0
         ) {
 
-            const heading =
-                collectionEmptyState
-                    .querySelector(
-                        "h2"
-                    );
+            collectionEmptyState.style.display =
+                "block";
 
-
-            const paragraph =
-                collectionEmptyState
-                    .querySelector(
-                        "p:not(.section-kicker)"
-                    );
-
-
-            if (
-                cards.length === 0
-            ) {
-
-                collectionEmptyState
-                    .style.display =
-                    "block";
-
-
-                if (heading) {
-
-                    heading.textContent =
-                        "YOUR VAULT IS EMPTY";
-                }
-
-
-                if (paragraph) {
-
-                    paragraph.textContent =
-                        "Purchase virtual items from The Gilded Store and they will automatically appear in your personal collection.";
-                }
-
-            } else if (
-                visible === 0
-            ) {
-
-                collectionEmptyState
-                    .style.display =
-                    "block";
-
-
-                if (heading) {
-
-                    heading.textContent =
-                        "NO ITEMS IN THIS CATEGORY";
-                }
-
-
-                if (paragraph) {
-
-                    paragraph.textContent =
-                        "You do not currently own any items in this collection category.";
-                }
-
-            } else {
-
-                collectionEmptyState
-                    .style.display =
-                    "none";
+            if (heading) {
+                heading.textContent =
+                    "YOUR VAULT IS EMPTY";
             }
+
+            if (paragraph) {
+                paragraph.textContent =
+                    "Purchase virtual items from The Gilded Store and they will automatically appear in your personal collection.";
+            }
+
+        } else if (
+            visible === 0
+        ) {
+
+            collectionEmptyState.style.display =
+                "block";
+
+            if (heading) {
+                heading.textContent =
+                    "NO ITEMS IN THIS CATEGORY";
+            }
+
+            if (paragraph) {
+                paragraph.textContent =
+                    "You do not currently own any items in this collection category.";
+            }
+
+        } else {
+
+            collectionEmptyState.style.display =
+                "none";
         }
     }
 
@@ -1532,13 +2583,11 @@ document.addEventListener("DOMContentLoaded", () => {
         owned.forEach(
             item => {
 
-                collectionGrid
-                    .appendChild(
-                        createCollectionCard(
-                            item
-                        )
-                    );
-
+                collectionGrid.appendChild(
+                    createCollectionCard(
+                        item
+                    )
+                );
             }
         );
 
@@ -1578,20 +2627,16 @@ document.addEventListener("DOMContentLoaded", () => {
                                 )
                         );
 
-
                     button.classList.add(
                         "active"
                     );
-
 
                     filterCollection(
                         button.dataset
                             .collectionCategory
                     );
-
                 }
             );
-
         }
     );
 
@@ -1605,7 +2650,6 @@ document.addEventListener("DOMContentLoaded", () => {
             ".casino-tab"
         );
 
-
     const casinoPanels =
         document.querySelectorAll(
             ".casino-game-panel"
@@ -1613,7 +2657,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function activateGame(
-        gameName
+        game
     ) {
 
         casinoTabs.forEach(
@@ -1622,9 +2666,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 tab.classList.toggle(
                     "active",
                     tab.dataset.game ===
-                        gameName
+                        game
                 );
-
             }
         );
 
@@ -1633,17 +2676,14 @@ document.addEventListener("DOMContentLoaded", () => {
             panel => {
 
                 const match =
-                    panel.id === gameName ||
-                    panel.dataset
-                        .gamePanel ===
-                        gameName;
-
+                    panel.id === game ||
+                    panel.dataset.gamePanel ===
+                        game;
 
                 panel.classList.toggle(
                     "active",
                     match
                 );
-
             }
         );
     }
@@ -1659,21 +2699,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     const game =
                         tab.dataset.game;
 
-
-                    activateGame(
-                        game
-                    );
-
+                    activateGame(game);
 
                     history.replaceState(
                         null,
                         "",
                         `#${game}`
                     );
-
                 }
             );
-
         }
     );
 
@@ -1684,11 +2718,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const game =
             window.location.hash
-                .replace(
-                    "#",
-                    ""
-                );
-
+                .replace("#", "");
 
         if (
             [
@@ -1696,14 +2726,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 "slots",
                 "roulette",
                 "dice"
-            ].includes(
-                game
-            )
+            ].includes(game)
         ) {
 
-            activateGame(
-                game
-            );
+            activateGame(game);
         }
     }
 
@@ -1724,12 +2750,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 displayId
             );
 
-
         const down =
             document.getElementById(
                 downId
             );
-
 
         const up =
             document.getElementById(
@@ -1742,8 +2766,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 startingBet
             );
 
-
-        if (index === -1) {
+        if (
+            index === -1
+        ) {
             index = 1;
         }
 
@@ -1760,43 +2785,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        if (down) {
+        down?.addEventListener(
+            "click",
+            () => {
 
-            down.addEventListener(
-                "click",
-                () => {
+                index =
+                    Math.max(
+                        0,
+                        index - 1
+                    );
 
-                    index =
-                        Math.max(
-                            0,
-                            index - 1
-                        );
-
-                    update();
-
-                }
-            );
-        }
+                update();
+            }
+        );
 
 
-        if (up) {
+        up?.addEventListener(
+            "click",
+            () => {
 
-            up.addEventListener(
-                "click",
-                () => {
+                index =
+                    Math.min(
+                        BET_LEVELS.length -
+                        1,
+                        index + 1
+                    );
 
-                    index =
-                        Math.min(
-                            BET_LEVELS.length -
-                                1,
-                            index + 1
-                        );
-
-                    update();
-
-                }
-            );
-        }
+                update();
+            }
+        );
 
 
         update();
@@ -1805,27 +2822,19 @@ document.addEventListener("DOMContentLoaded", () => {
         return {
 
             getBet() {
-
-                return (
-                    BET_LEVELS[index]
-                );
+                return BET_LEVELS[index];
             },
 
-            setDisabled(
-                disabled
-            ) {
+            setDisabled(disabled) {
 
                 if (down) {
-                    down.disabled =
-                        disabled;
+                    down.disabled = disabled;
                 }
 
                 if (up) {
-                    up.disabled =
-                        disabled;
+                    up.disabled = disabled;
                 }
             }
-
         };
     }
 
@@ -1850,48 +2859,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 100
             );
 
-
         const dealerCards =
             document.getElementById(
                 "dealerCards"
             );
-
 
         const playerCards =
             document.getElementById(
                 "playerCards"
             );
 
-
         const dealerValue =
             document.getElementById(
                 "dealerValue"
             );
-
 
         const playerValue =
             document.getElementById(
                 "playerValue"
             );
 
-
         const message =
             document.getElementById(
                 "blackjackMessage"
             );
-
 
         const hit =
             document.getElementById(
                 "blackjackHit"
             );
 
-
         const stand =
             document.getElementById(
                 "blackjackStand"
             );
-
 
         const double =
             document.getElementById(
@@ -1909,35 +2910,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         function createDeck() {
 
-            const suits =
-                [
-                    "♠",
-                    "♥",
-                    "♦",
-                    "♣"
-                ];
+            const suits = [
+                "♠",
+                "♥",
+                "♦",
+                "♣"
+            ];
 
+            const ranks = [
+                "A",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "J",
+                "Q",
+                "K"
+            ];
 
-            const ranks =
-                [
-                    "A",
-                    "2",
-                    "3",
-                    "4",
-                    "5",
-                    "6",
-                    "7",
-                    "8",
-                    "9",
-                    "10",
-                    "J",
-                    "Q",
-                    "K"
-                ];
-
-
-            const cards =
-                [];
+            const cards = [];
 
 
             suits.forEach(
@@ -1950,10 +2946,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 suit,
                                 rank
                             });
-
                         }
                     );
-
                 }
             );
 
@@ -1970,12 +2964,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         i + 1
                     );
 
-
                 [
                     cards[i],
                     cards[j]
-                ] =
-                [
+                ] = [
                     cards[j],
                     cards[i]
                 ];
@@ -2000,9 +2992,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        function cardValue(
-            card
-        ) {
+        function cardValue(card) {
 
             if (
                 [
@@ -2013,19 +3003,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     card.rank
                 )
             ) {
-
                 return 10;
             }
 
-
             if (
-                card.rank ===
-                "A"
+                card.rank === "A"
             ) {
-
                 return 11;
             }
-
 
             return Number(
                 card.rank
@@ -2033,56 +3018,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        function handValue(
-            hand
-        ) {
+        function handValue(hand) {
 
-            let total =
+            let value =
                 hand.reduce(
                     (
-                        sum,
+                        total,
                         card
                     ) =>
-                        sum +
-                        cardValue(
-                            card
-                        ),
+                        total +
+                        cardValue(card),
                     0
                 );
-
 
             let aces =
                 hand.filter(
                     card =>
-                        card.rank ===
-                            "A"
+                        card.rank === "A"
                 ).length;
 
 
             while (
-                total > 21 &&
+                value > 21 &&
                 aces > 0
             ) {
 
-                total -= 10;
-
+                value -= 10;
                 aces--;
             }
 
-
-            return total;
+            return value;
         }
 
 
-        function isBlackjack(
-            hand
-        ) {
+        function isBlackjack(hand) {
 
             return (
                 hand.length === 2 &&
-                handValue(
-                    hand
-                ) === 21
+                handValue(hand) === 21
             );
         }
 
@@ -2095,11 +3068,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (hidden) {
 
                 return `
-
                     <div class="playing-card card-back">
                         <span>A</span>
                     </div>
-
                 `;
             }
 
@@ -2110,7 +3081,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             return `
-
                 <div class="playing-card">
 
                     <span class="card-rank">
@@ -2122,12 +3092,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     </span>
 
                 </div>
-
             `;
         }
 
 
-        function render(
+        function renderBlackjack(
             hideDealer = true
         ) {
 
@@ -2167,11 +3136,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (hideDealer) {
 
                 dealerValue.textContent =
-                    dealerHand.length
-                        ? `Dealer: ${cardValue(
-                            dealerHand[0]
-                        )}`
-                        : "Dealer: —";
+                    `Dealer: ${
+                        dealerHand.length
+                            ? cardValue(
+                                dealerHand[0]
+                            )
+                            : "—"
+                    }`;
 
             } else {
 
@@ -2183,7 +3154,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        function setMessage(
+        function blackjackMessage(
             text,
             type = ""
         ) {
@@ -2194,9 +3165,7 @@ document.addEventListener("DOMContentLoaded", () => {
             message.className =
                 "game-message";
 
-
             if (type) {
-
                 message.classList.add(
                     type
                 );
@@ -2204,43 +3173,40 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        function setButtons(
-            roundActive
+        function blackjackButtons(
+            enabled
         ) {
 
             active =
-                roundActive;
-
+                enabled;
 
             hit.disabled =
-                !roundActive;
+                !enabled;
 
             stand.disabled =
-                !roundActive;
+                !enabled;
 
             double.disabled =
-                !roundActive;
+                !enabled;
 
             blackjackDeal.disabled =
-                roundActive;
-
+                enabled;
 
             betControl.setDisabled(
-                roundActive
+                enabled
             );
         }
 
 
-        function finish(
+        function finishBlackjack(
             result
         ) {
 
-            render(
+            renderBlackjack(
                 false
             );
 
-
-            setButtons(
+            blackjackButtons(
                 false
             );
 
@@ -2256,19 +3222,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         2.5
                     );
 
-
                 addBalance(
                     payout
                 );
-
 
                 recordGame(
                     "blackjack",
                     "win"
                 );
 
-
-                setMessage(
+                blackjackMessage(
                     `BLACKJACK! You won ${formatNumber(
                         payout -
                         currentBet
@@ -2276,59 +3239,50 @@ document.addEventListener("DOMContentLoaded", () => {
                     "win"
                 );
 
-
                 return;
             }
 
 
             if (
-                result ===
-                "win"
+                result === "win"
             ) {
 
                 addBalance(
                     currentBet * 2
                 );
 
-
                 recordGame(
                     "blackjack",
                     "win"
                 );
 
-
-                setMessage(
+                blackjackMessage(
                     `You won ${formatNumber(
                         currentBet
                     )} AC.`,
                     "win"
                 );
 
-
                 return;
             }
 
 
             if (
-                result ===
-                "push"
+                result === "push"
             ) {
 
                 addBalance(
                     currentBet
                 );
 
-
                 recordGame(
                     "blackjack",
                     "push"
                 );
 
-
-                setMessage(
+                blackjackMessage(
                     "Push. Your bet was returned."
                 );
-
 
                 return;
             }
@@ -2339,8 +3293,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "loss"
             );
 
-
-            setMessage(
+            blackjackMessage(
                 `House wins. You lost ${formatNumber(
                     currentBet
                 )} AC.`,
@@ -2368,7 +3321,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     playerHand
                 );
 
-
             const dealer =
                 handValue(
                     dealerHand
@@ -2380,7 +3332,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 player > dealer
             ) {
 
-                finish(
+                finishBlackjack(
                     "win"
                 );
 
@@ -2388,128 +3340,118 @@ document.addEventListener("DOMContentLoaded", () => {
                 player < dealer
             ) {
 
-                finish(
+                finishBlackjack(
                     "loss"
                 );
 
             } else {
 
-                finish(
+                finishBlackjack(
                     "push"
                 );
             }
         }
 
 
-        blackjackDeal
-            .addEventListener(
-                "click",
-                () => {
+        blackjackDeal.addEventListener(
+            "click",
+            () => {
 
-                    if (active) {
-                        return;
-                    }
-
-
-                    currentBet =
-                        betControl
-                            .getBet();
-
-
-                    if (
-                        !canAfford(
-                            currentBet
-                        )
-                    ) {
-
-                        setMessage(
-                            "You do not have enough Ace Credits.",
-                            "loss"
-                        );
-
-                        return;
-                    }
-
-
-                    setBalance(
-                        balance -
-                        currentBet
-                    );
-
-
-                    deck =
-                        createDeck();
-
-
-                    playerHand =
-                        [
-                            drawCard(),
-                            drawCard()
-                        ];
-
-
-                    dealerHand =
-                        [
-                            drawCard(),
-                            drawCard()
-                        ];
-
-
-                    render(
-                        true
-                    );
-
-
-                    setButtons(
-                        true
-                    );
-
-
-                    setMessage(
-                        "Choose HIT, STAND, or DOUBLE."
-                    );
-
-
-                    const playerBJ =
-                        isBlackjack(
-                            playerHand
-                        );
-
-
-                    const dealerBJ =
-                        isBlackjack(
-                            dealerHand
-                        );
-
-
-                    if (
-                        playerBJ &&
-                        dealerBJ
-                    ) {
-
-                        finish(
-                            "push"
-                        );
-
-                    } else if (
-                        playerBJ
-                    ) {
-
-                        finish(
-                            "blackjack"
-                        );
-
-                    } else if (
-                        dealerBJ
-                    ) {
-
-                        finish(
-                            "loss"
-                        );
-                    }
-
+                if (active) {
+                    return;
                 }
-            );
+
+
+                currentBet =
+                    betControl.getBet();
+
+
+                if (
+                    !canAfford(
+                        currentBet
+                    )
+                ) {
+
+                    blackjackMessage(
+                        "You do not have enough Ace Credits.",
+                        "loss"
+                    );
+
+                    return;
+                }
+
+
+                setBalance(
+                    balance -
+                    currentBet
+                );
+
+
+                deck =
+                    createDeck();
+
+                playerHand = [
+                    drawCard(),
+                    drawCard()
+                ];
+
+                dealerHand = [
+                    drawCard(),
+                    drawCard()
+                ];
+
+
+                renderBlackjack(
+                    true
+                );
+
+                blackjackButtons(
+                    true
+                );
+
+                blackjackMessage(
+                    "Choose HIT, STAND, or DOUBLE."
+                );
+
+
+                const playerBJ =
+                    isBlackjack(
+                        playerHand
+                    );
+
+                const dealerBJ =
+                    isBlackjack(
+                        dealerHand
+                    );
+
+
+                if (
+                    playerBJ &&
+                    dealerBJ
+                ) {
+
+                    finishBlackjack(
+                        "push"
+                    );
+
+                } else if (
+                    playerBJ
+                ) {
+
+                    finishBlackjack(
+                        "blackjack"
+                    );
+
+                } else if (
+                    dealerBJ
+                ) {
+
+                    finishBlackjack(
+                        "loss"
+                    );
+                }
+            }
+        );
 
 
         hit.addEventListener(
@@ -2525,12 +3467,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     drawCard()
                 );
 
-
                 double.disabled =
                     true;
 
-
-                render(
+                renderBlackjack(
                     true
                 );
 
@@ -2545,7 +3485,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     value > 21
                 ) {
 
-                    finish(
+                    finishBlackjack(
                         "loss"
                     );
 
@@ -2555,7 +3495,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     dealerPlay();
                 }
-
             }
         );
 
@@ -2569,7 +3508,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 dealerPlay();
-
             }
         );
 
@@ -2580,10 +3518,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (
                     !active ||
-                    playerHand.length !==
-                        2
+                    playerHand.length !== 2
                 ) {
-
                     return;
                 }
 
@@ -2594,7 +3530,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                 ) {
 
-                    setMessage(
+                    blackjackMessage(
                         "Not enough Ace Credits to double.",
                         "loss"
                     );
@@ -2608,17 +3544,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     currentBet
                 );
 
-
-                currentBet *=
-                    2;
+                currentBet *= 2;
 
 
                 playerHand.push(
                     drawCard()
                 );
 
-
-                render(
+                renderBlackjack(
                     true
                 );
 
@@ -2629,7 +3562,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     ) > 21
                 ) {
 
-                    finish(
+                    finishBlackjack(
                         "loss"
                     );
 
@@ -2638,12 +3571,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 dealerPlay();
-
             }
         );
 
 
-        setButtons(
+        blackjackButtons(
             false
         );
     }
@@ -2670,18 +3602,17 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const reels =
-            [
-                document.getElementById(
-                    "slotReel1"
-                ),
-                document.getElementById(
-                    "slotReel2"
-                ),
-                document.getElementById(
-                    "slotReel3"
-                )
-            ];
+        const reels = [
+            document.getElementById(
+                "slotReel1"
+            ),
+            document.getElementById(
+                "slotReel2"
+            ),
+            document.getElementById(
+                "slotReel3"
+            )
+        ];
 
 
         const message =
@@ -2690,15 +3621,14 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const symbols =
-            [
-                "♠",
-                "♥",
-                "♦",
-                "♣",
-                "7",
-                "A"
-            ];
+        const symbols = [
+            "♠",
+            "♥",
+            "♦",
+            "♣",
+            "7",
+            "A"
+        ];
 
 
         function symbol() {
@@ -2711,7 +3641,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        function setMessage(
+        function slotMessage(
             text,
             type = ""
         ) {
@@ -2722,9 +3652,7 @@ document.addEventListener("DOMContentLoaded", () => {
             message.className =
                 "game-message";
 
-
             if (type) {
-
                 message.classList.add(
                     type
                 );
@@ -2741,12 +3669,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 if (
-                    !canAfford(
-                        bet
-                    )
+                    !canAfford(bet)
                 ) {
 
-                    setMessage(
+                    slotMessage(
                         "You do not have enough Ace Credits.",
                         "loss"
                     );
@@ -2763,7 +3689,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 slotSpin.disabled =
                     true;
 
-
                 betControl.setDisabled(
                     true
                 );
@@ -2777,7 +3702,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                setMessage(
+                slotMessage(
                     "Spinning..."
                 );
 
@@ -2788,13 +3713,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             reels.forEach(
                                 reel => {
-
                                     reel.textContent =
                                         symbol();
-
                                 }
                             );
-
                         },
                         90
                     );
@@ -2816,12 +3738,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
 
 
-                        const result =
-                            [
-                                symbol(),
-                                symbol(),
-                                symbol()
-                            ];
+                        const result = [
+                            symbol(),
+                            symbol(),
+                            symbol()
+                        ];
 
 
                         reels.forEach(
@@ -2832,7 +3753,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 reel.textContent =
                                     result[index];
-
                             }
                         );
 
@@ -2844,24 +3764,20 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (
                             result.every(
                                 value =>
-                                    value ===
-                                    "7"
+                                    value === "7"
                             )
                         ) {
 
-                            multiplier =
-                                10;
+                            multiplier = 10;
 
                         } else if (
                             result.every(
                                 value =>
-                                    value ===
-                                    "A"
+                                    value === "A"
                             )
                         ) {
 
-                            multiplier =
-                                7;
+                            multiplier = 7;
 
                         } else if (
                             result[0] ===
@@ -2870,8 +3786,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 result[2]
                         ) {
 
-                            multiplier =
-                                5;
+                            multiplier = 5;
 
                         } else if (
                             result[0] ===
@@ -2882,8 +3797,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 result[2]
                         ) {
 
-                            multiplier =
-                                2;
+                            multiplier = 2;
                         }
 
 
@@ -2895,19 +3809,16 @@ document.addEventListener("DOMContentLoaded", () => {
                                 bet *
                                 multiplier;
 
-
                             addBalance(
                                 payout
                             );
-
 
                             recordGame(
                                 "slots",
                                 "win"
                             );
 
-
-                            setMessage(
+                            slotMessage(
                                 `WIN! ${formatNumber(
                                     payout
                                 )} AC paid.`,
@@ -2921,8 +3832,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 "loss"
                             );
 
-
-                            setMessage(
+                            slotMessage(
                                 `No match. You lost ${formatNumber(
                                     bet
                                 )} AC.`,
@@ -2934,7 +3844,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         slotSpin.disabled =
                             false;
 
-
                         betControl.setDisabled(
                             false
                         );
@@ -2942,7 +3851,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                     1200
                 );
-
             }
         );
     }
@@ -2974,18 +3882,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".roulette-choice"
             );
 
-
-        const resultDisplay =
+        const result =
             document.getElementById(
                 "rouletteResult"
             );
-
 
         const message =
             document.getElementById(
                 "rouletteMessage"
             );
-
 
         const wheel =
             document.querySelector(
@@ -2993,35 +3898,31 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
+        const redNumbers =
+            new Set([
+                1,3,5,7,9,
+                12,14,16,18,
+                19,21,23,25,
+                27,30,32,34,
+                36
+            ]);
+
+
         let selected =
             null;
 
 
-        const reds =
-            new Set(
-                [
-                    1,3,5,7,9,
-                    12,14,16,18,
-                    19,21,23,25,
-                    27,30,32,34,
-                    36
-                ]
-            );
-
-
-        function color(
+        function rouletteColor(
             number
         ) {
 
             if (
                 number === 0
             ) {
-
                 return "green";
             }
 
-
-            return reds.has(
+            return redNumbers.has(
                 number
             )
                 ? "red"
@@ -3029,7 +3930,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        function wins(
+        function rouletteWins(
             selection,
             number
         ) {
@@ -3037,62 +3938,56 @@ document.addEventListener("DOMContentLoaded", () => {
             if (
                 number === 0
             ) {
-
                 return false;
             }
 
 
             if (
-                selection ===
-                "red"
+                selection === "red"
             ) {
 
                 return (
-                    color(number) ===
-                    "red"
+                    rouletteColor(
+                        number
+                    ) === "red"
                 );
             }
 
 
             if (
-                selection ===
-                "black"
+                selection === "black"
             ) {
 
                 return (
-                    color(number) ===
-                    "black"
+                    rouletteColor(
+                        number
+                    ) === "black"
                 );
             }
 
 
             if (
-                selection ===
-                "odd"
+                selection === "odd"
             ) {
 
                 return (
-                    number %
-                    2 !== 0
+                    number % 2 !== 0
                 );
             }
 
 
             if (
-                selection ===
-                "even"
+                selection === "even"
             ) {
 
                 return (
-                    number %
-                    2 === 0
+                    number % 2 === 0
                 );
             }
 
 
             if (
-                selection ===
-                "low"
+                selection === "low"
             ) {
 
                 return (
@@ -3103,8 +3998,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             if (
-                selection ===
-                "high"
+                selection === "high"
             ) {
 
                 return (
@@ -3132,223 +4026,194 @@ document.addEventListener("DOMContentLoaded", () => {
                                 )
                         );
 
-
                         button.classList.add(
                             "selected"
                         );
-
 
                         selected =
                             button.dataset
                                 .rouletteChoice;
 
-
                         message.textContent =
                             `${button.textContent.trim()} selected.`;
 
-
                         message.className =
                             "game-message";
-
                     }
                 );
-
             }
         );
 
 
-        rouletteSpin
-            .addEventListener(
-                "click",
-                () => {
+        rouletteSpin.addEventListener(
+            "click",
+            () => {
 
-                    if (!selected) {
-
-                        message.textContent =
-                            "Choose RED, BLACK, ODD, EVEN, 1-18, or 19-36 first.";
-
-                        message.className =
-                            "game-message loss";
-
-                        return;
-                    }
-
-
-                    const bet =
-                        betControl.getBet();
-
-
-                    if (
-                        !canAfford(
-                            bet
-                        )
-                    ) {
-
-                        message.textContent =
-                            "You do not have enough Ace Credits.";
-
-                        message.className =
-                            "game-message loss";
-
-                        return;
-                    }
-
-
-                    setBalance(
-                        balance - bet
-                    );
-
-
-                    rouletteSpin.disabled =
-                        true;
-
-
-                    betControl.setDisabled(
-                        true
-                    );
-
-
-                    choices.forEach(
-                        button =>
-                            button.disabled =
-                                true
-                    );
-
-
-                    if (wheel) {
-
-                        wheel.classList.add(
-                            "spinning"
-                        );
-                    }
-
+                if (!selected) {
 
                     message.textContent =
-                        "Wheel spinning...";
-
+                        "Choose RED, BLACK, ODD, EVEN, 1-18, or 19-36 first.";
 
                     message.className =
-                        "game-message";
+                        "game-message loss";
+
+                    return;
+                }
 
 
-                    const animation =
-                        setInterval(
-                            () => {
+                const bet =
+                    betControl.getBet();
 
-                                resultDisplay.textContent =
-                                    randomInt(
-                                        37
-                                    );
 
-                            },
-                            80
+                if (
+                    !canAfford(bet)
+                ) {
+
+                    message.textContent =
+                        "You do not have enough Ace Credits.";
+
+                    message.className =
+                        "game-message loss";
+
+                    return;
+                }
+
+
+                setBalance(
+                    balance - bet
+                );
+
+
+                rouletteSpin.disabled =
+                    true;
+
+                betControl.setDisabled(
+                    true
+                );
+
+
+                choices.forEach(
+                    button => {
+                        button.disabled = true;
+                    }
+                );
+
+
+                wheel?.classList.add(
+                    "spinning"
+                );
+
+
+                message.textContent =
+                    "Wheel spinning...";
+
+                message.className =
+                    "game-message";
+
+
+                const animation =
+                    setInterval(
+                        () => {
+
+                            result.textContent =
+                                randomInt(37);
+                        },
+                        80
+                    );
+
+
+                setTimeout(
+                    () => {
+
+                        clearInterval(
+                            animation
                         );
 
 
-                    setTimeout(
-                        () => {
+                        wheel?.classList.remove(
+                            "spinning"
+                        );
 
-                            clearInterval(
-                                animation
+
+                        const number =
+                            randomInt(37);
+
+                        const color =
+                            rouletteColor(
+                                number
                             );
 
 
-                            if (wheel) {
+                        result.textContent =
+                            number;
 
-                                wheel.classList.remove(
-                                    "spinning"
-                                );
+
+                        if (
+                            rouletteWins(
+                                selected,
+                                number
+                            )
+                        ) {
+
+                            addBalance(
+                                bet * 2
+                            );
+
+                            recordGame(
+                                "roulette",
+                                "win"
+                            );
+
+                            message.textContent =
+                                `${number} ${color.toUpperCase()} — You won ${formatNumber(
+                                    bet
+                                )} AC.`;
+
+                            message.className =
+                                "game-message win";
+
+                        } else {
+
+                            recordGame(
+                                "roulette",
+                                "loss"
+                            );
+
+                            message.textContent =
+                                `${number} ${color.toUpperCase()} — You lost ${formatNumber(
+                                    bet
+                                )} AC.`;
+
+                            message.className =
+                                "game-message loss";
+                        }
+
+
+                        rouletteSpin.disabled =
+                            false;
+
+                        betControl.setDisabled(
+                            false
+                        );
+
+
+                        choices.forEach(
+                            button => {
+                                button.disabled =
+                                    false;
                             }
+                        );
 
-
-                            const number =
-                                randomInt(
-                                    37
-                                );
-
-
-                            const resultColor =
-                                color(
-                                    number
-                                );
-
-
-                            resultDisplay.textContent =
-                                number;
-
-
-                            if (
-                                wins(
-                                    selected,
-                                    number
-                                )
-                            ) {
-
-                                addBalance(
-                                    bet * 2
-                                );
-
-
-                                recordGame(
-                                    "roulette",
-                                    "win"
-                                );
-
-
-                                message.textContent =
-                                    `${number} ${resultColor.toUpperCase()} — You won ${formatNumber(
-                                        bet
-                                    )} AC.`;
-
-
-                                message.className =
-                                    "game-message win";
-
-                            } else {
-
-                                recordGame(
-                                    "roulette",
-                                    "loss"
-                                );
-
-
-                                message.textContent =
-                                    `${number} ${resultColor.toUpperCase()} — You lost ${formatNumber(
-                                        bet
-                                    )} AC.`;
-
-
-                                message.className =
-                                    "game-message loss";
-                            }
-
-
-                            rouletteSpin.disabled =
-                                false;
-
-
-                            betControl.setDisabled(
-                                false
-                            );
-
-
-                            choices.forEach(
-                                button =>
-                                    button.disabled =
-                                        false
-                            );
-
-                        },
-                        1500
-                    );
-
-                }
-            );
+                    },
+                    1500
+                );
+            }
+        );
     }
 
 
     /* =========================================================
-       HIGH ROLL / DICE
+       DICE / HIGH ROLL
     ========================================================= */
 
     const diceRoll =
@@ -3373,24 +4238,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 "houseDie"
             );
 
-
         const playerDie =
             document.getElementById(
                 "playerDie"
             );
-
 
         const houseValue =
             document.getElementById(
                 "houseDieValue"
             );
 
-
         const playerValue =
             document.getElementById(
                 "playerDieValue"
             );
-
 
         const message =
             document.getElementById(
@@ -3398,23 +4259,20 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const faces =
-            [
-                "⚀",
-                "⚁",
-                "⚂",
-                "⚃",
-                "⚄",
-                "⚅"
-            ];
+        const faces = [
+            "⚀",
+            "⚁",
+            "⚂",
+            "⚃",
+            "⚄",
+            "⚅"
+        ];
 
 
-        function roll() {
+        function rollDie() {
 
             return (
-                randomInt(
-                    6
-                ) + 1
+                randomInt(6) + 1
             );
         }
 
@@ -3428,9 +4286,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 if (
-                    !canAfford(
-                        bet
-                    )
+                    !canAfford(bet)
                 ) {
 
                     message.textContent =
@@ -3451,7 +4307,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 diceRoll.disabled =
                     true;
 
-
                 betControl.setDisabled(
                     true
                 );
@@ -3461,7 +4316,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     "rolling"
                 );
 
-
                 playerDie.classList.add(
                     "rolling"
                 );
@@ -3469,7 +4323,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 message.textContent =
                     "Rolling...";
-
 
                 message.className =
                     "game-message";
@@ -3481,15 +4334,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             houseDie.textContent =
                                 faces[
-                                    roll() - 1
+                                    rollDie() - 1
                                 ];
-
 
                             playerDie.textContent =
                                 faces[
-                                    roll() - 1
+                                    rollDie() - 1
                                 ];
-
                         },
                         90
                     );
@@ -3507,18 +4358,16 @@ document.addEventListener("DOMContentLoaded", () => {
                             "rolling"
                         );
 
-
                         playerDie.classList.remove(
                             "rolling"
                         );
 
 
                         const house =
-                            roll();
-
+                            rollDie();
 
                         const player =
-                            roll();
+                            rollDie();
 
 
                         houseDie.textContent =
@@ -3526,16 +4375,13 @@ document.addEventListener("DOMContentLoaded", () => {
                                 house - 1
                             ];
 
-
                         playerDie.textContent =
                             faces[
                                 player - 1
                             ];
 
-
                         houseValue.textContent =
                             house;
-
 
                         playerValue.textContent =
                             player;
@@ -3549,18 +4395,15 @@ document.addEventListener("DOMContentLoaded", () => {
                                 bet * 2
                             );
 
-
                             recordGame(
                                 "dice",
                                 "win"
                             );
 
-
                             message.textContent =
                                 `You rolled ${player}. House rolled ${house}. You won ${formatNumber(
                                     bet
                                 )} AC.`;
-
 
                             message.className =
                                 "game-message win";
@@ -3573,16 +4416,13 @@ document.addEventListener("DOMContentLoaded", () => {
                                 bet
                             );
 
-
                             recordGame(
                                 "dice",
                                 "push"
                             );
 
-
                             message.textContent =
                                 `Tie at ${player}. Your bet was returned.`;
-
 
                             message.className =
                                 "game-message";
@@ -3594,12 +4434,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                 "loss"
                             );
 
-
                             message.textContent =
                                 `You rolled ${player}. House rolled ${house}. You lost ${formatNumber(
                                     bet
                                 )} AC.`;
-
 
                             message.className =
                                 "game-message loss";
@@ -3609,7 +4447,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         diceRoll.disabled =
                             false;
 
-
                         betControl.setDisabled(
                             false
                         );
@@ -3617,47 +4454,28 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                     1000
                 );
-
             }
         );
     }
 
 
     /* =========================================================
-       PROFILE SYSTEM
+       PROFILE STATISTICS
     ========================================================= */
-
-    function setText(
-        id,
-        value
-    ) {
-
-        const element =
-            document.getElementById(
-                id
-            );
-
-
-        if (element) {
-
-            element.textContent =
-                value;
-        }
-    }
-
 
     function getHighestOwnedItem() {
 
-        const owned =
+        const items =
             getOwnedItems();
 
-
-        if (!owned.length) {
+        if (
+            items.length === 0
+        ) {
             return null;
         }
 
 
-        return owned.reduce(
+        return items.reduce(
             (
                 highest,
                 item
@@ -3665,20 +4483,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (
                     !highest ||
-                    Number(
-                        item.price
-                    ) >
-                    Number(
-                        highest.price
-                    )
+                    Number(item.price) >
+                    Number(highest.price)
                 ) {
-
                     return item;
                 }
 
-
                 return highest;
-
             },
             null
         );
@@ -3712,14 +4523,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
 
             return {
-                name:
-                    "CASINO OWNER",
-                next:
-                    "MAXIMUM STATUS",
-                start:
-                    10000000,
-                target:
-                    10000000
+                name: "CASINO OWNER",
+                next: "MAXIMUM STATUS",
+                start: 10000000,
+                target: 10000000
             };
         }
 
@@ -3730,14 +4537,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
 
             return {
-                name:
-                    "DIAMOND CLUB",
-                next:
-                    "CASINO OWNER",
-                start:
-                    1000000,
-                target:
-                    10000000
+                name: "DIAMOND CLUB",
+                next: "CASINO OWNER",
+                start: 1000000,
+                target: 10000000
             };
         }
 
@@ -3748,14 +4551,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
 
             return {
-                name:
-                    "HIGH ROLLER",
-                next:
-                    "DIAMOND CLUB",
-                start:
-                    500000,
-                target:
-                    1000000
+                name: "HIGH ROLLER",
+                next: "DIAMOND CLUB",
+                start: 500000,
+                target: 1000000
             };
         }
 
@@ -3766,14 +4565,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
 
             return {
-                name:
-                    "VIP",
-                next:
-                    "HIGH ROLLER",
-                start:
-                    250000,
-                target:
-                    500000
+                name: "VIP",
+                next: "HIGH ROLLER",
+                start: 250000,
+                target: 500000
             };
         }
 
@@ -3784,27 +4579,19 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
 
             return {
-                name:
-                    "GOLD MEMBER",
-                next:
-                    "VIP",
-                start:
-                    100000,
-                target:
-                    250000
+                name: "GOLD MEMBER",
+                next: "VIP",
+                start: 100000,
+                target: 250000
             };
         }
 
 
         return {
-            name:
-                "STANDARD",
-            next:
-                "GOLD MEMBER",
-            start:
-                0,
-            target:
-                100000
+            name: "STANDARD",
+            next: "GOLD MEMBER",
+            start: 0,
+            target: 100000
         };
     }
 
@@ -3820,7 +4607,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".profile-membership"
             );
 
-
         if (membership) {
 
             membership.textContent =
@@ -3833,7 +4619,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".profile-tier-label"
             );
 
-
         if (tierLabel) {
 
             tierLabel.textContent =
@@ -3841,40 +4626,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        const top =
+        const groups =
             document.querySelectorAll(
                 ".profile-progress-top > div"
             );
 
 
         if (
-            top.length >= 2
+            groups.length >= 2
         ) {
 
-            const currentStrong =
-                top[0]
+            const current =
+                groups[0]
                     .querySelector(
                         "strong"
                     );
 
-
-            const nextStrong =
-                top[1]
+            const next =
+                groups[1]
                     .querySelector(
                         "strong"
                     );
 
-
-            if (currentStrong) {
-
-                currentStrong.textContent =
+            if (current) {
+                current.textContent =
                     tier.name;
             }
 
-
-            if (nextStrong) {
-
-                nextStrong.textContent =
+            if (next) {
+                next.textContent =
                     tier.next;
             }
         }
@@ -3895,7 +4675,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     balance
                 )} AC`;
 
-
             bottom[1].textContent =
                 `${formatNumber(
                     tier.target
@@ -3903,13 +4682,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        const progress =
+        const bar =
             document.querySelector(
                 ".profile-progress-bar"
             );
 
 
-        if (progress) {
+        if (bar) {
 
             let percentage =
                 100;
@@ -3945,7 +4724,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-            progress.style.width =
+            bar.style.width =
                 `${percentage}%`;
         }
     }
@@ -3958,8 +4737,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".achievement-card"
             );
 
-
-        if (!cards.length) {
+        if (
+            cards.length === 0
+        ) {
             return;
         }
 
@@ -3968,13 +4748,14 @@ document.addEventListener("DOMContentLoaded", () => {
             getStats();
 
 
-        const unlocked =
-            [
-                true,
-                stats.totalWins >= 1,
-                balance >= 100000,
-                balance >= 1000000
-            ];
+        const unlocked = [
+            Boolean(
+                getActiveAccount()
+            ),
+            stats.totalWins >= 1,
+            balance >= 100000,
+            balance >= 1000000
+        ];
 
 
         cards.forEach(
@@ -3983,7 +4764,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 index
             ) => {
 
-                const status =
+                const label =
                     card.querySelector(
                         ":scope > span"
                     );
@@ -4001,10 +4782,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         "locked"
                     );
 
-
-                    if (status) {
-
-                        status.textContent =
+                    if (label) {
+                        label.textContent =
                             "UNLOCKED";
                     }
 
@@ -4018,14 +4797,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         "locked"
                     );
 
-
-                    if (status) {
-
-                        status.textContent =
+                    if (label) {
+                        label.textContent =
                             "LOCKED";
                     }
                 }
-
             }
         );
     }
@@ -4038,22 +4814,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".profile-page"
             );
 
-
         if (!profilePage) {
             return;
         }
 
 
+        const account =
+            getActiveAccount();
+
         const stats =
             getStats();
 
-
-        const owned =
+        const items =
             getOwnedItems();
-
 
         const highest =
             getHighestOwnedItem();
+
+
+        if (account) {
+
+            setText(
+                "profileUsername",
+                account.username
+            );
+
+
+            const avatar =
+                document.getElementById(
+                    "profileAvatarLetter"
+                );
+
+            if (avatar) {
+
+                avatar.textContent =
+                    account.username
+                        .charAt(0)
+                        .toUpperCase() ||
+                    "A";
+            }
+        }
 
 
         setText(
@@ -4063,14 +4863,12 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         );
 
-
         setText(
             "profileTotalLosses",
             formatNumber(
                 stats.totalLosses
             )
         );
-
 
         setText(
             "profileGamesPlayed",
@@ -4079,14 +4877,12 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         );
 
-
         setText(
             "profileCollectionCount",
             formatNumber(
-                owned.length
+                items.length
             )
         );
-
 
         setText(
             "profileBlackjackWins",
@@ -4095,14 +4891,12 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         );
 
-
         setText(
             "profileBlackjackPlayed",
             formatNumber(
                 stats.blackjack.played
             )
         );
-
 
         setText(
             "profileSlotsWins",
@@ -4111,14 +4905,12 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         );
 
-
         setText(
             "profileSlotsPlayed",
             formatNumber(
                 stats.slots.played
             )
         );
-
 
         setText(
             "profileRouletteWins",
@@ -4127,14 +4919,12 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         );
 
-
         setText(
             "profileRoulettePlayed",
             formatNumber(
                 stats.roulette.played
             )
         );
-
 
         setText(
             "profileDiceWins",
@@ -4143,7 +4933,6 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         );
 
-
         setText(
             "profileDicePlayed",
             formatNumber(
@@ -4151,14 +4940,12 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         );
 
-
         setText(
             "profileOwnedItems",
             formatNumber(
-                owned.length
+                items.length
             )
         );
-
 
         setText(
             "profileCollectionValue",
@@ -4166,7 +4953,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 getCollectionValue()
             )} AC`
         );
-
 
         setText(
             "profileRarestAsset",
@@ -4177,19 +4963,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         updateProfileProgress();
-
         updateAchievements();
     }
 
 
     /* =========================================================
-       INITIAL PAGE LOAD
+       RELOAD ACTIVE PROFILE DATA
     ========================================================= */
 
+    function loadActiveProfileState() {
+
+        balance =
+            loadBalance();
+
+        updateBalanceDisplays();
+        updateDailyRewardButton();
+        updateStoreButtons();
+        renderCollection();
+        updateProfile();
+    }
+
+
+    /* =========================================================
+       INITIALIZE
+    ========================================================= */
+
+    balance =
+        loadBalance();
+
     updateBalanceDisplays();
+
+    updateDailyRewardButton();
+
+    updateStoreButtons();
+
+    if (
+        storeCategoryButtons.length
+    ) {
+        filterStore("all");
+    }
 
     renderCollection();
 
     updateProfile();
+
+    renderProfileAccess();
 
 });
