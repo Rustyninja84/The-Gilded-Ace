@@ -15,16 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let balance = Number(localStorage.getItem("gildedAceBalance"));
 
-    if (
-        !Number.isFinite(balance) ||
-        balance < 0
-    ) {
+    if (!Number.isFinite(balance) || balance < 0) {
         balance = STARTING_BALANCE;
-
-        localStorage.setItem(
-            "gildedAceBalance",
-            balance
-        );
+        localStorage.setItem("gildedAceBalance", balance);
     }
 
 
@@ -88,10 +81,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       POPUP MESSAGE
+       TOAST MESSAGE
     ========================================================= */
 
-    function showToast(message) {
+    function showToast(message, type = "gold") {
 
         const oldToast =
             document.querySelector(".gilded-toast");
@@ -107,6 +100,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         toast.textContent = message;
 
+        let borderColor = "#d6b35a";
+        let textColor = "#d6b35a";
+
+        if (type === "success") {
+            borderColor = "#5b936a";
+            textColor = "#7fba8d";
+        }
+
+        if (type === "error") {
+            borderColor = "#9e4d4d";
+            textColor = "#d47777";
+        }
+
         Object.assign(
             toast.style,
             {
@@ -119,8 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 maxWidth: "90%",
                 padding: "14px 24px",
                 background: "#111",
-                border: "1px solid #d6b35a",
-                color: "#d6b35a",
+                border: `1px solid ${borderColor}`,
+                color: textColor,
                 textAlign: "center",
                 fontSize: "11px",
                 fontWeight: "700",
@@ -292,7 +298,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateDailyRewardButton();
 
                 showToast(
-                    `+${formatNumber(DAILY_REWARD)} AC DAILY REWARD`
+                    `+${formatNumber(DAILY_REWARD)} AC DAILY REWARD`,
+                    "success"
                 );
 
             }
@@ -304,6 +311,336 @@ document.addEventListener("DOMContentLoaded", () => {
             updateDailyRewardButton,
             1000
         );
+
+    }
+
+
+    /* =========================================================
+       STORE SYSTEM
+    ========================================================= */
+
+    const storeCategoryButtons =
+        document.querySelectorAll(
+            ".store-category"
+        );
+
+    const storeProducts =
+        document.querySelectorAll(
+            ".store-product"
+        );
+
+    const storeSections =
+        document.querySelectorAll(
+            ".store-category-section"
+        );
+
+
+    function getOwnedItems() {
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        "gildedAceOwnedItems"
+                    ) || "[]"
+                );
+
+            return Array.isArray(saved)
+                ? saved
+                : [];
+
+        } catch (error) {
+
+            return [];
+
+        }
+
+    }
+
+
+    function saveOwnedItems(items) {
+
+        localStorage.setItem(
+            "gildedAceOwnedItems",
+            JSON.stringify(items)
+        );
+
+    }
+
+
+    function playerOwnsItem(itemId) {
+
+        const ownedItems =
+            getOwnedItems();
+
+        return ownedItems.some(
+            (item) =>
+                item.id === itemId
+        );
+
+    }
+
+
+    function updateStoreButtons() {
+
+        document
+            .querySelectorAll(
+                ".store-product"
+            )
+            .forEach((product) => {
+
+                const itemId =
+                    product.dataset.itemId;
+
+                const button =
+                    product.querySelector(
+                        ".buy-item-button"
+                    );
+
+                if (!button) {
+                    return;
+                }
+
+                if (
+                    playerOwnsItem(itemId)
+                ) {
+
+                    button.textContent =
+                        "OWNED";
+
+                    button.disabled = true;
+
+                    button.classList.add(
+                        "owned"
+                    );
+
+                } else {
+
+                    button.textContent =
+                        "PURCHASE";
+
+                    button.disabled = false;
+
+                    button.classList.remove(
+                        "owned"
+                    );
+
+                }
+
+            });
+
+    }
+
+
+    function filterStore(category) {
+
+        storeProducts.forEach(
+            (product) => {
+
+                const productCategory =
+                    product.dataset.category;
+
+                const show =
+                    category === "all" ||
+                    productCategory ===
+                        category;
+
+                product.classList.toggle(
+                    "store-hidden",
+                    !show
+                );
+
+            }
+        );
+
+
+        storeSections.forEach(
+            (section) => {
+
+                const visibleProducts =
+                    section.querySelectorAll(
+                        ".store-product:not(.store-hidden)"
+                    );
+
+                section.classList.toggle(
+                    "store-hidden",
+                    visibleProducts.length === 0
+                );
+
+            }
+        );
+
+    }
+
+
+    storeCategoryButtons.forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    storeCategoryButtons
+                        .forEach(
+                            (item) => {
+
+                                item.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                    filterStore(
+                        button.dataset
+                            .storeCategory
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    document
+        .querySelectorAll(
+            ".buy-item-button"
+        )
+        .forEach((button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const product =
+                        button.closest(
+                            ".store-product"
+                        );
+
+                    if (!product) {
+                        return;
+                    }
+
+                    const itemId =
+                        product.dataset.itemId;
+
+                    const itemName =
+                        product.dataset.itemName;
+
+                    const category =
+                        product.dataset.category;
+
+                    const price =
+                        Number(
+                            product.dataset.price
+                        );
+
+
+                    if (
+                        !itemId ||
+                        !itemName ||
+                        !Number.isFinite(price)
+                    ) {
+
+                        showToast(
+                            "STORE ITEM ERROR",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        playerOwnsItem(
+                            itemId
+                        )
+                    ) {
+
+                        showToast(
+                            "YOU ALREADY OWN THIS ITEM"
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !canAfford(price)
+                    ) {
+
+                        showToast(
+                            `NOT ENOUGH ACE CREDITS — NEED ${formatNumber(price)} AC`,
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    const confirmed =
+                        window.confirm(
+                            `Purchase ${itemName} for ${formatNumber(price)} AC?`
+                        );
+
+                    if (!confirmed) {
+                        return;
+                    }
+
+
+                    balance -= price;
+
+                    saveBalance();
+
+
+                    const ownedItems =
+                        getOwnedItems();
+
+
+                    ownedItems.push({
+                        id: itemId,
+                        name: itemName,
+                        category: category,
+                        price: price,
+                        purchasedAt:
+                            new Date().toISOString()
+                    });
+
+
+                    saveOwnedItems(
+                        ownedItems
+                    );
+
+                    updateStoreButtons();
+
+                    showToast(
+                        `${itemName.toUpperCase()} PURCHASED`,
+                        "success"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    if (
+        storeCategoryButtons.length > 0
+    ) {
+
+        updateStoreButtons();
+
+        filterStore("all");
 
     }
 
@@ -345,6 +682,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     casinoTabs.forEach((tab) => {
 
         tab.addEventListener(
@@ -367,6 +705,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+
     if (window.location.hash) {
 
         const requestedGame =
@@ -385,16 +724,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 requestedGame
             )
         ) {
+
             activateGame(
                 requestedGame
             );
+
         }
 
     }
 
 
     /* =========================================================
-       BET CONTROL HELPER
+       BET CONTROL
     ========================================================= */
 
     function createBetControl(
@@ -421,6 +762,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let bet = startingBet;
 
+
         function update() {
 
             if (display) {
@@ -431,6 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         }
+
 
         if (down) {
 
@@ -450,6 +793,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
+
         if (up) {
 
             up.addEventListener(
@@ -468,7 +812,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
+
         update();
+
 
         return {
 
@@ -504,6 +850,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "blackjackDeal"
         );
 
+
     if (blackjackDeal) {
 
         const blackjackBetControl =
@@ -513,6 +860,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "blackjackBetUp",
                 100
             );
+
 
         const dealerCardsElement =
             document.getElementById(
@@ -554,59 +902,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 "blackjackDouble"
             );
 
+
         let deck = [];
         let playerHand = [];
         let dealerHand = [];
 
         let currentBet = 0;
         let roundActive = false;
-
-
-        function createDeck() {
-
-            const suits = [
-                "♠",
-                "♥",
-                "♦",
-                "♣"
-            ];
-
-            const ranks = [
-                "A",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "J",
-                "Q",
-                "K"
-            ];
-
-            const newDeck = [];
-
-            suits.forEach((suit) => {
-
-                ranks.forEach((rank) => {
-
-                    newDeck.push({
-                        rank,
-                        suit
-                    });
-
-                });
-
-            });
-
-            return shuffleArray(
-                newDeck
-            );
-
-        }
 
 
         function shuffleArray(array) {
@@ -639,13 +941,66 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        function createDeck() {
+
+            const suits = [
+                "♠",
+                "♥",
+                "♦",
+                "♣"
+            ];
+
+            const ranks = [
+                "A",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "J",
+                "Q",
+                "K"
+            ];
+
+            const newDeck = [];
+
+            suits.forEach(
+                (suit) => {
+
+                    ranks.forEach(
+                        (rank) => {
+
+                            newDeck.push({
+                                rank,
+                                suit
+                            });
+
+                        }
+                    );
+
+                }
+            );
+
+            return shuffleArray(
+                newDeck
+            );
+
+        }
+
+
         function drawCard() {
 
             if (
                 deck.length < 10
             ) {
+
                 deck =
                     createDeck();
+
             }
 
             return deck.pop();
@@ -656,17 +1011,25 @@ document.addEventListener("DOMContentLoaded", () => {
         function cardValue(card) {
 
             if (
-                ["J", "Q", "K"].includes(
+                [
+                    "J",
+                    "Q",
+                    "K"
+                ].includes(
                     card.rank
                 )
             ) {
+
                 return 10;
+
             }
 
             if (
                 card.rank === "A"
             ) {
+
                 return 11;
+
             }
 
             return Number(
@@ -692,12 +1055,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         card.rank === "A"
                 ).length;
 
+
             while (
                 value > 21 &&
                 aces > 0
             ) {
 
                 value -= 10;
+
                 aces--;
 
             }
@@ -736,6 +1101,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.suit === "♥" ||
                 card.suit === "♦";
 
+
             return `
                 <div class="playing-card">
 
@@ -773,6 +1139,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                     .join("");
 
+
             playerCardsElement.innerHTML =
                 playerHand
                     .map(
@@ -781,10 +1148,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                     .join("");
 
+
             playerValueElement.textContent =
                 `Your Hand: ${handValue(
                     playerHand
                 )}`;
+
 
             if (hideDealer) {
 
@@ -861,6 +1230,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             blackjackDeal.disabled =
                 false;
+
 
             if (
                 result === "blackjack"
@@ -950,6 +1320,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             const playerValue =
                 handValue(
                     playerHand
@@ -959,6 +1330,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 handValue(
                     dealerHand
                 );
+
 
             if (
                 dealerValue > 21
@@ -1005,9 +1377,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+
                 currentBet =
                     blackjackBetControl
                         .getBet();
+
 
                 if (
                     !canAfford(
@@ -1024,29 +1398,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
+
                 balance -=
                     currentBet;
 
                 saveBalance();
 
+
                 deck =
                     createDeck();
+
 
                 playerHand = [
                     drawCard(),
                     drawCard()
                 ];
 
+
                 dealerHand = [
                     drawCard(),
                     drawCard()
                 ];
 
+
                 roundActive = true;
+
 
                 renderBlackjack(true);
 
                 setBlackjackButtons(true);
+
 
                 setBlackjackMessage(
                     "Choose HIT, STAND, or DOUBLE."
@@ -1103,19 +1484,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+
                 playerHand.push(
                     drawCard()
                 );
 
+
                 renderBlackjack(true);
+
 
                 const value =
                     handValue(
                         playerHand
                     );
 
+
                 doubleButton.disabled =
                     true;
+
 
                 if (
                     value > 21
@@ -1159,8 +1545,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     !roundActive ||
                     playerHand.length !== 2
                 ) {
+
                     return;
+
                 }
+
 
                 if (
                     !canAfford(
@@ -1177,6 +1566,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
+
                 balance -=
                     currentBet;
 
@@ -1184,11 +1574,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 saveBalance();
 
+
                 playerHand.push(
                     drawCard()
                 );
 
+
                 renderBlackjack(true);
+
 
                 if (
                     handValue(
@@ -1203,6 +1596,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
 
                 }
+
 
                 dealerPlay();
 
@@ -1221,6 +1615,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "slotSpin"
         );
 
+
     if (slotSpinButton) {
 
         const slotBetControl =
@@ -1230,6 +1625,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "slotBetUp",
                 100
             );
+
 
         const reels = [
             document.getElementById(
@@ -1243,10 +1639,12 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         ];
 
+
         const slotMessage =
             document.getElementById(
                 "slotMessage"
             );
+
 
         const symbols = [
             "♠",
@@ -1300,6 +1698,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     slotBetControl
                         .getBet();
 
+
                 if (
                     !canAfford(bet)
                 ) {
@@ -1313,12 +1712,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
+
                 balance -= bet;
 
                 saveBalance();
 
+
                 slotSpinButton.disabled =
                     true;
+
 
                 reels.forEach(
                     (reel) => {
@@ -1329,6 +1731,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     }
                 );
+
 
                 setSlotMessage(
                     "Spinning..."
@@ -1360,6 +1763,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             animation
                         );
 
+
                         reels.forEach(
                             (reel) => {
 
@@ -1376,6 +1780,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             randomSymbol(),
                             randomSymbol()
                         ];
+
 
                         reels.forEach(
                             (reel, index) => {
@@ -1407,21 +1812,16 @@ document.addEventListener("DOMContentLoaded", () => {
                             multiplier = 12;
 
                         } else if (
-                            result[0] ===
-                                result[1] &&
-                            result[1] ===
-                                result[2]
+                            result[0] === result[1] &&
+                            result[1] === result[2]
                         ) {
 
                             multiplier = 8;
 
                         } else if (
-                            result[0] ===
-                                result[1] ||
-                            result[1] ===
-                                result[2] ||
-                            result[0] ===
-                                result[2]
+                            result[0] === result[1] ||
+                            result[1] === result[2] ||
+                            result[0] === result[2]
                         ) {
 
                             multiplier = 2;
@@ -1437,10 +1837,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                 bet *
                                 multiplier;
 
-                            balance +=
-                                payout;
+                            balance += payout;
 
                             saveBalance();
+
 
                             setSlotMessage(
                                 `WIN! ${formatNumber(
@@ -1483,6 +1883,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "rouletteSpin"
         );
 
+
     if (rouletteSpinButton) {
 
         const rouletteBetControl =
@@ -1493,50 +1894,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 100
             );
 
+
         const rouletteChoices =
             document.querySelectorAll(
                 ".roulette-choice"
             );
+
 
         const rouletteResult =
             document.getElementById(
                 "rouletteResult"
             );
 
+
         const rouletteMessage =
             document.getElementById(
                 "rouletteMessage"
             );
+
 
         const rouletteWheel =
             document.querySelector(
                 ".roulette-wheel"
             );
 
+
         let selectedRouletteBet =
             null;
 
 
-        const redNumbers = new Set([
-            1,
-            3,
-            5,
-            7,
-            9,
-            12,
-            14,
-            16,
-            18,
-            19,
-            21,
-            23,
-            25,
-            27,
-            30,
-            32,
-            34,
-            36
-        ]);
+        const redNumbers =
+            new Set([
+                1, 3, 5, 7, 9,
+                12, 14, 16, 18,
+                19, 21, 23, 25,
+                27, 30, 32, 34,
+                36
+            ]);
 
 
         rouletteChoices.forEach(
@@ -1557,17 +1951,21 @@ document.addEventListener("DOMContentLoaded", () => {
                                 }
                             );
 
+
                         button.classList.add(
                             "selected"
                         );
+
 
                         selectedRouletteBet =
                             button.dataset
                                 .rouletteChoice;
 
+
                         rouletteMessage
                             .className =
                                 "game-message";
+
 
                         rouletteMessage
                             .textContent =
@@ -1587,16 +1985,22 @@ document.addEventListener("DOMContentLoaded", () => {
             if (
                 number === 0
             ) {
+
                 return "green";
+
             }
+
 
             if (
                 redNumbers.has(
                     number
                 )
             ) {
+
                 return "red";
+
             }
+
 
             return "black";
 
@@ -1620,6 +2024,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             if (
                 selection === "black"
             ) {
@@ -1632,11 +2037,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             if (
                 number === 0
             ) {
+
                 return false;
+
             }
+
 
             if (
                 selection === "odd"
@@ -1648,6 +2057,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             if (
                 selection === "even"
             ) {
@@ -1657,6 +2067,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
             }
+
 
             if (
                 selection === "low"
@@ -1669,6 +2080,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             if (
                 selection === "high"
             ) {
@@ -1679,6 +2091,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
             }
+
 
             return false;
 
@@ -1703,9 +2116,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
+
                 const bet =
                     rouletteBetControl
                         .getBet();
+
 
                 if (
                     !canAfford(bet)
@@ -1726,21 +2141,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 saveBalance();
 
+
                 rouletteSpinButton.disabled =
                     true;
+
 
                 rouletteWheel.classList.add(
                     "spinning"
                 );
 
+
                 rouletteMessage.className =
                     "game-message";
+
 
                 rouletteMessage.textContent =
                     "Wheel spinning...";
 
 
-                let displayInterval =
+                const displayInterval =
                     setInterval(
                         () => {
 
@@ -1762,9 +2181,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             displayInterval
                         );
 
+
                         rouletteWheel.classList.remove(
                             "spinning"
                         );
+
 
                         const number =
                             Math.floor(
@@ -1772,13 +2193,16 @@ document.addEventListener("DOMContentLoaded", () => {
                                 37
                             );
 
+
                         const color =
                             rouletteColor(
                                 number
                             );
 
+
                         rouletteResult.textContent =
                             number;
+
 
                         if (
                             rouletteBetWins(
@@ -1793,6 +2217,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             balance += payout;
 
                             saveBalance();
+
 
                             rouletteMessage.textContent =
                                 `${number} ${color.toUpperCase()} — You won ${formatNumber(
@@ -1814,6 +2239,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         }
 
+
                         rouletteSpinButton.disabled =
                             false;
 
@@ -1828,13 +2254,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       HIGH ROLL DICE
+       HIGH ROLL
     ========================================================= */
 
     const diceRollButton =
         document.getElementById(
             "diceRoll"
         );
+
 
     if (diceRollButton) {
 
@@ -1846,30 +2273,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 100
             );
 
+
         const houseDie =
             document.getElementById(
                 "houseDie"
             );
+
 
         const playerDie =
             document.getElementById(
                 "playerDie"
             );
 
+
         const houseDieValue =
             document.getElementById(
                 "houseDieValue"
             );
+
 
         const playerDieValue =
             document.getElementById(
                 "playerDieValue"
             );
 
+
         const diceMessage =
             document.getElementById(
                 "diceMessage"
             );
+
 
         const diceFaces = [
             "⚀",
@@ -1885,7 +2318,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return (
                 Math.floor(
-                    Math.random() * 6
+                    Math.random() *
+                    6
                 ) + 1
             );
 
@@ -1899,6 +2333,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const bet =
                     diceBetControl
                         .getBet();
+
 
                 if (
                     !canAfford(bet)
@@ -1919,19 +2354,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 saveBalance();
 
+
                 diceRollButton.disabled =
                     true;
+
 
                 houseDie.classList.add(
                     "rolling"
                 );
 
+
                 playerDie.classList.add(
                     "rolling"
                 );
 
+
                 diceMessage.className =
                     "game-message";
+
 
                 diceMessage.textContent =
                     "Rolling...";
@@ -1943,14 +2383,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             houseDie.textContent =
                                 diceFaces[
-                                    randomDie() -
-                                    1
+                                    randomDie() - 1
                                 ];
+
 
                             playerDie.textContent =
                                 diceFaces[
-                                    randomDie() -
-                                    1
+                                    randomDie() - 1
                                 ];
 
                         },
@@ -1965,9 +2404,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             animation
                         );
 
+
                         houseDie.classList.remove(
                             "rolling"
                         );
+
 
                         playerDie.classList.remove(
                             "rolling"
@@ -1976,6 +2417,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         const house =
                             randomDie();
+
 
                         const player =
                             randomDie();
@@ -1986,6 +2428,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 house - 1
                             ];
 
+
                         playerDie.textContent =
                             diceFaces[
                                 player - 1
@@ -1994,6 +2437,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         houseDieValue.textContent =
                             house;
+
 
                         playerDieValue.textContent =
                             player;
@@ -2010,6 +2454,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             saveBalance();
 
+
                             diceMessage.textContent =
                                 `You rolled ${player}. House rolled ${house}. You won ${formatNumber(
                                     bet
@@ -2025,6 +2470,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             balance += bet;
 
                             saveBalance();
+
 
                             diceMessage.textContent =
                                 `Tie at ${player}. Your bet was returned.`;
@@ -2059,7 +2505,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       INITIAL DISPLAY
+       INITIAL PAGE LOAD
     ========================================================= */
 
     updateBalanceDisplays();
