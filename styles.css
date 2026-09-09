@@ -2187,3 +2187,446 @@ img{
     }
 
 }
+/* =========================================================
+   THE GILDED ACE
+   COLLECTION PAGE
+========================================================= */
+
+.collection-page-hero {
+    padding: 95px 20px 55px;
+    background:
+        radial-gradient(circle at top center, rgba(214, 179, 90, 0.10), transparent 40%),
+        linear-gradient(to bottom, #0a0a0a, #070707);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+}
+
+.collection-page-hero h1 {
+    margin: 10px 0 16px;
+    font-size: clamp(38px, 6vw, 72px);
+    line-height: 1;
+    letter-spacing: 3px;
+    color: var(--text);
+}
+
+.collection-page-hero p {
+    max-width: 720px;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.collection-hero-count {
+    margin-top: 28px;
+}
+
+.collection-hero-count span {
+    display: inline-block;
+    padding: 10px 18px;
+    border: 1px solid var(--gold-dark);
+    background: rgba(214, 179, 90, 0.06);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   COLLECTION BODY
+========================================================= */
+
+.collection-page {
+    padding: 60px 0 80px;
+    background: var(--bg);
+}
+
+
+/* =========================================================
+   COLLECTION SUMMARY
+========================================================= */
+
+.collection-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 35px;
+}
+
+.collection-stat {
+    min-height: 125px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(214, 179, 90, 0.05),
+            rgba(255, 255, 255, 0.01)
+        ),
+        var(--panel);
+
+    border: 1px solid var(--border);
+}
+
+.collection-stat-label {
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.collection-stat strong {
+    color: var(--gold);
+    font-size: 24px;
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   COLLECTION FILTERS
+========================================================= */
+
+.collection-filter-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-bottom: 35px;
+    padding-bottom: 25px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.collection-filter {
+    padding: 11px 16px;
+
+    border: 1px solid var(--border);
+    background: var(--panel);
+
+    color: var(--muted);
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.collection-filter:hover {
+    border-color: var(--gold-dark);
+    color: var(--gold);
+    transform: translateY(-1px);
+}
+
+.collection-filter.active {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: #080808;
+}
+
+
+/* =========================================================
+   COLLECTION CONTENT
+========================================================= */
+
+.collection-content {
+    min-height: 350px;
+}
+
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+
+/* =========================================================
+   COLLECTION ITEM
+========================================================= */
+
+.collection-item {
+    overflow: hidden;
+    position: relative;
+
+    background: var(--panel);
+    border: 1px solid var(--border);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.collection-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold-dark);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.collection-item-art {
+    min-height: 180px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(214, 179, 90, 0.12),
+            transparent 60%
+        ),
+        linear-gradient(
+            145deg,
+            #171717,
+            #0c0c0c
+        );
+
+    border-bottom: 1px solid var(--border);
+
+    color: var(--gold);
+
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.collection-item-details {
+    padding: 22px;
+}
+
+.collection-item-category {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--gold);
+
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+.collection-item-name {
+    margin: 0 0 10px;
+
+    color: var(--text);
+
+    font-size: 20px;
+    letter-spacing: 0.5px;
+}
+
+.collection-item-date {
+    margin-bottom: 20px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+.collection-item-bottom {
+    padding-top: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    border-top: 1px solid var(--border);
+}
+
+.collection-item-price {
+    color: var(--gold);
+
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+}
+
+.collection-owned-badge {
+    padding: 7px 10px;
+
+    border: 1px solid var(--gold-dark);
+    background: rgba(214, 179, 90, 0.06);
+
+    color: var(--gold);
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+
+/* =========================================================
+   EMPTY COLLECTION
+========================================================= */
+
+.collection-empty {
+    padding: 70px 25px;
+
+    text-align: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(214, 179, 90, 0.08),
+            transparent 60%
+        ),
+        var(--panel);
+
+    border: 1px solid var(--border);
+}
+
+.collection-empty-icon {
+    margin-bottom: 18px;
+
+    color: var(--gold);
+
+    font-size: 64px;
+}
+
+.collection-empty h2 {
+    margin: 8px 0 15px;
+
+    color: var(--text);
+
+    font-size: clamp(26px, 4vw, 42px);
+    letter-spacing: 2px;
+}
+
+.collection-empty p {
+    max-width: 600px;
+
+    margin: 0 auto 25px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.collection-store-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 160px;
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   COLLECTION DISCLAIMER
+========================================================= */
+
+.collection-disclaimer {
+    margin-top: 45px;
+    padding: 24px;
+
+    border: 1px solid var(--border);
+    background: var(--panel);
+}
+
+.collection-disclaimer strong {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: var(--gold);
+
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.collection-disclaimer p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   HIDDEN COLLECTION ITEMS
+========================================================= */
+
+.collection-item.collection-hidden {
+    display: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .collection-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 760px) {
+
+    .collection-page-hero {
+        padding-top: 70px;
+    }
+
+    .collection-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .collection-filter-nav {
+        justify-content: center;
+    }
+
+    .collection-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .collection-stat {
+        min-height: 105px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .collection-page {
+        padding-top: 40px;
+    }
+
+    .collection-filter {
+        flex: 1 1 calc(50% - 10px);
+        text-align: center;
+    }
+
+    .collection-item-art {
+        min-height: 150px;
+        font-size: 46px;
+    }
+
+    .collection-item-details {
+        padding: 18px;
+    }
+
+}
