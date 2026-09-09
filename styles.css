@@ -54,6 +54,7 @@ img{
     display:block;
 }
 
+
 /* =========================
    HEADER
 ========================= */
@@ -198,6 +199,7 @@ img{
     color:var(--gold);
 }
 
+
 /* =========================
    HERO
 ========================= */
@@ -329,6 +331,7 @@ img{
     color:#777;
 }
 
+
 /* =========================
    GLOBAL SECTIONS
 ========================= */
@@ -380,6 +383,7 @@ img{
 .text-link:hover{
     color:var(--gold);
 }
+
 
 /* =========================
    DASHBOARD
@@ -469,6 +473,7 @@ img{
     color:#111;
 }
 
+
 /* =========================
    GAMES
 ========================= */
@@ -544,8 +549,9 @@ img{
     letter-spacing:1.5px;
 }
 
+
 /* =========================
-   STORE
+   STORE HOMEPAGE
 ========================= */
 
 .store-banner{
@@ -606,6 +612,7 @@ img{
     font-size:38px;
 }
 
+
 /* =========================
    LEADERBOARD
 ========================= */
@@ -662,6 +669,7 @@ img{
     font-weight:700;
 }
 
+
 /* =========================
    DISCLAIMER
 ========================= */
@@ -690,6 +698,7 @@ img{
     font-size:12px;
     line-height:1.8;
 }
+
 
 /* =========================
    FOOTER
@@ -758,8 +767,9 @@ img{
     text-align:right;
 }
 
+
 /* =========================
-   RESPONSIVE
+   GLOBAL RESPONSIVE
 ========================= */
 
 @media (max-width:1100px){
@@ -908,9 +918,12 @@ img{
         width:100%;
     }
 }
+
+
 /* =========================================================
    THE GILDED ACE - CASINO PAGE
 ========================================================= */
+
 
 /* =========================
    CASINO HERO
@@ -1222,7 +1235,7 @@ img{
     transition:.2s ease;
 }
 
-.bet-adjuster button:hover{
+.bet-adjuster button:hover:not(:disabled){
     border-color:var(--gold);
     background:#1d1d1d;
 }
@@ -1277,7 +1290,9 @@ img{
     color:#111;
 }
 
-.casino-action:disabled{
+.casino-action:disabled,
+.bet-adjuster button:disabled,
+.roulette-choice:disabled{
     opacity:.35;
     cursor:not-allowed;
 }
@@ -1516,7 +1531,7 @@ img{
     transition:.2s ease;
 }
 
-.roulette-choice:hover{
+.roulette-choice:hover:not(:disabled){
     border-color:var(--gold);
     color:var(--gold);
 }
@@ -1643,7 +1658,7 @@ img{
 
 
 /* =========================
-   CASINO MOBILE
+   CASINO RESPONSIVE
 ========================= */
 
 @media (max-width:900px){
@@ -1682,7 +1697,6 @@ img{
         grid-template-columns:1fr;
     }
 }
-
 
 @media (max-width:700px){
 
@@ -1756,7 +1770,6 @@ img{
     }
 }
 
-
 @media (max-width:450px){
 
     .casino-tab{
@@ -1789,9 +1802,12 @@ img{
         min-width:90px;
     }
 }
+
+
 /* =========================================================
    THE GILDED ACE - STORE PAGE
 ========================================================= */
+
 
 /* =========================
    STORE HERO
@@ -2130,7 +2146,7 @@ img{
 
 
 /* =========================
-   STORE FILTER ANIMATION
+   STORE FILTER
 ========================= */
 
 .store-product.store-hidden{
@@ -2143,7 +2159,7 @@ img{
 
 
 /* =========================
-   RESPONSIVE
+   STORE RESPONSIVE
 ========================= */
 
 @media (max-width:1100px){
@@ -2151,7 +2167,6 @@ img{
     .store-product-grid{
         grid-template-columns:repeat(2,1fr);
     }
-
 }
 
 @media (max-width:700px){
@@ -2185,448 +2200,436 @@ img{
     .buy-item-button{
         width:100%;
     }
-
 }
+
+
 /* =========================================================
-   THE GILDED ACE
+   THE GILDED ACE - COLLECTION PAGE
+========================================================= */
+
+
+/* =========================
+   COLLECTION HERO
+========================= */
+
+.collection-page-hero{
+    padding:90px 0 65px;
+    background:
+        radial-gradient(circle at 75% 30%, rgba(214,179,90,.10), transparent 30%),
+        linear-gradient(180deg,#0b0b0b,#070707);
+    border-bottom:1px solid #1d1d1d;
+    text-align:left;
+}
+
+.collection-page-hero h1{
+    margin-top:12px;
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:clamp(48px,7vw,82px);
+    font-weight:400;
+    line-height:1;
+    letter-spacing:-2px;
+}
+
+.collection-page-hero p{
+    margin-top:18px;
+    max-width:760px;
+    color:#999;
+    font-size:14px;
+    line-height:1.8;
+}
+
+.collection-hero-count{
+    margin-top:32px;
+    display:inline-flex;
+}
+
+.collection-hero-count span{
+    display:block;
+    padding:18px 22px;
+    border:1px solid rgba(214,179,90,.28);
+    background:#0d0d0d;
+    color:var(--gold);
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:22px;
+    font-weight:400;
+    letter-spacing:1px;
+}
+
+
+/* =========================
    COLLECTION PAGE
-========================================================= */
+========================= */
 
-.collection-page-hero {
-    padding: 95px 20px 55px;
-    background:
-        radial-gradient(circle at top center, rgba(214, 179, 90, 0.10), transparent 40%),
-        linear-gradient(to bottom, #0a0a0a, #070707);
-    border-bottom: 1px solid var(--border);
-    text-align: center;
-}
-
-.collection-page-hero h1 {
-    margin: 10px 0 16px;
-    font-size: clamp(38px, 6vw, 72px);
-    line-height: 1;
-    letter-spacing: 3px;
-    color: var(--text);
-}
-
-.collection-page-hero p {
-    max-width: 720px;
-    margin: 0 auto;
-    color: var(--muted);
-    font-size: 15px;
-    line-height: 1.8;
-}
-
-.collection-hero-count {
-    margin-top: 28px;
-}
-
-.collection-hero-count span {
-    display: inline-block;
-    padding: 10px 18px;
-    border: 1px solid var(--gold-dark);
-    background: rgba(214, 179, 90, 0.06);
-    color: var(--gold);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
+.collection-page{
+    padding:55px 0 90px;
 }
 
 
-/* =========================================================
-   COLLECTION BODY
-========================================================= */
-
-.collection-page {
-    padding: 60px 0 80px;
-    background: var(--bg);
-}
-
-
-/* =========================================================
+/* =========================
    COLLECTION SUMMARY
-========================================================= */
+========================= */
 
-.collection-summary {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    margin-bottom: 35px;
+.collection-summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-bottom:55px;
 }
 
-.collection-stat {
-    min-height: 125px;
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(214, 179, 90, 0.05),
-            rgba(255, 255, 255, 0.01)
-        ),
-        var(--panel);
-
-    border: 1px solid var(--border);
+.collection-stat{
+    min-height:150px;
+    padding:28px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    border:1px solid #292929;
+    background:linear-gradient(145deg,#131313,#0b0b0b);
 }
 
-.collection-stat-label {
-    margin-bottom: 10px;
-    color: var(--muted);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
+.collection-stat::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:2px;
+    background:linear-gradient(90deg,var(--gold),transparent);
+    opacity:.4;
 }
 
-.collection-stat strong {
-    color: var(--gold);
-    font-size: 24px;
-    letter-spacing: 1px;
+.collection-stat-label{
+    color:#777;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.6px;
+}
+
+.collection-stat strong{
+    margin-top:12px;
+    color:var(--gold);
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:28px;
+    font-weight:400;
 }
 
 
-/* =========================================================
+/* =========================
    COLLECTION FILTERS
-========================================================= */
+========================= */
 
-.collection-filter-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-
-    margin-bottom: 35px;
-    padding-bottom: 25px;
-
-    border-bottom: 1px solid var(--border);
+.collection-filter-nav{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:55px;
+    padding-bottom:20px;
+    border-bottom:1px solid #222;
 }
 
-.collection-filter {
-    padding: 11px 16px;
-
-    border: 1px solid var(--border);
-    background: var(--panel);
-
-    color: var(--muted);
-
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.4px;
-
-    cursor: pointer;
-
-    transition:
-        border-color 0.2s ease,
-        color 0.2s ease,
-        background 0.2s ease,
-        transform 0.2s ease;
+.collection-filter{
+    min-height:42px;
+    padding:0 18px;
+    border:1px solid #292929;
+    background:#0d0d0d;
+    color:#888;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.4px;
+    transition:.2s ease;
 }
 
-.collection-filter:hover {
-    border-color: var(--gold-dark);
-    color: var(--gold);
-    transform: translateY(-1px);
+.collection-filter:hover{
+    color:var(--gold);
+    border-color:var(--gold);
 }
 
-.collection-filter.active {
-    border-color: var(--gold);
-    background: var(--gold);
-    color: #080808;
+.collection-filter.active{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:#111;
 }
 
 
-/* =========================================================
-   COLLECTION CONTENT
-========================================================= */
+/* =========================
+   COLLECTION GRID
+========================= */
 
-.collection-content {
-    min-height: 350px;
+.collection-content{
+    min-height:350px;
 }
 
-.collection-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+.collection-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
 }
 
 
-/* =========================================================
-   COLLECTION ITEM
-========================================================= */
+/* =========================
+   COLLECTION ITEM CARD
+========================= */
 
-.collection-item {
-    overflow: hidden;
-    position: relative;
-
-    background: var(--panel);
-    border: 1px solid var(--border);
-
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
+.collection-item{
+    min-height:410px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    border:1px solid #292929;
+    background:linear-gradient(145deg,#131313,#0b0b0b);
+    transition:.22s ease;
 }
 
-.collection-item:hover {
-    transform: translateY(-4px);
-    border-color: var(--gold-dark);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+.collection-item:hover{
+    transform:translateY(-4px);
+    border-color:rgba(214,179,90,.55);
+    box-shadow:0 20px 45px rgba(0,0,0,.35);
 }
 
-.collection-item-art {
-    min-height: 180px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* =========================
+   COLLECTION ART
+========================= */
 
+.collection-item-art{
+    min-height:180px;
+    display:grid;
+    place-items:center;
+    position:relative;
+    overflow:hidden;
     background:
-        radial-gradient(
-            circle at center,
-            rgba(214, 179, 90, 0.12),
-            transparent 60%
-        ),
-        linear-gradient(
-            145deg,
-            #171717,
-            #0c0c0c
-        );
-
-    border-bottom: 1px solid var(--border);
-
-    color: var(--gold);
-
-    font-size: 56px;
-    font-weight: 800;
-    letter-spacing: 2px;
+        radial-gradient(circle at center, rgba(214,179,90,.12), transparent 35%),
+        linear-gradient(145deg,#111,#080808);
+    border-bottom:1px solid #242424;
+    color:var(--gold);
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:64px;
+    font-weight:400;
 }
 
-.collection-item-details {
-    padding: 22px;
-}
-
-.collection-item-category {
-    display: block;
-
-    margin-bottom: 8px;
-
-    color: var(--gold);
-
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-
-    text-transform: uppercase;
-}
-
-.collection-item-name {
-    margin: 0 0 10px;
-
-    color: var(--text);
-
-    font-size: 20px;
-    letter-spacing: 0.5px;
-}
-
-.collection-item-date {
-    margin-bottom: 20px;
-
-    color: var(--muted);
-
-    font-size: 11px;
-}
-
-.collection-item-bottom {
-    padding-top: 15px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-
-    border-top: 1px solid var(--border);
-}
-
-.collection-item-price {
-    color: var(--gold);
-
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.6px;
-}
-
-.collection-owned-badge {
-    padding: 7px 10px;
-
-    border: 1px solid var(--gold-dark);
-    background: rgba(214, 179, 90, 0.06);
-
-    color: var(--gold);
-
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
+.collection-item-art::before{
+    content:"";
+    position:absolute;
+    inset:18px;
+    border:1px solid rgba(214,179,90,.18);
+    pointer-events:none;
 }
 
 
-/* =========================================================
+/* =========================
+   COLLECTION DETAILS
+========================= */
+
+.collection-item-details{
+    flex:1;
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+}
+
+.collection-item-category{
+    color:#777;
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+}
+
+.collection-item-name{
+    margin-top:9px;
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:25px;
+    font-weight:400;
+}
+
+.collection-item-date{
+    margin-top:12px;
+    color:#929292;
+    font-size:11px;
+    line-height:1.75;
+    letter-spacing:.5px;
+}
+
+.collection-item-bottom{
+    margin-top:auto;
+    padding-top:24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.collection-item-price{
+    color:var(--gold);
+    font-size:13px;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.collection-owned-badge{
+    min-height:40px;
+    padding:0 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #45684f;
+    background:rgba(63,107,74,.10);
+    color:#7fba8d;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.2px;
+}
+
+
+/* =========================
    EMPTY COLLECTION
-========================================================= */
+========================= */
 
-.collection-empty {
-    padding: 70px 25px;
-
-    text-align: center;
-
+.collection-empty{
+    padding:70px 30px;
+    border:1px solid #292929;
     background:
-        radial-gradient(
-            circle at center,
-            rgba(214, 179, 90, 0.08),
-            transparent 60%
-        ),
-        var(--panel);
-
-    border: 1px solid var(--border);
+        radial-gradient(circle at center, rgba(214,179,90,.08), transparent 35%),
+        #0d0d0d;
+    text-align:center;
 }
 
-.collection-empty-icon {
-    margin-bottom: 18px;
-
-    color: var(--gold);
-
-    font-size: 64px;
+.collection-empty-icon{
+    color:var(--gold);
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:64px;
 }
 
-.collection-empty h2 {
-    margin: 8px 0 15px;
-
-    color: var(--text);
-
-    font-size: clamp(26px, 4vw, 42px);
-    letter-spacing: 2px;
+.collection-empty h2{
+    margin-top:10px;
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:36px;
+    font-weight:400;
 }
 
-.collection-empty p {
-    max-width: 600px;
-
-    margin: 0 auto 25px;
-
-    color: var(--muted);
-
-    font-size: 14px;
-    line-height: 1.8;
+.collection-empty p{
+    max-width:650px;
+    margin:14px auto 0;
+    color:#858585;
+    font-size:12px;
+    line-height:1.8;
 }
 
-.collection-store-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.collection-store-button{
+    margin-top:28px;
+    display:inline-flex;
+    min-height:48px;
+    padding:0 24px;
+    align-items:center;
+    justify-content:center;
+    border:1px solid var(--gold);
+    background:var(--gold);
+    color:#111;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    transition:.22s ease;
+}
 
-    min-width: 160px;
-
-    text-decoration: none;
+.collection-store-button:hover{
+    background:#ecd079;
+    border-color:#ecd079;
+    color:#111;
 }
 
 
-/* =========================================================
+/* =========================
    COLLECTION DISCLAIMER
-========================================================= */
+========================= */
 
-.collection-disclaimer {
-    margin-top: 45px;
-    padding: 24px;
-
-    border: 1px solid var(--border);
-    background: var(--panel);
+.collection-disclaimer{
+    margin-top:75px;
+    padding:30px;
+    border:1px solid #282828;
+    background:#0d0d0d;
+    text-align:center;
 }
 
-.collection-disclaimer strong {
-    display: block;
-
-    margin-bottom: 10px;
-
-    color: var(--gold);
-
-    font-size: 10px;
-    letter-spacing: 2px;
+.collection-disclaimer strong{
+    display:block;
+    color:var(--gold);
+    font-size:10px;
+    letter-spacing:1.7px;
 }
 
-.collection-disclaimer p {
-    margin: 0;
-
-    color: var(--muted);
-
-    font-size: 12px;
-    line-height: 1.8;
+.collection-disclaimer p{
+    max-width:900px;
+    margin:12px auto 0;
+    color:#818181;
+    font-size:12px;
+    line-height:1.8;
 }
 
 
-/* =========================================================
-   HIDDEN COLLECTION ITEMS
-========================================================= */
+/* =========================
+   HIDDEN ITEMS
+========================= */
 
-.collection-item.collection-hidden {
-    display: none;
+.collection-item.collection-hidden{
+    display:none;
 }
 
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+/* =========================
+   COLLECTION RESPONSIVE
+========================= */
 
-@media (max-width: 1000px) {
+@media (max-width:1100px){
 
-    .collection-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .collection-grid{
+        grid-template-columns:repeat(2,1fr);
     }
-
 }
 
+@media (max-width:700px){
 
-@media (max-width: 760px) {
-
-    .collection-page-hero {
-        padding-top: 70px;
+    .collection-page-hero{
+        padding:65px 0 50px;
     }
 
-    .collection-summary {
-        grid-template-columns: 1fr;
+    .collection-summary{
+        grid-template-columns:1fr;
     }
 
-    .collection-filter-nav {
-        justify-content: center;
+    .collection-filter-nav{
+        gap:6px;
     }
 
-    .collection-grid {
-        grid-template-columns: 1fr;
+    .collection-filter{
+        flex:1;
+        min-width:110px;
     }
 
-    .collection-stat {
-        min-height: 105px;
+    .collection-grid{
+        grid-template-columns:1fr;
     }
 
+    .collection-item-bottom{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .collection-owned-badge{
+        width:100%;
+    }
 }
 
+@media (max-width:480px){
 
-@media (max-width: 480px) {
-
-    .collection-page {
-        padding-top: 40px;
+    .collection-page-hero h1{
+        font-size:48px;
     }
 
-    .collection-filter {
-        flex: 1 1 calc(50% - 10px);
-        text-align: center;
+    .collection-empty{
+        padding:50px 20px;
     }
 
-    .collection-item-art {
-        min-height: 150px;
-        font-size: 46px;
+    .collection-empty h2{
+        font-size:30px;
     }
-
-    .collection-item-details {
-        padding: 18px;
-    }
-
 }
