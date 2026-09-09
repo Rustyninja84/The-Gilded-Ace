@@ -28,17 +28,34 @@ function loadProfile() {
     const saved =
         localStorage.getItem("gildedAceProfile");
 
+
     if (!saved) {
+
+        const oldBalance =
+            Number(
+                localStorage.getItem("ga_balance")
+            );
+
 
         const fresh = {
             ...DEFAULT_PROFILE,
             collection: []
         };
 
+
+        if (
+            Number.isFinite(oldBalance) &&
+            oldBalance > 0
+        ) {
+            fresh.balance = oldBalance;
+        }
+
+
         localStorage.setItem(
             "gildedAceProfile",
             JSON.stringify(fresh)
         );
+
 
         return fresh;
     }
@@ -46,7 +63,9 @@ function loadProfile() {
 
     try {
 
-        const parsed = JSON.parse(saved);
+        const parsed =
+            JSON.parse(saved);
+
 
         return {
             ...DEFAULT_PROFILE,
@@ -65,12 +84,13 @@ function loadProfile() {
             error
         );
 
+
         return {
             ...DEFAULT_PROFILE,
             collection: []
         };
-    }
 
+    }
 }
 
 
@@ -84,6 +104,7 @@ function saveProfile() {
         JSON.stringify(profile)
     );
 
+
     updateAllDisplays();
 
 }
@@ -92,8 +113,10 @@ function saveProfile() {
 function formatCredits(amount) {
 
     return (
-        Number(amount || 0).toLocaleString()
-        + " AC"
+        Number(amount || 0)
+            .toLocaleString()
+        +
+        " AC"
     );
 
 }
@@ -105,24 +128,30 @@ function formatCredits(amount) {
 
 function setText(selector, value) {
 
-    const element = $(selector);
+    const element =
+        $(selector);
+
 
     if (element) {
-        element.textContent = value;
-    }
 
+        element.textContent =
+            value;
+
+    }
 }
 
 
 function updateBalanceDisplays() {
 
-    $$("[data-balance]").forEach((element) => {
+    $$("[data-balance]")
+        .forEach((element) => {
 
-        element.textContent =
-            formatCredits(profile.balance);
+            element.textContent =
+                formatCredits(
+                    profile.balance
+                );
 
-    });
-
+        });
 }
 
 
@@ -146,7 +175,9 @@ function updateAllDisplays() {
 function claimDaily() {
 
     const today =
-        new Date().toDateString();
+        new Date()
+            .toDateString();
+
 
     const lastClaim =
         localStorage.getItem(
@@ -296,7 +327,8 @@ function buyItem(name, price) {
 
     const owned =
         profile.collection.some(
-            (item) => item.name === name
+            (item) =>
+                item.name === name
         );
 
 
@@ -358,13 +390,15 @@ function buyItem(name, price) {
 function updateStoreButtons() {
 
     const buttons =
-        $$("button[onclick^='buyItem']");
+        $$("button[onclick*='buyItem']");
 
 
     buttons.forEach((button) => {
 
         const onclick =
-            button.getAttribute("onclick");
+            button.getAttribute(
+                "onclick"
+            );
 
 
         if (!onclick) {
@@ -402,9 +436,6 @@ function updateStoreButtons() {
             button.disabled =
                 true;
 
-            button.style.opacity =
-                ".55";
-
         }
 
     });
@@ -420,21 +451,23 @@ let currentCollectionFilter =
     "all";
 
 
-function filterCollection(category, button) {
+function filterCollection(
+    category,
+    button
+) {
 
     currentCollectionFilter =
         category;
 
 
-    $$(".collection-filter").forEach(
-        (element) => {
+    $$(".collection-filter")
+        .forEach((element) => {
 
             element.classList.remove(
                 "selected"
             );
 
-        }
-    );
+        });
 
 
     if (button) {
@@ -483,10 +516,14 @@ function updateCollectionPage() {
     filtered.forEach((item) => {
 
         const card =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         card.className =
             "card collection-item";
+
 
         card.dataset.category =
             item.category;
@@ -541,7 +578,8 @@ function updateCollectionPage() {
     const value =
         items.reduce(
             (sum, item) =>
-                sum + Number(item.price || 0),
+                sum +
+                Number(item.price || 0),
             0
         );
 
@@ -562,6 +600,7 @@ function updateCollectionPage() {
                 ) {
                     return item;
                 }
+
 
                 return best;
 
@@ -603,8 +642,11 @@ function getMembershipTier(balance) {
             current: "DIAMOND CLUB",
             next: "CASINO OWNER",
             progress:
-                ((balance - 5000000) /
-                5000000) * 100
+                (
+                    (balance - 5000000)
+                    /
+                    5000000
+                ) * 100
         };
 
     }
@@ -616,8 +658,11 @@ function getMembershipTier(balance) {
             current: "HIGH ROLLER",
             next: "DIAMOND CLUB",
             progress:
-                ((balance - 1000000) /
-                4000000) * 100
+                (
+                    (balance - 1000000)
+                    /
+                    4000000
+                ) * 100
         };
 
     }
@@ -629,8 +674,11 @@ function getMembershipTier(balance) {
             current: "GOLD MEMBER",
             next: "HIGH ROLLER",
             progress:
-                ((balance - 100000) /
-                900000) * 100
+                (
+                    (balance - 100000)
+                    /
+                    900000
+                ) * 100
         };
 
     }
@@ -667,9 +715,15 @@ function updateProfilePage() {
     );
 
 
+    const statusLabel =
+        tier.current === "STANDARD"
+            ? "STANDARD MEMBER"
+            : tier.current;
+
+
     setText(
         "#profileStatus",
-        `${tier.current} MEMBER`
+        statusLabel
     );
 
 
@@ -692,13 +746,15 @@ function updateProfilePage() {
     if (bar) {
 
         bar.style.width =
-            `${Math.max(
-                0,
-                Math.min(
-                    100,
-                    tier.progress
+            `${
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        tier.progress
+                    )
                 )
-            )}%`;
+            }%`;
 
     }
 
@@ -760,7 +816,8 @@ function updateProfilePage() {
     const value =
         profile.collection.reduce(
             (sum, item) =>
-                sum + Number(item.price || 0),
+                sum +
+                Number(item.price || 0),
             0
         );
 
@@ -781,6 +838,7 @@ function updateProfilePage() {
                 ) {
                     return item;
                 }
+
 
                 return best;
 
@@ -825,7 +883,10 @@ function changeUsername() {
 
 
     profile.username =
-        name.substring(0, 20);
+        name.substring(
+            0,
+            20
+        );
 
 
     input.value =
@@ -880,7 +941,10 @@ function resetGildedProfile() {
    GAME STATISTICS
    ========================================================== */
 
-function recordResult(won, game) {
+function recordResult(
+    won,
+    game
+) {
 
     profile.gamesPlayed++;
 
@@ -951,7 +1015,8 @@ let blackjackPlayer = [];
 
 let blackjackDealer = [];
 
-let blackjackActive = false;
+let blackjackActive =
+    false;
 
 
 function shuffle(array) {
@@ -1037,7 +1102,8 @@ function buildDeck() {
 function cardValue(card) {
 
     if (
-        ["J", "Q", "K"].includes(card.rank)
+        ["J", "Q", "K"]
+            .includes(card.rank)
     ) {
 
         return 10;
@@ -1052,7 +1118,9 @@ function cardValue(card) {
     }
 
 
-    return Number(card.rank);
+    return Number(
+        card.rank
+    );
 
 }
 
@@ -1113,6 +1181,7 @@ function renderBlackjack(
     const playerCards =
         $("#playerCards");
 
+
     const dealerCards =
         $("#dealerCards");
 
@@ -1137,7 +1206,9 @@ function renderBlackjack(
             dealerCards.textContent =
                 cardText(
                     blackjackDealer[0]
-                ) + " ?";
+                )
+                +
+                " ?";
 
         } else {
 
@@ -1423,7 +1494,8 @@ function spinSlots() {
 
     if (jackpot) {
 
-        profile.balance += 2500;
+        profile.balance +=
+            2500;
 
 
         setText(
@@ -1456,11 +1528,10 @@ function spinSlots() {
 
 
 /* ==========================================================
-   EUROPEAN ROULETTE DATA
+   EUROPEAN ROULETTE
    ========================================================== */
 
 const EUROPEAN_WHEEL = [
-
     0,
     32,
     15,
@@ -1498,13 +1569,11 @@ const EUROPEAN_WHEEL = [
     35,
     3,
     26
-
 ];
 
 
 const RED_NUMBERS =
     new Set([
-
         1,
         3,
         5,
@@ -1523,7 +1592,6 @@ const RED_NUMBERS =
         32,
         34,
         36
-
     ]);
 
 
@@ -1535,15 +1603,7 @@ const POCKET_ANGLE =
     360 / POCKET_COUNT;
 
 
-/* ==========================================================
-   ROULETTE STATE
-   ========================================================== */
-
 let selectedRouletteBet =
-    null;
-
-
-let selectedRouletteButton =
     null;
 
 
@@ -1564,40 +1624,63 @@ let ballRotation =
 
 
 /* ==========================================================
-   NUMBER COLOR
+   ROULETTE COLORS
    ========================================================== */
 
 function rouletteColor(number) {
 
     if (number === 0) {
+
         return "green";
+
     }
 
 
-    if (
-        RED_NUMBERS.has(number)
-    ) {
-        return "red";
+    return RED_NUMBERS.has(number)
+        ? "red"
+        : "black";
+
+}
+
+
+function rouletteColorHex(number) {
+
+    if (number === 0) {
+
+        return "#087541";
+
     }
 
 
-    return "black";
+    return RED_NUMBERS.has(number)
+        ? "#a50b20"
+        : "#111111";
 
 }
 
 
 /* ==========================================================
-   GENERATE REAL WHEEL POCKETS
+   BUILD ROULETTE WHEEL
    ========================================================== */
 
 function buildRouletteWheel() {
 
+    const wheel =
+        document.getElementById(
+            "rouletteWheel"
+        );
+
+
     const layer =
-        $("#roulettePocketLayer");
+        document.getElementById(
+            "roulettePocketLayer"
+        );
 
 
-    if (!layer) {
+    if (!wheel || !layer) {
+
         return;
+
     }
 
 
@@ -1605,55 +1688,134 @@ function buildRouletteWheel() {
         "";
 
 
+    /*
+        Construct 37 exact sectors.
+
+        "-POCKET_ANGLE / 2" makes the
+        center of pocket zero line up
+        exactly with 12 o'clock.
+    */
+
+    const sectors = [];
+
+
     EUROPEAN_WHEEL.forEach(
         (number, index) => {
 
-            const pocket =
+            const start =
+                index *
+                POCKET_ANGLE;
+
+
+            const end =
+                (index + 1) *
+                POCKET_ANGLE;
+
+
+            sectors.push(
+                `${rouletteColorHex(number)} ${start}deg ${end}deg`
+            );
+
+        }
+    );
+
+
+    wheel.style.background =
+        `
+        conic-gradient(
+            from ${-POCKET_ANGLE / 2}deg,
+            ${sectors.join(",")}
+        )
+        `;
+
+
+    /*
+        Draw each number directly
+        over the center of its pocket.
+    */
+
+    EUROPEAN_WHEEL.forEach(
+        (number, index) => {
+
+            const label =
                 document.createElement(
                     "div"
                 );
 
 
-            const color =
-                rouletteColor(number);
+            label.className =
+                "roulette-pocket-number";
 
 
-            pocket.className =
-                `roulette-pocket ${color}`;
+            label.textContent =
+                number;
 
 
             const angle =
-                index * POCKET_ANGLE;
+                index *
+                POCKET_ANGLE;
 
 
-            pocket.style.transform =
+            /*
+                Wheel coordinate system:
+
+                0 degrees = top
+                positive = clockwise
+            */
+
+            const radians =
+                (
+                    angle - 90
+                )
+                *
+                Math.PI
+                /
+                180;
+
+
+            /*
+                44% puts the labels
+                toward the outside edge.
+            */
+
+            const radius =
+                44;
+
+
+            const x =
+                50 +
+                Math.cos(radians) *
+                radius;
+
+
+            const y =
+                50 +
+                Math.sin(radians) *
+                radius;
+
+
+            label.style.left =
+                `${x}%`;
+
+
+            label.style.top =
+                `${y}%`;
+
+
+            /*
+                Rotate label so its top
+                points toward the outer rim.
+            */
+
+            label.style.transform =
                 `
-                translateX(-50%)
+                translate(-50%, -50%)
                 rotate(${angle}deg)
                 `;
 
 
-            const numberLabel =
-                document.createElement(
-                    "span"
-                );
-
-
-            numberLabel.className =
-                "roulette-pocket-number";
-
-
-            numberLabel.textContent =
-                number;
-
-
-            pocket.appendChild(
-                numberLabel
-            );
-
-
             layer.appendChild(
-                pocket
+                label
             );
 
         }
@@ -1663,17 +1825,21 @@ function buildRouletteWheel() {
 
 
 /* ==========================================================
-   GENERATE 1-36 BETTING TABLE
+   BUILD ROULETTE TABLE
    ========================================================== */
 
 function buildRouletteTable() {
 
     const grid =
-        $("#rouletteNumberGrid");
+        document.getElementById(
+            "rouletteNumberGrid"
+        );
 
 
     if (!grid) {
+
         return;
+
     }
 
 
@@ -1682,63 +1848,76 @@ function buildRouletteTable() {
 
 
     /*
-        Standard roulette table columns:
+        Standard roulette betting table:
 
-        3  6  9  12 ...
-        2  5  8  11 ...
-        1  4  7  10 ...
-
-        CSS grid-auto-flow: column handles
-        the three-row layout on desktop.
+        3  6  9  12 15 18 21 24 27 30 33 36
+        2  5  8  11 14 17 20 23 26 29 32 35
+        1  4  7  10 13 16 19 22 25 28 31 34
     */
 
-
     for (
-        let number = 1;
-        number <= 36;
-        number++
+        let column = 0;
+        column < 12;
+        column++
     ) {
 
-        const button =
-            document.createElement(
-                "button"
-            );
+        const lowNumber =
+            column * 3 + 1;
 
 
-        button.type =
-            "button";
+        const numbers = [
+            lowNumber + 2,
+            lowNumber + 1,
+            lowNumber
+        ];
 
 
-        button.className =
-            `
-            roulette-number-cell
-            ${rouletteColor(number)}
-            `;
+        numbers.forEach(
+            (number) => {
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
 
 
-        button.textContent =
-            number;
+                button.type =
+                    "button";
 
 
-        button.dataset.number =
-            number;
+                button.className =
+                    `
+                    roulette-number-cell
+                    ${rouletteColor(number)}
+                    `;
 
 
-        button.addEventListener(
-            "click",
-            () => {
+                button.textContent =
+                    number;
 
-                selectNumberBet(
-                    number,
+
+                button.dataset.number =
+                    number;
+
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        selectNumberBet(
+                            number,
+                            this
+                        );
+
+                    }
+                );
+
+
+                grid.appendChild(
                     button
                 );
 
             }
-        );
-
-
-        grid.appendChild(
-            button
         );
 
     }
@@ -1747,42 +1926,22 @@ function buildRouletteTable() {
 
 
 /* ==========================================================
-   CLEAR SELECTED BET BUTTON
+   CLEAR ROULETTE SELECTION
    ========================================================== */
 
 function clearRouletteSelection() {
 
-    $$(".roulette-table button").forEach(
-        (button) => {
+    document
+        .querySelectorAll(
+            ".roulette-table-wrapper button"
+        )
+        .forEach((button) => {
 
             button.classList.remove(
                 "selected"
             );
 
-        }
-    );
-
-
-    $$(".roulette-dozens button").forEach(
-        (button) => {
-
-            button.classList.remove(
-                "selected"
-            );
-
-        }
-    );
-
-
-    $$(".roulette-outside-bets button").forEach(
-        (button) => {
-
-            button.classList.remove(
-                "selected"
-            );
-
-        }
-    );
+        });
 
 }
 
@@ -1797,7 +1956,9 @@ function selectNumberBet(
 ) {
 
     if (rouletteSpinning) {
+
         return;
+
     }
 
 
@@ -1805,22 +1966,11 @@ function selectNumberBet(
 
 
     selectedRouletteBet = {
-
         type: "number",
-
-        number,
-
-        label:
-            `NUMBER ${number}`,
-
-        payout:
-            35
-
+        number: Number(number),
+        label: `NUMBER ${number}`,
+        payout: 35
     };
-
-
-    selectedRouletteButton =
-        button;
 
 
     if (button) {
@@ -1847,7 +1997,7 @@ function selectNumberBet(
 
 
 /* ==========================================================
-   OUTSIDE / DOZEN BET
+   OUTSIDE / DOZEN BETS
    ========================================================== */
 
 function selectRouletteBet(
@@ -1856,11 +2006,10 @@ function selectRouletteBet(
 ) {
 
     if (rouletteSpinning) {
+
         return;
+
     }
-
-
-    clearRouletteSelection();
 
 
     const bets = {
@@ -1913,30 +2062,25 @@ function selectRouletteBet(
     };
 
 
-    const data =
+    const bet =
         bets[type];
 
 
-    if (!data) {
+    if (!bet) {
+
         return;
+
     }
 
 
+    clearRouletteSelection();
+
+
     selectedRouletteBet = {
-
         type,
-
-        label:
-            data.label,
-
-        payout:
-            data.payout
-
+        label: bet.label,
+        payout: bet.payout
     };
-
-
-    selectedRouletteButton =
-        button;
 
 
     if (button) {
@@ -1950,13 +2094,13 @@ function selectRouletteBet(
 
     setText(
         "#selectedBet",
-        data.label
+        bet.label
     );
 
 
     setText(
         "#selectedPayout",
-        `${data.payout}:1 PAYOUT`
+        `${bet.payout}:1 PAYOUT`
     );
 
 }
@@ -1966,42 +2110,50 @@ function selectRouletteBet(
    BET AMOUNT
    ========================================================== */
 
-function changeBet(amount) {
+function changeBet(change) {
 
     if (rouletteSpinning) {
+
         return;
+
     }
 
 
-    if (profile.balance <= 0) {
+    if (profile.balance < 100) {
 
         betAmount = 0;
+
 
         setText(
             "#betAmount",
             "0 AC"
         );
 
+
         return;
     }
 
 
     betAmount +=
-        amount;
+        Number(change);
 
 
-    betAmount =
-        Math.max(
-            100,
-            betAmount
-        );
+    if (betAmount < 100) {
+
+        betAmount = 100;
+
+    }
 
 
-    betAmount =
-        Math.min(
-            profile.balance,
-            betAmount
-        );
+    if (
+        betAmount >
+        profile.balance
+    ) {
+
+        betAmount =
+            profile.balance;
+
+    }
 
 
     setText(
@@ -2015,15 +2167,15 @@ function changeBet(amount) {
 
 
 /* ==========================================================
-   DETERMINE WINNING BET
+   CHECK ROULETTE WIN
    ========================================================== */
 
-function rouletteBetWins(
-    winningNumber
-) {
+function rouletteBetWins(number) {
 
     if (!selectedRouletteBet) {
+
         return false;
+
     }
 
 
@@ -2034,53 +2186,48 @@ function rouletteBetWins(
     if (type === "number") {
 
         return (
-            winningNumber ===
+            number ===
             selectedRouletteBet.number
         );
 
     }
 
 
+    /*
+        Zero loses standard outside bets.
+    */
+
+    if (number === 0) {
+
+        return false;
+
+    }
+
+
     if (type === "red") {
 
-        return (
-            winningNumber !== 0 &&
-            RED_NUMBERS.has(
-                winningNumber
-            )
-        );
+        return RED_NUMBERS.has(number);
 
     }
 
 
     if (type === "black") {
 
-        return (
-            winningNumber !== 0 &&
-            !RED_NUMBERS.has(
-                winningNumber
-            )
-        );
+        return !RED_NUMBERS.has(number);
 
     }
 
 
     if (type === "even") {
 
-        return (
-            winningNumber !== 0 &&
-            winningNumber % 2 === 0
-        );
+        return number % 2 === 0;
 
     }
 
 
     if (type === "odd") {
 
-        return (
-            winningNumber !== 0 &&
-            winningNumber % 2 === 1
-        );
+        return number % 2 !== 0;
 
     }
 
@@ -2088,8 +2235,8 @@ function rouletteBetWins(
     if (type === "low") {
 
         return (
-            winningNumber >= 1 &&
-            winningNumber <= 18
+            number >= 1 &&
+            number <= 18
         );
 
     }
@@ -2098,8 +2245,8 @@ function rouletteBetWins(
     if (type === "high") {
 
         return (
-            winningNumber >= 19 &&
-            winningNumber <= 36
+            number >= 19 &&
+            number <= 36
         );
 
     }
@@ -2108,8 +2255,8 @@ function rouletteBetWins(
     if (type === "dozen1") {
 
         return (
-            winningNumber >= 1 &&
-            winningNumber <= 12
+            number >= 1 &&
+            number <= 12
         );
 
     }
@@ -2118,8 +2265,8 @@ function rouletteBetWins(
     if (type === "dozen2") {
 
         return (
-            winningNumber >= 13 &&
-            winningNumber <= 24
+            number >= 13 &&
+            number <= 24
         );
 
     }
@@ -2128,8 +2275,8 @@ function rouletteBetWins(
     if (type === "dozen3") {
 
         return (
-            winningNumber >= 25 &&
-            winningNumber <= 36
+            number >= 25 &&
+            number <= 36
         );
 
     }
@@ -2141,7 +2288,7 @@ function rouletteBetWins(
 
 
 /* ==========================================================
-   ROULETTE RESULT COLOR
+   RESULT COLOR
    ========================================================== */
 
 function rouletteResultName(number) {
@@ -2153,48 +2300,44 @@ function rouletteResultName(number) {
     }
 
 
-    if (
-        RED_NUMBERS.has(number)
-    ) {
-
-        return "RED";
-
-    }
-
-
-    return "BLACK";
+    return RED_NUMBERS.has(number)
+        ? "RED"
+        : "BLACK";
 
 }
 
 
 /* ==========================================================
-   NORMALIZE DEGREES
+   NORMALIZE ANGLE
    ========================================================== */
 
 function normalizeAngle(angle) {
 
     return (
-        (angle % 360) + 360
+        (angle % 360) +
+        360
     ) % 360;
 
 }
 
 
 /* ==========================================================
-   ROULETTE SPIN
+   SPIN ROULETTE
    ========================================================== */
 
 function spinRoulette() {
 
     if (rouletteSpinning) {
+
         return;
+
     }
 
 
     if (!selectedRouletteBet) {
 
         alert(
-            "Select a roulette bet first."
+            "Select a number or outside bet first."
         );
 
         return;
@@ -2202,12 +2345,12 @@ function spinRoulette() {
 
 
     if (
-        betAmount <= 0 ||
+        betAmount < 100 ||
         profile.balance < betAmount
     ) {
 
         alert(
-            "You do not have enough Ace Credits."
+            "You need at least 100 Ace Credits to spin."
         );
 
         return;
@@ -2215,20 +2358,27 @@ function spinRoulette() {
 
 
     const wheel =
-        $("#rouletteWheel");
+        document.getElementById(
+            "rouletteWheel"
+        );
+
 
     const ballTrack =
-        $("#ballTrack");
+        document.getElementById(
+            "ballTrack"
+        );
+
 
     const spinButton =
-        $("#rouletteSpinButton");
+        document.getElementById(
+            "rouletteSpinButton"
+        );
 
 
-    if (
-        !wheel ||
-        !ballTrack
-    ) {
+    if (!wheel || !ballTrack) {
+
         return;
+
     }
 
 
@@ -2245,8 +2395,7 @@ function spinRoulette() {
 
 
     /*
-        Pick one ACTUAL pocket from the wheel.
-        Everything after this point uses this same index.
+        Select one real European pocket.
     */
 
     const winningIndex =
@@ -2263,36 +2412,36 @@ function spinRoulette() {
 
 
     /*
-        Pocket center position relative to wheel's
-        starting top pointer.
+        Pocket zero is centered at
+        the pointer.
 
-        Pocket 0 starts at 0 degrees.
+        Each following pocket moves
+        clockwise POCKET_ANGLE degrees.
     */
 
-    const pocketAngle =
+    const targetPocketAngle =
         winningIndex *
         POCKET_ANGLE;
 
 
-    setText(
-        "#rouletteResult",
-        "SPINNING"
-    );
+    const currentWheelAngle =
+        normalizeAngle(
+            wheelRotation
+        );
 
 
-    ballTrack.classList.remove(
-        "ball-drop"
-    );
+    const desiredWheelAngle =
+        normalizeAngle(
+            -targetPocketAngle
+        );
 
 
-    /*
-        WHEEL:
+    const neededRotation =
+        normalizeAngle(
+            desiredWheelAngle -
+            currentWheelAngle
+        );
 
-        The chosen winning pocket will finish
-        directly under the pointer at 12 o'clock.
-
-        Wheel spins clockwise several times.
-    */
 
     const extraWheelSpins =
         7 +
@@ -2301,38 +2450,18 @@ function spinRoulette() {
         );
 
 
-    const currentWheel =
-        normalizeAngle(
-            wheelRotation
-        );
-
-
-    const desiredWheel =
-        normalizeAngle(
-            -pocketAngle
-        );
-
-
-    const wheelDifference =
-        normalizeAngle(
-            desiredWheel -
-            currentWheel
-        );
-
-
     wheelRotation +=
-        extraWheelSpins *
-        360 +
-        wheelDifference;
+        (
+            extraWheelSpins *
+            360
+        )
+        +
+        neededRotation;
 
 
     /*
-        BALL:
-
-        Ball rotates the opposite direction.
-
-        It completes more revolutions than the wheel
-        to create a realistic counter-rotation.
+        Ball rotates in the opposite
+        direction around the outer track.
     */
 
     const extraBallSpins =
@@ -2347,6 +2476,20 @@ function spinRoulette() {
         360;
 
 
+    setText(
+        "#rouletteResult",
+        "SPINNING"
+    );
+
+
+    ballTrack.classList.remove(
+        "ball-drop"
+    );
+
+
+    void ballTrack.offsetWidth;
+
+
     wheel.style.transform =
         `rotate(${wheelRotation}deg)`;
 
@@ -2354,11 +2497,6 @@ function spinRoulette() {
     ballTrack.style.transform =
         `rotate(${ballRotation}deg)`;
 
-
-    /*
-        Near the end of the animation,
-        visually move the ball inward.
-    */
 
     setTimeout(
         () => {
@@ -2368,13 +2506,9 @@ function spinRoulette() {
             );
 
         },
-        3900
+        4000
     );
 
-
-    /*
-        Finish result after animation.
-    */
 
     setTimeout(
         () => {
@@ -2417,26 +2551,24 @@ function finishRoulette(
 
 
     /*
-        Deduct original wager first.
+        Deduct wager.
     */
 
     profile.balance -=
         betAmount;
 
 
-    if (won) {
+    /*
+        Return stake plus winnings.
+    */
 
-        /*
-            Example:
-            1:1 = wager + equal profit
-            2:1 = wager + 2x profit
-            35:1 = wager + 35x profit
-        */
+    if (won) {
 
         const totalReturn =
             betAmount *
             (
-                selectedRouletteBet.payout +
+                selectedRouletteBet.payout
+                +
                 1
             );
 
@@ -2465,43 +2597,32 @@ function finishRoulette(
     );
 
 
-    /*
-        If player's remaining balance is below
-        the selected wager, automatically lower it.
-    */
-
     if (
-        profile.balance > 0 &&
+        profile.balance >= 100 &&
         betAmount > profile.balance
     ) {
 
         betAmount =
             profile.balance;
 
-
-        setText(
-            "#betAmount",
-            formatCredits(
-                betAmount
-            )
-        );
-
     }
 
 
     if (
-        profile.balance <= 0
+        profile.balance < 100
     ) {
 
         betAmount = 0;
 
-
-        setText(
-            "#betAmount",
-            "0 AC"
-        );
-
     }
+
+
+    setText(
+        "#betAmount",
+        formatCredits(
+            betAmount
+        )
+    );
 
 }
 
@@ -2554,7 +2675,8 @@ function rollDice() {
 
     if (player > house) {
 
-        profile.balance += 250;
+        profile.balance +=
+            250;
 
 
         setText(
@@ -2616,17 +2738,23 @@ function sortLeaderboard(type) {
 
 
     if (!table) {
+
         return;
+
     }
 
 
     const tbody =
-        table.querySelector("tbody");
+        table.querySelector(
+            "tbody"
+        );
 
 
     const rows =
         Array.from(
-            tbody.querySelectorAll("tr")
+            tbody.querySelectorAll(
+                "tr"
+            )
         );
 
 
@@ -2674,7 +2802,9 @@ function sortLeaderboard(type) {
         (row, index) => {
 
             const rank =
-                row.querySelector("td");
+                row.querySelector(
+                    "td"
+                );
 
 
             if (rank) {
@@ -2690,12 +2820,64 @@ function sortLeaderboard(type) {
             }
 
 
-            tbody.appendChild(row);
+            tbody.appendChild(
+                row
+            );
 
         }
     );
 
 }
+
+
+/* ==========================================================
+   EXPOSE FUNCTIONS TO HTML
+   ========================================================== */
+
+window.claimDaily =
+    claimDaily;
+
+window.buyItem =
+    buyItem;
+
+window.filterCollection =
+    filterCollection;
+
+window.changeUsername =
+    changeUsername;
+
+window.resetGildedProfile =
+    resetGildedProfile;
+
+window.startBlackjack =
+    startBlackjack;
+
+window.blackjackHit =
+    blackjackHit;
+
+window.blackjackStand =
+    blackjackStand;
+
+window.spinSlots =
+    spinSlots;
+
+window.selectNumberBet =
+    selectNumberBet;
+
+window.selectRouletteBet =
+    selectRouletteBet;
+
+window.changeBet =
+    changeBet;
+
+window.spinRoulette =
+    spinRoulette;
+
+window.rollDice =
+    rollDice;
+
+window.sortLeaderboard =
+    sortLeaderboard;
 
 
 /* ==========================================================
@@ -2711,6 +2893,17 @@ document.addEventListener(
         buildRouletteTable();
 
         updateAllDisplays();
+
+
+        setText(
+            "#betAmount",
+            formatCredits(
+                Math.min(
+                    betAmount,
+                    profile.balance
+                )
+            )
+        );
 
     }
 );
