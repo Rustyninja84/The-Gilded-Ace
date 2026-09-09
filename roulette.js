@@ -2,13 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =========================================================
        THE GILDED ACE
-       LUXURY ROULETTE SYSTEM
+       LUXURY ROULETTE + CASINO TAB SUPPORT
     ========================================================= */
 
     const STARTING_BALANCE = 10000;
-
-    const ACCOUNTS_KEY =
-        "gildedAceAccounts";
 
     const SESSION_KEY =
         "gildedAceActiveAccountId";
@@ -29,6 +26,144 @@ document.addEventListener("DOMContentLoaded", () => {
         2500,
         5000
     ];
+
+
+    /* =========================================================
+       CASINO GAME TABS
+    ========================================================= */
+
+    const casinoTabs =
+        document.querySelectorAll(
+            ".casino-tab"
+        );
+
+    const casinoPanels =
+        document.querySelectorAll(
+            ".casino-game-panel"
+        );
+
+
+    function openCasinoGame(game) {
+
+        casinoTabs.forEach(
+            tab => {
+
+                const active =
+                    tab.dataset.game ===
+                    game;
+
+                tab.classList.toggle(
+                    "active",
+                    active
+                );
+            }
+        );
+
+
+        casinoPanels.forEach(
+            panel => {
+
+                const active =
+                    panel.id ===
+                    game;
+
+                panel.classList.toggle(
+                    "active",
+                    active
+                );
+
+                /*
+                    Backup display handling in case
+                    the main stylesheet is not applying
+                    the active panel correctly.
+                */
+
+                if (active) {
+
+                    panel.style.display =
+                        "block";
+
+                } else {
+
+                    panel.style.display =
+                        "none";
+                }
+            }
+        );
+
+
+        if (
+            window.location.hash !==
+            "#" + game
+        ) {
+
+            history.replaceState(
+                null,
+                "",
+                "#" + game
+            );
+        }
+    }
+
+
+    casinoTabs.forEach(
+        tab => {
+
+            tab.addEventListener(
+                "click",
+                () => {
+
+                    const game =
+                        tab.dataset.game;
+
+                    if (!game) {
+                        return;
+                    }
+
+                    openCasinoGame(
+                        game
+                    );
+                }
+            );
+        }
+    );
+
+
+    /* =========================================================
+       OPEN GAME FROM URL
+    ========================================================= */
+
+    const requestedGame =
+        window.location.hash
+            .replace("#", "")
+            .toLowerCase();
+
+
+    const validGames = [
+        "blackjack",
+        "slots",
+        "roulette",
+        "dice"
+    ];
+
+
+    if (
+        validGames.includes(
+            requestedGame
+        )
+    ) {
+
+        openCasinoGame(
+            requestedGame
+        );
+
+    } else {
+
+        openCasinoGame(
+            "blackjack"
+        );
+    }
+
 
 
     /* =========================================================
@@ -100,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       ELEMENTS
+       ROULETTE ELEMENTS
     ========================================================= */
 
     const wheel =
@@ -164,6 +299,13 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
+    /*
+        If the page does not contain the new
+        roulette system, stop here.
+
+        Casino tabs above will still work.
+    */
+
     if (
         !wheel ||
         !numberRing ||
@@ -171,12 +313,13 @@ document.addEventListener("DOMContentLoaded", () => {
         !spinButton ||
         !numberBoard
     ) {
+
         return;
     }
 
 
     /* =========================================================
-       STATE
+       ROULETTE STATE
     ========================================================= */
 
     let betIndex = 1;
@@ -191,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       RANDOM
+       SECURE RANDOM NUMBER
     ========================================================= */
 
     function randomInt(max) {
@@ -201,31 +344,63 @@ document.addEventListener("DOMContentLoaded", () => {
             window.crypto.getRandomValues
         ) {
 
+            const maximum =
+                0x100000000;
+
+            const limit =
+                maximum -
+                (
+                    maximum %
+                    max
+                );
+
+
             const values =
                 new Uint32Array(1);
 
-            window.crypto.getRandomValues(
-                values
+
+            let value;
+
+
+            do {
+
+                window.crypto.getRandomValues(
+                    values
+                );
+
+                value =
+                    values[0];
+
+            } while (
+                value >= limit
             );
 
-            return values[0] % max;
+
+            return (
+                value %
+                max
+            );
         }
 
+
         return Math.floor(
-            Math.random() * max
+            Math.random() *
+            max
         );
     }
 
 
     /* =========================================================
-       ACCOUNT / BALANCE
+       ACCOUNT BALANCE STORAGE
     ========================================================= */
 
     function getActiveAccountId() {
 
-        return localStorage.getItem(
-            SESSION_KEY
-        ) || "";
+        return (
+            localStorage.getItem(
+                SESSION_KEY
+            ) || ""
+        );
     }
 
 
@@ -233,6 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const accountId =
             getActiveAccountId();
+
 
         if (accountId) {
 
@@ -243,6 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+
         return LEGACY_BALANCE_KEY;
     }
 
@@ -251,6 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const accountId =
             getActiveAccountId();
+
 
         if (accountId) {
 
@@ -261,40 +439,59 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+
         return LEGACY_STATS_KEY;
     }
 
 
     function getBalance() {
 
-        let balance =
-            Number(
-                localStorage.getItem(
-                    balanceKey()
-                )
+        const stored =
+            localStorage.getItem(
+                balanceKey()
             );
 
-        if (
-            !Number.isFinite(balance) ||
-            balance < 0
-        ) {
 
-            balance =
-                STARTING_BALANCE;
+        if (
+            stored === null
+        ) {
 
             localStorage.setItem(
                 balanceKey(),
-                balance
+                STARTING_BALANCE
             );
+
+            return STARTING_BALANCE;
         }
 
-        return balance;
+
+        const value =
+            Number(stored);
+
+
+        if (
+            !Number.isFinite(value) ||
+            value < 0
+        ) {
+
+            localStorage.setItem(
+                balanceKey(),
+                STARTING_BALANCE
+            );
+
+            return STARTING_BALANCE;
+        }
+
+
+        return Math.floor(
+            value
+        );
     }
 
 
     function setBalance(value) {
 
-        const balance =
+        const newBalance =
             Math.max(
                 0,
                 Math.floor(
@@ -305,19 +502,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         localStorage.setItem(
             balanceKey(),
-            balance
+            String(
+                newBalance
+            )
         );
 
 
         updateBalanceDisplays();
 
-        return balance;
+
+        return newBalance;
     }
 
 
     function updateBalanceDisplays() {
 
-        const balance =
+        const currentBalance =
             getBalance();
 
 
@@ -329,18 +529,66 @@ document.addEventListener("DOMContentLoaded", () => {
                 element => {
 
                     element.textContent =
-                        balance.toLocaleString() +
+                        currentBalance
+                            .toLocaleString() +
                         " AC";
                 }
             );
     }
 
 
+
     /* =========================================================
        STATS
     ========================================================= */
 
+    function defaultStats() {
+
+        return {
+
+            totalWins: 0,
+
+            totalLosses: 0,
+
+            gamesPlayed: 0,
+
+
+            blackjack: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            },
+
+
+            slots: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            },
+
+
+            roulette: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            },
+
+
+            dice: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            }
+
+        };
+    }
+
+
     function getStats() {
+
+        const defaults =
+            defaultStats();
+
 
         try {
 
@@ -353,122 +601,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             return {
+
                 totalWins:
                     Number(
                         saved.totalWins
                     ) || 0,
+
 
                 totalLosses:
                     Number(
                         saved.totalLosses
                     ) || 0,
 
+
                 gamesPlayed:
                     Number(
                         saved.gamesPlayed
                     ) || 0,
 
+
                 blackjack: {
-                    wins:
-                        Number(
-                            saved.blackjack?.wins
-                        ) || 0,
-
-                    losses:
-                        Number(
-                            saved.blackjack?.losses
-                        ) || 0,
-
-                    played:
-                        Number(
-                            saved.blackjack?.played
-                        ) || 0
+                    ...defaults.blackjack,
+                    ...(saved.blackjack || {})
                 },
+
 
                 slots: {
-                    wins:
-                        Number(
-                            saved.slots?.wins
-                        ) || 0,
-
-                    losses:
-                        Number(
-                            saved.slots?.losses
-                        ) || 0,
-
-                    played:
-                        Number(
-                            saved.slots?.played
-                        ) || 0
+                    ...defaults.slots,
+                    ...(saved.slots || {})
                 },
+
 
                 roulette: {
-                    wins:
-                        Number(
-                            saved.roulette?.wins
-                        ) || 0,
-
-                    losses:
-                        Number(
-                            saved.roulette?.losses
-                        ) || 0,
-
-                    played:
-                        Number(
-                            saved.roulette?.played
-                        ) || 0
+                    ...defaults.roulette,
+                    ...(saved.roulette || {})
                 },
 
+
                 dice: {
-                    wins:
-                        Number(
-                            saved.dice?.wins
-                        ) || 0,
-
-                    losses:
-                        Number(
-                            saved.dice?.losses
-                        ) || 0,
-
-                    played:
-                        Number(
-                            saved.dice?.played
-                        ) || 0
+                    ...defaults.dice,
+                    ...(saved.dice || {})
                 }
+
             };
 
         } catch {
 
-            return {
-                totalWins:0,
-                totalLosses:0,
-                gamesPlayed:0,
-
-                blackjack:{
-                    wins:0,
-                    losses:0,
-                    played:0
-                },
-
-                slots:{
-                    wins:0,
-                    losses:0,
-                    played:0
-                },
-
-                roulette:{
-                    wins:0,
-                    losses:0,
-                    played:0
-                },
-
-                dice:{
-                    wins:0,
-                    losses:0,
-                    played:0
-                }
-            };
+            return defaults;
         }
+    }
+
+
+    function saveStats(stats) {
+
+        localStorage.setItem(
+            statsKey(),
+            JSON.stringify(
+                stats
+            )
+        );
     }
 
 
@@ -501,35 +692,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        localStorage.setItem(
-            statsKey(),
-            JSON.stringify(stats)
+        saveStats(
+            stats
         );
     }
 
 
+
     /* =========================================================
-       COLORS
+       ROULETTE COLORS
     ========================================================= */
 
-    function rouletteColor(number) {
+    function rouletteColor(
+        number
+    ) {
+
+        number =
+            Number(number);
+
 
         if (
-            Number(number) === 0
+            number === 0
         ) {
+
             return "green";
         }
 
+
         return RED_NUMBERS.has(
-            Number(number)
+            number
         )
             ? "red"
             : "black";
     }
 
 
+
     /* =========================================================
-       BUILD PHYSICAL WHEEL
+       BUILD WHEEL
     ========================================================= */
 
     function buildWheel() {
@@ -541,8 +741,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const total =
             WHEEL_ORDER.length;
 
+
         const step =
-            360 / total;
+            360 /
+            total;
 
 
         WHEEL_ORDER.forEach(
@@ -557,6 +759,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
 
+                const inner =
+                    document.createElement(
+                        "div"
+                    );
+
+
                 const color =
                     rouletteColor(
                         number
@@ -564,7 +772,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 const angle =
-                    index * step;
+                    index *
+                    step;
 
 
                 pocket.className =
@@ -572,14 +781,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     color;
 
 
+                /*
+                    CSS controls wheel size.
+
+                    Instead of relying on a hardcoded
+                    pixel radius from the old version,
+                    position the pockets using a
+                    percentage-based transform.
+                */
+
                 pocket.style.transform =
-                    `rotate(${angle}deg) translateY(-220px)`;
-
-
-                const inner =
-                    document.createElement(
-                        "div"
-                    );
+                    `rotate(${angle}deg) translateY(-245%)`;
 
 
                 inner.className =
@@ -587,7 +799,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 inner.textContent =
-                    number;
+                    String(number);
 
 
                 inner.style.transform =
@@ -607,8 +819,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
     /* =========================================================
-       BUILD NUMBER BETTING BOARD
+       BUILD ROULETTE TABLE
     ========================================================= */
 
     function buildNumberBoard() {
@@ -626,14 +839,11 @@ document.addEventListener("DOMContentLoaded", () => {
         zero.type =
             "button";
 
-
         zero.textContent =
             "0";
 
-
         zero.className =
             "roulette-board-number green zero";
-
 
         zero.dataset.number =
             "0";
@@ -645,16 +855,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-            Board arrangement:
+            Standard roulette table:
 
-            Top:
-            3 6 9 ... 36
-
-            Middle:
-            2 5 8 ... 35
-
-            Bottom:
-            1 4 7 ... 34
+            3  6  9  12 ... 36
+            2  5  8  11 ... 35
+            1  4  7  10 ... 34
         */
 
         for (
@@ -663,7 +868,7 @@ document.addEventListener("DOMContentLoaded", () => {
             row++
         ) {
 
-            const rowStart =
+            const firstNumber =
                 3 - row;
 
 
@@ -674,8 +879,11 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
 
                 const number =
-                    rowStart +
-                    column * 3;
+                    firstNumber +
+                    (
+                        column *
+                        3
+                    );
 
 
                 const button =
@@ -689,7 +897,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 button.textContent =
-                    number;
+                    String(number);
 
 
                 button.dataset.number =
@@ -723,6 +931,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
     /* =========================================================
        BET SELECTION
     ========================================================= */
@@ -734,9 +943,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".roulette-board-number"
             )
             .forEach(
-                element => {
+                button => {
 
-                    element.classList.remove(
+                    button.classList.remove(
                         "selected"
                     );
                 }
@@ -748,9 +957,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".luxury-roulette-choice"
             )
             .forEach(
-                element => {
+                button => {
 
-                    element.classList.remove(
+                    button.classList.remove(
                         "selected"
                     );
                 }
@@ -777,8 +986,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         selectedBet = {
-            type:"number",
-            value:Number(number)
+
+            type: "number",
+
+            value:
+                Number(number)
+
         };
 
 
@@ -789,6 +1002,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         messageDisplay.textContent =
             "Straight-up number bet selected.";
+
+
+        messageDisplay.className =
+            "roulette-luxury-message";
     }
 
 
@@ -811,26 +1028,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         selectedBet = {
-            type:type
+            type: type
         };
 
 
-        const names = {
-            red:"RED",
-            black:"BLACK",
-            odd:"ODD",
-            even:"EVEN",
-            low:"1 TO 18",
-            high:"19 TO 36"
+        const labels = {
+
+            red:
+                "RED",
+
+            black:
+                "BLACK",
+
+            odd:
+                "ODD",
+
+            even:
+                "EVEN",
+
+            low:
+                "1 TO 18",
+
+            high:
+                "19 TO 36"
+
         };
 
 
         selectedBetDisplay.textContent =
-            names[type] || type.toUpperCase();
+            labels[type] ||
+            type.toUpperCase();
 
 
         messageDisplay.textContent =
             "Outside bet selected.";
+
+
+        messageDisplay.className =
+            "roulette-luxury-message";
     }
 
 
@@ -876,6 +1111,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
         );
+
 
 
     /* =========================================================
@@ -941,8 +1177,9 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+
     /* =========================================================
-       DETERMINE BET WIN
+       WIN CHECK
     ========================================================= */
 
     function betWins(
@@ -955,20 +1192,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        number =
+            Number(number);
+
+
         if (
-            bet.type === "number"
+            bet.type ===
+            "number"
         ) {
 
             return (
-                Number(bet.value) ===
-                Number(number)
+                Number(
+                    bet.value
+                ) === number
             );
         }
 
 
+        /*
+            Zero loses all normal
+            even-money outside bets.
+        */
+
         if (
             number === 0
         ) {
+
             return false;
         }
 
@@ -980,47 +1229,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         if (
-            bet.type === "red"
+            bet.type ===
+            "red"
         ) {
 
             return (
-                color === "red"
+                color ===
+                "red"
             );
         }
 
 
         if (
-            bet.type === "black"
+            bet.type ===
+            "black"
         ) {
 
             return (
-                color === "black"
+                color ===
+                "black"
             );
         }
 
 
         if (
-            bet.type === "odd"
+            bet.type ===
+            "odd"
         ) {
 
             return (
-                number % 2 !== 0
+                number %
+                2 !== 0
             );
         }
 
 
         if (
-            bet.type === "even"
+            bet.type ===
+            "even"
         ) {
 
             return (
-                number % 2 === 0
+                number %
+                2 === 0
             );
         }
 
 
         if (
-            bet.type === "low"
+            bet.type ===
+            "low"
         ) {
 
             return (
@@ -1031,7 +1289,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         if (
-            bet.type === "high"
+            bet.type ===
+            "high"
         ) {
 
             return (
@@ -1045,39 +1304,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
     /* =========================================================
-       PAYOUT
+       PAYOUT MULTIPLIER
     ========================================================= */
 
-    function getPayoutMultiplier(
+    function payoutMultiplier(
         bet
     ) {
 
-        if (
-            bet.type === "number"
-        ) {
+        /*
+            Straight-up:
+            35:1 profit + stake returned
+            = 36x total payout.
+        */
 
-            /*
-                Player receives stake back
-                plus 35:1 winnings.
-            */
+        if (
+            bet.type ===
+            "number"
+        ) {
 
             return 36;
         }
 
 
         /*
-            1:1 outside bet.
-            Player receives original stake
-            plus equal winnings.
+            Even-money:
+            1:1 profit + stake returned
+            = 2x total payout.
         */
 
         return 2;
     }
 
 
+
     /* =========================================================
-       RESULT HISTORY
+       HISTORY
     ========================================================= */
 
     function addHistoryResult(
@@ -1117,7 +1380,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 item.textContent =
-                    result;
+                    String(result);
 
 
                 historyList.appendChild(
@@ -1128,11 +1391,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
     /* =========================================================
-       DISABLE CONTROLS
+       DISABLE ROULETTE CONTROLS
     ========================================================= */
 
-    function setControlsDisabled(
+    function disableRouletteControls(
         disabled
     ) {
 
@@ -1160,8 +1424,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
     /* =========================================================
-       BALL ANIMATION
+       BALL LANDING POSITION
+    ========================================================= */
+
+    function getPocketAngle(
+        winningNumber
+    ) {
+
+        const index =
+            WHEEL_ORDER.indexOf(
+                Number(
+                    winningNumber
+                )
+            );
+
+
+        const pocketSize =
+            360 /
+            WHEEL_ORDER.length;
+
+
+        /*
+            Rotate to the center of
+            the selected pocket.
+        */
+
+        return (
+            index *
+            pocketSize
+        );
+    }
+
+
+
+    /* =========================================================
+       BALL SPIN
     ========================================================= */
 
     function animateBallToNumber(
@@ -1171,58 +1470,53 @@ document.addEventListener("DOMContentLoaded", () => {
         return new Promise(
             resolve => {
 
-                const index =
-                    WHEEL_ORDER.indexOf(
+                const pocketAngle =
+                    getPocketAngle(
                         winningNumber
                     );
 
 
-                const segment =
-                    360 /
-                    WHEEL_ORDER.length;
-
-
-                /*
-                    The ball will complete several
-                    full rotations before settling
-                    into the target pocket.
-                */
-
-                const target =
-                    index * segment;
-
-
-                const extraSpins =
+                const fullSpins =
                     7 +
                     randomInt(4);
 
 
+                /*
+                    Always move forward from the
+                    ball's current position.
+                */
+
+                const currentNormalized =
+                    (
+                        (
+                            currentBallRotation %
+                            360
+                        ) +
+                        360
+                    ) %
+                    360;
+
+
+                let delta =
+                    pocketAngle -
+                    currentNormalized;
+
+
+                if (
+                    delta < 0
+                ) {
+
+                    delta += 360;
+                }
+
+
                 const finalRotation =
                     currentBallRotation +
-                    extraSpins * 360 +
-                    target;
-
-
-                const animation =
-                    ballTrack.animate(
-                        [
-                            {
-                                transform:
-                                    `rotate(${currentBallRotation}deg)`
-                            },
-
-                            {
-                                transform:
-                                    `rotate(${finalRotation}deg)`
-                            }
-                        ],
-                        {
-                            duration:6200,
-                            easing:
-                                "cubic-bezier(.08,.65,.12,1)",
-                            fill:"forwards"
-                        }
-                    );
+                    (
+                        fullSpins *
+                        360
+                    ) +
+                    delta;
 
 
                 wheel.classList.add(
@@ -1230,17 +1524,76 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
+                statusDisplay.textContent =
+                    "SPINNING...";
+
+
+                const animation =
+                    ballTrack.animate(
+                        [
+
+                            {
+                                transform:
+                                    `rotate(${currentBallRotation}deg)`
+                            },
+
+                            {
+                                offset: 0.2,
+
+                                transform:
+                                    `rotate(${currentBallRotation + ((fullSpins * 360) * 0.45)}deg)`
+                            },
+
+                            {
+                                offset: 0.65,
+
+                                transform:
+                                    `rotate(${currentBallRotation + ((fullSpins * 360) * 0.83)}deg)`
+                            },
+
+                            {
+                                transform:
+                                    `rotate(${finalRotation}deg)`
+                            }
+
+                        ],
+                        {
+
+                            duration:
+                                6200,
+
+                            easing:
+                                "cubic-bezier(.08,.62,.15,1)",
+
+                            fill:
+                                "forwards"
+
+                        }
+                    );
+
+
                 animation.onfinish =
                     () => {
 
                         currentBallRotation =
-                            finalRotation %
-                            360;
+                            finalRotation;
 
 
                         ballTrack.style.transform =
-                            `rotate(${currentBallRotation}deg)`;
+                            `rotate(${finalRotation}deg)`;
 
+
+                        wheel.classList.remove(
+                            "wheel-spinning"
+                        );
+
+
+                        resolve();
+                    };
+
+
+                animation.oncancel =
+                    () => {
 
                         wheel.classList.remove(
                             "wheel-spinning"
@@ -1254,8 +1607,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
     /* =========================================================
-       SPIN
+       SPIN BUTTON
     ========================================================= */
 
     spinButton.addEventListener(
@@ -1272,8 +1626,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 messageDisplay.textContent =
                     "Select a number or outside bet first.";
 
+
                 messageDisplay.className =
                     "roulette-luxury-message loss";
+
 
                 return;
             }
@@ -1288,14 +1644,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             if (
-                currentBalance < bet
+                currentBalance <
+                bet
             ) {
 
                 messageDisplay.textContent =
                     "You do not have enough Ace Credits.";
 
+
                 messageDisplay.className =
                     "roulette-luxury-message loss";
+
 
                 return;
             }
@@ -1305,10 +1664,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 true;
 
 
-            setControlsDisabled(
+            disableRouletteControls(
                 true
             );
 
+
+            /*
+                Deduct wager before spin.
+            */
 
             setBalance(
                 currentBalance -
@@ -1317,7 +1680,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             messageDisplay.textContent =
-                "The wheel is spinning...";
+                "The ball is spinning...";
+
 
             messageDisplay.className =
                 "roulette-luxury-message";
@@ -1328,8 +1692,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-                Pick the winning pocket
-                before the animation begins.
+                Random result 0–36.
             */
 
             const winningNumber =
@@ -1362,7 +1725,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (won) {
 
                 const multiplier =
-                    getPayoutMultiplier(
+                    payoutMultiplier(
                         selectedBet
                     );
 
@@ -1394,20 +1757,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     "number"
                 ) {
 
+                    const profit =
+                        payout -
+                        bet;
+
+
                     messageDisplay.textContent =
                         "STRAIGHT-UP WIN! " +
-                        payout.toLocaleString() +
-                        " AC paid.";
+                        profit.toLocaleString() +
+                        " AC PROFIT";
+
 
                 } else {
 
                     messageDisplay.textContent =
-                        "WIN! " +
-                        (
-                            payout -
-                            bet
-                        ).toLocaleString() +
-                        " AC profit.";
+                        "WIN! +" +
+                        bet.toLocaleString() +
+                        " AC";
+
                 }
 
 
@@ -1428,9 +1795,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 messageDisplay.textContent =
-                    "House wins. You lost " +
+                    winningNumber +
+                    " " +
+                    color.toUpperCase() +
+                    " — LOST " +
                     bet.toLocaleString() +
-                    " AC.";
+                    " AC";
 
 
                 messageDisplay.className =
@@ -1442,7 +1812,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 false;
 
 
-            setControlsDisabled(
+            disableRouletteControls(
                 false
             );
 
@@ -1452,8 +1822,9 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+
     /* =========================================================
-       INITIALIZE
+       INITIALIZE ROULETTE
     ========================================================= */
 
     buildWheel();
