@@ -3,415 +3,596 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>The Gilded Ace | Collection</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="styles.css">
+    <title>
+        Collection | The Gilded Ace
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles.css?v=7"
+    >
 </head>
 
-<body>
 
-    <!-- =========================================================
-         HEADER
-    ========================================================== -->
-
-    <header class="site-header">
-
-        <div class="nav-container">
-
-            <a href="index.html" class="brand">
-
-                <div class="brand-mark">
-                    A
-                </div>
-
-                <div class="brand-text">
-
-                    <span class="brand-name">
-                        THE GILDED ACE
-                    </span>
-
-                    <span class="brand-subtitle">
-                        CASINO & SOCIAL CLUB
-                    </span>
-
-                </div>
-
-            </a>
+<body class="page-collection">
 
 
-            <nav class="main-nav">
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
 
-                <a href="index.html">
-                    HOME
-                </a>
+<header class="site-header">
 
-                <a href="casino.html">
-                    CASINO
-                </a>
+    <div class="nav-container">
 
-                <a href="store.html">
-                    STORE
-                </a>
+        <a
+            href="index.html"
+            class="brand"
+        >
 
-                <a href="collection.html" class="active">
-                    COLLECTION
-                </a>
-
-                <a href="leaderboard.html">
-                    LEADERBOARD
-                </a>
-
-            </nav>
-
-
-            <div class="nav-account">
-
-                <div class="nav-balance">
-
-                    <span class="balance-label">
-                        ACE CREDITS
-                    </span>
-
-                    <span class="balance-value">
-                        10,000 AC
-                    </span>
-
-                </div>
-
-                <a href="profile.html" class="profile-button">
-                    PROFILE
-                </a>
-
+            <div class="brand-mark">
+                A
             </div>
 
-        </div>
+            <div class="brand-text">
 
-    </header>
+                <span class="brand-name">
+                    THE GILDED ACE
+                </span>
 
-
-    <!-- =========================================================
-         COLLECTION HERO
-    ========================================================== -->
-
-    <section class="collection-page-hero">
-
-        <div class="section-container">
-
-            <p class="section-kicker">
-                THE GILDED ACE VAULT
-            </p>
-
-            <h1>
-                YOUR COLLECTION.
-            </h1>
-
-            <p>
-                Every virtual collectible, cosmetic, vehicle,
-                property, casino upgrade, and prestige item
-                you own is displayed here.
-            </p>
-
-            <div class="collection-hero-count">
-
-                <span id="collectionItemCount">
-                    0 ITEMS
+                <span class="brand-subtitle">
+                    CASINO & SOCIAL CLUB
                 </span>
 
             </div>
 
+        </a>
+
+
+        <nav class="main-nav">
+
+            <a href="index.html">
+                HOME
+            </a>
+
+            <a href="casino.html">
+                CASINO
+            </a>
+
+            <a href="store.html">
+                STORE
+            </a>
+
+            <a
+                href="collection.html"
+                class="active"
+            >
+                COLLECTION
+            </a>
+
+            <a href="leaderboard.html">
+                LEADERBOARD
+            </a>
+
+        </nav>
+
+
+        <div class="nav-account">
+
+            <span>
+                ACE CREDITS
+            </span>
+
+            <span
+                class="balance-value"
+                data-balance
+            >
+                10,000 AC
+            </span>
+
+            <a
+                href="profile.html"
+                class="profile-button"
+            >
+                PROFILE
+            </a>
+
         </div>
 
-    </section>
+    </div>
+
+</header>
 
 
-    <!-- =========================================================
-         COLLECTION PAGE
-    ========================================================== -->
 
-    <main class="collection-page">
+<!-- =========================================================
+     HERO
+     ========================================================= -->
 
-        <div class="section-container">
+<section class="page-hero">
 
+    <span class="eyebrow">
+        THE GILDED ACE VAULT
+    </span>
 
-            <!-- =================================================
-                 COLLECTION SUMMARY
-            ================================================== -->
+    <h1>
+        YOUR COLLECTION.
+    </h1>
 
-            <section class="collection-summary">
+    <p>
+        Every cosmetic, collectible, vehicle, property,
+        casino upgrade, and prestige item you own
+        appears inside your private vault.
+    </p>
 
-
-                <div class="collection-stat">
-
-                    <span class="collection-stat-label">
-                        OWNED ITEMS
-                    </span>
-
-                    <strong id="collectionOwnedCount">
-                        0
-                    </strong>
-
-                </div>
+</section>
 
 
-                <div class="collection-stat">
 
-                    <span class="collection-stat-label">
-                        COLLECTION VALUE
-                    </span>
+<!-- =========================================================
+     COLLECTION STATS
+     ========================================================= -->
 
-                    <strong id="collectionValue">
-                        0 AC
-                    </strong>
+<section class="section">
 
-                </div>
+    <div class="container">
 
-
-                <div class="collection-stat">
-
-                    <span class="collection-stat-label">
-                        HIGHEST PURCHASE
-                    </span>
-
-                    <strong id="collectionHighestPurchase">
-                        —
-                    </strong>
-
-                </div>
+        <div class="grid">
 
 
-            </section>
+            <div class="card">
 
-
-            <!-- =================================================
-                 COLLECTION FILTERS
-            ================================================== -->
-
-            <section class="collection-filter-nav">
-
-                <button
-                    type="button"
-                    class="collection-filter active"
-                    data-collection-category="all"
-                >
-                    ALL
-                </button>
-
-
-                <button
-                    type="button"
-                    class="collection-filter"
-                    data-collection-category="profile"
-                >
-                    PROFILE
-                </button>
-
-
-                <button
-                    type="button"
-                    class="collection-filter"
-                    data-collection-category="collectible"
-                >
-                    COLLECTIBLES
-                </button>
-
-
-                <button
-                    type="button"
-                    class="collection-filter"
-                    data-collection-category="vehicle"
-                >
-                    VEHICLES
-                </button>
-
-
-                <button
-                    type="button"
-                    class="collection-filter"
-                    data-collection-category="property"
-                >
-                    PROPERTY
-                </button>
-
-
-                <button
-                    type="button"
-                    class="collection-filter"
-                    data-collection-category="casino"
-                >
-                    CASINO
-                </button>
-
-
-                <button
-                    type="button"
-                    class="collection-filter"
-                    data-collection-category="prestige"
-                >
-                    PRESTIGE
-                </button>
-
-            </section>
-
-
-            <!-- =================================================
-                 OWNED ITEMS
-            ================================================== -->
-
-            <section class="collection-content">
-
-
-                <!--
-                    Purchased items will automatically
-                    be inserted into this grid by script.js
-                -->
+                <span class="tag">
+                    OWNED ITEMS
+                </span>
 
                 <div
-                    id="collectionGrid"
-                    class="collection-grid"
-                ></div>
-
-
-                <!-- =================================================
-                     EMPTY COLLECTION
-                ================================================== -->
-
-                <div
-                    id="collectionEmptyState"
-                    class="collection-empty"
+                    class="stat"
+                    id="collectionCount"
                 >
-
-                    <div class="collection-empty-icon">
-                        ♠
-                    </div>
-
-                    <p class="section-kicker">
-                        THE VAULT
-                    </p>
-
-                    <h2>
-                        YOUR VAULT IS EMPTY
-                    </h2>
-
-                    <p>
-                        Purchase virtual items from The Gilded Store
-                        and they will automatically appear in your
-                        personal collection.
-                    </p>
-
-                    <a
-                        href="store.html"
-                        class="profile-button collection-store-button"
-                    >
-                        EXPLORE STORE
-                    </a>
-
+                    0
                 </div>
-
-
-            </section>
-
-
-            <!-- =================================================
-                 COLLECTION DISCLAIMER
-            ================================================== -->
-
-            <section class="collection-disclaimer">
-
-                <strong>
-                    VIRTUAL COLLECTION NOTICE
-                </strong>
 
                 <p>
-                    All items displayed in The Gilded Ace are fictional
-                    digital collectibles used only within this play-money
-                    social experience. Items have no cash value, cannot be
-                    withdrawn, and cannot be exchanged for real-world
-                    goods, services, prizes, or money.
+                    Total number of virtual items
+                    currently inside your collection.
                 </p>
 
-            </section>
+            </div>
+
+
+
+            <div class="card">
+
+                <span class="tag">
+                    COLLECTION VALUE
+                </span>
+
+                <div
+                    class="stat"
+                    id="collectionValue"
+                >
+                    0 AC
+                </div>
+
+                <p>
+                    Total Ace Credits spent on
+                    your current collection.
+                </p>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <span class="tag">
+                    HIGHEST PURCHASE
+                </span>
+
+                <div
+                    class="stat"
+                    id="highestPurchase"
+                >
+                    —
+                </div>
+
+                <p>
+                    The most expensive item currently
+                    owned in your vault.
+                </p>
+
+            </div>
 
 
         </div>
 
-    </main>
+    </div>
+
+</section>
 
 
-    <!-- =========================================================
-         FOOTER
-    ========================================================== -->
 
-    <footer class="site-footer">
+<!-- =========================================================
+     FILTERS
+     ========================================================= -->
 
-        <div class="footer-container">
+<section class="section">
 
+    <div class="container">
+
+
+        <div class="section-head">
 
             <div>
 
-                <div class="footer-brand">
-                    THE GILDED ACE
+                <span class="eyebrow">
+                    PRIVATE VAULT
+                </span>
+
+                <h2>
+                    Your Items
+                </h2>
+
+            </div>
+
+        </div>
+
+
+
+        <div
+            style="
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+                margin-bottom:30px;
+            "
+        >
+
+            <button
+                type="button"
+                class="collection-filter"
+                onclick="filterCollection('all', this)"
+            >
+                ALL ITEMS
+            </button>
+
+            <button
+                type="button"
+                class="collection-filter"
+                onclick="filterCollection('profile', this)"
+            >
+                PROFILE
+            </button>
+
+            <button
+                type="button"
+                class="collection-filter"
+                onclick="filterCollection('collectible', this)"
+            >
+                COLLECTIBLES
+            </button>
+
+            <button
+                type="button"
+                class="collection-filter"
+                onclick="filterCollection('vehicle', this)"
+            >
+                VEHICLES
+            </button>
+
+            <button
+                type="button"
+                class="collection-filter"
+                onclick="filterCollection('property', this)"
+            >
+                PROPERTY
+            </button>
+
+            <button
+                type="button"
+                class="collection-filter"
+                onclick="filterCollection('casino', this)"
+            >
+                CASINO
+            </button>
+
+            <button
+                type="button"
+                class="collection-filter"
+                onclick="filterCollection('prestige', this)"
+            >
+                PRESTIGE
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             COLLECTION ITEMS ARE GENERATED BY SCRIPT.JS
+             ================================================= -->
+
+        <div
+            class="grid"
+            id="collectionGrid"
+        ></div>
+
+
+
+        <!-- =================================================
+             EMPTY VAULT STATE
+             ================================================= -->
+
+        <div
+            class="card empty-state"
+            id="emptyCollection"
+        >
+
+            <div class="icon">
+                ♠
+            </div>
+
+            <span class="eyebrow">
+                THE GILDED VAULT
+            </span>
+
+            <h2>
+                YOUR VAULT IS EMPTY
+            </h2>
+
+            <p
+                style="
+                    max-width:620px;
+                    margin:15px auto 28px;
+                "
+            >
+                Start building your collection by purchasing
+                virtual items from The Gilded Store.
+            </p>
+
+            <a
+                href="store.html"
+                class="btn"
+            >
+                EXPLORE STORE
+            </a>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     COLLECTION PROGRESSION
+     ========================================================= -->
+
+<section class="section">
+
+    <div class="container">
+
+
+        <div class="section-head">
+
+            <div>
+
+                <span class="eyebrow">
+                    COLLECTION STATUS
+                </span>
+
+                <h2>
+                    Build Your Legacy
+                </h2>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="grid">
+
+
+            <div class="card">
+
+                <span class="tag">
+                    TIER I
+                </span>
+
+                <h3>
+                    Collector
+                </h3>
+
+                <div class="price">
+                    5 ITEMS
                 </div>
 
                 <p>
-                    Play. Win. Build Your Legacy.
+                    Begin establishing your
+                    private Gilded collection.
                 </p>
 
             </div>
 
 
-            <div class="footer-links">
 
-                <a href="index.html">
-                    HOME
-                </a>
+            <div class="card">
 
-                <a href="casino.html">
-                    CASINO
-                </a>
+                <span class="tag">
+                    TIER II
+                </span>
 
-                <a href="store.html">
-                    STORE
-                </a>
+                <h3>
+                    Curator
+                </h3>
 
-                <a href="collection.html">
-                    COLLECTION
-                </a>
+                <div class="price">
+                    15 ITEMS
+                </div>
 
-                <a href="leaderboard.html">
-                    LEADERBOARD
-                </a>
+                <p>
+                    Build a diverse vault of
+                    high-value club items.
+                </p>
 
-                <a href="profile.html">
-                    PROFILE
-                </a>
+            </div>
+
+
+
+            <div class="card">
+
+                <span class="tag">
+                    TIER III
+                </span>
+
+                <h3>
+                    Gilded Collector
+                </h3>
+
+                <div class="price">
+                    30 ITEMS
+                </div>
+
+                <p>
+                    Reach one of the highest
+                    fictional collection milestones.
+                </p>
 
             </div>
 
 
         </div>
 
+    </div>
 
-        <div class="footer-disclaimer">
+</section>
 
-            The Gilded Ace uses fictional Ace Credits for
-            entertainment purposes only.
 
-            Ace Credits have no monetary value and cannot be
-            purchased, withdrawn, redeemed, or exchanged for
-            real-world goods or services.
+
+<!-- =========================================================
+     STORE LINK
+     ========================================================= -->
+
+<section class="section">
+
+    <div class="container">
+
+        <div
+            class="card"
+            style="
+                text-align:center;
+                padding:55px 25px;
+                background:
+                    radial-gradient(
+                        circle at center top,
+                        rgba(104,6,25,.30),
+                        transparent 55%
+                    ),
+                    linear-gradient(
+                        #141414,
+                        #090909
+                    );
+            "
+        >
+
+            <span class="eyebrow">
+                EXPAND YOUR COLLECTION
+            </span>
+
+            <h2>
+                Looking For Something New?
+            </h2>
+
+            <p
+                style="
+                    max-width:650px;
+                    margin:15px auto 28px;
+                "
+            >
+                Visit The Gilded Store to discover new
+                cosmetics, collectibles, vehicles,
+                properties and prestige items.
+            </p>
+
+            <a
+                href="store.html"
+                class="btn"
+            >
+                VISIT THE STORE
+            </a>
 
         </div>
 
-    </footer>
+    </div>
+
+</section>
 
 
-    <!-- =========================================================
-         JAVASCRIPT
-    ========================================================== -->
 
-    <script src="script.js"></script>
+<!-- =========================================================
+     NOTICE
+     ========================================================= -->
+
+<section class="section">
+
+    <div class="container notice">
+
+        <h3>
+            VIRTUAL COLLECTION
+        </h3>
+
+        <p>
+            All items shown in your Gilded Ace collection
+            are fictional digital items for this play-money
+            website. They have no cash value and cannot be
+            exchanged, redeemed, sold, or withdrawn for
+            real-world money.
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer>
+
+    <strong>
+        THE GILDED ACE
+    </strong>
+
+    CASINO & SOCIAL CLUB
+
+    <br>
+
+    PLAY-MONEY ENTERTAINMENT ONLY
+    •
+    ACE CREDITS HAVE NO CASH VALUE
+
+</footer>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script src="script.js?v=7"></script>
+
 
 </body>
 
