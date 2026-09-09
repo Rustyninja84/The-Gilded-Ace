@@ -1789,3 +1789,401 @@ img{
         min-width:90px;
     }
 }
+/* =========================================================
+   THE GILDED ACE - STORE PAGE
+========================================================= */
+
+/* =========================
+   STORE HERO
+========================= */
+
+.store-page-hero{
+    padding:90px 0 65px;
+    background:
+        radial-gradient(circle at 75% 30%, rgba(214,179,90,.10), transparent 30%),
+        linear-gradient(180deg,#0b0b0b,#070707);
+    border-bottom:1px solid #1d1d1d;
+}
+
+.store-page-hero h1{
+    margin-top:12px;
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:clamp(48px,7vw,82px);
+    font-weight:400;
+    letter-spacing:-2px;
+}
+
+.store-page-hero p{
+    margin-top:18px;
+    max-width:760px;
+    color:#999;
+    font-size:14px;
+    line-height:1.8;
+}
+
+.store-hero-balance{
+    margin-top:32px;
+    display:inline-flex;
+    flex-direction:column;
+    gap:5px;
+    padding:18px 22px;
+    border:1px solid rgba(214,179,90,.28);
+    background:#0d0d0d;
+}
+
+.store-hero-balance span{
+    color:#777;
+    font-size:9px;
+    letter-spacing:1.6px;
+}
+
+.store-hero-balance strong{
+    color:var(--gold);
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:28px;
+    font-weight:400;
+}
+
+
+/* =========================
+   STORE PAGE
+========================= */
+
+.store-page{
+    padding:55px 0 90px;
+}
+
+
+/* =========================
+   CATEGORY NAV
+========================= */
+
+.store-category-nav{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:55px;
+    padding-bottom:20px;
+    border-bottom:1px solid #222;
+}
+
+.store-category{
+    min-height:42px;
+    padding:0 18px;
+    border:1px solid #292929;
+    background:#0d0d0d;
+    color:#888;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.4px;
+    transition:.2s ease;
+}
+
+.store-category:hover{
+    color:var(--gold);
+    border-color:var(--gold);
+}
+
+.store-category.active{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:#111;
+}
+
+
+/* =========================
+   STORE SECTIONS
+========================= */
+
+.store-category-section{
+    margin-bottom:75px;
+}
+
+.store-section-heading{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    margin-bottom:26px;
+}
+
+.store-section-heading h2{
+    margin-top:7px;
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:36px;
+    font-weight:400;
+}
+
+
+/* =========================
+   PRODUCT GRID
+========================= */
+
+.store-product-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.store-product{
+    border:1px solid #292929;
+    background:
+        linear-gradient(145deg,#131313,#0b0b0b);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    min-height:410px;
+    transition:.22s ease;
+}
+
+.store-product:hover{
+    transform:translateY(-4px);
+    border-color:rgba(214,179,90,.55);
+    box-shadow:0 20px 45px rgba(0,0,0,.35);
+}
+
+
+/* =========================
+   PRODUCT ART
+========================= */
+
+.product-art{
+    min-height:180px;
+    display:grid;
+    place-items:center;
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at center, rgba(214,179,90,.12), transparent 35%),
+        linear-gradient(145deg,#111,#080808);
+    border-bottom:1px solid #242424;
+}
+
+.product-art::before{
+    content:"";
+    position:absolute;
+    inset:18px;
+    border:1px solid rgba(214,179,90,.18);
+}
+
+.product-art span{
+    position:relative;
+    z-index:2;
+    color:var(--gold);
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:64px;
+    font-weight:400;
+}
+
+.vehicle-art{
+    background:
+        radial-gradient(circle at center, rgba(214,179,90,.12), transparent 42%),
+        linear-gradient(145deg,#11130f,#070807);
+}
+
+.vehicle-art span{
+    font-size:45px;
+    letter-spacing:4px;
+}
+
+.property-art{
+    background:
+        linear-gradient(135deg,rgba(214,179,90,.06),transparent),
+        #0c0c0c;
+}
+
+.property-art span{
+    font-size:42px;
+    letter-spacing:4px;
+}
+
+.prestige-art{
+    background:
+        radial-gradient(circle at center, rgba(214,179,90,.20), transparent 38%),
+        linear-gradient(145deg,#17140d,#080808);
+}
+
+.prestige-art span{
+    text-shadow:
+        0 0 25px rgba(214,179,90,.25);
+}
+
+
+/* =========================
+   PRODUCT DETAILS
+========================= */
+
+.product-details{
+    flex:1;
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+}
+
+.product-category{
+    color:#777;
+    font-size:9px;
+    letter-spacing:1.5px;
+}
+
+.product-details h3{
+    margin-top:9px;
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:25px;
+    font-weight:400;
+}
+
+.product-details p{
+    margin-top:12px;
+    color:#929292;
+    font-size:12px;
+    line-height:1.75;
+}
+
+.product-bottom{
+    margin-top:auto;
+    padding-top:24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.product-bottom strong{
+    color:var(--gold);
+    font-size:13px;
+    white-space:nowrap;
+}
+
+
+/* =========================
+   PURCHASE BUTTON
+========================= */
+
+.buy-item-button{
+    min-height:40px;
+    padding:0 16px;
+    border:1px solid var(--gold);
+    background:transparent;
+    color:var(--gold);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.2px;
+    transition:.2s ease;
+}
+
+.buy-item-button:hover{
+    background:var(--gold);
+    color:#111;
+}
+
+.buy-item-button.owned{
+    border-color:#45684f;
+    color:#7fba8d;
+    background:rgba(63,107,74,.10);
+    cursor:default;
+}
+
+.buy-item-button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+
+/* =========================
+   PRESTIGE PRODUCTS
+========================= */
+
+.prestige-product{
+    border-color:rgba(214,179,90,.30);
+}
+
+.prestige-product:hover{
+    border-color:var(--gold);
+}
+
+
+/* =========================
+   STORE DISCLAIMER
+========================= */
+
+.store-disclaimer{
+    padding:30px;
+    border:1px solid #282828;
+    background:#0d0d0d;
+    text-align:center;
+}
+
+.store-disclaimer strong{
+    display:block;
+    color:var(--gold);
+    font-size:10px;
+    letter-spacing:1.7px;
+}
+
+.store-disclaimer p{
+    max-width:900px;
+    margin:12px auto 0;
+    color:#818181;
+    font-size:12px;
+    line-height:1.8;
+}
+
+
+/* =========================
+   STORE FILTER ANIMATION
+========================= */
+
+.store-product.store-hidden{
+    display:none;
+}
+
+.store-category-section.store-hidden{
+    display:none;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width:1100px){
+
+    .store-product-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media (max-width:700px){
+
+    .store-page-hero{
+        padding:65px 0 50px;
+    }
+
+    .store-category-nav{
+        gap:6px;
+    }
+
+    .store-category{
+        flex:1;
+        min-width:110px;
+    }
+
+    .store-product-grid{
+        grid-template-columns:1fr;
+    }
+
+    .store-section-heading h2{
+        font-size:30px;
+    }
+
+    .product-bottom{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .buy-item-button{
+        width:100%;
+    }
+
+}
