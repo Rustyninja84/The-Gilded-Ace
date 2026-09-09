@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const BALANCE_KEY = "gildedAceBalance";
     const DAILY_KEY = "gildedAceLastDailyReward";
     const INVENTORY_KEY = "gildedAceOwnedItems";
+    const STATS_KEY = "gildedAceStats";
 
     const BET_LEVELS = [
         50,
@@ -30,23 +31,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function randomInt(max) {
 
-        if (max <= 0) {
-            return 0;
-        }
-
         if (
             window.crypto &&
             window.crypto.getRandomValues
         ) {
 
-            const values =
+            const array =
                 new Uint32Array(1);
 
             window.crypto.getRandomValues(
-                values
+                array
             );
 
-            return values[0] % max;
+            return array[0] % max;
         }
 
         return Math.floor(
@@ -56,30 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       BALANCE
+       NUMBER FORMAT
     ========================================================= */
-
-    let balance =
-        Number(
-            localStorage.getItem(
-                BALANCE_KEY
-            )
-        );
-
-    if (
-        !Number.isFinite(balance) ||
-        balance < 0
-    ) {
-
-        balance =
-            STARTING_BALANCE;
-
-        localStorage.setItem(
-            BALANCE_KEY,
-            String(balance)
-        );
-    }
-
 
     function formatNumber(value) {
 
@@ -89,10 +64,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* =========================================================
+       BALANCE SYSTEM
+    ========================================================= */
+
     function getBalance() {
 
-        return balance;
+        const stored =
+            Number(
+                localStorage.getItem(
+                    BALANCE_KEY
+                )
+            );
+
+        if (
+            !Number.isFinite(stored) ||
+            stored < 0
+        ) {
+
+            localStorage.setItem(
+                BALANCE_KEY,
+                STARTING_BALANCE
+            );
+
+            return STARTING_BALANCE;
+        }
+
+        return stored;
     }
+
+
+    let balance =
+        getBalance();
 
 
     function setBalance(value) {
@@ -107,17 +110,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         localStorage.setItem(
             BALANCE_KEY,
-            String(balance)
+            balance
         );
 
         updateBalanceDisplays();
+        updateProfile();
     }
 
 
     function addBalance(amount) {
 
         setBalance(
-            balance + Number(amount || 0)
+            balance + amount
         );
     }
 
@@ -125,7 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function canAfford(amount) {
 
         return (
-            balance >= Number(amount || 0)
+            balance >=
+            Number(amount)
         );
     }
 
@@ -136,36 +141,42 @@ document.addEventListener("DOMContentLoaded", () => {
             .querySelectorAll(
                 ".balance-value"
             )
-            .forEach((element) => {
+            .forEach(
+                (element) => {
 
-                element.textContent =
-                    `${formatNumber(balance)} AC`;
+                    element.textContent =
+                        `${formatNumber(balance)} AC`;
 
-            });
+                }
+            );
 
 
         document
             .querySelectorAll(
                 ".casino-balance"
             )
-            .forEach((element) => {
+            .forEach(
+                (element) => {
 
-                element.textContent =
-                    `${formatNumber(balance)} AC`;
+                    element.textContent =
+                        `${formatNumber(balance)} AC`;
 
-            });
+                }
+            );
 
 
         document
             .querySelectorAll(
                 ".credit-balance"
             )
-            .forEach((element) => {
+            .forEach(
+                (element) => {
 
-                element.innerHTML =
-                    `${formatNumber(balance)} <span>AC</span>`;
+                    element.innerHTML =
+                        `${formatNumber(balance)} <span>AC</span>`;
 
-            });
+                }
+            );
     }
 
 
@@ -230,21 +241,52 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.assign(
             toast.style,
             {
-                position: "fixed",
-                top: "105px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                zIndex: "99999",
-                minWidth: "260px",
-                maxWidth: "90%",
-                padding: "14px 24px",
-                background: "#111",
-                border: `1px solid ${borderColor}`,
-                color: textColor,
-                textAlign: "center",
-                fontSize: "11px",
-                fontWeight: "700",
-                letterSpacing: "1.3px",
+
+                position:
+                    "fixed",
+
+                top:
+                    "105px",
+
+                left:
+                    "50%",
+
+                transform:
+                    "translateX(-50%)",
+
+                zIndex:
+                    "99999",
+
+                minWidth:
+                    "260px",
+
+                maxWidth:
+                    "90%",
+
+                padding:
+                    "14px 24px",
+
+                background:
+                    "#111",
+
+                border:
+                    `1px solid ${borderColor}`,
+
+                color:
+                    textColor,
+
+                textAlign:
+                    "center",
+
+                fontSize:
+                    "11px",
+
+                fontWeight:
+                    "700",
+
+                letterSpacing:
+                    "1.3px",
+
                 boxShadow:
                     "0 18px 45px rgba(0,0,0,.55)"
             }
@@ -256,22 +298,26 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            toast.style.transition =
-                "opacity .35s ease";
+                toast.style.transition =
+                    "opacity .35s ease";
 
-            toast.style.opacity =
-                "0";
+                toast.style.opacity =
+                    "0";
 
 
-            setTimeout(() => {
+                setTimeout(
+                    () => {
+                        toast.remove();
+                    },
+                    350
+                );
 
-                toast.remove();
-
-            }, 350);
-
-        }, 2200);
+            },
+            2200
+        );
     }
 
 
@@ -323,10 +369,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return Math.max(
             0,
-            (
-                lastReward +
-                REWARD_COOLDOWN
-            ) -
+            lastReward +
+            REWARD_COOLDOWN -
             Date.now()
         );
     }
@@ -346,8 +390,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const minutes =
             Math.floor(
-                (seconds % 3600) /
-                60
+                (
+                    seconds %
+                    3600
+                ) / 60
             );
 
         const remainingSeconds =
@@ -382,12 +428,6 @@ document.addEventListener("DOMContentLoaded", () => {
             dailyRewardButton.textContent =
                 "CLAIM DAILY REWARD";
 
-            dailyRewardButton.style.opacity =
-                "1";
-
-            dailyRewardButton.style.cursor =
-                "pointer";
-
         } else {
 
             dailyRewardButton.disabled =
@@ -398,49 +438,47 @@ document.addEventListener("DOMContentLoaded", () => {
                 formatCountdown(
                     getRewardRemaining()
                 );
-
-            dailyRewardButton.style.opacity =
-                ".55";
-
-            dailyRewardButton.style.cursor =
-                "not-allowed";
         }
     }
 
 
     if (dailyRewardButton) {
 
-        dailyRewardButton.addEventListener(
-            "click",
-            () => {
+        dailyRewardButton
+            .addEventListener(
+                "click",
+                () => {
 
-                if (
-                    !isRewardAvailable()
-                ) {
-                    return;
+                    if (
+                        !isRewardAvailable()
+                    ) {
+                        return;
+                    }
+
+
+                    localStorage.setItem(
+                        DAILY_KEY,
+                        Date.now()
+                    );
+
+
+                    addBalance(
+                        DAILY_REWARD
+                    );
+
+
+                    updateDailyRewardButton();
+
+
+                    showToast(
+                        `+${formatNumber(
+                            DAILY_REWARD
+                        )} AC DAILY REWARD`,
+                        "success"
+                    );
+
                 }
-
-
-                addBalance(
-                    DAILY_REWARD
-                );
-
-
-                localStorage.setItem(
-                    DAILY_KEY,
-                    String(Date.now())
-                );
-
-
-                updateDailyRewardButton();
-
-
-                showToast(
-                    `+${formatNumber(DAILY_REWARD)} AC DAILY REWARD`,
-                    "success"
-                );
-            }
-        );
+            );
 
 
         updateDailyRewardButton();
@@ -485,6 +523,9 @@ document.addEventListener("DOMContentLoaded", () => {
             INVENTORY_KEY,
             JSON.stringify(items)
         );
+
+        renderCollection();
+        updateProfile();
     }
 
 
@@ -492,14 +533,168 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return getOwnedItems()
             .some(
-                (item) =>
+                item =>
                     item.id === itemId
             );
     }
 
 
     /* =========================================================
-       STORE
+       PLAYER STATISTICS
+    ========================================================= */
+
+    function defaultStats() {
+
+        return {
+
+            totalWins: 0,
+            totalLosses: 0,
+            gamesPlayed: 0,
+
+            blackjack: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            },
+
+            slots: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            },
+
+            roulette: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            },
+
+            dice: {
+                wins: 0,
+                losses: 0,
+                played: 0
+            }
+
+        };
+    }
+
+
+    function getStats() {
+
+        const defaults =
+            defaultStats();
+
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        STATS_KEY
+                    ) || "{}"
+                );
+
+
+            return {
+
+                totalWins:
+                    Number(
+                        saved.totalWins
+                    ) || 0,
+
+                totalLosses:
+                    Number(
+                        saved.totalLosses
+                    ) || 0,
+
+                gamesPlayed:
+                    Number(
+                        saved.gamesPlayed
+                    ) || 0,
+
+                blackjack: {
+                    ...defaults.blackjack,
+                    ...saved.blackjack
+                },
+
+                slots: {
+                    ...defaults.slots,
+                    ...saved.slots
+                },
+
+                roulette: {
+                    ...defaults.roulette,
+                    ...saved.roulette
+                },
+
+                dice: {
+                    ...defaults.dice,
+                    ...saved.dice
+                }
+
+            };
+
+        } catch {
+
+            return defaults;
+        }
+    }
+
+
+    function saveStats(stats) {
+
+        localStorage.setItem(
+            STATS_KEY,
+            JSON.stringify(stats)
+        );
+
+        updateProfile();
+    }
+
+
+    function recordGame(
+        game,
+        result
+    ) {
+
+        const stats =
+            getStats();
+
+
+        if (!stats[game]) {
+            return;
+        }
+
+
+        stats.gamesPlayed += 1;
+
+        stats[game].played += 1;
+
+
+        if (result === "win") {
+
+            stats.totalWins += 1;
+
+            stats[game].wins += 1;
+        }
+
+
+        if (result === "loss") {
+
+            stats.totalLosses += 1;
+
+            stats[game].losses += 1;
+        }
+
+
+        saveStats(
+            stats
+        );
+    }
+
+
+    /* =========================================================
+       STORE FILTERS
     ========================================================= */
 
     const storeCategoryButtons =
@@ -507,10 +702,12 @@ document.addEventListener("DOMContentLoaded", () => {
             ".store-category"
         );
 
+
     const storeProducts =
         document.querySelectorAll(
             ".store-product"
         );
+
 
     const storeSections =
         document.querySelectorAll(
@@ -521,15 +718,17 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateStoreButtons() {
 
         storeProducts.forEach(
-            (product) => {
+            product => {
 
                 const itemId =
                     product.dataset.itemId;
+
 
                 const button =
                     product.querySelector(
                         ".buy-item-button"
                     );
+
 
                 if (!button) {
                     return;
@@ -537,7 +736,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 if (
-                    playerOwnsItem(itemId)
+                    playerOwnsItem(
+                        itemId
+                    )
                 ) {
 
                     button.textContent =
@@ -562,6 +763,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         "owned"
                     );
                 }
+
             }
         );
     }
@@ -570,40 +772,44 @@ document.addEventListener("DOMContentLoaded", () => {
     function filterStore(category) {
 
         storeProducts.forEach(
-            (product) => {
+            product => {
 
                 const show =
                     category === "all" ||
                     product.dataset.category ===
-                    category;
+                        category;
+
 
                 product.classList.toggle(
                     "store-hidden",
                     !show
                 );
+
             }
         );
 
 
         storeSections.forEach(
-            (section) => {
+            section => {
 
                 const visible =
                     section.querySelectorAll(
                         ".store-product:not(.store-hidden)"
                     );
 
+
                 section.classList.toggle(
                     "store-hidden",
                     visible.length === 0
                 );
+
             }
         );
     }
 
 
     storeCategoryButtons.forEach(
-        (button) => {
+        button => {
 
             button.addEventListener(
                 "click",
@@ -611,15 +817,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     storeCategoryButtons
                         .forEach(
-                            (otherButton) => {
-
-                                otherButton
-                                    .classList
-                                    .remove(
-                                        "active"
-                                    );
-
-                            }
+                            item =>
+                                item.classList.remove(
+                                    "active"
+                                )
                         );
 
 
@@ -632,8 +833,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         button.dataset
                             .storeCategory
                     );
+
                 }
             );
+
         }
     );
 
@@ -643,7 +846,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ".buy-item-button"
         )
         .forEach(
-            (button) => {
+            button => {
 
                 button.addEventListener(
                     "click",
@@ -654,6 +857,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 ".store-product"
                             );
 
+
                         if (!product) {
                             return;
                         }
@@ -663,13 +867,16 @@ document.addEventListener("DOMContentLoaded", () => {
                             product.dataset
                                 .itemId;
 
+
                         const itemName =
                             product.dataset
                                 .itemName;
 
+
                         const category =
                             product.dataset
                                 .category;
+
 
                         const price =
                             Number(
@@ -716,7 +923,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         ) {
 
                             showToast(
-                                `NOT ENOUGH ACE CREDITS — NEED ${formatNumber(price)} AC`,
+                                `NOT ENOUGH ACE CREDITS — NEED ${formatNumber(
+                                    price
+                                )} AC`,
                                 "error"
                             );
 
@@ -726,7 +935,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         const confirmed =
                             window.confirm(
-                                `Purchase ${itemName} for ${formatNumber(price)} AC?`
+                                `Purchase ${itemName} for ${formatNumber(
+                                    price
+                                )} AC?`
                             );
 
 
@@ -736,28 +947,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                         setBalance(
-                            getBalance() -
-                            price
+                            balance - price
                         );
 
 
-                        const items =
+                        const owned =
                             getOwnedItems();
 
 
-                        items.push({
-                            id: itemId,
-                            name: itemName,
-                            category: category,
-                            price: price,
+                        owned.push({
+
+                            id:
+                                itemId,
+
+                            name:
+                                itemName,
+
+                            category:
+                                category,
+
+                            price:
+                                price,
+
                             purchasedAt:
                                 new Date()
                                     .toISOString()
+
                         });
 
 
                         saveOwnedItems(
-                            items
+                            owned
                         );
 
 
@@ -768,8 +988,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             `${itemName.toUpperCase()} PURCHASED`,
                             "success"
                         );
+
                     }
                 );
+
             }
         );
 
@@ -780,7 +1002,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         updateStoreButtons();
 
-        filterStore("all");
+        filterStore(
+            "all"
+        );
     }
 
 
@@ -793,30 +1017,36 @@ document.addEventListener("DOMContentLoaded", () => {
             "collectionGrid"
         );
 
+
     const collectionEmptyState =
         document.getElementById(
             "collectionEmptyState"
         );
+
 
     const collectionOwnedCount =
         document.getElementById(
             "collectionOwnedCount"
         );
 
+
     const collectionItemCount =
         document.getElementById(
             "collectionItemCount"
         );
+
 
     const collectionValue =
         document.getElementById(
             "collectionValue"
         );
 
+
     const collectionHighestPurchase =
         document.getElementById(
             "collectionHighestPurchase"
         );
+
 
     const collectionFilters =
         document.querySelectorAll(
@@ -826,31 +1056,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const collectionArt = {
 
-        "gold-profile-frame": "◇",
-        "diamond-nameplate": "♦",
-        "high-roller-title": "★",
+        "gold-profile-frame":
+            "◇",
 
-        "gilded-watch": "◉",
-        "golden-ace-card": "♠",
-        "diamond-crown": "♛",
+        "diamond-nameplate":
+            "♦",
 
-        "grand-touring-coupe": "GT",
-        "gilded-supercar": "GA",
-        "executive-limousine": "XL",
-        "private-yacht": "Y",
-        "private-jet": "JET",
+        "high-roller-title":
+            "★",
 
-        "hotel-suite": "01",
-        "luxury-penthouse": "PH",
-        "private-estate": "EST",
+        "gilded-watch":
+            "◉",
 
-        "gilded-card-back": "A",
-        "gold-blackjack-table": "21",
-        "midnight-roulette": "0",
+        "golden-ace-card":
+            "♠",
 
-        "high-roller-membership": "HR",
-        "diamond-club": "♦",
-        "casino-ownership": "♛"
+        "diamond-crown":
+            "♛",
+
+        "grand-touring-coupe":
+            "GT",
+
+        "gilded-supercar":
+            "GA",
+
+        "executive-limousine":
+            "XL",
+
+        "private-yacht":
+            "Y",
+
+        "private-jet":
+            "JET",
+
+        "hotel-suite":
+            "01",
+
+        "luxury-penthouse":
+            "PH",
+
+        "private-estate":
+            "EST",
+
+        "gilded-card-back":
+            "A",
+
+        "gold-blackjack-table":
+            "21",
+
+        "midnight-roulette":
+            "0",
+
+        "high-roller-membership":
+            "HR",
+
+        "diamond-club":
+            "♦",
+
+        "casino-ownership":
+            "♛"
+
     };
 
 
@@ -859,6 +1124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
 
         const names = {
+
             profile:
                 "PROFILE COSMETIC",
 
@@ -876,6 +1142,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             prestige:
                 "PRESTIGE"
+
         };
 
 
@@ -886,17 +1153,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    function escapeText(value) {
+
+        return String(
+            value ?? ""
+        )
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
+    }
+
+
     function formatPurchaseDate(
-        dateString
+        value
     ) {
 
-        if (!dateString) {
-            return "DATE UNAVAILABLE";
-        }
-
-
         const date =
-            new Date(dateString);
+            new Date(
+                value
+            );
 
 
         if (
@@ -905,16 +1197,23 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         ) {
 
-            return "DATE UNAVAILABLE";
+            return "UNKNOWN";
         }
 
 
         return date.toLocaleDateString(
             undefined,
             {
-                year: "numeric",
-                month: "short",
-                day: "numeric"
+
+                year:
+                    "numeric",
+
+                month:
+                    "short",
+
+                day:
+                    "numeric"
+
             }
         );
     }
@@ -934,8 +1233,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "collection-item";
 
 
-        card.dataset
-            .collectionCategory =
+        card.dataset.collectionCategory =
             item.category ||
             "collectible";
 
@@ -945,139 +1243,54 @@ document.addEventListener("DOMContentLoaded", () => {
             "♠";
 
 
-        const price =
-            Number(item.price) || 0;
+        card.innerHTML = `
 
+            <div class="collection-item-art">
+                ${escapeText(art)}
+            </div>
 
-        const artElement =
-            document.createElement(
-                "div"
-            );
+            <div class="collection-item-details">
 
-        artElement.className =
-            "collection-item-art";
+                <span class="collection-item-category">
+                    ${escapeText(
+                        getCollectionCategoryName(
+                            item.category
+                        )
+                    )}
+                </span>
 
-        artElement.textContent =
-            art;
+                <h3 class="collection-item-name">
+                    ${escapeText(
+                        item.name
+                    )}
+                </h3>
 
+                <div class="collection-item-date">
+                    ACQUIRED
+                    ${escapeText(
+                        formatPurchaseDate(
+                            item.purchasedAt
+                        )
+                    )}
+                </div>
 
-        const details =
-            document.createElement(
-                "div"
-            );
+                <div class="collection-item-bottom">
 
-        details.className =
-            "collection-item-details";
+                    <span class="collection-item-price">
+                        ${formatNumber(
+                            item.price
+                        )} AC
+                    </span>
 
+                    <span class="collection-owned-badge">
+                        OWNED
+                    </span>
 
-        const category =
-            document.createElement(
-                "span"
-            );
+                </div>
 
-        category.className =
-            "collection-item-category";
+            </div>
 
-        category.textContent =
-            getCollectionCategoryName(
-                item.category
-            );
-
-
-        const name =
-            document.createElement(
-                "h3"
-            );
-
-        name.className =
-            "collection-item-name";
-
-        name.textContent =
-            item.name ||
-            "Gilded Item";
-
-
-        const date =
-            document.createElement(
-                "div"
-            );
-
-        date.className =
-            "collection-item-date";
-
-        date.textContent =
-            "ACQUIRED " +
-            formatPurchaseDate(
-                item.purchasedAt
-            );
-
-
-        const bottom =
-            document.createElement(
-                "div"
-            );
-
-        bottom.className =
-            "collection-item-bottom";
-
-
-        const priceElement =
-            document.createElement(
-                "span"
-            );
-
-        priceElement.className =
-            "collection-item-price";
-
-        priceElement.textContent =
-            `${formatNumber(price)} AC`;
-
-
-        const owned =
-            document.createElement(
-                "span"
-            );
-
-        owned.className =
-            "collection-owned-badge";
-
-        owned.textContent =
-            "OWNED";
-
-
-        bottom.appendChild(
-            priceElement
-        );
-
-        bottom.appendChild(
-            owned
-        );
-
-
-        details.appendChild(
-            category
-        );
-
-        details.appendChild(
-            name
-        );
-
-        details.appendChild(
-            date
-        );
-
-        details.appendChild(
-            bottom
-        );
-
-
-        card.appendChild(
-            artElement
-        );
-
-        card.appendChild(
-            details
-        );
+        `;
 
 
         return card;
@@ -1088,47 +1301,48 @@ document.addEventListener("DOMContentLoaded", () => {
         items
     ) {
 
-        const totalItems =
-            items.length;
-
-
         const totalValue =
             items.reduce(
-                (total, item) =>
-                    total +
-                    (
-                        Number(
-                            item.price
-                        ) || 0
-                    ),
+                (
+                    total,
+                    item
+                ) => {
+
+                    return (
+                        total +
+                        (
+                            Number(
+                                item.price
+                            ) || 0
+                        )
+                    );
+
+                },
                 0
             );
 
 
-        let highestItem =
+        let highest =
             null;
 
 
         items.forEach(
-            (item) => {
+            item => {
 
                 if (
-                    !highestItem ||
-                    (
-                        Number(
-                            item.price
-                        ) || 0
+                    !highest ||
+                    Number(
+                        item.price
                     ) >
-                    (
-                        Number(
-                            highestItem.price
-                        ) || 0
+                    Number(
+                        highest.price
                     )
                 ) {
 
-                    highestItem =
+                    highest =
                         item;
                 }
+
             }
         );
 
@@ -1140,7 +1354,7 @@ document.addEventListener("DOMContentLoaded", () => {
             collectionOwnedCount
                 .textContent =
                 formatNumber(
-                    totalItems
+                    items.length
                 );
         }
 
@@ -1151,8 +1365,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             collectionItemCount
                 .textContent =
-                `${formatNumber(totalItems)} ${
-                    totalItems === 1
+                `${items.length} ${
+                    items.length === 1
                         ? "ITEM"
                         : "ITEMS"
                 }`;
@@ -1163,8 +1377,11 @@ document.addEventListener("DOMContentLoaded", () => {
             collectionValue
         ) {
 
-            collectionValue.textContent =
-                `${formatNumber(totalValue)} AC`;
+            collectionValue
+                .textContent =
+                `${formatNumber(
+                    totalValue
+                )} AC`;
         }
 
 
@@ -1174,8 +1391,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             collectionHighestPurchase
                 .textContent =
-                highestItem
-                    ? highestItem.name
+                highest
+                    ? highest.name
                     : "—";
         }
     }
@@ -1197,17 +1414,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-        let visibleItems = 0;
+        let visible =
+            0;
 
 
         cards.forEach(
-            (card) => {
+            card => {
 
                 const show =
                     category === "all" ||
                     card.dataset
                         .collectionCategory ===
-                    category;
+                        category;
 
 
                 card.classList.toggle(
@@ -1217,8 +1435,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 if (show) {
-                    visibleItems++;
+                    visible++;
                 }
+
             }
         );
 
@@ -1226,6 +1445,20 @@ document.addEventListener("DOMContentLoaded", () => {
         if (
             collectionEmptyState
         ) {
+
+            const heading =
+                collectionEmptyState
+                    .querySelector(
+                        "h2"
+                    );
+
+
+            const paragraph =
+                collectionEmptyState
+                    .querySelector(
+                        "p:not(.section-kicker)"
+                    );
+
 
             if (
                 cards.length === 0
@@ -1235,25 +1468,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     .style.display =
                     "block";
 
+
+                if (heading) {
+
+                    heading.textContent =
+                        "YOUR VAULT IS EMPTY";
+                }
+
+
+                if (paragraph) {
+
+                    paragraph.textContent =
+                        "Purchase virtual items from The Gilded Store and they will automatically appear in your personal collection.";
+                }
+
             } else if (
-                visibleItems === 0
+                visible === 0
             ) {
 
                 collectionEmptyState
                     .style.display =
                     "block";
-
-                const heading =
-                    collectionEmptyState
-                        .querySelector(
-                            "h2"
-                        );
-
-                const text =
-                    collectionEmptyState
-                        .querySelector(
-                            "p:not(.section-kicker)"
-                        );
 
 
                 if (heading) {
@@ -1263,9 +1498,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                if (text) {
+                if (paragraph) {
 
-                    text.textContent =
+                    paragraph.textContent =
                         "You do not currently own any items in this collection category.";
                 }
 
@@ -1286,7 +1521,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        const items =
+        const owned =
             getOwnedItems();
 
 
@@ -1294,20 +1529,22 @@ document.addEventListener("DOMContentLoaded", () => {
             "";
 
 
-        items.forEach(
-            (item) => {
+        owned.forEach(
+            item => {
 
-                collectionGrid.appendChild(
-                    createCollectionCard(
-                        item
-                    )
-                );
+                collectionGrid
+                    .appendChild(
+                        createCollectionCard(
+                            item
+                        )
+                    );
+
             }
         );
 
 
         updateCollectionStatistics(
-            items
+            owned
         );
 
 
@@ -1317,21 +1554,17 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const category =
+        filterCollection(
             active
                 ? active.dataset
                     .collectionCategory
-                : "all";
-
-
-        filterCollection(
-            category
+                : "all"
         );
     }
 
 
     collectionFilters.forEach(
-        (button) => {
+        button => {
 
             button.addEventListener(
                 "click",
@@ -1339,14 +1572,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     collectionFilters
                         .forEach(
-                            (otherButton) => {
-
-                                otherButton
-                                    .classList
-                                    .remove(
-                                        "active"
-                                    );
-                            }
+                            item =>
+                                item.classList.remove(
+                                    "active"
+                                )
                         );
 
 
@@ -1359,8 +1588,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         button.dataset
                             .collectionCategory
                     );
+
                 }
             );
+
         }
     );
 
@@ -1374,6 +1605,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ".casino-tab"
         );
 
+
     const casinoPanels =
         document.querySelectorAll(
             ".casino-game-panel"
@@ -1385,34 +1617,40 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
 
         casinoTabs.forEach(
-            (tab) => {
+            tab => {
 
                 tab.classList.toggle(
                     "active",
                     tab.dataset.game ===
-                    gameName
+                        gameName
                 );
+
             }
         );
 
 
         casinoPanels.forEach(
-            (panel) => {
+            panel => {
 
-                panel.classList.toggle(
-                    "active",
+                const match =
                     panel.id === gameName ||
                     panel.dataset
                         .gamePanel ===
-                    gameName
+                        gameName;
+
+
+                panel.classList.toggle(
+                    "active",
+                    match
                 );
+
             }
         );
     }
 
 
     casinoTabs.forEach(
-        (tab) => {
+        tab => {
 
             tab.addEventListener(
                 "click",
@@ -1420,6 +1658,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const game =
                         tab.dataset.game;
+
 
                     activateGame(
                         game
@@ -1431,34 +1670,41 @@ document.addEventListener("DOMContentLoaded", () => {
                         "",
                         `#${game}`
                     );
+
                 }
             );
+
         }
     );
 
 
-    const requestedGame =
-        window.location.hash
-            .replace("#", "");
-
-
-    const validGames = [
-        "blackjack",
-        "slots",
-        "roulette",
-        "dice"
-    ];
-
-
     if (
-        validGames.includes(
-            requestedGame
-        )
+        window.location.hash
     ) {
 
-        activateGame(
-            requestedGame
-        );
+        const game =
+            window.location.hash
+                .replace(
+                    "#",
+                    ""
+                );
+
+
+        if (
+            [
+                "blackjack",
+                "slots",
+                "roulette",
+                "dice"
+            ].includes(
+                game
+            )
+        ) {
+
+            activateGame(
+                game
+            );
+        }
     }
 
 
@@ -1478,10 +1724,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 displayId
             );
 
+
         const down =
             document.getElementById(
                 downId
             );
+
 
         const up =
             document.getElementById(
@@ -1495,7 +1743,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        if (index < 0) {
+        if (index === -1) {
             index = 1;
         }
 
@@ -1505,7 +1753,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (display) {
 
                 display.textContent =
-                    `${formatNumber(BET_LEVELS[index])} AC`;
+                    `${formatNumber(
+                        BET_LEVELS[index]
+                    )} AC`;
             }
         }
 
@@ -1523,6 +1773,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
 
                     update();
+
                 }
             );
         }
@@ -1537,11 +1788,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     index =
                         Math.min(
                             BET_LEVELS.length -
-                            1,
+                                1,
                             index + 1
                         );
 
                     update();
+
                 }
             );
         }
@@ -1554,11 +1806,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             getBet() {
 
-                return BET_LEVELS[
-                    index
-                ];
+                return (
+                    BET_LEVELS[index]
+                );
             },
-
 
             setDisabled(
                 disabled
@@ -1574,6 +1825,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         disabled;
                 }
             }
+
         };
     }
 
@@ -1604,35 +1856,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 "dealerCards"
             );
 
+
         const playerCards =
             document.getElementById(
                 "playerCards"
             );
+
 
         const dealerValue =
             document.getElementById(
                 "dealerValue"
             );
 
+
         const playerValue =
             document.getElementById(
                 "playerValue"
             );
+
 
         const message =
             document.getElementById(
                 "blackjackMessage"
             );
 
+
         const hit =
             document.getElementById(
                 "blackjackHit"
             );
 
+
         const stand =
             document.getElementById(
                 "blackjackStand"
             );
+
 
         const double =
             document.getElementById(
@@ -1645,50 +1904,56 @@ document.addEventListener("DOMContentLoaded", () => {
         let dealerHand = [];
 
         let currentBet = 0;
-        let roundActive = false;
+        let active = false;
 
 
         function createDeck() {
 
-            const suits = [
-                "♠",
-                "♥",
-                "♦",
-                "♣"
-            ];
-
-            const ranks = [
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "J",
-                "Q",
-                "K",
-                "A"
-            ];
+            const suits =
+                [
+                    "♠",
+                    "♥",
+                    "♦",
+                    "♣"
+                ];
 
 
-            const cards = [];
+            const ranks =
+                [
+                    "A",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "J",
+                    "Q",
+                    "K"
+                ];
+
+
+            const cards =
+                [];
 
 
             suits.forEach(
-                (suit) => {
+                suit => {
 
                     ranks.forEach(
-                        (rank) => {
+                        rank => {
 
                             cards.push({
-                                rank,
-                                suit
+                                suit,
+                                rank
                             });
+
                         }
                     );
+
                 }
             );
 
@@ -1705,10 +1970,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         i + 1
                     );
 
+
                 [
                     cards[i],
                     cards[j]
-                ] = [
+                ] =
+                [
                     cards[j],
                     cards[i]
                 ];
@@ -1722,7 +1989,7 @@ document.addEventListener("DOMContentLoaded", () => {
         function drawCard() {
 
             if (
-                deck.length === 0
+                deck.length < 10
             ) {
 
                 deck =
@@ -1752,7 +2019,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             if (
-                card.rank === "A"
+                card.rank ===
+                "A"
             ) {
 
                 return 11;
@@ -1776,15 +2044,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         card
                     ) =>
                         sum +
-                        cardValue(card),
+                        cardValue(
+                            card
+                        ),
                     0
                 );
 
 
             let aces =
                 hand.filter(
-                    (card) =>
-                        card.rank === "A"
+                    card =>
+                        card.rank ===
+                            "A"
                 ).length;
 
 
@@ -1794,6 +2065,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
 
                 total -= 10;
+
                 aces--;
             }
 
@@ -1808,134 +2080,106 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return (
                 hand.length === 2 &&
-                handValue(hand) ===
-                21
+                handValue(
+                    hand
+                ) === 21
             );
         }
 
 
-        function renderCard(
+        function cardHtml(
             card,
             hidden = false
         ) {
 
-            const element =
-                document.createElement(
-                    "div"
-                );
-
-
             if (hidden) {
 
-                element.className =
-                    "playing-card card-back";
+                return `
 
-                element.innerHTML =
-                    "<span>A</span>";
+                    <div class="playing-card card-back">
+                        <span>A</span>
+                    </div>
 
-                return element;
+                `;
             }
 
 
-            element.className =
-                "playing-card";
-
-
-            const rank =
-                document.createElement(
-                    "span"
-                );
-
-            rank.className =
-                "card-rank";
-
-            rank.textContent =
-                card.rank;
-
-
-            const suit =
-                document.createElement(
-                    "span"
-                );
-
-            suit.className =
-                "card-suit";
-
-            suit.textContent =
-                card.suit;
-
-
-            if (
+            const red =
                 card.suit === "♥" ||
-                card.suit === "♦"
-            ) {
-
-                suit.classList.add(
-                    "red"
-                );
-            }
+                card.suit === "♦";
 
 
-            element.appendChild(
-                rank
-            );
+            return `
 
-            element.appendChild(
-                suit
-            );
+                <div class="playing-card">
 
+                    <span class="card-rank">
+                        ${card.rank}
+                    </span>
 
-            return element;
+                    <span class="card-suit ${red ? "red" : ""}">
+                        ${card.suit}
+                    </span>
+
+                </div>
+
+            `;
         }
 
 
-        function renderBlackjack(
+        function render(
             hideDealer = true
         ) {
 
             dealerCards.innerHTML =
-                "";
-
-            playerCards.innerHTML =
-                "";
-
-
-            dealerHand.forEach(
-                (card, index) => {
-
-                    dealerCards
-                        .appendChild(
-                            renderCard(
+                dealerHand
+                    .map(
+                        (
+                            card,
+                            index
+                        ) =>
+                            cardHtml(
                                 card,
                                 hideDealer &&
                                 index === 1
                             )
-                        );
-                }
-            );
+                    )
+                    .join("");
 
 
-            playerHand.forEach(
-                (card) => {
-
-                    playerCards
-                        .appendChild(
-                            renderCard(
+            playerCards.innerHTML =
+                playerHand
+                    .map(
+                        card =>
+                            cardHtml(
                                 card
                             )
-                        );
-                }
-            );
+                    )
+                    .join("");
 
 
             playerValue.textContent =
-                `Your Hand: ${handValue(playerHand)}`;
+                `Your Hand: ${handValue(
+                    playerHand
+                )}`;
 
 
-            dealerValue.textContent =
-                hideDealer
-                    ? "Dealer: ?"
-                    : `Dealer: ${handValue(dealerHand)}`;
+            if (hideDealer) {
+
+                dealerValue.textContent =
+                    dealerHand.length
+                        ? `Dealer: ${cardValue(
+                            dealerHand[0]
+                        )}`
+                        : "Dealer: —";
+
+            } else {
+
+                dealerValue.textContent =
+                    `Dealer: ${handValue(
+                        dealerHand
+                    )}`;
+            }
         }
 
 
@@ -1950,6 +2194,7 @@ document.addEventListener("DOMContentLoaded", () => {
             message.className =
                 "game-message";
 
+
             if (type) {
 
                 message.classList.add(
@@ -1960,23 +2205,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         function setButtons(
-            active
+            roundActive
         ) {
 
+            active =
+                roundActive;
+
+
             hit.disabled =
-                !active;
+                !roundActive;
 
             stand.disabled =
-                !active;
+                !roundActive;
 
             double.disabled =
-                !active;
+                !roundActive;
 
             blackjackDeal.disabled =
-                active;
+                roundActive;
+
 
             betControl.setDisabled(
-                active
+                roundActive
             );
         }
 
@@ -1985,12 +2235,10 @@ document.addEventListener("DOMContentLoaded", () => {
             result
         ) {
 
-            roundActive =
-                false;
-
-            renderBlackjack(
+            render(
                 false
             );
+
 
             setButtons(
                 false
@@ -2004,57 +2252,98 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const payout =
                     Math.floor(
-                        currentBet * 2.5
+                        currentBet *
+                        2.5
                     );
+
 
                 addBalance(
                     payout
                 );
 
-                setMessage(
-                    `BLACKJACK! You won ${formatNumber(payout - currentBet)} AC.`,
+
+                recordGame(
+                    "blackjack",
                     "win"
                 );
+
+
+                setMessage(
+                    `BLACKJACK! You won ${formatNumber(
+                        payout -
+                        currentBet
+                    )} AC.`,
+                    "win"
+                );
+
 
                 return;
             }
 
 
             if (
-                result === "win"
+                result ===
+                "win"
             ) {
 
                 addBalance(
                     currentBet * 2
                 );
 
-                setMessage(
-                    `You won ${formatNumber(currentBet)} AC.`,
+
+                recordGame(
+                    "blackjack",
                     "win"
                 );
+
+
+                setMessage(
+                    `You won ${formatNumber(
+                        currentBet
+                    )} AC.`,
+                    "win"
+                );
+
 
                 return;
             }
 
 
             if (
-                result === "push"
+                result ===
+                "push"
             ) {
 
                 addBalance(
                     currentBet
                 );
 
+
+                recordGame(
+                    "blackjack",
+                    "push"
+                );
+
+
                 setMessage(
                     "Push. Your bet was returned."
                 );
+
 
                 return;
             }
 
 
+            recordGame(
+                "blackjack",
+                "loss"
+            );
+
+
             setMessage(
-                `House wins. You lost ${formatNumber(currentBet)} AC.`,
+                `House wins. You lost ${formatNumber(
+                    currentBet
+                )} AC.`,
                 "loss"
             );
         }
@@ -2074,151 +2363,160 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            const playerTotal =
+            const player =
                 handValue(
                     playerHand
                 );
 
-            const dealerTotal =
+
+            const dealer =
                 handValue(
                     dealerHand
                 );
 
 
             if (
-                dealerTotal > 21
+                dealer > 21 ||
+                player > dealer
             ) {
 
-                finish("win");
+                finish(
+                    "win"
+                );
 
             } else if (
-                dealerTotal >
-                playerTotal
+                player < dealer
             ) {
 
-                finish("loss");
-
-            } else if (
-                dealerTotal <
-                playerTotal
-            ) {
-
-                finish("win");
+                finish(
+                    "loss"
+                );
 
             } else {
 
-                finish("push");
+                finish(
+                    "push"
+                );
             }
         }
 
 
-        blackjackDeal.addEventListener(
-            "click",
-            () => {
+        blackjackDeal
+            .addEventListener(
+                "click",
+                () => {
 
-                if (roundActive) {
-                    return;
-                }
-
-
-                currentBet =
-                    betControl.getBet();
+                    if (active) {
+                        return;
+                    }
 
 
-                if (
-                    !canAfford(
+                    currentBet =
+                        betControl
+                            .getBet();
+
+
+                    if (
+                        !canAfford(
+                            currentBet
+                        )
+                    ) {
+
+                        setMessage(
+                            "You do not have enough Ace Credits.",
+                            "loss"
+                        );
+
+                        return;
+                    }
+
+
+                    setBalance(
+                        balance -
                         currentBet
-                    )
-                ) {
-
-                    setMessage(
-                        "You do not have enough Ace Credits.",
-                        "loss"
-                    );
-
-                    return;
-                }
-
-
-                setBalance(
-                    getBalance() -
-                    currentBet
-                );
-
-
-                deck =
-                    createDeck();
-
-                playerHand = [
-                    drawCard(),
-                    drawCard()
-                ];
-
-                dealerHand = [
-                    drawCard(),
-                    drawCard()
-                ];
-
-                roundActive =
-                    true;
-
-
-                renderBlackjack(
-                    true
-                );
-
-                setButtons(
-                    true
-                );
-
-
-                const playerBJ =
-                    isBlackjack(
-                        playerHand
-                    );
-
-                const dealerBJ =
-                    isBlackjack(
-                        dealerHand
                     );
 
 
-                if (
-                    playerBJ &&
-                    dealerBJ
-                ) {
+                    deck =
+                        createDeck();
 
-                    finish("push");
 
-                } else if (
-                    playerBJ
-                ) {
+                    playerHand =
+                        [
+                            drawCard(),
+                            drawCard()
+                        ];
 
-                    finish(
-                        "blackjack"
+
+                    dealerHand =
+                        [
+                            drawCard(),
+                            drawCard()
+                        ];
+
+
+                    render(
+                        true
                     );
 
-                } else if (
-                    dealerBJ
-                ) {
 
-                    finish("loss");
+                    setButtons(
+                        true
+                    );
 
-                } else {
 
                     setMessage(
                         "Choose HIT, STAND, or DOUBLE."
                     );
+
+
+                    const playerBJ =
+                        isBlackjack(
+                            playerHand
+                        );
+
+
+                    const dealerBJ =
+                        isBlackjack(
+                            dealerHand
+                        );
+
+
+                    if (
+                        playerBJ &&
+                        dealerBJ
+                    ) {
+
+                        finish(
+                            "push"
+                        );
+
+                    } else if (
+                        playerBJ
+                    ) {
+
+                        finish(
+                            "blackjack"
+                        );
+
+                    } else if (
+                        dealerBJ
+                    ) {
+
+                        finish(
+                            "loss"
+                        );
+                    }
+
                 }
-            }
-        );
+            );
 
 
         hit.addEventListener(
             "click",
             () => {
 
-                if (!roundActive) {
+                if (!active) {
                     return;
                 }
 
@@ -2232,7 +2530,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     true;
 
 
-                renderBlackjack(
+                render(
                     true
                 );
 
@@ -2247,7 +2545,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     value > 21
                 ) {
 
-                    finish("loss");
+                    finish(
+                        "loss"
+                    );
 
                 } else if (
                     value === 21
@@ -2255,6 +2555,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     dealerPlay();
                 }
+
             }
         );
 
@@ -2263,11 +2564,12 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             () => {
 
-                if (!roundActive) {
+                if (!active) {
                     return;
                 }
 
                 dealerPlay();
+
             }
         );
 
@@ -2277,20 +2579,18 @@ document.addEventListener("DOMContentLoaded", () => {
             () => {
 
                 if (
-                    !roundActive ||
-                    playerHand.length !== 2
+                    !active ||
+                    playerHand.length !==
+                        2
                 ) {
+
                     return;
                 }
 
 
-                const extraBet =
-                    currentBet;
-
-
                 if (
                     !canAfford(
-                        extraBet
+                        currentBet
                     )
                 ) {
 
@@ -2304,12 +2604,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 setBalance(
-                    getBalance() -
-                    extraBet
+                    balance -
+                    currentBet
                 );
 
 
-                currentBet *= 2;
+                currentBet *=
+                    2;
 
 
                 playerHand.push(
@@ -2317,11 +2618,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                double.disabled =
-                    true;
-
-
-                renderBlackjack(
+                render(
                     true
                 );
 
@@ -2332,14 +2629,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     ) > 21
                 ) {
 
-                    finish("loss");
+                    finish(
+                        "loss"
+                    );
 
                     return;
                 }
 
 
                 dealerPlay();
+
             }
+        );
+
+
+        setButtons(
+            false
         );
     }
 
@@ -2365,19 +2670,18 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const reels = [
-            document.getElementById(
-                "slotReel1"
-            ),
-
-            document.getElementById(
-                "slotReel2"
-            ),
-
-            document.getElementById(
-                "slotReel3"
-            )
-        ];
+        const reels =
+            [
+                document.getElementById(
+                    "slotReel1"
+                ),
+                document.getElementById(
+                    "slotReel2"
+                ),
+                document.getElementById(
+                    "slotReel3"
+                )
+            ];
 
 
         const message =
@@ -2386,17 +2690,18 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const symbols = [
-            "♠",
-            "♥",
-            "♦",
-            "♣",
-            "7",
-            "A"
-        ];
+        const symbols =
+            [
+                "♠",
+                "♥",
+                "♦",
+                "♣",
+                "7",
+                "A"
+            ];
 
 
-        function randomSymbol() {
+        function symbol() {
 
             return symbols[
                 randomInt(
@@ -2416,6 +2721,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             message.className =
                 "game-message";
+
 
             if (type) {
 
@@ -2450,8 +2756,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 setBalance(
-                    getBalance() -
-                    bet
+                    balance - bet
                 );
 
 
@@ -2459,13 +2764,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     true;
 
 
-                reels.forEach(
-                    (reel) => {
+                betControl.setDisabled(
+                    true
+                );
 
+
+                reels.forEach(
+                    reel =>
                         reel.classList.add(
                             "spinning"
-                        );
-                    }
+                        )
                 );
 
 
@@ -2479,10 +2787,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         () => {
 
                             reels.forEach(
-                                (reel) => {
+                                reel => {
 
                                     reel.textContent =
-                                        randomSymbol();
+                                        symbol();
+
                                 }
                             );
 
@@ -2499,64 +2808,82 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
 
 
-                        const result = [
-                            randomSymbol(),
-                            randomSymbol(),
-                            randomSymbol()
-                        ];
+                        reels.forEach(
+                            reel =>
+                                reel.classList.remove(
+                                    "spinning"
+                                )
+                        );
+
+
+                        const result =
+                            [
+                                symbol(),
+                                symbol(),
+                                symbol()
+                            ];
 
 
                         reels.forEach(
-                            (reel, index) => {
-
-                                reel.classList.remove(
-                                    "spinning"
-                                );
+                            (
+                                reel,
+                                index
+                            ) => {
 
                                 reel.textContent =
                                     result[index];
+
                             }
                         );
 
 
-                        let multiplier = 0;
+                        let multiplier =
+                            0;
 
 
                         if (
-                            result[0] === "7" &&
-                            result[1] === "7" &&
-                            result[2] === "7"
+                            result.every(
+                                value =>
+                                    value ===
+                                    "7"
+                            )
                         ) {
 
-                            multiplier = 10;
+                            multiplier =
+                                10;
 
                         } else if (
-                            result[0] === "A" &&
-                            result[1] === "A" &&
-                            result[2] === "A"
+                            result.every(
+                                value =>
+                                    value ===
+                                    "A"
+                            )
                         ) {
 
-                            multiplier = 7;
+                            multiplier =
+                                7;
 
                         } else if (
                             result[0] ===
-                            result[1] &&
+                                result[1] &&
                             result[1] ===
-                            result[2]
+                                result[2]
                         ) {
 
-                            multiplier = 5;
+                            multiplier =
+                                5;
 
                         } else if (
                             result[0] ===
-                            result[1] ||
+                                result[1] ||
                             result[1] ===
-                            result[2] ||
+                                result[2] ||
                             result[0] ===
-                            result[2]
+                                result[2]
                         ) {
 
-                            multiplier = 2;
+                            multiplier =
+                                2;
                         }
 
 
@@ -2574,15 +2901,31 @@ document.addEventListener("DOMContentLoaded", () => {
                             );
 
 
+                            recordGame(
+                                "slots",
+                                "win"
+                            );
+
+
                             setMessage(
-                                `WIN! ${formatNumber(payout)} AC paid.`,
+                                `WIN! ${formatNumber(
+                                    payout
+                                )} AC paid.`,
                                 "win"
                             );
 
                         } else {
 
+                            recordGame(
+                                "slots",
+                                "loss"
+                            );
+
+
                             setMessage(
-                                `No match. You lost ${formatNumber(bet)} AC.`,
+                                `No match. You lost ${formatNumber(
+                                    bet
+                                )} AC.`,
                                 "loss"
                             );
                         }
@@ -2591,9 +2934,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         slotSpin.disabled =
                             false;
 
+
+                        betControl.setDisabled(
+                            false
+                        );
+
                     },
                     1200
                 );
+
             }
         );
     }
@@ -2625,15 +2974,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".roulette-choice"
             );
 
-        const result =
+
+        const resultDisplay =
             document.getElementById(
                 "rouletteResult"
             );
+
 
         const message =
             document.getElementById(
                 "rouletteMessage"
             );
+
 
         const wheel =
             document.querySelector(
@@ -2645,92 +2997,102 @@ document.addEventListener("DOMContentLoaded", () => {
             null;
 
 
-        const redNumbers =
-            new Set([
-                1, 3, 5, 7, 9,
-                12, 14, 16, 18,
-                19, 21, 23, 25,
-                27, 30, 32, 34,
-                36
-            ]);
+        const reds =
+            new Set(
+                [
+                    1,3,5,7,9,
+                    12,14,16,18,
+                    19,21,23,25,
+                    27,30,32,34,
+                    36
+                ]
+            );
 
 
-        function rouletteColor(
+        function color(
             number
         ) {
 
-            if (number === 0) {
+            if (
+                number === 0
+            ) {
+
                 return "green";
             }
 
-            if (
-                redNumbers.has(
-                    number
-                )
-            ) {
-                return "red";
-            }
 
-            return "black";
+            return reds.has(
+                number
+            )
+                ? "red"
+                : "black";
         }
 
 
-        function rouletteWins(
-            choice,
+        function wins(
+            selection,
             number
         ) {
 
-            if (number === 0) {
+            if (
+                number === 0
+            ) {
+
                 return false;
             }
 
 
             if (
-                choice === "red"
+                selection ===
+                "red"
             ) {
 
                 return (
-                    rouletteColor(
-                        number
-                    ) === "red"
+                    color(number) ===
+                    "red"
                 );
             }
 
 
             if (
-                choice === "black"
+                selection ===
+                "black"
             ) {
 
                 return (
-                    rouletteColor(
-                        number
-                    ) === "black"
+                    color(number) ===
+                    "black"
                 );
             }
 
 
             if (
-                choice === "odd"
+                selection ===
+                "odd"
             ) {
 
                 return (
-                    number % 2 !== 0
+                    number %
+                    2 !== 0
                 );
             }
 
 
             if (
-                choice === "even"
+                selection ===
+                "even"
             ) {
 
                 return (
-                    number % 2 === 0
+                    number %
+                    2 === 0
                 );
             }
 
 
             if (
-                choice === "low"
+                selection ===
+                "low"
             ) {
 
                 return (
@@ -2741,7 +3103,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             if (
-                choice === "high"
+                selection ===
+                "high"
             ) {
 
                 return (
@@ -2756,20 +3119,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         choices.forEach(
-            (button) => {
+            button => {
 
                 button.addEventListener(
                     "click",
                     () => {
 
                         choices.forEach(
-                            (other) => {
-
-                                other.classList
-                                    .remove(
-                                        "selected"
-                                    );
-                            }
+                            item =>
+                                item.classList.remove(
+                                    "selected"
+                                )
                         );
 
 
@@ -2783,178 +3143,212 @@ document.addEventListener("DOMContentLoaded", () => {
                                 .rouletteChoice;
 
 
+                        message.textContent =
+                            `${button.textContent.trim()} selected.`;
+
+
                         message.className =
                             "game-message";
 
-                        message.textContent =
-                            `${button.textContent.trim()} selected.`;
                     }
                 );
+
             }
         );
 
 
-        rouletteSpin.addEventListener(
-            "click",
-            () => {
+        rouletteSpin
+            .addEventListener(
+                "click",
+                () => {
 
-                if (!selected) {
+                    if (!selected) {
 
-                    message.textContent =
-                        "Choose RED, BLACK, ODD, EVEN, 1-18, or 19-36 first.";
+                        message.textContent =
+                            "Choose RED, BLACK, ODD, EVEN, 1-18, or 19-36 first.";
 
-                    message.className =
-                        "game-message loss";
+                        message.className =
+                            "game-message loss";
 
-                    return;
-                }
-
-
-                const bet =
-                    betControl.getBet();
-
-
-                if (
-                    !canAfford(
-                        bet
-                    )
-                ) {
-
-                    message.textContent =
-                        "You do not have enough Ace Credits.";
-
-                    message.className =
-                        "game-message loss";
-
-                    return;
-                }
-
-
-                setBalance(
-                    getBalance() -
-                    bet
-                );
-
-
-                rouletteSpin.disabled =
-                    true;
-
-
-                choices.forEach(
-                    (choice) => {
-
-                        choice.disabled =
-                            true;
+                        return;
                     }
-                );
 
 
-                if (wheel) {
+                    const bet =
+                        betControl.getBet();
 
-                    wheel.classList.add(
-                        "spinning"
+
+                    if (
+                        !canAfford(
+                            bet
+                        )
+                    ) {
+
+                        message.textContent =
+                            "You do not have enough Ace Credits.";
+
+                        message.className =
+                            "game-message loss";
+
+                        return;
+                    }
+
+
+                    setBalance(
+                        balance - bet
                     );
-                }
 
 
-                message.className =
-                    "game-message";
-
-                message.textContent =
-                    "Wheel spinning...";
+                    rouletteSpin.disabled =
+                        true;
 
 
-                const animation =
-                    setInterval(
+                    betControl.setDisabled(
+                        true
+                    );
+
+
+                    choices.forEach(
+                        button =>
+                            button.disabled =
+                                true
+                    );
+
+
+                    if (wheel) {
+
+                        wheel.classList.add(
+                            "spinning"
+                        );
+                    }
+
+
+                    message.textContent =
+                        "Wheel spinning...";
+
+
+                    message.className =
+                        "game-message";
+
+
+                    const animation =
+                        setInterval(
+                            () => {
+
+                                resultDisplay.textContent =
+                                    randomInt(
+                                        37
+                                    );
+
+                            },
+                            80
+                        );
+
+
+                    setTimeout(
                         () => {
 
-                            result.textContent =
-                                randomInt(37);
+                            clearInterval(
+                                animation
+                            );
+
+
+                            if (wheel) {
+
+                                wheel.classList.remove(
+                                    "spinning"
+                                );
+                            }
+
+
+                            const number =
+                                randomInt(
+                                    37
+                                );
+
+
+                            const resultColor =
+                                color(
+                                    number
+                                );
+
+
+                            resultDisplay.textContent =
+                                number;
+
+
+                            if (
+                                wins(
+                                    selected,
+                                    number
+                                )
+                            ) {
+
+                                addBalance(
+                                    bet * 2
+                                );
+
+
+                                recordGame(
+                                    "roulette",
+                                    "win"
+                                );
+
+
+                                message.textContent =
+                                    `${number} ${resultColor.toUpperCase()} — You won ${formatNumber(
+                                        bet
+                                    )} AC.`;
+
+
+                                message.className =
+                                    "game-message win";
+
+                            } else {
+
+                                recordGame(
+                                    "roulette",
+                                    "loss"
+                                );
+
+
+                                message.textContent =
+                                    `${number} ${resultColor.toUpperCase()} — You lost ${formatNumber(
+                                        bet
+                                    )} AC.`;
+
+
+                                message.className =
+                                    "game-message loss";
+                            }
+
+
+                            rouletteSpin.disabled =
+                                false;
+
+
+                            betControl.setDisabled(
+                                false
+                            );
+
+
+                            choices.forEach(
+                                button =>
+                                    button.disabled =
+                                        false
+                            );
 
                         },
-                        80
+                        1500
                     );
 
-
-                setTimeout(
-                    () => {
-
-                        clearInterval(
-                            animation
-                        );
-
-
-                        if (wheel) {
-
-                            wheel.classList.remove(
-                                "spinning"
-                            );
-                        }
-
-
-                        const number =
-                            randomInt(37);
-
-                        const color =
-                            rouletteColor(
-                                number
-                            );
-
-
-                        result.textContent =
-                            number;
-
-
-                        if (
-                            rouletteWins(
-                                selected,
-                                number
-                            )
-                        ) {
-
-                            addBalance(
-                                bet * 2
-                            );
-
-
-                            message.textContent =
-                                `${number} ${color.toUpperCase()} — You won ${formatNumber(bet)} AC.`;
-
-                            message.className =
-                                "game-message win";
-
-                        } else {
-
-                            message.textContent =
-                                `${number} ${color.toUpperCase()} — You lost ${formatNumber(bet)} AC.`;
-
-                            message.className =
-                                "game-message loss";
-                        }
-
-
-                        rouletteSpin.disabled =
-                            false;
-
-
-                        choices.forEach(
-                            (choice) => {
-
-                                choice.disabled =
-                                    false;
-                            }
-                        );
-
-                    },
-                    1500
-                );
-            }
-        );
+                }
+            );
     }
 
 
     /* =========================================================
-       HIGH ROLL
+       HIGH ROLL / DICE
     ========================================================= */
 
     const diceRoll =
@@ -2979,20 +3373,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 "houseDie"
             );
 
+
         const playerDie =
             document.getElementById(
                 "playerDie"
             );
+
 
         const houseValue =
             document.getElementById(
                 "houseDieValue"
             );
 
+
         const playerValue =
             document.getElementById(
                 "playerDieValue"
             );
+
 
         const message =
             document.getElementById(
@@ -3000,20 +3398,23 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const faces = [
-            "⚀",
-            "⚁",
-            "⚂",
-            "⚃",
-            "⚄",
-            "⚅"
-        ];
+        const faces =
+            [
+                "⚀",
+                "⚁",
+                "⚂",
+                "⚃",
+                "⚄",
+                "⚅"
+            ];
 
 
-        function rollDie() {
+        function roll() {
 
             return (
-                randomInt(6) + 1
+                randomInt(
+                    6
+                ) + 1
             );
         }
 
@@ -3043,8 +3444,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 setBalance(
-                    getBalance() -
-                    bet
+                    balance - bet
                 );
 
 
@@ -3052,20 +3452,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     true;
 
 
+                betControl.setDisabled(
+                    true
+                );
+
+
                 houseDie.classList.add(
                     "rolling"
                 );
+
 
                 playerDie.classList.add(
                     "rolling"
                 );
 
 
-                message.className =
-                    "game-message";
-
                 message.textContent =
                     "Rolling...";
+
+
+                message.className =
+                    "game-message";
 
 
                 const animation =
@@ -3074,12 +3481,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             houseDie.textContent =
                                 faces[
-                                    rollDie() - 1
+                                    roll() - 1
                                 ];
+
 
                             playerDie.textContent =
                                 faces[
-                                    rollDie() - 1
+                                    roll() - 1
                                 ];
 
                         },
@@ -3099,22 +3507,25 @@ document.addEventListener("DOMContentLoaded", () => {
                             "rolling"
                         );
 
+
                         playerDie.classList.remove(
                             "rolling"
                         );
 
 
                         const house =
-                            rollDie();
+                            roll();
+
 
                         const player =
-                            rollDie();
+                            roll();
 
 
                         houseDie.textContent =
                             faces[
                                 house - 1
                             ];
+
 
                         playerDie.textContent =
                             faces[
@@ -3124,6 +3535,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         houseValue.textContent =
                             house;
+
 
                         playerValue.textContent =
                             player;
@@ -3138,8 +3550,17 @@ document.addEventListener("DOMContentLoaded", () => {
                             );
 
 
+                            recordGame(
+                                "dice",
+                                "win"
+                            );
+
+
                             message.textContent =
-                                `You rolled ${player}. House rolled ${house}. You won ${formatNumber(bet)} AC.`;
+                                `You rolled ${player}. House rolled ${house}. You won ${formatNumber(
+                                    bet
+                                )} AC.`;
+
 
                             message.className =
                                 "game-message win";
@@ -3153,16 +3574,32 @@ document.addEventListener("DOMContentLoaded", () => {
                             );
 
 
+                            recordGame(
+                                "dice",
+                                "push"
+                            );
+
+
                             message.textContent =
                                 `Tie at ${player}. Your bet was returned.`;
+
 
                             message.className =
                                 "game-message";
 
                         } else {
 
+                            recordGame(
+                                "dice",
+                                "loss"
+                            );
+
+
                             message.textContent =
-                                `You rolled ${player}. House rolled ${house}. You lost ${formatNumber(bet)} AC.`;
+                                `You rolled ${player}. House rolled ${house}. You lost ${formatNumber(
+                                    bet
+                                )} AC.`;
+
 
                             message.className =
                                 "game-message loss";
@@ -3172,11 +3609,576 @@ document.addEventListener("DOMContentLoaded", () => {
                         diceRoll.disabled =
                             false;
 
+
+                        betControl.setDisabled(
+                            false
+                        );
+
                     },
                     1000
                 );
+
             }
         );
+    }
+
+
+    /* =========================================================
+       PROFILE SYSTEM
+    ========================================================= */
+
+    function setText(
+        id,
+        value
+    ) {
+
+        const element =
+            document.getElementById(
+                id
+            );
+
+
+        if (element) {
+
+            element.textContent =
+                value;
+        }
+    }
+
+
+    function getHighestOwnedItem() {
+
+        const owned =
+            getOwnedItems();
+
+
+        if (!owned.length) {
+            return null;
+        }
+
+
+        return owned.reduce(
+            (
+                highest,
+                item
+            ) => {
+
+                if (
+                    !highest ||
+                    Number(
+                        item.price
+                    ) >
+                    Number(
+                        highest.price
+                    )
+                ) {
+
+                    return item;
+                }
+
+
+                return highest;
+
+            },
+            null
+        );
+    }
+
+
+    function getCollectionValue() {
+
+        return getOwnedItems()
+            .reduce(
+                (
+                    total,
+                    item
+                ) =>
+                    total +
+                    (
+                        Number(
+                            item.price
+                        ) || 0
+                    ),
+                0
+            );
+    }
+
+
+    function getTier() {
+
+        if (
+            balance >=
+            10000000
+        ) {
+
+            return {
+                name:
+                    "CASINO OWNER",
+                next:
+                    "MAXIMUM STATUS",
+                start:
+                    10000000,
+                target:
+                    10000000
+            };
+        }
+
+
+        if (
+            balance >=
+            1000000
+        ) {
+
+            return {
+                name:
+                    "DIAMOND CLUB",
+                next:
+                    "CASINO OWNER",
+                start:
+                    1000000,
+                target:
+                    10000000
+            };
+        }
+
+
+        if (
+            balance >=
+            500000
+        ) {
+
+            return {
+                name:
+                    "HIGH ROLLER",
+                next:
+                    "DIAMOND CLUB",
+                start:
+                    500000,
+                target:
+                    1000000
+            };
+        }
+
+
+        if (
+            balance >=
+            250000
+        ) {
+
+            return {
+                name:
+                    "VIP",
+                next:
+                    "HIGH ROLLER",
+                start:
+                    250000,
+                target:
+                    500000
+            };
+        }
+
+
+        if (
+            balance >=
+            100000
+        ) {
+
+            return {
+                name:
+                    "GOLD MEMBER",
+                next:
+                    "VIP",
+                start:
+                    100000,
+                target:
+                    250000
+            };
+        }
+
+
+        return {
+            name:
+                "STANDARD",
+            next:
+                "GOLD MEMBER",
+            start:
+                0,
+            target:
+                100000
+        };
+    }
+
+
+    function updateProfileProgress() {
+
+        const tier =
+            getTier();
+
+
+        const membership =
+            document.querySelector(
+                ".profile-membership"
+            );
+
+
+        if (membership) {
+
+            membership.textContent =
+                `${tier.name} MEMBER`;
+        }
+
+
+        const tierLabel =
+            document.querySelector(
+                ".profile-tier-label"
+            );
+
+
+        if (tierLabel) {
+
+            tierLabel.textContent =
+                tier.name;
+        }
+
+
+        const top =
+            document.querySelectorAll(
+                ".profile-progress-top > div"
+            );
+
+
+        if (
+            top.length >= 2
+        ) {
+
+            const currentStrong =
+                top[0]
+                    .querySelector(
+                        "strong"
+                    );
+
+
+            const nextStrong =
+                top[1]
+                    .querySelector(
+                        "strong"
+                    );
+
+
+            if (currentStrong) {
+
+                currentStrong.textContent =
+                    tier.name;
+            }
+
+
+            if (nextStrong) {
+
+                nextStrong.textContent =
+                    tier.next;
+            }
+        }
+
+
+        const bottom =
+            document.querySelectorAll(
+                ".profile-progress-bottom span"
+            );
+
+
+        if (
+            bottom.length >= 2
+        ) {
+
+            bottom[0].textContent =
+                `${formatNumber(
+                    balance
+                )} AC`;
+
+
+            bottom[1].textContent =
+                `${formatNumber(
+                    tier.target
+                )} AC`;
+        }
+
+
+        const progress =
+            document.querySelector(
+                ".profile-progress-bar"
+            );
+
+
+        if (progress) {
+
+            let percentage =
+                100;
+
+
+            if (
+                tier.target >
+                tier.start
+            ) {
+
+                percentage =
+                    (
+                        (
+                            balance -
+                            tier.start
+                        ) /
+                        (
+                            tier.target -
+                            tier.start
+                        )
+                    ) *
+                    100;
+            }
+
+
+            percentage =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        percentage
+                    )
+                );
+
+
+            progress.style.width =
+                `${percentage}%`;
+        }
+    }
+
+
+    function updateAchievements() {
+
+        const cards =
+            document.querySelectorAll(
+                ".achievement-card"
+            );
+
+
+        if (!cards.length) {
+            return;
+        }
+
+
+        const stats =
+            getStats();
+
+
+        const unlocked =
+            [
+                true,
+                stats.totalWins >= 1,
+                balance >= 100000,
+                balance >= 1000000
+            ];
+
+
+        cards.forEach(
+            (
+                card,
+                index
+            ) => {
+
+                const status =
+                    card.querySelector(
+                        ":scope > span"
+                    );
+
+
+                if (
+                    unlocked[index]
+                ) {
+
+                    card.classList.add(
+                        "unlocked"
+                    );
+
+                    card.classList.remove(
+                        "locked"
+                    );
+
+
+                    if (status) {
+
+                        status.textContent =
+                            "UNLOCKED";
+                    }
+
+                } else {
+
+                    card.classList.remove(
+                        "unlocked"
+                    );
+
+                    card.classList.add(
+                        "locked"
+                    );
+
+
+                    if (status) {
+
+                        status.textContent =
+                            "LOCKED";
+                    }
+                }
+
+            }
+        );
+    }
+
+
+    function updateProfile() {
+
+        const profilePage =
+            document.querySelector(
+                ".profile-page"
+            );
+
+
+        if (!profilePage) {
+            return;
+        }
+
+
+        const stats =
+            getStats();
+
+
+        const owned =
+            getOwnedItems();
+
+
+        const highest =
+            getHighestOwnedItem();
+
+
+        setText(
+            "profileTotalWins",
+            formatNumber(
+                stats.totalWins
+            )
+        );
+
+
+        setText(
+            "profileTotalLosses",
+            formatNumber(
+                stats.totalLosses
+            )
+        );
+
+
+        setText(
+            "profileGamesPlayed",
+            formatNumber(
+                stats.gamesPlayed
+            )
+        );
+
+
+        setText(
+            "profileCollectionCount",
+            formatNumber(
+                owned.length
+            )
+        );
+
+
+        setText(
+            "profileBlackjackWins",
+            formatNumber(
+                stats.blackjack.wins
+            )
+        );
+
+
+        setText(
+            "profileBlackjackPlayed",
+            formatNumber(
+                stats.blackjack.played
+            )
+        );
+
+
+        setText(
+            "profileSlotsWins",
+            formatNumber(
+                stats.slots.wins
+            )
+        );
+
+
+        setText(
+            "profileSlotsPlayed",
+            formatNumber(
+                stats.slots.played
+            )
+        );
+
+
+        setText(
+            "profileRouletteWins",
+            formatNumber(
+                stats.roulette.wins
+            )
+        );
+
+
+        setText(
+            "profileRoulettePlayed",
+            formatNumber(
+                stats.roulette.played
+            )
+        );
+
+
+        setText(
+            "profileDiceWins",
+            formatNumber(
+                stats.dice.wins
+            )
+        );
+
+
+        setText(
+            "profileDicePlayed",
+            formatNumber(
+                stats.dice.played
+            )
+        );
+
+
+        setText(
+            "profileOwnedItems",
+            formatNumber(
+                owned.length
+            )
+        );
+
+
+        setText(
+            "profileCollectionValue",
+            `${formatNumber(
+                getCollectionValue()
+            )} AC`
+        );
+
+
+        setText(
+            "profileRarestAsset",
+            highest
+                ? highest.name
+                : "—"
+        );
+
+
+        updateProfileProgress();
+
+        updateAchievements();
     }
 
 
@@ -3187,5 +4189,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateBalanceDisplays();
 
     renderCollection();
+
+    updateProfile();
 
 });
