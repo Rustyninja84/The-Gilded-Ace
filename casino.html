@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 
@@ -8,1889 +9,420 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Casino | The Gilded Ace</title>
-
-    <style>
-
-        /* ======================================================
-           THE GILDED ACE - CASINO
-           ====================================================== */
-
-        :root {
-            --black: #050505;
-            --panel: #101010;
-            --panel-light: #171717;
-
-            --gold: #d7a933;
-            --gold-light: #f4d66f;
-            --gold-dark: #805c12;
-
-            --red: #a80e1c;
-            --red-dark: #600711;
-
-            --green: #08713a;
-            --green-dark: #034722;
-
-            --white: #f5f0e6;
-            --muted: #918b80;
-
-            --border: rgba(215, 169, 51, 0.25);
-        }
-
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-
-        body {
-            min-height: 100vh;
-
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
-
-            color: var(--white);
-
-            background:
-                radial-gradient(
-                    circle at top,
-                    rgba(90, 5, 18, 0.18),
-                    transparent 35%
-                ),
-                #060606;
-        }
-
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-
-        button {
-            font: inherit;
-            cursor: pointer;
-        }
-
-
-        /* ======================================================
-           HEADER
-           ====================================================== */
-
-        .site-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-
-            border-bottom:
-                1px solid var(--border);
-
-            background:
-                rgba(5, 5, 5, 0.96);
-
-            backdrop-filter:
-                blur(14px);
-        }
-
-
-        .nav-container {
-            width: min(1380px, 94%);
-            min-height: 84px;
-            margin: auto;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            gap: 30px;
-        }
-
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-        }
-
-
-        .brand-mark {
-            width: 47px;
-            height: 47px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border:
-                1px solid var(--gold-light);
-
-            border-radius:
-                9px 2px 9px 2px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #f4d56e,
-                    #b77d18
-                );
-
-            color: #120d03;
-
-            font-family:
-                Georgia,
-                serif;
-
-            font-size: 24px;
-            font-weight: 900;
-
-            box-shadow:
-                0 0 20px
-                rgba(215,169,51,0.18);
-        }
-
-
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-
-        .brand-name {
-            color: var(--gold-light);
-
-            font-size: 14px;
-            font-weight: 900;
-
-            letter-spacing: 2px;
-        }
-
-
-        .brand-subtitle {
-            margin-top: 4px;
-
-            color: #777269;
-
-            font-size: 9px;
-            font-weight: 700;
-
-            letter-spacing: 2px;
-        }
-
-
-        .main-nav {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
-
-
-        .main-nav a {
-            color: #aaa59c;
-
-            font-size: 11px;
-            font-weight: 900;
-
-            letter-spacing: 1.3px;
-
-            transition: 0.2s ease;
-        }
-
-
-        .main-nav a:hover,
-        .main-nav a.active {
-            color: var(--gold-light);
-        }
-
-
-        .account {
-            color: var(--gold-light);
-
-            font-size: 13px;
-            font-weight: 900;
-        }
-
-
-        /* ======================================================
-           HERO
-           ====================================================== */
-
-        .casino-hero {
-            padding:
-                100px 20px
-                70px;
-
-            text-align: center;
-
-            border-bottom:
-                1px solid
-                rgba(215,169,51,0.12);
-
-            background:
-                radial-gradient(
-                    circle at center top,
-                    rgba(111, 7, 25, 0.30),
-                    transparent 50%
-                );
-        }
-
-
-        .casino-hero span {
-            color: var(--gold);
-
-            font-size: 10px;
-            font-weight: 900;
-
-            letter-spacing: 3px;
-        }
-
-
-        .casino-hero h1 {
-            margin-top: 13px;
-
-            font-family:
-                Georgia,
-                serif;
-
-            font-size:
-                clamp(
-                    46px,
-                    7vw,
-                    82px
-                );
-
-            line-height: 1;
-
-            color: #f6f0e3;
-        }
-
-
-        .casino-hero p {
-            max-width: 650px;
-            margin:
-                20px auto 0;
-
-            color: var(--muted);
-
-            line-height: 1.7;
-        }
-
-
-        /* ======================================================
-           GAME NAV
-           ====================================================== */
-
-        .game-tabs {
-            padding: 28px 15px;
-
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-
-            gap: 10px;
-        }
-
-
-        .game-tabs button {
-            padding: 11px 18px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 7px;
-
-            background:
-                #0f0f0f;
-
-            color: #aaa49a;
-
-            font-size: 10px;
-            font-weight: 900;
-
-            letter-spacing: 1.5px;
-
-            transition: 0.2s;
-        }
-
-
-        .game-tabs button:hover {
-            color: var(--gold-light);
-
-            border-color:
-                rgba(215,169,51,0.6);
-        }
-
-
-        /* ======================================================
-           GAME SECTIONS
-           ====================================================== */
-
-        .game-section {
-            width: min(1180px, 92%);
-            margin: 0 auto 55px;
-
-            padding: 45px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 18px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #151515,
-                    #0b0b0b
-                );
-
-            box-shadow:
-                0 22px 55px
-                rgba(0,0,0,0.35);
-        }
-
-
-        .game-label {
-            color: var(--gold);
-
-            font-size: 9px;
-            font-weight: 900;
-
-            letter-spacing: 2.5px;
-        }
-
-
-        .game-section h2 {
-            margin-top: 7px;
-
-            font-family:
-                Georgia,
-                serif;
-
-            font-size:
-                clamp(
-                    31px,
-                    4vw,
-                    45px
-                );
-        }
-
-
-        .game-description {
-            margin-top: 8px;
-
-            color: var(--muted);
-        }
-
-
-        .simple-game {
-            margin-top: 30px;
-
-            padding: 30px;
-
-            border:
-                1px solid
-                rgba(255,255,255,0.05);
-
-            border-radius: 12px;
-
-            background:
-                rgba(255,255,255,0.018);
-
-            text-align: center;
-        }
-
-
-        .basic-button {
-            margin: 10px 4px;
-
-            padding: 12px 20px;
-
-            border:
-                1px solid
-                rgba(215,169,51,0.45);
-
-            border-radius: 7px;
-
-            background:
-                rgba(215,169,51,0.07);
-
-            color: var(--gold-light);
-
-            font-weight: 900;
-
-            letter-spacing: 1px;
-        }
-
-
-        /* ======================================================
-           ROULETTE SECTION
-           ====================================================== */
-
-        #roulette {
-            max-width: 1350px;
-        }
-
-
-        .roulette-layout {
-            margin-top: 40px;
-
-            display: grid;
-            grid-template-columns:
-                minmax(500px, 1.15fr)
-                minmax(330px, 0.85fr);
-
-            gap: 50px;
-
-            align-items: center;
-        }
-
-
-        /* ======================================================
-           ROULETTE WHEEL CABINET
-           ====================================================== */
-
-        .roulette-stage {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            min-height: 650px;
-
-            perspective: 1200px;
-        }
-
-
-        .roulette-cabinet {
-            position: relative;
-
-            width:
-                min(
-                    600px,
-                    88vw
-                );
-
-            aspect-ratio: 1;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    circle,
-                    #130d05 0%,
-                    #24170a 55%,
-                    #080604 75%,
-                    #020202 100%
-                );
-
-            box-shadow:
-                0 45px 80px
-                rgba(0,0,0,0.7),
-
-                0 0 0 3px
-                #a77b24,
-
-                0 0 0 10px
-                #171006,
-
-                0 0 0 13px
-                #5d410d,
-
-                inset 0 0 60px
-                rgba(0,0,0,0.9);
-        }
-
-
-        .roulette-cabinet::before {
-            content: "";
-
-            position: absolute;
-
-            inset: 3.5%;
-
-            border-radius: 50%;
-
-            border:
-                8px solid
-                #69480f;
-
-            box-shadow:
-                inset 0 0 25px
-                rgba(0,0,0,0.8),
-
-                0 0 8px
-                rgba(245,213,110,0.15);
-        }
-
-
-        /* ======================================================
-           ROTATING WHEEL
-           ====================================================== */
-
-        .roulette-wheel {
-            position: absolute;
-
-            width: 86%;
-            height: 86%;
-
-            border-radius: 50%;
-
-            transition:
-                transform
-                7s
-                cubic-bezier(
-                    0.08,
-                    0.6,
-                    0.08,
-                    1
-                );
-
-            box-shadow:
-                inset 0 0 40px
-                rgba(0,0,0,0.88),
-
-                0 0 0 5px
-                #b38931,
-
-                0 0 0 10px
-                #191107;
-        }
-
-
-        /*
-           Real European roulette pocket colors/order.
-        */
-
-        .roulette-color-ring {
-            position: absolute;
-            inset: 0;
-
-            border-radius: 50%;
-
-            background:
-                conic-gradient(
-                    #08713a 0deg 9.729deg,
-
-                    #9f101c 9.729deg 19.459deg,
-                    #090909 19.459deg 29.189deg,
-                    #9f101c 29.189deg 38.918deg,
-                    #090909 38.918deg 48.648deg,
-                    #9f101c 48.648deg 58.378deg,
-                    #090909 58.378deg 68.108deg,
-                    #9f101c 68.108deg 77.837deg,
-                    #090909 77.837deg 87.567deg,
-                    #9f101c 87.567deg 97.297deg,
-
-                    #090909 97.297deg 107.027deg,
-                    #9f101c 107.027deg 116.756deg,
-                    #090909 116.756deg 126.486deg,
-                    #9f101c 126.486deg 136.216deg,
-                    #090909 136.216deg 145.945deg,
-                    #9f101c 145.945deg 155.675deg,
-                    #090909 155.675deg 165.405deg,
-                    #9f101c 165.405deg 175.135deg,
-                    #090909 175.135deg 184.864deg,
-
-                    #9f101c 184.864deg 194.594deg,
-                    #090909 194.594deg 204.324deg,
-                    #9f101c 204.324deg 214.054deg,
-                    #090909 214.054deg 223.783deg,
-                    #9f101c 223.783deg 233.513deg,
-                    #090909 233.513deg 243.243deg,
-                    #9f101c 243.243deg 252.972deg,
-                    #090909 252.972deg 262.702deg,
-                    #9f101c 262.702deg 272.432deg,
-
-                    #090909 272.432deg 282.162deg,
-                    #9f101c 282.162deg 291.891deg,
-                    #090909 291.891deg 301.621deg,
-                    #9f101c 301.621deg 311.351deg,
-                    #090909 311.351deg 321.081deg,
-                    #9f101c 321.081deg 330.810deg,
-                    #090909 330.810deg 340.540deg,
-                    #9f101c 340.540deg 350.270deg,
-                    #090909 350.270deg 360deg
-                );
-        }
-
-
-        /* cut center out of color ring */
-
-        .roulette-color-ring::after {
-            content: "";
-
-            position: absolute;
-
-            inset: 22%;
-
-            border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    circle,
-                    #3c270d 0%,
-                    #281906 58%,
-                    #171006 100%
-                );
-
-            border:
-                5px solid
-                #a77b24;
-
-            box-shadow:
-                inset 0 0 30px
-                rgba(0,0,0,0.85),
-
-                0 0 0 6px
-                #171006;
-        }
-
-
-        /* ======================================================
-           NUMBER LABELS
-           ====================================================== */
-
-        .roulette-numbers {
-            position: absolute;
-
-            inset: 0;
-
-            border-radius: 50%;
-        }
-
-
-        .roulette-number {
-            position: absolute;
-
-            left: 50%;
-            top: 50%;
-
-            width: 30px;
-            height: 46%;
-
-            margin-left: -15px;
-
-            transform-origin:
-                center top;
-
-            display: flex;
-            justify-content: center;
-
-            z-index: 5;
-
-            pointer-events: none;
-        }
-
-
-        .roulette-number span {
-            width: 29px;
-            height: 38px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            color: #fff;
-
-            font-family:
-                Georgia,
-                serif;
-
-            font-size: 11px;
-            font-weight: 900;
-
-            text-shadow:
-                0 2px 3px #000;
-        }
-
-
-        /* ======================================================
-           CENTER CONE
-           ====================================================== */
-
-        .roulette-center {
-            position: absolute;
-
-            left: 50%;
-            top: 50%;
-
-            width: 38%;
-            height: 38%;
-
-            transform:
-                translate(-50%, -50%);
-
-            border-radius: 50%;
-
-            z-index: 8;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background:
-                radial-gradient(
-                    circle,
-                    #6c4c12,
-                    #281804 60%,
-                    #080604
-                );
-
-            border:
-                4px solid
-                #c29637;
-
-            box-shadow:
-                0 0 0 7px
-                #171006,
-
-                inset 0 0 25px
-                rgba(0,0,0,0.7);
-        }
-
-
-        .roulette-center::before {
-            content: "";
-
-            position: absolute;
-
-            width: 72%;
-            height: 72%;
-
-            border-radius: 50%;
-
-            border:
-                2px solid
-                rgba(245,213,110,0.5);
-
-            background:
-                radial-gradient(
-                    circle,
-                    #b58224,
-                    #5d3c0b
-                );
-        }
-
-
-        .roulette-center-logo {
-            position: relative;
-            z-index: 5;
-
-            width: 52%;
-            height: 52%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 50%;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #f3d46e,
-                    #a87215
-                );
-
-            color: #130e03;
-
-            font-family:
-                Georgia,
-                serif;
-
-            font-size: 43px;
-            font-weight: 900;
-
-            box-shadow:
-                inset 0 0 10px
-                rgba(255,255,255,0.35);
-        }
-
-
-        /* decorative spindle */
-
-        .roulette-spindle {
-            position: absolute;
-
-            left: 50%;
-            top: 50%;
-
-            width: 4%;
-            height: 49%;
-
-            transform:
-                translate(-50%, -50%);
-
-            z-index: 7;
-
-            pointer-events: none;
-        }
-
-
-        .roulette-spindle::before,
-        .roulette-spindle::after {
-            content: "";
-
-            position: absolute;
-
-            left: 50%;
-
-            width: 10px;
-            height: 70px;
-
-            transform:
-                translateX(-50%);
-
-            border-radius: 50%;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #805b12,
-                    #f1d06a,
-                    #704b0c
-                );
-        }
-
-
-        .roulette-spindle::before {
-            top: -40px;
-        }
-
-
-        .roulette-spindle::after {
-            bottom: -40px;
-        }
-
-
-        /* ======================================================
-           BALL TRACK
-           ====================================================== */
-
-        .ball-track {
-            position: absolute;
-
-            width: 94%;
-            height: 94%;
-
-            border-radius: 50%;
-
-            z-index: 20;
-
-            pointer-events: none;
-
-            transition:
-                transform
-                6.2s
-                cubic-bezier(
-                    0.07,
-                    0.65,
-                    0.12,
-                    1
-                );
-        }
-
-
-        .roulette-ball {
-            position: absolute;
-
-            left: 50%;
-            top: -3px;
-
-            width: 15px;
-            height: 15px;
-
-            transform:
-                translateX(-50%);
-
-            border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    circle at 35% 30%,
-                    #ffffff,
-                    #dedede 45%,
-                    #8c8c8c
-                );
-
-            box-shadow:
-                0 3px 7px
-                rgba(0,0,0,0.9),
-
-                0 0 6px
-                rgba(255,255,255,0.7);
-
-            transition:
-                top 1.3s ease;
-        }
-
-
-        /*
-           When the ball drops,
-           move it closer to the pockets.
-        */
-
-        .ball-track.ball-drop
-        .roulette-ball {
-            top: 8.2%;
-        }
-
-
-        /* ======================================================
-           POINTER
-           ====================================================== */
-
-        .roulette-pointer {
-            position: absolute;
-
-            z-index: 30;
-
-            top: -19px;
-            left: 50%;
-
-            transform:
-                translateX(-50%);
-
-            width: 0;
-            height: 0;
-
-            border-left:
-                17px solid transparent;
-
-            border-right:
-                17px solid transparent;
-
-            border-top:
-                31px solid
-                var(--gold-light);
-
-            filter:
-                drop-shadow(
-                    0 4px 5px
-                    rgba(0,0,0,0.8)
-                );
-        }
-
-
-        /* ======================================================
-           ROULETTE CONTROLS
-           ====================================================== */
-
-        .roulette-controls {
-            padding: 28px;
-
-            border:
-                1px solid
-                rgba(215,169,51,0.2);
-
-            border-radius: 14px;
-
-            background:
-                rgba(5,5,5,0.5);
-        }
-
-
-        .roulette-result {
-            margin-bottom: 25px;
-
-            padding: 20px;
-
-            text-align: center;
-
-            border:
-                1px solid
-                rgba(215,169,51,0.28);
-
-            border-radius: 10px;
-
-            background: #090909;
-        }
-
-
-        .roulette-result-label {
-            color: #6f6a61;
-
-            font-size: 9px;
-            font-weight: 900;
-
-            letter-spacing: 2px;
-        }
-
-
-        #rouletteResult {
-            margin-top: 5px;
-
-            color: var(--gold-light);
-
-            font-family:
-                Georgia,
-                serif;
-
-            font-size: 35px;
-            font-weight: 900;
-        }
-
-
-        .balance-box {
-            margin-bottom: 20px;
-
-            display: flex;
-            justify-content: space-between;
-
-            color: #8e897f;
-
-            font-size: 12px;
-        }
-
-
-        .balance-box strong {
-            color: var(--gold-light);
-        }
-
-
-        .bet-label {
-            margin-top: 20px;
-
-            color: #787269;
-
-            font-size: 9px;
-            font-weight: 900;
-
-            letter-spacing: 2px;
-        }
-
-
-        .bet-control {
-            margin-top: 8px;
-
-            display: flex;
-            align-items: center;
-
-            border:
-                1px solid
-                rgba(215,169,51,0.2);
-
-            border-radius: 8px;
-
-            overflow: hidden;
-        }
-
-
-        .bet-control button {
-            width: 55px;
-            height: 45px;
-
-            border: 0;
-
-            background: #161616;
-
-            color: var(--gold-light);
-
-            font-size: 20px;
-        }
-
-
-        .bet-control span {
-            flex: 1;
-
-            text-align: center;
-
-            color: #eee8dc;
-
-            font-weight: 900;
-        }
-
-
-        .outside-bets {
-            margin-top: 20px;
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
-            gap: 8px;
-        }
-
-
-        .outside-bets button {
-            padding: 11px 5px;
-
-            border:
-                1px solid
-                rgba(255,255,255,0.08);
-
-            border-radius: 6px;
-
-            background: #131313;
-
-            color: #aaa59b;
-
-            font-size: 9px;
-            font-weight: 900;
-
-            letter-spacing: 0.8px;
-
-            transition: 0.2s;
-        }
-
-
-        .outside-bets button:hover,
-        .outside-bets button.selected {
-            border-color:
-                var(--gold);
-
-            color:
-                var(--gold-light);
-        }
-
-
-        .outside-bets .red-bet {
-            background:
-                linear-gradient(
-                    #9d111d,
-                    #620711
-                );
-
-            color: #fff;
-        }
-
-
-        .outside-bets .black-bet {
-            background:
-                linear-gradient(
-                    #252525,
-                    #080808
-                );
-
-            color: #fff;
-        }
-
-
-        .spin-button {
-            width: 100%;
-
-            margin-top: 24px;
-
-            padding: 16px;
-
-            border:
-                1px solid #f2d169;
-
-            border-radius: 8px;
-
-            background:
-                linear-gradient(
-                    #f1d067,
-                    #bd8419
-                );
-
-            color: #151005;
-
-            font-weight: 900;
-
-            letter-spacing: 2px;
-
-            transition: 0.2s;
-        }
-
-
-        .spin-button:hover {
-            transform:
-                translateY(-2px);
-
-            box-shadow:
-                0 10px 28px
-                rgba(215,169,51,0.25);
-        }
-
-
-        .spin-button:disabled {
-            opacity: 0.4;
-
-            cursor: not-allowed;
-
-            transform: none;
-        }
-
-
-        .history-title {
-            margin-top: 25px;
-
-            color: #777269;
-
-            font-size: 9px;
-            font-weight: 900;
-
-            letter-spacing: 2px;
-        }
-
-
-        .result-history {
-            margin-top: 10px;
-
-            display: flex;
-            flex-wrap: wrap;
-
-            gap: 7px;
-        }
-
-
-        .history-ball {
-            width: 34px;
-            height: 34px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 50%;
-
-            font-size: 11px;
-            font-weight: 900;
-        }
-
-
-        .history-red {
-            background:
-                #96121d;
-        }
-
-
-        .history-black {
-            background:
-                #111;
-        }
-
-
-        .history-green {
-            background:
-                #08713a;
-        }
-
-
-        /* ======================================================
-           FOOTER
-           ====================================================== */
-
-        footer {
-            margin-top: 70px;
-
-            padding: 45px 20px;
-
-            text-align: center;
-
-            border-top:
-                1px solid var(--border);
-
-            color: #605b53;
-        }
-
-
-        footer strong {
-            display: block;
-
-            margin-bottom: 10px;
-
-            color: var(--gold-light);
-        }
-
-
-        /* ======================================================
-           RESPONSIVE
-           ====================================================== */
-
-        @media
-        (max-width: 1050px) {
-
-            .roulette-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .roulette-controls {
-                max-width: 600px;
-                width: 100%;
-
-                margin: auto;
-            }
-
-            .roulette-stage {
-                min-height: auto;
-            }
-
-        }
-
-
-        @media
-        (max-width: 800px) {
-
-            .nav-container {
-                flex-direction: column;
-
-                padding: 18px 0;
-            }
-
-            .main-nav {
-                flex-wrap: wrap;
-
-                justify-content: center;
-            }
-
-            .game-section {
-                padding: 28px 18px;
-            }
-
-        }
-
-
-        @media
-        (max-width: 550px) {
-
-            .roulette-cabinet {
-                width: 88vw;
-            }
-
-            .roulette-number span {
-                font-size: 8px;
-
-                width: 20px;
-            }
-
-            .roulette-number {
-                width: 20px;
-
-                margin-left: -10px;
-            }
-
-            .roulette-center-logo {
-                font-size: 28px;
-            }
-
-            .outside-bets {
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
-
-        }
-
-    </style>
+    <title>
+        Casino | The Gilded Ace
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles.css?v=7"
+    >
 </head>
 
 
-<body>
+<body class="page-casino">
 
 
-    <!-- ======================================================
-         HEADER
-         ====================================================== -->
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
 
-    <header class="site-header">
+<header class="site-header">
 
-        <div class="nav-container">
+    <div class="nav-container">
 
-            <a
-                href="index.html"
-                class="brand"
-            >
+        <a href="index.html" class="brand">
 
-                <div class="brand-mark">
-                    A
-                </div>
+            <div class="brand-mark">
+                A
+            </div>
 
-                <div class="brand-text">
+            <div class="brand-text">
 
-                    <span class="brand-name">
-                        THE GILDED ACE
-                    </span>
+                <span class="brand-name">
+                    THE GILDED ACE
+                </span>
 
-                    <span class="brand-subtitle">
-                        CASINO & SOCIAL CLUB
-                    </span>
-
-                </div>
-
-            </a>
-
-
-            <nav class="main-nav">
-
-                <a href="index.html">
-                    HOME
-                </a>
-
-                <a
-                    href="casino.html"
-                    class="active"
-                >
-                    CASINO
-                </a>
-
-                <a href="store.html">
-                    STORE
-                </a>
-
-                <a href="collection.html">
-                    COLLECTION
-                </a>
-
-                <a href="leaderboard.html">
-                    LEADERBOARD
-                </a>
-
-            </nav>
-
-
-            <div class="account">
-
-                ACE CREDITS
-
-                <span id="navBalance">
-                    10,000 AC
+                <span class="brand-subtitle">
+                    CASINO & SOCIAL CLUB
                 </span>
 
             </div>
 
+        </a>
+
+
+        <nav class="main-nav">
+
+            <a href="index.html">
+                HOME
+            </a>
+
+            <a href="casino.html" class="active">
+                CASINO
+            </a>
+
+            <a href="store.html">
+                STORE
+            </a>
+
+            <a href="collection.html">
+                COLLECTION
+            </a>
+
+            <a href="leaderboard.html">
+                LEADERBOARD
+            </a>
+
+        </nav>
+
+
+        <div class="nav-account">
+
+            <span>
+                ACE CREDITS
+            </span>
+
+            <span
+                class="balance-value"
+                data-balance
+            >
+                10,000 AC
+            </span>
+
+            <a
+                href="profile.html"
+                class="profile-button"
+            >
+                PROFILE
+            </a>
+
         </div>
-
-    </header>
-
-
-
-    <!-- ======================================================
-         HERO
-         ====================================================== -->
-
-    <section class="casino-hero">
-
-        <span>
-            THE GILDED ACE CASINO
-        </span>
-
-        <h1>
-            CHOOSE YOUR GAME
-        </h1>
-
-        <p>
-            Test your luck using fictional Ace Credits.
-            Play bold. Win big. Build your legacy.
-        </p>
-
-    </section>
-
-
-
-    <!-- ======================================================
-         GAME NAVIGATION
-         ====================================================== -->
-
-    <div class="game-tabs">
-
-        <button
-            onclick="goToGame('blackjack')"
-        >
-            BLACKJACK
-        </button>
-
-        <button
-            onclick="goToGame('slots')"
-        >
-            SLOTS
-        </button>
-
-        <button
-            onclick="goToGame('roulette')"
-        >
-            ROULETTE
-        </button>
-
-        <button
-            onclick="goToGame('dice')"
-        >
-            HIGH ROLL
-        </button>
 
     </div>
 
+</header>
 
 
-    <!-- ======================================================
-         BLACKJACK
-         ====================================================== -->
 
-    <section
-        class="game-section"
-        id="blackjack"
+<!-- =========================================================
+     CASINO HERO
+     ========================================================= -->
+
+<section class="page-hero">
+
+    <span class="eyebrow">
+        THE GILDED ACE CASINO
+    </span>
+
+    <h1>
+        CHOOSE YOUR GAME
+    </h1>
+
+    <p>
+        Step onto the casino floor and put your fictional
+        Ace Credits to the test.
+    </p>
+
+</section>
+
+
+
+<!-- =========================================================
+     GAME NAVIGATION
+     ========================================================= -->
+
+<div class="game-tabs">
+
+    <a
+        href="#blackjack"
+        class="btn secondary"
     >
+        BLACKJACK
+    </a>
 
-        <span class="game-label">
-            TABLE GAME
+    <a
+        href="#slots"
+        class="btn secondary"
+    >
+        SLOTS
+    </a>
+
+    <a
+        href="#roulette"
+        class="btn secondary"
+    >
+        ROULETTE
+    </a>
+
+    <a
+        href="#dice"
+        class="btn secondary"
+    >
+        HIGH ROLL
+    </a>
+
+</div>
+
+
+
+<!-- =========================================================
+     BLACKJACK
+     ========================================================= -->
+
+<section
+    class="game-section"
+    id="blackjack"
+>
+
+    <span class="eyebrow">
+        CLASSIC TABLE GAME
+    </span>
+
+    <h2>
+        Blackjack
+    </h2>
+
+    <p>
+        Get closer to 21 than the dealer without going over.
+    </p>
+
+
+    <div class="simple-game">
+
+        <span class="tag">
+            DEALER
         </span>
 
-        <h2>
-            Blackjack
-        </h2>
+        <div
+            id="dealerCards"
+            style="
+                font-family:Cinzel,serif;
+                font-size:42px;
+                margin:20px 0;
+                color:#f3d675;
+            "
+        >
+            ? ?
+        </div>
 
-        <p class="game-description">
-            Beat the dealer without going over 21.
-            Blackjack pays 3 to 2.
+
+        <p>
+            Dealer Total:
+            <strong id="dealerTotal">
+                —
+            </strong>
         </p>
 
 
-        <div class="simple-game">
+        <hr
+            style="
+                border:0;
+                border-top:1px solid rgba(212,166,50,.15);
+                margin:30px 0;
+            "
+        >
 
-            <h3>
-                DEALER
-            </h3>
 
-            <p id="dealerCards">
-                Dealer: —
-            </p>
+        <span class="tag">
+            YOUR HAND
+        </span>
 
-            <br>
 
-            <h3>
-                YOUR HAND
-            </h3>
+        <div
+            id="playerCards"
+            style="
+                font-family:Cinzel,serif;
+                font-size:42px;
+                margin:20px 0;
+                color:#f3d675;
+            "
+        >
+            ? ?
+        </div>
 
-            <p id="playerCards">
-                Your Hand: —
-            </p>
 
-            <br>
+        <p>
+            Your Total:
+            <strong id="playerTotal">
+                —
+            </strong>
+        </p>
+
+
+        <div
+            style="
+                display:flex;
+                justify-content:center;
+                flex-wrap:wrap;
+                gap:10px;
+                margin-top:25px;
+            "
+        >
 
             <button
-                class="basic-button"
-                onclick="dealBlackjack()"
+                type="button"
+                onclick="startBlackjack()"
             >
                 DEAL
             </button>
 
             <button
-                class="basic-button"
-                onclick="hitBlackjack()"
+                type="button"
+                onclick="blackjackHit()"
             >
                 HIT
             </button>
 
             <button
-                class="basic-button"
-                onclick="standBlackjack()"
+                type="button"
+                onclick="blackjackStand()"
             >
                 STAND
             </button>
 
-            <p id="blackjackMessage">
-                Place your bet and deal.
-            </p>
-
         </div>
 
-    </section>
 
-
-
-    <!-- ======================================================
-         SLOTS
-         ====================================================== -->
-
-    <section
-        class="game-section"
-        id="slots"
-    >
-
-        <span class="game-label">
-            SLOT GAME
-        </span>
-
-        <h2>
-            Gilded Slots
-        </h2>
-
-        <p class="game-description">
-            Match symbols and chase the jackpot.
+        <p
+            id="blackjackMessage"
+            style="
+                margin-top:22px;
+                color:#f3d675;
+            "
+        >
+            Press DEAL to begin.
         </p>
 
+    </div>
 
-        <div class="simple-game">
+</section>
 
-            <div
-                id="slotDisplay"
-                style="
-                    font-size:50px;
-                    letter-spacing:20px;
-                    margin:30px 0;
-                "
-            >
-                7 A ♠
-            </div>
 
-            <button
-                class="basic-button"
-                onclick="spinSlots()"
-            >
-                SPIN
-            </button>
 
-            <p id="slotMessage">
-                Match three symbols for the largest prizes.
-            </p>
+<!-- =========================================================
+     GILDED SLOTS
+     ========================================================= -->
 
+<section
+    class="game-section"
+    id="slots"
+>
+
+    <span class="eyebrow">
+        THE GILDED REELS
+    </span>
+
+    <h2>
+        Gilded Slots
+    </h2>
+
+    <p>
+        Spin the reels and chase a matching combination.
+    </p>
+
+
+    <div class="simple-game">
+
+
+        <div
+            id="slotDisplay"
+            style="
+                max-width:500px;
+                margin:30px auto;
+                padding:30px 20px;
+                border:1px solid rgba(212,166,50,.25);
+                border-radius:12px;
+                background:#060606;
+                color:#f3d675;
+                font-family:Cinzel,serif;
+                font-size:clamp(42px,8vw,72px);
+                letter-spacing:20px;
+                box-shadow:
+                    inset 0 0 30px rgba(0,0,0,.8);
+            "
+        >
+            7 A ♠
         </div>
 
-    </section>
+
+        <button
+            type="button"
+            onclick="spinSlots()"
+        >
+            SPIN REELS
+        </button>
 
 
-
-    <!-- ======================================================
-         ROULETTE
-         ====================================================== -->
-
-    <section
-        class="game-section"
-        id="roulette"
-    >
-
-        <span class="game-label">
-            EUROPEAN ROULETTE
-        </span>
-
-        <h2>
-            Roulette
-        </h2>
-
-        <p class="game-description">
-            Spin the wheel. Test your luck.
-            Build your legacy.
+        <p
+            id="slotMessage"
+            style="
+                margin-top:20px;
+                color:#f3d675;
+            "
+        >
+            Match three symbols for the jackpot.
         </p>
 
+    </div>
 
-        <div class="roulette-layout">
-
-
-            <!-- =============================================
-                 WHEEL
-                 ============================================= -->
-
-            <div class="roulette-stage">
-
-                <div class="roulette-cabinet">
+</section>
 
 
-                    <div
-                        class="roulette-wheel"
-                        id="rouletteWheel"
-                    >
 
-                        <div
-                            class="roulette-color-ring"
-                        ></div>
+<!-- =========================================================
+     ROULETTE
+     ========================================================= -->
+
+<section
+    class="game-section"
+    id="roulette"
+>
+
+    <span class="eyebrow">
+        EUROPEAN ROULETTE
+    </span>
+
+    <h2>
+        Roulette
+    </h2>
+
+    <p>
+        Spin the wheel. Test your luck. Build your legacy.
+    </p>
 
 
-                        <div
-                            class="roulette-numbers"
-                            id="rouletteNumbers"
-                        ></div>
+    <div class="roulette-layout">
 
 
-                        <div
-                            class="roulette-spindle"
-                        ></div>
+        <!-- =================================================
+             ROULETTE WHEEL
+             ================================================= -->
+
+        <div class="roulette-stage">
+
+            <div class="roulette-cabinet">
 
 
-                        <div class="roulette-center">
-
-                            <div
-                                class="roulette-center-logo"
-                            >
-                                A
-                            </div>
-
-                        </div>
-
-                    </div>
-
+                <div
+                    class="roulette-wheel"
+                    id="rouletteWheel"
+                >
 
                     <div
-                        class="ball-track"
-                        id="ballTrack"
-                    >
-
-                        <div
-                            class="roulette-ball"
-                        ></div>
-
-                    </div>
-
-
-                    <div
-                        class="roulette-pointer"
+                        class="roulette-numbers"
+                        id="rouletteNumbers"
                     ></div>
 
-
-                </div>
-
-            </div>
-
-
-
-            <!-- =============================================
-                 CONTROLS
-                 ============================================= -->
-
-            <div class="roulette-controls">
-
-
-                <div class="roulette-result">
-
-                    <div
-                        class="roulette-result-label"
-                    >
-                        LAST RESULT
-                    </div>
-
-                    <div id="rouletteResult">
-                        READY
-                    </div>
-
-                </div>
-
-
-                <div class="balance-box">
-
-                    <span>
-                        YOUR BALANCE
-                    </span>
-
-                    <strong id="rouletteBalance">
-                        10,000 AC
-                    </strong>
-
-                </div>
-
-
-                <div class="bet-label">
-                    BET AMOUNT
-                </div>
-
-
-                <div class="bet-control">
-
-                    <button
-                        onclick="changeBet(-100)"
-                    >
-                        −
-                    </button>
-
-                    <span id="betAmount">
-                        100 AC
-                    </span>
-
-                    <button
-                        onclick="changeBet(100)"
-                    >
-                        +
-                    </button>
-
-                </div>
-
-
-                <div class="bet-label">
-                    SELECTED BET
-                </div>
-
-                <p
-                    id="selectedBet"
-                    style="
-                        margin-top:7px;
-                        color:#f4d66f;
-                        font-weight:900;
-                    "
-                >
-                    NONE
-                </p>
-
-
-                <div class="outside-bets">
-
-                    <button
-                        onclick="selectBet('low', this)"
-                    >
-                        1 TO 18
-                    </button>
-
-                    <button
-                        onclick="selectBet('even', this)"
-                    >
-                        EVEN
-                    </button>
-
-                    <button
-                        class="red-bet"
-                        onclick="selectBet('red', this)"
-                    >
-                        RED
-                    </button>
-
-                    <button
-                        class="black-bet"
-                        onclick="selectBet('black', this)"
-                    >
-                        BLACK
-                    </button>
-
-                    <button
-                        onclick="selectBet('odd', this)"
-                    >
-                        ODD
-                    </button>
-
-                    <button
-                        onclick="selectBet('high', this)"
-                    >
-                        19 TO 36
-                    </button>
-
-                </div>
-
-
-                <button
-                    class="spin-button"
-                    id="rouletteSpinButton"
-                    onclick="spinRoulette()"
-                >
-                    SPIN ROULETTE
-                </button>
-
-
-                <div class="history-title">
-                    LAST RESULTS
                 </div>
 
 
                 <div
-                    class="result-history"
-                    id="rouletteHistory"
+                    class="ball-track"
+                    id="ballTrack"
                 >
 
-                    <span
-                        style="
-                            color:#6d685f;
-                            font-size:11px;
-                        "
-                    >
-                        NO SPINS YET
-                    </span>
+                    <div class="roulette-ball"></div>
 
                 </div>
 
@@ -1899,1209 +431,352 @@
 
         </div>
 
-    </section>
 
 
+        <!-- =================================================
+             ROULETTE CONTROLS
+             ================================================= -->
 
-    <!-- ======================================================
-         HIGH ROLL
-         ====================================================== -->
-
-    <section
-        class="game-section"
-        id="dice"
-    >
-
-        <span class="game-label">
-            HIGH ROLL
-        </span>
-
-        <h2>
-            High Roll
-        </h2>
-
-        <p class="game-description">
-            Roll higher than the house to win.
-            Ties return your wager.
-        </p>
+        <div class="roulette-controls">
 
 
-        <div class="simple-game">
+            <div class="roulette-result">
 
-            <h3>
-                HOUSE
-            </h3>
+                <span class="tag">
+                    LAST RESULT
+                </span>
 
-            <div
-                id="houseDice"
-                style="
-                    font-size:55px;
-                    margin:10px;
-                "
-            >
-                ⚀
+                <strong id="rouletteResult">
+                    READY
+                </strong>
+
             </div>
 
-            <h3>
-                VS
-            </h3>
+
 
             <div
-                id="playerDice"
+                class="card"
+                style="margin-bottom:18px;"
+            >
+
+                <span class="tag">
+                    YOUR BALANCE
+                </span>
+
+                <div
+                    class="stat"
+                    data-balance
+                >
+                    10,000 AC
+                </div>
+
+            </div>
+
+
+
+            <div
+                class="card"
+                style="margin-bottom:18px;"
+            >
+
+                <span class="tag">
+                    BET AMOUNT
+                </span>
+
+                <div
+                    class="stat"
+                    id="betAmount"
+                >
+                    100 AC
+                </div>
+
+
+                <div class="bet-row">
+
+                    <button
+                        type="button"
+                        onclick="changeBet(-100)"
+                    >
+                        -100
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="changeBet(100)"
+                    >
+                        +100
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <p>
+                SELECTED BET:
+                <strong
+                    id="selectedBet"
+                    style="color:#f3d675;"
+                >
+                    NONE
+                </strong>
+            </p>
+
+
+
+            <!-- OUTSIDE BETS -->
+
+            <div class="bet-row">
+
+                <button
+                    type="button"
+                    onclick="selectBet('low',this)"
+                >
+                    1 TO 18
+                </button>
+
+                <button
+                    type="button"
+                    onclick="selectBet('even',this)"
+                >
+                    EVEN
+                </button>
+
+                <button
+                    type="button"
+                    onclick="selectBet('red',this)"
+                >
+                    RED
+                </button>
+
+            </div>
+
+
+            <div class="bet-row">
+
+                <button
+                    type="button"
+                    onclick="selectBet('black',this)"
+                >
+                    BLACK
+                </button>
+
+                <button
+                    type="button"
+                    onclick="selectBet('odd',this)"
+                >
+                    ODD
+                </button>
+
+                <button
+                    type="button"
+                    onclick="selectBet('high',this)"
+                >
+                    19 TO 36
+                </button>
+
+            </div>
+
+
+
+            <div
+                class="notice"
                 style="
-                    font-size:55px;
-                    margin:10px;
+                    margin-top:20px;
+                    font-size:12px;
                 "
             >
-                ⚀
+
+                <strong>
+                    OUTSIDE BET PAYOUT
+                </strong>
+
+                <br>
+
+                Winning outside bets pay 1:1.
+
+                Zero loses all currently available
+                outside bets.
+
             </div>
+
+
 
             <button
-                class="basic-button"
-                onclick="rollDice()"
+                type="button"
+                class="spin-button"
+                id="rouletteSpinButton"
+                onclick="spinRoulette()"
             >
-                ROLL
+                SPIN ROULETTE
             </button>
-
-            <p id="diceMessage">
-                Highest roll wins.
-            </p>
 
         </div>
 
-    </section>
+    </div>
 
+</section>
 
 
-    <!-- ======================================================
-         FOOTER
-         ====================================================== -->
 
-    <footer>
+<!-- =========================================================
+     HIGH ROLL
+     ========================================================= -->
 
-        <strong>
-            THE GILDED ACE
-        </strong>
+<section
+    class="game-section"
+    id="dice"
+>
 
-        PLAY-MONEY ENTERTAINMENT ONLY •
-        ACE CREDITS HAVE NO REAL-WORLD CASH VALUE
+    <span class="eyebrow">
+        HIGH ROLL
+    </span>
 
-    </footer>
+    <h2>
+        High Roll
+    </h2>
 
+    <p>
+        Roll against the house. Highest number wins.
+    </p>
 
 
-    <script>
+    <div class="simple-game">
 
-        /* ======================================================
-           GLOBAL BALANCE
-           ====================================================== */
 
-        let balance = 10000;
+        <div
+            style="
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:20px;
+                max-width:650px;
+                margin:30px auto;
+            "
+        >
 
-        let rouletteBetAmount = 100;
 
-        let selectedRouletteBet = null;
+            <div class="card">
 
-        let rouletteSpinning = false;
+                <span class="tag">
+                    HOUSE
+                </span>
 
-        let wheelRotation = 0;
+                <div
+                    id="houseDice"
+                    style="
+                        font-size:75px;
+                        color:#f3d675;
+                    "
+                >
+                    ⚀
+                </div>
 
-        let ballRotation = 0;
+            </div>
 
-        let rouletteHistory = [];
 
 
-        function updateBalance() {
+            <div class="card">
 
-            const formatted =
-                balance.toLocaleString()
-                + " AC";
+                <span class="tag">
+                    YOU
+                </span>
 
+                <div
+                    id="playerDice"
+                    style="
+                        font-size:75px;
+                        color:#f3d675;
+                    "
+                >
+                    ⚀
+                </div>
 
-            document.getElementById(
-                "navBalance"
-            ).textContent =
-                formatted;
+            </div>
 
 
-            document.getElementById(
-                "rouletteBalance"
-            ).textContent =
-                formatted;
+        </div>
 
-        }
 
 
+        <button
+            type="button"
+            onclick="rollDice()"
+        >
+            ROLL DICE
+        </button>
 
-        /* ======================================================
-           NAVIGATION
-           ====================================================== */
 
-        function goToGame(id) {
+        <p
+            id="diceMessage"
+            style="
+                margin-top:20px;
+                color:#f3d675;
+            "
+        >
+            Highest roll wins.
+        </p>
 
-            document
-                .getElementById(id)
-                .scrollIntoView({
-                    behavior:
-                        "smooth"
-                });
+    </div>
 
-        }
+</section>
 
 
 
-        /* ======================================================
-           EUROPEAN ROULETTE DATA
-           ====================================================== */
+<!-- =========================================================
+     DISCLAIMER
+     ========================================================= -->
 
-        const europeanWheel = [
+<section class="section">
 
-            0,
-            32,
-            15,
-            19,
-            4,
-            21,
-            2,
-            25,
-            17,
-            34,
-            6,
-            27,
-            13,
-            36,
-            11,
-            30,
-            8,
-            23,
-            10,
-            5,
-            24,
-            16,
-            33,
-            1,
-            20,
-            14,
-            31,
-            9,
-            22,
-            18,
-            29,
-            7,
-            28,
-            12,
-            35,
-            3,
-            26
+    <div class="container notice">
 
-        ];
+        <h3>
+            PLAY-MONEY CASINO
+        </h3>
 
+        <p>
+            All games at The Gilded Ace use fictional
+            Ace Credits. Ace Credits have no cash value
+            and cannot be purchased, withdrawn, redeemed,
+            or exchanged for real-world money or prizes.
+        </p>
 
-        const redNumbers =
-            new Set([
+    </div>
 
-                1,
-                3,
-                5,
-                7,
-                9,
+</section>
 
-                12,
-                14,
-                16,
-                18,
 
-                19,
-                21,
-                23,
-                25,
-                27,
 
-                30,
-                32,
-                34,
-                36
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
 
-            ]);
+<footer>
 
+    <strong>
+        THE GILDED ACE
+    </strong>
 
-        const pocketAngle =
-            360 /
-            europeanWheel.length;
+    CASINO & SOCIAL CLUB
 
+    <br>
 
+    PLAY-MONEY ENTERTAINMENT ONLY
+    •
+    ACE CREDITS HAVE NO CASH VALUE
 
-        /* ======================================================
-           BUILD NUMBER LABELS
-           ====================================================== */
+</footer>
 
-        const numberContainer =
-            document.getElementById(
-                "rouletteNumbers"
-            );
 
 
-        europeanWheel.forEach(
-            (number, index) => {
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
 
-                const holder =
-                    document.createElement(
-                        "div"
-                    );
+<script src="script.js?v=7"></script>
 
-
-                holder.className =
-                    "roulette-number";
-
-
-                /*
-                    Each number is positioned
-                    around the edge.
-                */
-
-                const angle =
-                    index *
-                    pocketAngle;
-
-
-                holder.style.transform =
-                    `
-                    rotate(${angle}deg)
-                    `;
-
-
-                const label =
-                    document.createElement(
-                        "span"
-                    );
-
-
-                label.textContent =
-                    number;
-
-
-                /*
-                    Keep the number upright
-                    relative to its pocket.
-                */
-
-                label.style.transform =
-                    `
-                    rotate(${
-                        -angle
-                    }deg)
-                    `;
-
-
-                holder.appendChild(
-                    label
-                );
-
-
-                numberContainer.appendChild(
-                    holder
-                );
-
-            }
-        );
-
-
-
-        /* ======================================================
-           BET CONTROL
-           ====================================================== */
-
-        function changeBet(amount) {
-
-            rouletteBetAmount +=
-                amount;
-
-
-            if (
-                rouletteBetAmount
-                < 100
-            ) {
-
-                rouletteBetAmount =
-                    100;
-
-            }
-
-
-            if (
-                rouletteBetAmount
-                > balance
-            ) {
-
-                rouletteBetAmount =
-                    balance;
-
-            }
-
-
-            document.getElementById(
-                "betAmount"
-            ).textContent =
-                rouletteBetAmount
-                .toLocaleString()
-                + " AC";
-
-        }
-
-
-
-        function selectBet(
-            bet,
-            button
-        ) {
-
-            selectedRouletteBet =
-                bet;
-
-
-            document
-                .querySelectorAll(
-                    ".outside-bets button"
-                )
-                .forEach(
-                    item => {
-
-                        item.classList.remove(
-                            "selected"
-                        );
-
-                    }
-                );
-
-
-            button.classList.add(
-                "selected"
-            );
-
-
-            const labels = {
-
-                low:
-                    "1 TO 18",
-
-                high:
-                    "19 TO 36",
-
-                even:
-                    "EVEN",
-
-                odd:
-                    "ODD",
-
-                red:
-                    "RED",
-
-                black:
-                    "BLACK"
-
-            };
-
-
-            document.getElementById(
-                "selectedBet"
-            ).textContent =
-                labels[bet];
-
-        }
-
-
-
-        /* ======================================================
-           ROULETTE SPIN
-           ====================================================== */
-
-        function spinRoulette() {
-
-            if (
-                rouletteSpinning
-            ) {
-                return;
-            }
-
-
-            if (
-                rouletteBetAmount
-                > balance
-            ) {
-
-                alert(
-                    "Not enough Ace Credits."
-                );
-
-                return;
-            }
-
-
-            rouletteSpinning =
-                true;
-
-
-            const button =
-                document.getElementById(
-                    "rouletteSpinButton"
-                );
-
-
-            const wheel =
-                document.getElementById(
-                    "rouletteWheel"
-                );
-
-
-            const ballTrack =
-                document.getElementById(
-                    "ballTrack"
-                );
-
-
-            const resultDisplay =
-                document.getElementById(
-                    "rouletteResult"
-                );
-
-
-            button.disabled =
-                true;
-
-
-            resultDisplay.textContent =
-                "SPINNING";
-
-
-            ballTrack.classList.remove(
-                "ball-drop"
-            );
-
-
-            /*
-               Choose the winning pocket.
-            */
-
-            const winningIndex =
-                Math.floor(
-                    Math.random() *
-                    europeanWheel.length
-                );
-
-
-            const winningNumber =
-                europeanWheel[
-                    winningIndex
-                ];
-
-
-            /*
-               Wheel rotates clockwise.
-
-               Use several full rotations
-               before reaching the chosen
-               pocket.
-            */
-
-            const wheelSpins =
-                7 +
-                Math.floor(
-                    Math.random() * 3
-                );
-
-
-            const targetPocket =
-                winningIndex *
-                pocketAngle;
-
-
-            const currentWheelAngle =
-                (
-                    wheelRotation %
-                    360 +
-                    360
-                ) %
-                360;
-
-
-            const correction =
-                (
-                    360 -
-                    targetPocket -
-                    currentWheelAngle
-                ) %
-                360;
-
-
-            wheelRotation +=
-                wheelSpins *
-                360 +
-                correction;
-
-
-            /*
-               Ball moves counter-clockwise
-               and initially runs faster
-               than the wheel.
-            */
-
-            const ballSpins =
-                11 +
-                Math.floor(
-                    Math.random() * 4
-                );
-
-
-            ballRotation -=
-                ballSpins *
-                360;
-
-
-            wheel.style.transform =
-                `rotate(${wheelRotation}deg)`;
-
-
-            ballTrack.style.transform =
-                `rotate(${ballRotation}deg)`;
-
-
-            /*
-               After the ball has been
-               circling for a few seconds,
-               visually drop it inward.
-            */
-
-            setTimeout(
-                () => {
-
-                    ballTrack.classList.add(
-                        "ball-drop"
-                    );
-
-                },
-                3900
-            );
-
-
-            /*
-               Final result.
-            */
-
-            setTimeout(
-                () => {
-
-                    finishRoulette(
-                        winningNumber
-                    );
-
-
-                    rouletteSpinning =
-                        false;
-
-
-                    button.disabled =
-                        false;
-
-                },
-                7100
-            );
-
-        }
-
-
-
-        /* ======================================================
-           FINISH ROULETTE
-           ====================================================== */
-
-        function finishRoulette(
-            number
-        ) {
-
-            let color;
-
-
-            if (
-                number === 0
-            ) {
-
-                color =
-                    "GREEN";
-
-            }
-
-            else if (
-                redNumbers.has(
-                    number
-                )
-            ) {
-
-                color =
-                    "RED";
-
-            }
-
-            else {
-
-                color =
-                    "BLACK";
-
-            }
-
-
-            document.getElementById(
-                "rouletteResult"
-            ).textContent =
-                number +
-                " • " +
-                color;
-
-
-            /*
-               Optional play-money payout
-               for outside bets.
-            */
-
-            if (
-                selectedRouletteBet
-            ) {
-
-                balance -=
-                    rouletteBetAmount;
-
-
-                let won = false;
-
-
-                switch (
-                    selectedRouletteBet
-                ) {
-
-                    case "red":
-
-                        won =
-                            redNumbers.has(
-                                number
-                            );
-
-                        break;
-
-
-                    case "black":
-
-                        won =
-                            number !== 0 &&
-                            !redNumbers.has(
-                                number
-                            );
-
-                        break;
-
-
-                    case "even":
-
-                        won =
-                            number !== 0 &&
-                            number % 2 === 0;
-
-                        break;
-
-
-                    case "odd":
-
-                        won =
-                            number !== 0 &&
-                            number % 2 !== 0;
-
-                        break;
-
-
-                    case "low":
-
-                        won =
-                            number >= 1 &&
-                            number <= 18;
-
-                        break;
-
-
-                    case "high":
-
-                        won =
-                            number >= 19 &&
-                            number <= 36;
-
-                        break;
-
-                }
-
-
-                if (
-                    won
-                ) {
-
-                    balance +=
-                        rouletteBetAmount *
-                        2;
-
-                }
-
-
-                updateBalance();
-
-            }
-
-
-            addRouletteHistory(
-                number,
-                color
-            );
-
-        }
-
-
-
-        /* ======================================================
-           HISTORY
-           ====================================================== */
-
-        function addRouletteHistory(
-            number,
-            color
-        ) {
-
-            rouletteHistory.unshift({
-                number,
-                color
-            });
-
-
-            rouletteHistory =
-                rouletteHistory.slice(
-                    0,
-                    8
-                );
-
-
-            const container =
-                document.getElementById(
-                    "rouletteHistory"
-                );
-
-
-            container.innerHTML =
-                "";
-
-
-            rouletteHistory.forEach(
-                item => {
-
-                    const element =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    element.className =
-                        "history-ball " +
-                        (
-                            item.color ===
-                            "RED"
-
-                            ? "history-red"
-
-                            :
-
-                            item.color ===
-                            "GREEN"
-
-                            ? "history-green"
-
-                            :
-
-                            "history-black"
-                        );
-
-
-                    element.textContent =
-                        item.number;
-
-
-                    container.appendChild(
-                        element
-                    );
-
-                }
-            );
-
-        }
-
-
-
-        /* ======================================================
-           SIMPLE BLACKJACK
-           ====================================================== */
-
-        let blackjackPlayer =
-            [];
-
-        let blackjackDealer =
-            [];
-
-
-        function randomCard() {
-
-            return (
-                Math.floor(
-                    Math.random() *
-                    10
-                ) +
-                2
-            );
-
-        }
-
-
-        function totalHand(
-            hand
-        ) {
-
-            return hand.reduce(
-                (a, b) =>
-                    a + b,
-                0
-            );
-
-        }
-
-
-        function showBlackjack() {
-
-            document.getElementById(
-                "playerCards"
-            ).textContent =
-                "Your Hand: " +
-                blackjackPlayer.join(
-                    ", "
-                ) +
-                " (" +
-                totalHand(
-                    blackjackPlayer
-                ) +
-                ")";
-
-
-            document.getElementById(
-                "dealerCards"
-            ).textContent =
-                "Dealer: " +
-                blackjackDealer.join(
-                    ", "
-                ) +
-                " (" +
-                totalHand(
-                    blackjackDealer
-                ) +
-                ")";
-
-        }
-
-
-        function dealBlackjack() {
-
-            blackjackPlayer = [
-                randomCard(),
-                randomCard()
-            ];
-
-
-            blackjackDealer = [
-                randomCard(),
-                randomCard()
-            ];
-
-
-            showBlackjack();
-
-
-            document.getElementById(
-                "blackjackMessage"
-            ).textContent =
-                "Hit or stand.";
-
-        }
-
-
-        function hitBlackjack() {
-
-            if (
-                blackjackPlayer.length
-                === 0
-            ) {
-                return;
-            }
-
-
-            blackjackPlayer.push(
-                randomCard()
-            );
-
-
-            showBlackjack();
-
-
-            if (
-                totalHand(
-                    blackjackPlayer
-                ) > 21
-            ) {
-
-                document.getElementById(
-                    "blackjackMessage"
-                ).textContent =
-                    "Bust!";
-
-            }
-
-        }
-
-
-        function standBlackjack() {
-
-            while (
-                totalHand(
-                    blackjackDealer
-                ) < 17
-            ) {
-
-                blackjackDealer.push(
-                    randomCard()
-                );
-
-            }
-
-
-            showBlackjack();
-
-
-            const player =
-                totalHand(
-                    blackjackPlayer
-                );
-
-
-            const dealer =
-                totalHand(
-                    blackjackDealer
-                );
-
-
-            let message;
-
-
-            if (
-                player > 21
-            ) {
-
-                message =
-                    "You busted.";
-
-            }
-
-            else if (
-                dealer > 21 ||
-                player > dealer
-            ) {
-
-                message =
-                    "You win!";
-
-            }
-
-            else if (
-                player === dealer
-            ) {
-
-                message =
-                    "Push.";
-
-            }
-
-            else {
-
-                message =
-                    "Dealer wins.";
-
-            }
-
-
-            document.getElementById(
-                "blackjackMessage"
-            ).textContent =
-                message;
-
-        }
-
-
-
-        /* ======================================================
-           SLOTS
-           ====================================================== */
-
-        function spinSlots() {
-
-            const symbols = [
-                "7",
-                "A",
-                "♠",
-                "♦",
-                "★"
-            ];
-
-
-            const result = [
-                symbols[
-                    Math.floor(
-                        Math.random() *
-                        symbols.length
-                    )
-                ],
-
-                symbols[
-                    Math.floor(
-                        Math.random() *
-                        symbols.length
-                    )
-                ],
-
-                symbols[
-                    Math.floor(
-                        Math.random() *
-                        symbols.length
-                    )
-                ]
-            ];
-
-
-            document.getElementById(
-                "slotDisplay"
-            ).textContent =
-                result.join(
-                    " "
-                );
-
-
-            document.getElementById(
-                "slotMessage"
-            ).textContent =
-                (
-                    result[0] ===
-                    result[1] &&
-                    result[1] ===
-                    result[2]
-                )
-
-                ? "JACKPOT!"
-
-                : "Spin again.";
-
-        }
-
-
-
-        /* ======================================================
-           DICE
-           ====================================================== */
-
-        const diceSymbols = [
-            "⚀",
-            "⚁",
-            "⚂",
-            "⚃",
-            "⚄",
-            "⚅"
-        ];
-
-
-        function rollDice() {
-
-            const house =
-                Math.floor(
-                    Math.random() *
-                    6
-                ) +
-                1;
-
-
-            const player =
-                Math.floor(
-                    Math.random() *
-                    6
-                ) +
-                1;
-
-
-            document.getElementById(
-                "houseDice"
-            ).textContent =
-                diceSymbols[
-                    house - 1
-                ];
-
-
-            document.getElementById(
-                "playerDice"
-            ).textContent =
-                diceSymbols[
-                    player - 1
-                ];
-
-
-            let message;
-
-
-            if (
-                player > house
-            ) {
-
-                message =
-                    "You win!";
-
-            }
-
-            else if (
-                player < house
-            ) {
-
-                message =
-                    "House wins.";
-
-            }
-
-            else {
-
-                message =
-                    "Tie.";
-
-            }
-
-
-            document.getElementById(
-                "diceMessage"
-            ).textContent =
-                message;
-
-        }
-
-
-
-        /* ======================================================
-           INITIALIZE
-           ====================================================== */
-
-        updateBalance();
-
-    </script>
 
 </body>
+
 </html>
