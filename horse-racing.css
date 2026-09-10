@@ -1341,34 +1341,28 @@ body.horse-racing-page{
 
 
 /* =========================================================
-   WHITE BOX REMOVAL — CODE FIX v50
+   EMBEDDED TRANSPARENT HORSE FIX v60
 ========================================================= */
 
-.horse-sprite-wrap{
-    background:transparent !important;
-    border:0 !important;
-    box-shadow:none !important;
-    overflow:visible !important;
-}
-
+.horse-sprite-wrap,
 .horse-sprite-image{
     background:transparent !important;
     border:0 !important;
     box-shadow:none !important;
-    mix-blend-mode:normal !important;
-    object-fit:contain !important;
 }
 
-.horse-cutout-canvas{
-    display:block;
-    width:100%;
-    height:100%;
-    background:transparent !important;
-    border:0 !important;
-    pointer-events:none;
-    filter:drop-shadow(0 6px 3px rgba(0,0,0,.38));
+.horse-sprite-image{
+    display:block !important;
+    object-fit:contain !important;
+    mix-blend-mode:normal !important;
+    filter:drop-shadow(0 6px 3px rgba(0,0,0,.38)) !important;
 }
 
 .sprite-number{
     display:none !important;
+}
+
+.race-horse::before{
+    display:none !important;
+    content:none !important;
 }
