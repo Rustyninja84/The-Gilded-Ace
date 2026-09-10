@@ -449,3 +449,31 @@ button:disabled{opacity:.38;cursor:not-allowed}
         flex:1;
     }
 }
+
+
+/* =========================================================
+   ALL-IN BUTTON
+========================================================= */
+
+.poker-allin-button{
+    min-height:42px;
+    padding:0 18px;
+    border:1px solid #bd7a2d;
+    background:
+        linear-gradient(180deg,#8d3f11,#4e1e09);
+    color:#ffd990;
+    font-weight:900;
+    font-size:10px;
+    letter-spacing:1.2px;
+    cursor:pointer;
+    box-shadow:0 0 22px rgba(189,122,45,.12);
+}
+
+.poker-allin-button:hover:not(:disabled){
+    filter:brightness(1.12);
+}
+
+.poker-allin-button:disabled{
+    opacity:.38;
+    cursor:not-allowed;
+}

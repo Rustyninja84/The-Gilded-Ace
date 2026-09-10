@@ -110,6 +110,7 @@ function bindPokerButtons() {
     $("foldButton")?.addEventListener("click", () => pokerAction("fold"));
     $("checkButton")?.addEventListener("click", () => pokerAction("check"));
     $("callButton")?.addEventListener("click", () => pokerAction("call"));
+    $("allInButton")?.addEventListener("click", () => pokerAction("allin"));
     $("raiseButton")?.addEventListener("click", () => {
         const amount = Number($("raiseAmount")?.value || 0);
         pokerAction("raise", amount);
@@ -487,16 +488,30 @@ function renderPokerActionControls() {
         ? Math.max(0, Number(pokerRoom.current_bet || 0) - Number(mySeat.bet_round || 0))
         : 0;
 
+    const stack = Number(mySeat?.stack || 0);
     const canCheck = myTurn && callAmount === 0;
-    const canCall = myTurn && callAmount > 0 && Number(mySeat.stack || 0) >= callAmount;
-    const canRaise = myTurn && Number(mySeat.stack || 0) > callAmount;
+    const canCall = myTurn && callAmount > 0 && stack > 0;
+    const canRaise = myTurn && stack > callAmount;
+    const canAllIn = myTurn && stack > 0;
 
     $("foldButton").disabled = !myTurn || actionBusy;
     $("checkButton").disabled = !canCheck || actionBusy;
     $("callButton").disabled = !canCall || actionBusy;
     $("raiseButton").disabled = !canRaise || actionBusy;
+    if ($("allInButton")) $("allInButton").disabled = !canAllIn || actionBusy;
 
-    $("callButton").textContent = callAmount > 0 ? `CALL ${fmt(callAmount)}` : "CALL";
+    if (callAmount > 0) {
+        $("callButton").textContent =
+            stack < callAmount
+                ? `ALL-IN CALL ${fmt(stack)}`
+                : `CALL ${fmt(callAmount)}`;
+    } else {
+        $("callButton").textContent = "CALL";
+    }
+
+    if ($("allInButton")) {
+        $("allInButton").textContent = stack > 0 ? `ALL IN ${fmt(stack)}` : "ALL IN";
+    }
 
     const minRaiseTo =
         Math.max(
