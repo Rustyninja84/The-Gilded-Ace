@@ -184,6 +184,9 @@ async function loadPokerRooms() {
                         ${occupied}/${room.max_seats} seats •
                         Buy-in ${fmt(room.buy_in)} AC •
                         Blinds ${fmt(room.small_blind)}/${fmt(room.big_blind)}
+                        ${seatRows.some(s => s.room_id === room.id && s.is_bot)
+                            ? " • Bots auto-yield seats to players"
+                            : ""}
                     </div>
                 </div>
                 <div class="poker-room-actions">
@@ -250,11 +253,41 @@ async function joinPokerRoom(roomId, enter = true) {
         if (enter) actionBusy = true;
         setLobbyMessage("Joining table...");
 
-        const { error } = await gaPokerSupabase.rpc("poker_join_room", {
-            p_room: roomId
-        });
+        let joined = false;
+        let attempts = 0;
 
-        if (error) throw error;
+        while (!joined && attempts < 120) {
+            attempts += 1;
+
+            const { data, error } = await gaPokerSupabase.rpc(
+                "poker_join_room_smart",
+                { p_room: roomId }
+            );
+
+            if (!error) {
+                joined = true;
+                break;
+            }
+
+            const message = String(error.message || "");
+
+            if (message.includes("BOT_REPLACE_WAIT")) {
+                setLobbyMessage(
+                    "Table is full of bots. Waiting for the current hand to finish, then a bot will be replaced automatically..."
+                );
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                continue;
+            }
+
+            throw error;
+        }
+
+        if (!joined) {
+            throw new Error(
+                "The current hand did not finish in time. Try joining again."
+            );
+        }
 
         if (enter) await enterPokerRoom(roomId);
     } catch (error) {
