@@ -1,14 +1,898 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
-:root{--db:#050505;--dp:#101010;--dp2:#171717;--burg:#520815;--gold:#d4a632;--gold2:#f3d675;--text:#e6e0d4;--muted:#918a7e;--border:rgba(212,166,50,.24)}
-*{box-sizing:border-box} body.horse-racing-page{margin:0;background:radial-gradient(circle at 50% -10%,rgba(82,8,21,.22),transparent 34%),var(--db);color:var(--text);font-family:Inter,Arial,sans-serif}
-.derby-hero{position:relative;min-height:350px;overflow:hidden;border-bottom:1px solid var(--border);background:radial-gradient(circle at 50% 10%,rgba(212,166,50,.16),transparent 24%),linear-gradient(115deg,rgba(0,0,0,.94),rgba(82,8,21,.64),rgba(0,0,0,.94));display:flex;align-items:center;justify-content:center;text-align:center}
-.derby-hero::before,.derby-hero::after{content:"";position:absolute;width:380px;height:380px;border:1px solid rgba(212,166,50,.14);transform:rotate(45deg)}.derby-hero::before{left:-220px;top:-160px}.derby-hero::after{right:-220px;bottom:-180px}.derby-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 45%,rgba(0,0,0,.65)),repeating-linear-gradient(90deg,transparent 0 79px,rgba(255,255,255,.015) 80px)}
-.derby-hero-content{position:relative;z-index:2;max-width:850px;padding:55px 24px}.derby-kicker{display:block;color:var(--gold);letter-spacing:.19em;font-size:.72rem;font-weight:800;margin-bottom:10px}.derby-hero h1,.derby-card h2{font-family:Cinzel,serif}.derby-hero h1{margin:0;font-size:clamp(2.5rem,7vw,5.6rem);letter-spacing:.06em;line-height:.98;color:var(--gold2);text-shadow:0 0 35px rgba(212,166,50,.15)}.derby-hero p{max-width:700px;margin:22px auto 0;color:#cfc7b9;line-height:1.7}.derby-hero-actions{margin-top:26px;display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}
-.derby-secondary-button,.derby-primary-button{border:1px solid var(--gold);text-decoration:none;font-weight:800;letter-spacing:.08em;cursor:pointer;transition:.2s}.derby-secondary-button{color:var(--gold2);background:rgba(0,0,0,.4);padding:12px 18px;font-size:.75rem}.derby-secondary-button:hover{background:rgba(212,166,50,.1);transform:translateY(-1px)}.derby-play-money{color:var(--muted);font-size:.68rem;letter-spacing:.15em;font-weight:700}
-.derby-main{width:min(1380px,calc(100% - 34px));margin:0 auto;padding:38px 0 70px}.derby-top-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:22px}.derby-card{border:1px solid var(--border);background:radial-gradient(circle at top right,rgba(82,8,21,.16),transparent 38%),linear-gradient(145deg,#141414,#0b0b0b);box-shadow:0 18px 55px rgba(0,0,0,.3)}.betting-card,.wager-card,.results-card,.rules-card{padding:25px}.derby-section-title,.race-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}.derby-card h2{margin:0;color:#eee7d9;font-size:1.7rem}.race-number{color:var(--muted);font-size:.74rem;letter-spacing:.12em}.race-number strong{color:var(--gold2)}
-.horse-selection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}.horse-choice{border:1px solid rgba(255,255,255,.075);background:#0b0b0b;padding:15px;text-align:left;color:var(--text);cursor:pointer;position:relative;overflow:hidden;transition:.18s}.horse-choice::after{content:"";position:absolute;inset:auto 0 0;height:2px;background:var(--horse-accent,var(--gold));transform:scaleX(0);transform-origin:left;transition:.18s}.horse-choice:hover{border-color:rgba(212,166,50,.45);transform:translateY(-2px)}.horse-choice:hover::after,.horse-choice.selected::after{transform:scaleX(1)}.horse-choice.selected{border-color:var(--gold);box-shadow:0 0 24px rgba(212,166,50,.08)}.horse-choice-top{display:flex;justify-content:space-between;align-items:center;gap:10px}.horse-number{width:32px;height:32px;display:grid;place-items:center;border-radius:4px;background:var(--horse-accent,var(--gold));color:#050505;font-family:Cinzel,serif;font-weight:900}.horse-odds{color:var(--gold2);font-family:Cinzel,serif;font-weight:800;font-size:1.05rem}.horse-choice h3{margin:15px 0 5px;font-family:Cinzel,serif;font-size:1rem}.horse-choice p{margin:0;color:var(--muted);font-size:.75rem}
-.wager-card h2{margin-bottom:22px}.ticket-line{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid rgba(255,255,255,.06);padding:12px 0;font-size:.78rem}.ticket-line span{color:var(--muted)}.ticket-line strong{color:var(--gold2);text-align:right}.wager-label{color:var(--muted);font-size:.7rem;letter-spacing:.14em;font-weight:800;margin:22px 0 9px}.wager-control{display:grid;grid-template-columns:44px 1fr 44px;border:1px solid var(--border)}.wager-control button,.quick-bets button{border:0;color:var(--gold2);background:#171717;cursor:pointer;font-weight:800}.wager-control button{min-height:44px;font-size:1.25rem}.wager-control button:hover,.quick-bets button:hover{background:#242016}.wager-control strong{display:grid;place-items:center;border-left:1px solid var(--border);border-right:1px solid var(--border)}.quick-bets{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.quick-bets button{min-height:34px;border:1px solid rgba(212,166,50,.14);font-size:.7rem}.derby-primary-button{width:100%;min-height:48px;margin-top:18px;color:#130e03;background:linear-gradient(180deg,var(--gold2),var(--gold));font-family:Inter,sans-serif}.derby-primary-button:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-1px)}.derby-primary-button:disabled{opacity:.45;cursor:not-allowed}.derby-message{min-height:38px;margin:13px 0 0;color:var(--muted);font-size:.78rem;line-height:1.55}.derby-message.win{color:#88d9ae}.derby-message.loss{color:#ef99a6}.derby-message.error{color:#f2adad}
-.race-card{margin-top:22px;padding:25px}.race-status{border:1px solid var(--border);padding:10px 14px;color:var(--gold2);font-size:.7rem;font-weight:800;letter-spacing:.13em;white-space:nowrap}.track-shell{position:relative;margin-top:22px;padding:12px 0;overflow:hidden;background:#07180f;border:1px solid rgba(212,166,50,.18)}.track-shell::after{content:"";position:absolute;top:0;bottom:0;right:58px;width:10px;opacity:.6;background:linear-gradient(45deg,#fff 25%,#111 25% 50%,#fff 50% 75%,#111 75%);background-size:10px 10px;z-index:1}.starting-gate-label,.finish-line-label{position:absolute;z-index:3;top:4px;color:rgba(255,255,255,.45);font-size:.55rem;font-weight:900;letter-spacing:.14em}.starting-gate-label{left:11px}.finish-line-label{right:18px}.race-track{position:relative;z-index:2}.race-lane{position:relative;height:74px;border-bottom:1px dashed rgba(255,255,255,.12);background:repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 39px,rgba(255,255,255,.035) 40px)}.race-lane:last-child{border-bottom:0}.lane-number{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:27px;height:27px;display:grid;place-items:center;border-radius:4px;background:var(--horse-accent);color:#050505;font-weight:900;font-family:Cinzel,serif;z-index:3}.race-horse{position:absolute;left:45px;top:7px;width:115px;transform:translateX(0);will-change:transform}.race-horse-body{font-size:2rem;line-height:1;filter:drop-shadow(0 5px 5px rgba(0,0,0,.4));transform-origin:center}.race-horse.running .race-horse-body{animation:horseGallop .24s infinite alternate ease-in-out}@keyframes horseGallop{from{transform:translateY(2px) rotate(-1deg)}to{transform:translateY(-2px) rotate(1deg)}}.race-horse-name{display:block;margin-top:4px;color:#eee7d9;font-size:.61rem;font-weight:800;white-space:nowrap;text-shadow:0 2px 3px #000}.commentary-board{border:1px solid rgba(212,166,50,.14);border-top:0;background:#090909;padding:14px 18px}.commentary-label{display:block;color:var(--gold);font-size:.6rem;letter-spacing:.15em;margin-bottom:5px}.commentary-board strong{font-family:Cinzel,serif;font-size:.88rem;font-weight:600}
-.derby-bottom-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:22px;margin-top:22px}.race-results.empty-results{color:var(--muted);padding:28px 0 10px}.result-row{display:grid;grid-template-columns:50px 1fr 90px;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.055)}.result-row:last-child{border-bottom:0}.result-place{font-family:Cinzel,serif;color:var(--gold);font-weight:900}.result-horse{font-family:Cinzel,serif;font-weight:700}.result-odds{text-align:right;color:var(--muted)}.rule-row{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;margin-top:14px}.rule-row strong{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold2);font-family:Cinzel,serif}.rule-row p{margin:3px 0 0;color:var(--muted);font-size:.8rem;line-height:1.5}.derby-disclaimer{margin-top:22px;border:1px solid rgba(212,166,50,.18);padding:18px 22px;text-align:center;background:#090909}.derby-disclaimer strong{color:var(--gold);font-size:.72rem;letter-spacing:.14em}.derby-disclaimer p{margin:8px auto 0;max-width:850px;color:var(--muted);font-size:.75rem;line-height:1.55}
-.winner-modal{position:fixed;inset:0;z-index:9999;display:none;place-items:center;padding:22px;background:rgba(0,0,0,.78);backdrop-filter:blur(7px)}.winner-modal.open{display:grid}.winner-modal-card{width:min(480px,100%);text-align:center;border:1px solid var(--gold);background:radial-gradient(circle at top,rgba(82,8,21,.32),transparent 42%),#0b0b0b;box-shadow:0 25px 100px #000,0 0 45px rgba(212,166,50,.08);padding:34px}.winner-modal-icon{font-size:3rem;margin:8px 0}.winner-modal-card h2{font-family:Cinzel,serif;color:var(--gold2);margin:8px 0}.winner-modal-card p{color:#d3ccbf;line-height:1.65}.winner-modal-card .derby-primary-button{width:auto;min-width:170px;padding:0 22px}
-@media(max-width:1050px){.derby-top-grid,.derby-bottom-grid{grid-template-columns:1fr}.horse-selection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.derby-main{width:min(100% - 18px,1380px)}.derby-card{padding:17px}.horse-selection-grid{grid-template-columns:1fr}.race-header,.derby-section-title{align-items:flex-start}.race-status{white-space:normal}.race-lane{height:68px}.race-horse{width:90px}.race-horse-name{font-size:.52rem}.track-shell::after{right:38px}}
+
+:root{
+    --derby-bg:#050505;
+    --derby-panel:#0d0d0d;
+    --derby-panel-2:#121212;
+    --derby-burg:#650814;
+    --derby-burg-2:#8d0b1d;
+    --derby-gold:#d4a632;
+    --derby-gold-light:#f2d06b;
+    --derby-text:#f1eee7;
+    --derby-muted:#9a9286;
+    --derby-border:rgba(212,166,50,.38);
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body.horse-racing-page{
+    margin:0;
+    background:
+        radial-gradient(circle at 50% -10%,rgba(99,7,22,.16),transparent 34%),
+        #050505;
+    color:var(--derby-text);
+    font-family:Inter,Arial,sans-serif;
+}
+
+.derby-main{
+    width:min(1500px,calc(100% - 48px));
+    margin:0 auto;
+    padding:22px 0 68px;
+}
+
+
+/* =========================================================
+   GAME TABS
+========================================================= */
+
+.derby-game-tabs{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:9px;
+    padding:0 0 13px;
+    border-bottom:1px solid rgba(212,166,50,.16);
+}
+
+.derby-game-tab{
+    min-height:56px;
+    border:1px solid rgba(212,166,50,.34);
+    border-radius:4px;
+    background:linear-gradient(180deg,#111,#0b0b0b);
+    color:#eeeae0;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Inter,Arial,sans-serif;
+    font-size:.72rem;
+    font-weight:800;
+    letter-spacing:.02em;
+    transition:.18s ease;
+}
+
+.derby-game-tab:hover{
+    border-color:rgba(242,208,107,.78);
+    background:#15120d;
+}
+
+.derby-game-tab.active{
+    background:linear-gradient(135deg,#5a0712,#810919);
+    border-color:var(--derby-gold);
+    color:var(--derby-gold-light);
+    box-shadow:inset 0 0 22px rgba(0,0,0,.3);
+}
+
+
+/* =========================================================
+   TITLE ROW
+========================================================= */
+
+.derby-title-row{
+    min-height:126px;
+    display:grid;
+    grid-template-columns:1fr 420px;
+    align-items:center;
+    gap:30px;
+    padding:18px 26px 14px;
+}
+
+.derby-kicker,
+.derby-field-label{
+    color:#bb9651;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.14em;
+}
+
+.derby-title-copy h1,
+.derby-card h2,
+.derby-track-brand strong{
+    font-family:Cinzel,Georgia,serif;
+}
+
+.derby-title-copy h1{
+    margin:5px 0 6px;
+    color:#e3bd67;
+    font-size:2.22rem;
+    line-height:1.05;
+    letter-spacing:.025em;
+    font-weight:600;
+}
+
+.derby-title-copy p{
+    margin:0;
+    color:#e9e5dd;
+    font-size:.97rem;
+}
+
+.derby-track-brand{
+    text-align:center;
+    color:#d6ae5b;
+}
+
+.derby-track-horse{
+    font-size:3rem;
+    line-height:.85;
+    transform:rotate(-4deg);
+    text-shadow:0 0 22px rgba(212,166,50,.2);
+}
+
+.derby-track-brand-line{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+}
+
+.derby-track-brand-line span{
+    display:block;
+    width:42px;
+    height:1px;
+    background:#b48a32;
+}
+
+.derby-track-brand-line strong{
+    font-size:1.35rem;
+    letter-spacing:.1em;
+    font-weight:600;
+}
+
+.derby-track-brand small{
+    display:block;
+    margin-top:2px;
+    color:#ac8740;
+    font-family:Cinzel,serif;
+    letter-spacing:.15em;
+    font-size:.61rem;
+}
+
+
+/* =========================================================
+   TRACK
+========================================================= */
+
+.derby-track-card{
+    border:1px solid rgba(212,166,50,.55);
+    border-radius:5px;
+    overflow:hidden;
+    background:#16110b;
+    box-shadow:0 16px 38px rgba(0,0,0,.35);
+}
+
+.track-scenery{
+    height:104px;
+    position:relative;
+    overflow:hidden;
+    background:
+        linear-gradient(to bottom,rgba(21,35,25,.28),rgba(35,24,12,.3)),
+        repeating-linear-gradient(
+            90deg,
+            #233222 0 42px,
+            #172317 42px 68px,
+            #31402d 68px 103px
+        );
+    border-bottom:4px solid #59421f;
+}
+
+.track-tree-line{
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(circle at 4% 54%,#34432b 0 22px,transparent 23px),
+        radial-gradient(circle at 12% 51%,#283923 0 28px,transparent 29px),
+        radial-gradient(circle at 23% 54%,#3a4931 0 25px,transparent 26px),
+        radial-gradient(circle at 35% 53%,#263720 0 30px,transparent 31px),
+        radial-gradient(circle at 47% 53%,#3b4a30 0 26px,transparent 27px),
+        radial-gradient(circle at 61% 50%,#293a24 0 30px,transparent 31px),
+        radial-gradient(circle at 75% 55%,#3b4930 0 25px,transparent 26px),
+        radial-gradient(circle at 88% 52%,#263620 0 31px,transparent 32px);
+    opacity:.92;
+}
+
+.track-billboard{
+    position:absolute;
+    top:18px;
+    min-height:67px;
+    background:linear-gradient(180deg,#15130f,#080808);
+    border:5px solid #4c381d;
+    box-shadow:0 4px 8px rgba(0,0,0,.5);
+    color:#c7973e;
+    font-family:Cinzel,serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.track-billboard-main{
+    left:31%;
+    width:290px;
+}
+
+.track-billboard-main strong{
+    font-size:1.12rem;
+    letter-spacing:.08em;
+}
+
+.track-billboard-main span{
+    margin-top:3px;
+    font-size:.52rem;
+    letter-spacing:.2em;
+}
+
+.track-billboard-side{
+    right:17%;
+    width:230px;
+    text-align:center;
+    font-size:.78rem;
+    letter-spacing:.07em;
+}
+
+.track-shell{
+    position:relative;
+    min-height:322px;
+    overflow:hidden;
+    background:
+        linear-gradient(to bottom,rgba(255,255,255,.04),transparent 7%),
+        repeating-linear-gradient(
+            to bottom,
+            #70513a 0 51px,
+            #795941 51px 52px,
+            #5d402d 52px 53px
+        );
+}
+
+.track-shell::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 49px,
+            rgba(243,226,193,.28) 49px 51px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 105px,
+            rgba(0,0,0,.025) 105px 106px
+        );
+}
+
+.race-track{
+    position:relative;
+    z-index:2;
+}
+
+.race-lane{
+    height:52px;
+    position:relative;
+    border-bottom:1px solid rgba(255,241,208,.18);
+}
+
+.lane-number{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    width:30px;
+    height:30px;
+    display:grid;
+    place-items:center;
+    border-radius:3px;
+    background:var(--horse-accent,#333);
+    color:white;
+    border:1px solid rgba(255,255,255,.45);
+    box-shadow:0 2px 6px rgba(0,0,0,.35);
+    font-weight:800;
+    font-size:1rem;
+}
+
+.race-horse{
+    position:absolute;
+    top:50%;
+    left:62px;
+    transform:translate(0,-50%);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    will-change:transform;
+}
+
+.race-horse-body{
+    font-size:2.7rem;
+    line-height:1;
+    transform-origin:center;
+    filter:drop-shadow(0 3px 2px rgba(0,0,0,.55));
+}
+
+.race-horse.running .race-horse-body{
+    animation:derbyGallop .42s linear infinite alternate;
+}
+
+.race-horse-name{
+    display:none;
+}
+
+@keyframes derbyGallop{
+    from{transform:translateY(-2px) rotate(-2deg)}
+    to{transform:translateY(2px) rotate(2deg)}
+}
+
+.finish-marker{
+    position:absolute;
+    right:62px;
+    top:-41px;
+    z-index:6;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    pointer-events:none;
+}
+
+.finish-marker span{
+    padding:4px 7px;
+    background:#f2eee5;
+    border:2px solid #3b3127;
+    color:#17130f;
+    font-size:.72rem;
+    font-weight:900;
+    box-shadow:0 3px 5px rgba(0,0,0,.35);
+}
+
+.finish-post{
+    width:10px;
+    height:354px;
+    border:1px solid #ded9cf;
+    background:repeating-linear-gradient(
+        to bottom,
+        #a71117 0 17px,
+        #f2ede5 17px 34px
+    );
+    box-shadow:0 0 4px rgba(0,0,0,.5);
+}
+
+
+/* =========================================================
+   LOWER GRID / CARDS
+========================================================= */
+
+.derby-info-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:14px;
+    margin-top:18px;
+}
+
+.derby-card{
+    border:1px solid var(--derby-border);
+    border-radius:5px;
+    background:
+        radial-gradient(circle at top right,rgba(98,7,21,.08),transparent 38%),
+        linear-gradient(145deg,#111,#090909);
+    box-shadow:0 12px 30px rgba(0,0,0,.24);
+}
+
+.runners-card,
+.wager-card,
+.race-info-card,
+.commentary-panel,
+.results-card{
+    padding:18px 20px;
+}
+
+.derby-card h2{
+    margin:0 0 12px;
+    color:#d9b45e;
+    font-size:1.05rem;
+    letter-spacing:.045em;
+    font-weight:600;
+}
+
+
+/* =========================================================
+   RUNNERS
+========================================================= */
+
+.horse-selection-grid{
+    display:grid;
+    gap:4px;
+}
+
+.horse-choice{
+    --horse-accent:#555;
+    min-height:40px;
+    width:100%;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:3px;
+    background:#111;
+    color:#eee;
+    display:grid;
+    grid-template-columns:38px 1fr 60px 28px;
+    align-items:center;
+    gap:8px;
+    padding:3px 8px 3px 4px;
+    cursor:pointer;
+    text-align:left;
+    transition:.16s ease;
+}
+
+.horse-choice:hover{
+    border-color:rgba(212,166,50,.55);
+    background:#151515;
+}
+
+.horse-choice.selected{
+    border-color:rgba(212,166,50,.5);
+    background:
+        linear-gradient(90deg,rgba(105,9,23,.45),rgba(18,18,18,.96));
+    box-shadow:inset 0 0 18px rgba(91,7,18,.2);
+}
+
+.horse-number{
+    width:33px;
+    height:33px;
+    display:grid;
+    place-items:center;
+    border-radius:3px;
+    color:white;
+    background:var(--horse-accent);
+    border:1px solid rgba(255,255,255,.3);
+    font-weight:800;
+}
+
+.horse-name{
+    font-size:.88rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.horse-odds{
+    color:#e8be58;
+    font-weight:800;
+    text-align:right;
+    font-size:.86rem;
+}
+
+.horse-radio{
+    justify-self:end;
+    width:19px;
+    height:19px;
+    border-radius:50%;
+    border:2px solid #c6c6c6;
+    position:relative;
+}
+
+.horse-choice.selected .horse-radio{
+    border-color:#f1ca62;
+}
+
+.horse-choice.selected .horse-radio::after{
+    content:"";
+    position:absolute;
+    inset:3px;
+    border-radius:50%;
+    background:#f1ca62;
+}
+
+
+/* =========================================================
+   WAGER
+========================================================= */
+
+.derby-field-label{
+    display:block;
+    margin:10px 0 7px;
+    font-size:.65rem;
+}
+
+.selected-horse-card{
+    min-height:47px;
+    border:1px solid rgba(255,255,255,.17);
+    border-radius:3px;
+    background:#111;
+    display:grid;
+    grid-template-columns:46px 1fr auto;
+    align-items:center;
+    overflow:hidden;
+}
+
+.selected-horse-number{
+    height:100%;
+    display:grid;
+    place-items:center;
+    background:#8d101b;
+    border-right:1px solid rgba(255,255,255,.12);
+    font-weight:800;
+    font-size:1.1rem;
+}
+
+.selected-horse-card strong{
+    padding:0 12px;
+    font-size:.9rem;
+}
+
+.selected-horse-odds{
+    padding-right:12px;
+    color:#f1c960;
+    font-weight:800;
+}
+
+.wager-control{
+    display:grid;
+    grid-template-columns:66px 1fr 66px;
+    gap:7px;
+}
+
+.wager-control button{
+    min-height:42px;
+    border:1px solid #a77d34;
+    border-radius:3px;
+    background:linear-gradient(#d1aa59,#a77d34);
+    color:#080808;
+    font-size:1.5rem;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.wager-control strong{
+    min-height:42px;
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:3px;
+    background:#0e0e0e;
+    display:grid;
+    place-items:center;
+    font-size:1rem;
+}
+
+.quick-bets{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+    margin-top:8px;
+}
+
+.quick-bets button{
+    min-height:37px;
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:3px;
+    background:#111;
+    color:#e7e3db;
+    font-family:Inter,Arial,sans-serif;
+    cursor:pointer;
+}
+
+.quick-bets button:hover{
+    border-color:#c99b3e;
+}
+
+.derby-primary-button{
+    width:100%;
+    min-height:50px;
+    margin-top:12px;
+    border:1px solid #d3a331;
+    border-radius:4px;
+    background:linear-gradient(135deg,#670815,#8b0a1d);
+    color:#f3ca63;
+    font-family:Inter,Arial,sans-serif;
+    font-size:.81rem;
+    font-weight:900;
+    letter-spacing:.05em;
+    cursor:pointer;
+    transition:.18s ease;
+}
+
+.derby-primary-button:hover:not(:disabled){
+    filter:brightness(1.12);
+    transform:translateY(-1px);
+}
+
+.derby-primary-button:disabled,
+.wager-control button:disabled,
+.quick-bets button:disabled,
+.horse-choice:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+.derby-message{
+    min-height:18px;
+    margin:8px 0 0;
+    color:#a59d90;
+    font-size:.73rem;
+    line-height:1.35;
+}
+
+.derby-message.win{color:#83d9a0}
+.derby-message.loss,
+.derby-message.error{color:#e18585}
+
+
+/* =========================================================
+   RACE INFO
+========================================================= */
+
+.race-info-row{
+    min-height:36px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.race-info-row span{
+    color:#93846c;
+    font-size:.69rem;
+}
+
+.race-info-row strong{
+    color:#eae6de;
+    font-size:.75rem;
+    font-weight:500;
+    text-align:right;
+}
+
+.race-info-quote{
+    margin-top:20px;
+    min-height:88px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(212,166,50,.8);
+    color:#deb860;
+    text-align:center;
+    font-family:Georgia,serif;
+    font-size:1rem;
+    line-height:1.55;
+}
+
+.race-mini-status{
+    margin-top:12px;
+    display:grid;
+    grid-template-columns:auto auto 1fr;
+    align-items:center;
+    gap:7px;
+    color:#8e867b;
+    font-size:.62rem;
+}
+
+.race-mini-status strong{
+    color:#d9b45c;
+}
+
+#raceStatus{
+    justify-self:end;
+    text-align:right;
+}
+
+
+/* =========================================================
+   COMMENTARY / RESULTS
+========================================================= */
+
+.commentary-panel,
+.results-card{
+    margin-top:14px;
+}
+
+.commentary-line{
+    min-height:34px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.commentary-icon{
+    color:#d0aa55;
+    font-size:1.35rem;
+}
+
+.commentary-line strong{
+    color:#e8e3da;
+    font-size:.87rem;
+    font-weight:500;
+}
+
+.race-results{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px;
+}
+
+.race-results.empty-results{
+    display:block;
+    color:#8d867b;
+    font-size:.8rem;
+}
+
+.result-row{
+    min-height:42px;
+    border:1px solid rgba(255,255,255,.1);
+    background:#0d0d0d;
+    display:grid;
+    grid-template-columns:34px 1fr auto;
+    align-items:center;
+    gap:9px;
+    padding:5px 9px;
+}
+
+.result-place{
+    width:28px;
+    height:28px;
+    display:grid;
+    place-items:center;
+    background:#171717;
+    border:1px solid rgba(212,166,50,.34);
+    color:#d8b158;
+    font-weight:800;
+}
+
+.result-horse{
+    font-size:.8rem;
+}
+
+.result-odds{
+    color:#cda64e;
+    font-size:.76rem;
+    font-weight:700;
+}
+
+
+/* =========================================================
+   DISCLAIMER / MODAL
+========================================================= */
+
+.derby-disclaimer{
+    margin-top:17px;
+    border:1px solid rgba(212,166,50,.16);
+    padding:16px 18px;
+    text-align:center;
+    color:#827c73;
+    font-size:.69rem;
+}
+
+.derby-disclaimer strong{
+    color:#a99163;
+    letter-spacing:.08em;
+}
+
+.derby-disclaimer p{
+    margin:6px 0 0;
+}
+
+.winner-modal{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:rgba(0,0,0,.84);
+    display:none;
+    place-items:center;
+    padding:20px;
+}
+
+.winner-modal.open{
+    display:grid;
+}
+
+.winner-modal-card{
+    width:min(460px,100%);
+    border:1px solid #d4a632;
+    background:
+        radial-gradient(circle at top,rgba(104,8,21,.24),transparent 42%),
+        #0c0c0c;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 24px 70px rgba(0,0,0,.7);
+}
+
+.winner-modal-icon{
+    font-size:3rem;
+    margin:10px 0;
+}
+
+.winner-modal-card h2{
+    margin:0;
+    font-family:Cinzel,serif;
+    color:#e6bf62;
+}
+
+.winner-modal-card p{
+    color:#cfc8bc;
+    line-height:1.55;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width:1050px){
+    .derby-title-row{
+        grid-template-columns:1fr;
+    }
+
+    .derby-track-brand{
+        display:none;
+    }
+
+    .derby-info-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .race-info-card{
+        grid-column:1 / -1;
+    }
+}
+
+@media (max-width:760px){
+    .derby-main{
+        width:min(100% - 20px,1500px);
+    }
+
+    .derby-game-tabs{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .derby-game-tab:last-child{
+        grid-column:1 / -1;
+    }
+
+    .derby-title-row{
+        padding-left:6px;
+        padding-right:6px;
+    }
+
+    .derby-title-copy h1{
+        font-size:1.8rem;
+    }
+
+    .track-billboard{
+        display:none;
+    }
+
+    .track-scenery{
+        height:48px;
+    }
+
+    .finish-marker{
+        right:36px;
+    }
+
+    .lane-number{
+        left:7px;
+    }
+
+    .race-horse{
+        left:46px;
+    }
+
+    .race-horse-body{
+        font-size:2.25rem;
+    }
+
+    .derby-info-grid{
+        grid-template-columns:1fr;
+    }
+
+    .race-info-card{
+        grid-column:auto;
+    }
+
+    .race-results{
+        grid-template-columns:1fr;
+    }
+}
