@@ -1296,3 +1296,45 @@ body.horse-racing-page{
     object-fit:contain !important;
     mix-blend-mode:normal !important;
 }
+
+
+/* =========================================================
+   ORIGINAL HORSE RESTORE + BACKGROUND CLEANUP v32
+========================================================= */
+
+.sprite-number{
+    display:none !important;
+}
+
+.horse-sprite-wrap{
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    overflow:visible !important;
+    isolation:isolate;
+}
+
+.horse-sprite-image{
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+
+    /*
+     * The preferred original horse image has a light checker/white
+     * preview baked into the file. Multiplying it against the dirt
+     * removes the white visually instead of drawing the rectangle.
+     */
+    mix-blend-mode:multiply !important;
+    filter:
+        brightness(1.18)
+        contrast(1.22)
+        saturate(1.08)
+        drop-shadow(0 6px 3px rgba(0,0,0,.34)) !important;
+}
+
+/* Never display an extra runner-number badge over the horse. */
+.race-horse .sprite-number,
+.race-horse::before{
+    display:none !important;
+    content:none !important;
+}
