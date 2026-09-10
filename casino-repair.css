@@ -198,65 +198,340 @@
     color:#e18490;
 }
 
-/* Blackjack */
+/* =========================================================
+   PROFESSIONAL BLACKJACK TABLE
+========================================================= */
+
+.ga-casino-page #blackjack{
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 50% 0%,rgba(214,179,90,.08),transparent 38%),
+        linear-gradient(180deg,#11100e,#090909);
+}
+
+.ga-casino-page #blackjack .casino-game-heading{
+    position:relative;
+    z-index:2;
+    margin-bottom:30px;
+}
+
 .ga-casino-page .blackjack-table{
-    display:grid;
-    gap:18px;
-    padding:26px;
-    border:2px solid rgba(214,179,90,.22);
-    border-radius:18px;
-    background:radial-gradient(circle at 50% 30%, #17492e, #0b281b 68%, #07150f);
+    position:relative;
+    width:min(1040px,100%);
+    min-height:560px;
+    margin:0 auto;
+    padding:58px 58px 46px;
+    overflow:hidden;
+    border:10px solid #4a2f12;
+    border-radius:52% 52% 16px 16px / 36% 36% 16px 16px;
+    background:
+        radial-gradient(circle at 50% 40%,rgba(255,255,255,.045),transparent 30%),
+        repeating-radial-gradient(circle at 50% 52%,rgba(255,255,255,.018) 0 1px,transparent 1px 4px),
+        linear-gradient(180deg,#11603b 0%,#0c4a30 52%,#083522 100%);
+    box-shadow:
+        0 28px 60px rgba(0,0,0,.58),
+        inset 0 0 0 2px rgba(243,214,117,.65),
+        inset 0 0 0 8px #201306,
+        inset 0 -38px 70px rgba(0,0,0,.28);
+}
+
+.ga-casino-page .blackjack-table::before{
+    content:"BLACKJACK PAYS 3 TO 2";
+    position:absolute;
+    top:34%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:72%;
+    padding:9px 0;
+    border-top:1px solid rgba(243,214,117,.38);
+    border-bottom:1px solid rgba(243,214,117,.38);
+    color:rgba(243,214,117,.72);
+    text-align:center;
+    font-family:Georgia,serif;
+    font-size:clamp(14px,2vw,21px);
+    font-weight:700;
+    letter-spacing:.16em;
+    pointer-events:none;
+}
+
+.ga-casino-page .blackjack-table::after{
+    content:"DEALER MUST STAND ON 17";
+    position:absolute;
+    top:42%;
+    left:50%;
+    transform:translateX(-50%);
+    color:rgba(245,245,245,.42);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    pointer-events:none;
+}
+
+.ga-casino-page .blackjack-hand{
+    position:relative;
+    z-index:1;
+    display:flex;
+    min-height:180px;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    text-align:center;
+}
+
+.ga-casino-page .blackjack-hand:first-child{
+    padding-bottom:84px;
+}
+
+.ga-casino-page .blackjack-hand:last-child{
+    padding-top:32px;
 }
 
 .ga-casino-page .blackjack-label{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:142px;
+    padding:8px 18px;
+    border:1px solid rgba(243,214,117,.48);
+    border-radius:999px;
+    background:rgba(5,23,15,.62);
     color:#f3d675;
-    font-size:11px;
-    font-weight:800;
-    letter-spacing:.14em;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.18em;
+    box-shadow:0 8px 18px rgba(0,0,0,.18);
 }
 
 .ga-casino-page .playing-card-row{
     display:flex;
     flex-wrap:wrap;
-    gap:8px;
-    min-height:86px;
-    padding:12px 0;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    min-height:112px;
+    padding:18px 0 10px;
 }
 
 .ga-casino-page .ga-card{
-    width:58px;
-    height:80px;
-    border-radius:7px;
-    background:#f7f2e8;
+    position:relative;
+    width:72px;
+    height:102px;
+    border:1px solid rgba(0,0,0,.28);
+    border-radius:9px;
+    background:
+        linear-gradient(145deg,rgba(255,255,255,.9),rgba(238,231,216,.96));
     color:#111;
     display:flex;
     align-items:center;
     justify-content:center;
     flex-direction:column;
     font-family:Georgia,serif;
-    font-weight:700;
-    box-shadow:0 8px 18px rgba(0,0,0,.32);
+    font-size:23px;
+    font-weight:800;
+    line-height:1.05;
+    box-shadow:
+        0 10px 22px rgba(0,0,0,.35),
+        inset 0 0 0 2px rgba(255,255,255,.7);
+    transform:translateY(0);
+    transition:transform .18s ease,box-shadow .18s ease;
 }
 
-.ga-casino-page .ga-card.red{ color:#a5091c; }
+.ga-casino-page .ga-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 15px 26px rgba(0,0,0,.42);
+}
+
+.ga-casino-page .ga-card.red{
+    color:#a5091c;
+}
+
 .ga-casino-page .ga-card.back{
-    background:repeating-linear-gradient(45deg,#480814,#480814 7px,#d4a632 7px,#d4a632 9px);
+    border:4px solid #eee4cc;
+    background:
+        linear-gradient(45deg,transparent 42%,rgba(212,166,50,.35) 42% 58%,transparent 58%),
+        linear-gradient(-45deg,transparent 42%,rgba(212,166,50,.35) 42% 58%,transparent 58%),
+        #520815;
+    background-size:18px 18px;
     color:transparent;
+    box-shadow:
+        0 10px 22px rgba(0,0,0,.35),
+        inset 0 0 0 2px #d4a632;
+}
+
+.ga-casino-page .blackjack-value{
+    min-width:160px;
+    padding:8px 14px;
+    border-radius:8px;
+    background:rgba(3,18,11,.64);
+    color:#f5f5f5;
+    font-weight:800;
+    letter-spacing:.04em;
+    box-shadow:inset 0 0 0 1px rgba(243,214,117,.18);
 }
 
 .ga-casino-page .blackjack-divider{
+    position:relative;
+    z-index:2;
+    width:86%;
     height:1px;
-    background:rgba(243,214,117,.35);
+    margin:0 auto;
+    background:linear-gradient(90deg,transparent,rgba(243,214,117,.75),transparent);
     text-align:center;
 }
+
+.ga-casino-page .blackjack-divider::before,
+.ga-casino-page .blackjack-divider::after{
+    content:"";
+    position:absolute;
+    top:-3px;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#d6b35a;
+    box-shadow:0 0 10px rgba(214,179,90,.6);
+}
+
+.ga-casino-page .blackjack-divider::before{left:0}
+.ga-casino-page .blackjack-divider::after{right:0}
+
 .ga-casino-page .blackjack-divider span{
     position:relative;
-    top:-9px;
-    padding:0 12px;
-    background:#0d3020;
-    color:#d6b35a;
+    top:-12px;
+    padding:4px 18px;
+    border:1px solid rgba(243,214,117,.42);
+    border-radius:999px;
+    background:#0b3b27;
+    color:#f3d675;
+    font-family:Georgia,serif;
     font-size:10px;
-    letter-spacing:.14em;
+    font-weight:700;
+    letter-spacing:.18em;
+}
+
+.ga-casino-page #blackjack .casino-control-panel{
+    width:min(1040px,100%);
+    margin:18px auto 0;
+    padding:20px 22px;
+    border:1px solid rgba(214,179,90,.24);
+    border-radius:12px;
+    background:
+        linear-gradient(180deg,rgba(24,22,18,.98),rgba(10,10,10,.98));
+    box-shadow:0 18px 34px rgba(0,0,0,.32);
+}
+
+.ga-casino-page #blackjack .casino-bet-control{
+    min-width:270px;
+}
+
+.ga-casino-page #blackjack .casino-bet-selector{
+    display:grid;
+    grid-template-columns:52px minmax(110px,1fr) 52px;
+    overflow:hidden;
+    gap:0;
+    border:1px solid rgba(214,179,90,.28);
+    border-radius:8px;
+    background:#090909;
+}
+
+.ga-casino-page #blackjack .casino-bet-selector button{
+    min-width:0;
+    border:0;
+    border-radius:0;
+    background:#151515;
+    font-size:19px;
+}
+
+.ga-casino-page #blackjack .casino-bet-selector button:first-child{
+    border-right:1px solid rgba(214,179,90,.22);
+}
+
+.ga-casino-page #blackjack .casino-bet-selector button:last-child{
+    border-left:1px solid rgba(214,179,90,.22);
+}
+
+.ga-casino-page #blackjack .casino-bet-selector strong{
+    display:flex;
+    min-height:44px;
+    align-items:center;
+    justify-content:center;
+    color:#fff1bd;
+    font-family:Georgia,serif;
+    font-size:16px;
+}
+
+.ga-casino-page #blackjack .casino-action-buttons{
+    justify-content:flex-end;
+}
+
+.ga-casino-page #blackjack .casino-primary-button,
+.ga-casino-page #blackjack .casino-secondary-button{
+    min-width:105px;
+    min-height:48px;
+    border-radius:7px;
+    letter-spacing:.11em;
+    transition:transform .15s ease,filter .15s ease,box-shadow .15s ease;
+}
+
+.ga-casino-page #blackjack .casino-primary-button{
+    box-shadow:0 8px 20px rgba(82,8,21,.32);
+}
+
+.ga-casino-page #blackjack .casino-primary-button:hover:not(:disabled),
+.ga-casino-page #blackjack .casino-secondary-button:hover:not(:disabled){
+    transform:translateY(-1px);
+    filter:brightness(1.12);
+}
+
+.ga-casino-page #blackjackMessage{
+    width:min(1040px,100%);
+    margin:14px auto 0;
+    border:1px solid rgba(214,179,90,.14);
+    border-left:4px solid #d6b35a;
+    border-radius:6px;
+}
+
+@media(max-width:760px){
+    .ga-casino-page .blackjack-table{
+        min-height:500px;
+        padding:40px 18px 30px;
+        border-width:7px;
+        border-radius:34% 34% 14px 14px / 18% 18% 14px 14px;
+    }
+
+    .ga-casino-page .blackjack-table::before{
+        top:35%;
+        width:88%;
+        font-size:12px;
+        letter-spacing:.1em;
+    }
+
+    .ga-casino-page .blackjack-table::after{
+        top:42%;
+        font-size:8px;
+    }
+
+    .ga-casino-page .blackjack-hand:first-child{
+        padding-bottom:72px;
+    }
+
+    .ga-casino-page .ga-card{
+        width:58px;
+        height:82px;
+        font-size:19px;
+    }
+
+    .ga-casino-page #blackjack .casino-control-panel{
+        align-items:stretch;
+    }
+
+    .ga-casino-page #blackjack .casino-bet-control{
+        min-width:0;
+    }
+
+    .ga-casino-page #blackjack .casino-action-buttons{
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+    }
 }
 
 /* Slots */
