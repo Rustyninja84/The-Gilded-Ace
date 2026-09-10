@@ -1,1 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Race for glory in The Gilded Derby using fictional Ace Credits.">
+    <title>The Gilded Derby | The Gilded Ace</title>
+    <link rel="stylesheet" href="styles.css?v=9">
+    <link rel="stylesheet" href="horse-racing.css?v=1">
+</head>
+<body class="horse-racing-page">
+<header class="site-header">
+    <div class="nav-container">
+        <a href="index.html" class="brand">
+            <div class="brand-mark">A</div>
+            <div class="brand-text"><span class="brand-name">THE GILDED ACE</span><span class="brand-subtitle">CASINO & SOCIAL CLUB</span></div>
+        </a>
+        <nav class="main-nav">
+            <a href="index.html">HOME</a><a href="casino.html" class="active">CASINO</a><a href="poker.html">POKER</a><a href="store.html">STORE</a><a href="collection.html">COLLECTION</a><a href="leaderboard.html">LEADERBOARD</a>
+        </nav>
+        <div class="nav-account">
+            <div class="nav-balance"><span class="balance-label">ACE CREDITS</span><span id="horseHeaderBalance" class="balance-value">10,000 AC</span></div>
+            <a href="profile.html" class="profile-button">PROFILE</a>
+        </div>
+    </div>
+</header>
 
+<section class="derby-hero">
+    <div class="derby-hero-overlay"></div>
+    <div class="derby-hero-content">
+        <span class="derby-kicker">THE GILDED ACE PRESENTS</span>
+        <h1>THE GILDED DERBY</h1>
+        <p>Choose your horse, place your fictional Ace Credit wager, and watch six thoroughbreds battle for the finish.</p>
+        <div class="derby-hero-actions"><a class="derby-secondary-button" href="casino.html">← RETURN TO CASINO</a><span class="derby-play-money">PLAY-MONEY ENTERTAINMENT ONLY</span></div>
+    </div>
+</section>
+
+<main class="derby-main">
+    <section class="derby-top-grid">
+        <div class="derby-card betting-card">
+            <div class="derby-section-title"><div><span class="derby-kicker">RACE BOOK</span><h2>Choose Your Horse</h2></div><div class="race-number">RACE <strong id="raceNumber">01</strong></div></div>
+            <div id="horseSelectionGrid" class="horse-selection-grid"></div>
+        </div>
+        <aside class="derby-card wager-card">
+            <span class="derby-kicker">YOUR TICKET</span><h2>Place Your Bet</h2>
+            <div class="ticket-line"><span>SELECTED HORSE</span><strong id="selectedHorseDisplay">NONE</strong></div>
+            <div class="ticket-line"><span>ODDS</span><strong id="selectedOddsDisplay">—</strong></div>
+            <div class="ticket-line"><span>BALANCE</span><strong id="horseBalanceDisplay">10,000 AC</strong></div>
+            <div class="wager-label">BET AMOUNT</div>
+            <div class="wager-control"><button id="horseBetDown" type="button">−</button><strong id="horseBetDisplay">100 AC</strong><button id="horseBetUp" type="button">+</button></div>
+            <div class="quick-bets"><button type="button" data-horse-bet="100">100</button><button type="button" data-horse-bet="500">500</button><button type="button" data-horse-bet="1000">1K</button><button type="button" data-horse-bet="5000">5K</button></div>
+            <button id="startRaceButton" class="derby-primary-button" type="button">PLACE BET & START RACE</button>
+            <p id="horseBetMessage" class="derby-message">Select a horse to create your race ticket.</p>
+        </aside>
+    </section>
+
+    <section class="derby-card race-card">
+        <div class="race-header"><div><span class="derby-kicker">LIVE FROM THE GILDED TRACK</span><h2>Grand Derby</h2></div><div id="raceStatus" class="race-status">AWAITING WAGERS</div></div>
+        <div class="track-shell"><div class="starting-gate-label">START</div><div class="finish-line-label">FINISH</div><div id="raceTrack" class="race-track"></div></div>
+        <div class="commentary-board"><span class="commentary-label">TRACK ANNOUNCER</span><strong id="raceCommentary">The field is waiting at the starting gate.</strong></div>
+    </section>
+
+    <section class="derby-bottom-grid">
+        <div class="derby-card results-card"><div class="derby-section-title"><div><span class="derby-kicker">OFFICIAL RESULTS</span><h2>Last Race</h2></div></div><div id="raceResults" class="race-results empty-results">No completed races yet.</div></div>
+        <div class="derby-card rules-card"><span class="derby-kicker">HOUSE RULES</span><h2>How It Works</h2>
+            <div class="rule-row"><strong>1</strong><p>Select one of six horses. Each runner has different posted odds.</p></div>
+            <div class="rule-row"><strong>2</strong><p>Set your Ace Credit wager and start the race.</p></div>
+            <div class="rule-row"><strong>3</strong><p>If your horse wins, the posted odds determine your payout.</p></div>
+            <div class="rule-row"><strong>4</strong><p>A winning ticket returns your original stake plus the posted profit.</p></div>
+        </div>
+    </section>
+
+    <section class="derby-disclaimer"><strong>PLAY-MONEY ENTERTAINMENT ONLY</strong><p>The Gilded Derby uses fictional Ace Credits with no cash value. Ace Credits cannot be purchased, withdrawn, redeemed, or exchanged for real-world money, goods, services, or prizes.</p></section>
+</main>
+
+<div id="winnerModal" class="winner-modal" aria-hidden="true"><div class="winner-modal-card"><span class="derby-kicker">OFFICIAL RESULT</span><div id="winnerModalIcon" class="winner-modal-icon">🏆</div><h2 id="winnerModalTitle">WINNER</h2><p id="winnerModalText"></p><button id="winnerModalClose" class="derby-primary-button" type="button">CONTINUE</button></div></div>
+
+<footer class="site-footer"><div class="footer-container"><div><div class="footer-brand">THE GILDED ACE</div><p>PLAY. WIN. BUILD YOUR LEGACY.</p></div><div class="footer-links"><a href="index.html">HOME</a><a href="casino.html">CASINO</a><a href="poker.html">POKER</a><a href="store.html">STORE</a><a href="collection.html">COLLECTION</a><a href="leaderboard.html">LEADERBOARD</a></div></div><div class="footer-disclaimer">THE GILDED ACE IS A PLAY-MONEY CASINO-STYLE SOCIAL EXPERIENCE. ACE CREDITS HAVE NO REAL-WORLD MONETARY VALUE.</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="horse-racing.js?v=1"></script>
+</body>
+</html>
