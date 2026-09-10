@@ -26,14 +26,18 @@ const DEFAULT_PROFILE = {
 function loadProfile() {
 
     const saved =
-        localStorage.getItem("gildedAceProfile");
+        localStorage.getItem(
+            "gildedAceProfile"
+        );
 
 
     if (!saved) {
 
         const oldBalance =
             Number(
-                localStorage.getItem("ga_balance")
+                localStorage.getItem(
+                    "ga_balance"
+                )
             );
 
 
@@ -47,7 +51,10 @@ function loadProfile() {
             Number.isFinite(oldBalance) &&
             oldBalance > 0
         ) {
-            fresh.balance = oldBalance;
+
+            fresh.balance =
+                oldBalance;
+
         }
 
 
@@ -58,6 +65,7 @@ function loadProfile() {
 
 
         return fresh;
+
     }
 
 
@@ -72,7 +80,9 @@ function loadProfile() {
             ...parsed,
 
             collection:
-                Array.isArray(parsed.collection)
+                Array.isArray(
+                    parsed.collection
+                )
                     ? parsed.collection
                     : []
         };
@@ -80,7 +90,7 @@ function loadProfile() {
     } catch (error) {
 
         console.error(
-            "Could not load Gilded Ace profile.",
+            "Could not load profile.",
             error
         );
 
@@ -91,10 +101,12 @@ function loadProfile() {
         };
 
     }
+
 }
 
 
-let profile = loadProfile();
+let profile =
+    loadProfile();
 
 
 function saveProfile() {
@@ -123,10 +135,13 @@ function formatCredits(amount) {
 
 
 /* ==========================================================
-   DISPLAY
+   DISPLAY HELPERS
    ========================================================== */
 
-function setText(selector, value) {
+function setText(
+    selector,
+    value
+) {
 
     const element =
         $(selector);
@@ -138,20 +153,24 @@ function setText(selector, value) {
             value;
 
     }
+
 }
 
 
 function updateBalanceDisplays() {
 
     $$("[data-balance]")
-        .forEach((element) => {
+        .forEach(
+            (element) => {
 
-            element.textContent =
-                formatCredits(
-                    profile.balance
-                );
+                element.textContent =
+                    formatCredits(
+                        profile.balance
+                    );
 
-        });
+            }
+        );
+
 }
 
 
@@ -192,10 +211,12 @@ function claimDaily() {
         );
 
         return;
+
     }
 
 
-    profile.balance += 1000;
+    profile.balance +=
+        1000;
 
 
     localStorage.setItem(
@@ -323,7 +344,10 @@ const STORE_ITEMS = {
 };
 
 
-function buyItem(name, price) {
+function buyItem(
+    name,
+    price
+) {
 
     const owned =
         profile.collection.some(
@@ -339,16 +363,21 @@ function buyItem(name, price) {
         );
 
         return;
+
     }
 
 
-    if (profile.balance < price) {
+    if (
+        profile.balance <
+        price
+    ) {
 
         alert(
             "You do not have enough Ace Credits."
         );
 
         return;
+
     }
 
 
@@ -359,7 +388,8 @@ function buyItem(name, price) {
         };
 
 
-    profile.balance -= price;
+    profile.balance -=
+        price;
 
 
     profile.collection.push({
@@ -372,7 +402,8 @@ function buyItem(name, price) {
             storeItem.category,
 
         purchased:
-            new Date().toISOString()
+            new Date()
+                .toISOString()
 
     });
 
@@ -390,55 +421,60 @@ function buyItem(name, price) {
 function updateStoreButtons() {
 
     const buttons =
-        $$("button[onclick*='buyItem']");
+        $$(
+            "button[onclick*='buyItem']"
+        );
 
 
-    buttons.forEach((button) => {
+    buttons.forEach(
+        (button) => {
 
-        const onclick =
-            button.getAttribute(
-                "onclick"
-            );
+            const onclick =
+                button.getAttribute(
+                    "onclick"
+                );
 
 
-        if (!onclick) {
-            return;
+            if (!onclick) {
+                return;
+            }
+
+
+            const match =
+                onclick.match(
+                    /buyItem\(\s*['"](.+?)['"]/
+                );
+
+
+            if (!match) {
+                return;
+            }
+
+
+            const name =
+                match[1];
+
+
+            const owned =
+                profile.collection.some(
+                    (item) =>
+                        item.name ===
+                        name
+                );
+
+
+            if (owned) {
+
+                button.textContent =
+                    "OWNED";
+
+                button.disabled =
+                    true;
+
+            }
+
         }
-
-
-        const match =
-            onclick.match(
-                /buyItem\(\s*['"](.+?)['"]/
-            );
-
-
-        if (!match) {
-            return;
-        }
-
-
-        const name =
-            match[1];
-
-
-        const owned =
-            profile.collection.some(
-                (item) =>
-                    item.name === name
-            );
-
-
-        if (owned) {
-
-            button.textContent =
-                "OWNED";
-
-            button.disabled =
-                true;
-
-        }
-
-    });
+    );
 
 }
 
@@ -461,13 +497,15 @@ function filterCollection(
 
 
     $$(".collection-filter")
-        .forEach((element) => {
+        .forEach(
+            (element) => {
 
-            element.classList.remove(
-                "selected"
-            );
+                element.classList.remove(
+                    "selected"
+                );
 
-        });
+            }
+        );
 
 
     if (button) {
@@ -513,46 +551,50 @@ function updateCollectionPage() {
         "";
 
 
-    filtered.forEach((item) => {
+    filtered.forEach(
+        (item) => {
 
-        const card =
-            document.createElement(
-                "div"
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "card collection-item";
+
+
+            card.dataset.category =
+                item.category;
+
+
+            card.innerHTML = `
+
+                <span class="tag">
+                    ${item.category.toUpperCase()}
+                </span>
+
+                <h3>
+                    ${item.name}
+                </h3>
+
+                <p>
+                    Owned Gilded Ace virtual item.
+                </p>
+
+                <div class="price">
+                    ${formatCredits(item.price)}
+                </div>
+
+            `;
+
+
+            grid.appendChild(
+                card
             );
 
-
-        card.className =
-            "card collection-item";
-
-
-        card.dataset.category =
-            item.category;
-
-
-        card.innerHTML = `
-
-            <span class="tag">
-                ${item.category.toUpperCase()}
-            </span>
-
-            <h3>
-                ${item.name}
-            </h3>
-
-            <p>
-                Owned Gilded Ace virtual item.
-            </p>
-
-            <div class="price">
-                ${formatCredits(item.price)}
-            </div>
-
-        `;
-
-
-        grid.appendChild(card);
-
-    });
+        }
+    );
 
 
     const empty =
@@ -579,14 +621,18 @@ function updateCollectionPage() {
         items.reduce(
             (sum, item) =>
                 sum +
-                Number(item.price || 0),
+                Number(
+                    item.price || 0
+                ),
             0
         );
 
 
     setText(
         "#collectionValue",
-        formatCredits(value)
+        formatCredits(
+            value
+        )
     );
 
 
@@ -596,9 +642,12 @@ function updateCollectionPage() {
 
                 if (
                     !best ||
-                    item.price > best.price
+                    item.price >
+                    best.price
                 ) {
+
                     return item;
+
                 }
 
 
@@ -623,9 +672,14 @@ function updateCollectionPage() {
    MEMBERSHIP
    ========================================================== */
 
-function getMembershipTier(balance) {
+function getMembershipTier(
+    balance
+) {
 
-    if (balance >= 10000000) {
+    if (
+        balance >=
+        10000000
+    ) {
 
         return {
             current: "CASINO OWNER",
@@ -636,49 +690,73 @@ function getMembershipTier(balance) {
     }
 
 
-    if (balance >= 5000000) {
+    if (
+        balance >=
+        5000000
+    ) {
 
         return {
             current: "DIAMOND CLUB",
             next: "CASINO OWNER",
             progress:
                 (
-                    (balance - 5000000)
+                    (
+                        balance -
+                        5000000
+                    )
                     /
                     5000000
-                ) * 100
+                )
+                *
+                100
         };
 
     }
 
 
-    if (balance >= 1000000) {
+    if (
+        balance >=
+        1000000
+    ) {
 
         return {
             current: "HIGH ROLLER",
             next: "DIAMOND CLUB",
             progress:
                 (
-                    (balance - 1000000)
+                    (
+                        balance -
+                        1000000
+                    )
                     /
                     4000000
-                ) * 100
+                )
+                *
+                100
         };
 
     }
 
 
-    if (balance >= 100000) {
+    if (
+        balance >=
+        100000
+    ) {
 
         return {
             current: "GOLD MEMBER",
             next: "HIGH ROLLER",
             progress:
                 (
-                    (balance - 100000)
+                    (
+                        balance -
+                        100000
+                    )
                     /
                     900000
-                ) * 100
+                )
+                *
+                100
         };
 
     }
@@ -690,7 +768,9 @@ function getMembershipTier(balance) {
         progress:
             Math.min(
                 100,
-                balance / 100000 * 100
+                balance /
+                100000 *
+                100
             )
     };
 
@@ -716,7 +796,8 @@ function updateProfilePage() {
 
 
     const statusLabel =
-        tier.current === "STANDARD"
+        tier.current ===
+        "STANDARD"
             ? "STANDARD MEMBER"
             : tier.current;
 
@@ -817,14 +898,18 @@ function updateProfilePage() {
         profile.collection.reduce(
             (sum, item) =>
                 sum +
-                Number(item.price || 0),
+                Number(
+                    item.price || 0
+                ),
             0
         );
 
 
     setText(
         "#profileCollectionValue",
-        formatCredits(value)
+        formatCredits(
+            value
+        )
     );
 
 
@@ -834,9 +919,12 @@ function updateProfilePage() {
 
                 if (
                     !best ||
-                    item.price > best.price
+                    item.price >
+                    best.price
                 ) {
+
                     return item;
+
                 }
 
 
@@ -872,13 +960,16 @@ function changeUsername() {
         input.value.trim();
 
 
-    if (name.length < 3) {
+    if (
+        name.length < 3
+    ) {
 
         alert(
             "Username must be at least 3 characters."
         );
 
         return;
+
     }
 
 
@@ -953,7 +1044,9 @@ function recordResult(
 
         profile.wins++;
 
-    } else if (won === false) {
+    } else if (
+        won === false
+    ) {
 
         profile.losses++;
 
@@ -1009,21 +1102,42 @@ function recordResult(
    BLACKJACK
    ========================================================== */
 
-let blackjackDeck = [];
+let blackjackDeck =
+    [];
 
-let blackjackPlayer = [];
 
-let blackjackDealer = [];
+let blackjackPlayer =
+    [];
+
+
+let blackjackDealer =
+    [];
+
 
 let blackjackActive =
     false;
 
 
+let blackjackBet =
+    500;
+
+
+let blackjackBetLocked =
+    0;
+
+
+/* ==========================================================
+   BLACKJACK DECK
+   ========================================================== */
+
 function shuffle(array) {
 
     for (
-        let i = array.length - 1;
+        let i =
+            array.length - 1;
+
         i > 0;
+
         i--
     ) {
 
@@ -1037,7 +1151,9 @@ function shuffle(array) {
         [
             array[i],
             array[j]
-        ] = [
+        ]
+        =
+        [
             array[j],
             array[i]
         ];
@@ -1080,18 +1196,22 @@ function buildDeck() {
     const deck = [];
 
 
-    suits.forEach((suit) => {
+    suits.forEach(
+        (suit) => {
 
-        ranks.forEach((rank) => {
+            ranks.forEach(
+                (rank) => {
 
-            deck.push({
-                suit,
-                rank
-            });
+                    deck.push({
+                        suit,
+                        rank
+                    });
 
-        });
+                }
+            );
 
-    });
+        }
+    );
 
 
     return shuffle(deck);
@@ -1099,11 +1219,16 @@ function buildDeck() {
 }
 
 
+/* ==========================================================
+   BLACKJACK CARD VALUES
+   ========================================================== */
+
 function cardValue(card) {
 
     if (
-        ["J", "Q", "K"]
-            .includes(card.rank)
+        card.rank === "J" ||
+        card.rank === "Q" ||
+        card.rank === "K"
     ) {
 
         return 10;
@@ -1111,7 +1236,9 @@ function cardValue(card) {
     }
 
 
-    if (card.rank === "A") {
+    if (
+        card.rank === "A"
+    ) {
 
         return 11;
 
@@ -1132,19 +1259,23 @@ function handValue(hand) {
     let aces = 0;
 
 
-    hand.forEach((card) => {
+    hand.forEach(
+        (card) => {
 
-        total +=
-            cardValue(card);
+            total +=
+                cardValue(card);
 
 
-        if (card.rank === "A") {
+            if (
+                card.rank === "A"
+            ) {
 
-            aces++;
+                aces++;
+
+            }
 
         }
-
-    });
+    );
 
 
     while (
@@ -1164,58 +1295,179 @@ function handValue(hand) {
 }
 
 
-function cardText(card) {
+function isBlackjack(hand) {
 
     return (
-        card.rank +
-        card.suit
+        hand.length === 2 &&
+        handValue(hand) === 21
     );
 
 }
 
 
-function renderBlackjack(
-    hideDealer = false
+/* ==========================================================
+   CREATE VISUAL CARD
+   ========================================================== */
+
+function createPlayingCard(
+    card,
+    hidden = false
 ) {
 
-    const playerCards =
-        $("#playerCards");
+    const element =
+        document.createElement(
+            "div"
+        );
 
 
-    const dealerCards =
-        $("#dealerCards");
+    if (hidden) {
+
+        element.className =
+            "playing-card card-back";
 
 
-    if (playerCards) {
-
-        playerCards.textContent =
-            blackjackPlayer
-                .map(cardText)
-                .join(" ");
+        return element;
 
     }
 
 
-    if (dealerCards) {
+    const red =
+        card.suit === "♥" ||
+        card.suit === "♦";
+
+
+    element.className =
+        red
+            ? "playing-card red-card"
+            : "playing-card";
+
+
+    element.innerHTML = `
+
+        <div class="card-corner">
+
+            <span>
+                ${card.rank}
+            </span>
+
+            <span>
+                ${card.suit}
+            </span>
+
+        </div>
+
+
+        <div class="card-suit-large">
+
+            ${card.suit}
+
+        </div>
+
+
+        <div class="card-corner bottom">
+
+            <span>
+                ${card.rank}
+            </span>
+
+            <span>
+                ${card.suit}
+            </span>
+
+        </div>
+
+    `;
+
+
+    return element;
+
+}
+
+
+/* ==========================================================
+   RENDER BLACKJACK
+   ========================================================== */
+
+function renderBlackjack(
+    hideDealer = false
+) {
+
+    const playerArea =
+        document.getElementById(
+            "playerCards"
+        );
+
+
+    const dealerArea =
+        document.getElementById(
+            "dealerCards"
+        );
+
+
+    if (playerArea) {
+
+        playerArea.innerHTML =
+            "";
+
 
         if (
-            hideDealer &&
-            blackjackDealer.length
+            blackjackPlayer.length === 0
         ) {
 
-            dealerCards.textContent =
-                cardText(
-                    blackjackDealer[0]
-                )
-                +
-                " ?";
+            playerArea.innerHTML = `
+                <div class="playing-card card-back"></div>
+                <div class="playing-card card-back"></div>
+            `;
 
         } else {
 
-            dealerCards.textContent =
-                blackjackDealer
-                    .map(cardText)
-                    .join(" ");
+            blackjackPlayer.forEach(
+                (card) => {
+
+                    playerArea.appendChild(
+                        createPlayingCard(
+                            card
+                        )
+                    );
+
+                }
+            );
+
+        }
+
+    }
+
+
+    if (dealerArea) {
+
+        dealerArea.innerHTML =
+            "";
+
+
+        if (
+            blackjackDealer.length === 0
+        ) {
+
+            dealerArea.innerHTML = `
+                <div class="playing-card card-back"></div>
+                <div class="playing-card card-back"></div>
+            `;
+
+        } else {
+
+            blackjackDealer.forEach(
+                (card, index) => {
+
+                    dealerArea.appendChild(
+                        createPlayingCard(
+                            card,
+                            hideDealer &&
+                            index === 1
+                        )
+                    );
+
+                }
+            );
 
         }
 
@@ -1224,25 +1476,277 @@ function renderBlackjack(
 
     setText(
         "#playerTotal",
-        handValue(
-            blackjackPlayer
-        )
+        blackjackPlayer.length
+            ? handValue(
+                blackjackPlayer
+            )
+            : "—"
     );
 
 
-    setText(
-        "#dealerTotal",
+    if (
+        !blackjackDealer.length
+    ) {
+
+        setText(
+            "#dealerTotal",
+            "—"
+        );
+
+    } else if (
         hideDealer
-            ? "?"
-            : handValue(
+    ) {
+
+        setText(
+            "#dealerTotal",
+            cardValue(
+                blackjackDealer[0]
+            )
+        );
+
+    } else {
+
+        setText(
+            "#dealerTotal",
+            handValue(
                 blackjackDealer
             )
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   BLACKJACK CONTROLS
+   ========================================================== */
+
+function setBlackjackControls(
+    active
+) {
+
+    const deal =
+        document.getElementById(
+            "blackjackDealButton"
+        );
+
+
+    const hit =
+        document.getElementById(
+            "blackjackHitButton"
+        );
+
+
+    const stand =
+        document.getElementById(
+            "blackjackStandButton"
+        );
+
+
+    if (deal) {
+
+        deal.disabled =
+            active;
+
+    }
+
+
+    if (hit) {
+
+        hit.disabled =
+            !active;
+
+    }
+
+
+    if (stand) {
+
+        stand.disabled =
+            !active;
+
+    }
+
+}
+
+
+/* ==========================================================
+   BLACKJACK BET DISPLAY
+   ========================================================== */
+
+function updateBlackjackBetDisplay() {
+
+    if (
+        profile.balance < 100 &&
+        !blackjackActive
+    ) {
+
+        blackjackBet = 0;
+
+    }
+
+
+    setText(
+        "#blackjackBetAmount",
+        formatCredits(
+            blackjackBet
+        )
     );
 
 }
 
 
+/* ==========================================================
+   BLACKJACK BETTING
+   ========================================================== */
+
+function setBlackjackBet(amount) {
+
+    if (blackjackActive) {
+        return;
+    }
+
+
+    if (
+        profile.balance < 100
+    ) {
+
+        blackjackBet = 0;
+
+        updateBlackjackBetDisplay();
+
+        return;
+
+    }
+
+
+    blackjackBet =
+        Math.max(
+            100,
+            Math.min(
+                Number(amount),
+                profile.balance
+            )
+        );
+
+
+    updateBlackjackBetDisplay();
+
+}
+
+
+function changeBlackjackBet(
+    change
+) {
+
+    if (blackjackActive) {
+        return;
+    }
+
+
+    if (
+        profile.balance < 100
+    ) {
+
+        blackjackBet = 0;
+
+        updateBlackjackBetDisplay();
+
+        return;
+
+    }
+
+
+    blackjackBet +=
+        Number(change);
+
+
+    blackjackBet =
+        Math.max(
+            100,
+            blackjackBet
+        );
+
+
+    blackjackBet =
+        Math.min(
+            profile.balance,
+            blackjackBet
+        );
+
+
+    updateBlackjackBetDisplay();
+
+}
+
+
+function maxBlackjackBet() {
+
+    if (blackjackActive) {
+        return;
+    }
+
+
+    if (
+        profile.balance <
+        100
+    ) {
+
+        blackjackBet = 0;
+
+    } else {
+
+        blackjackBet =
+            profile.balance;
+
+    }
+
+
+    updateBlackjackBetDisplay();
+
+}
+
+
+/* ==========================================================
+   START BLACKJACK HAND
+   ========================================================== */
+
 function startBlackjack() {
+
+    if (blackjackActive) {
+        return;
+    }
+
+
+    if (
+        blackjackBet < 100 ||
+        profile.balance <
+        blackjackBet
+    ) {
+
+        alert(
+            "You need enough Ace Credits to cover your bet."
+        );
+
+        return;
+
+    }
+
+
+    const table =
+        document.querySelector(
+            ".blackjack-casino-table"
+        );
+
+
+    if (table) {
+
+        table.classList.remove(
+            "blackjack-win"
+        );
+
+    }
+
 
     blackjackDeck =
         buildDeck();
@@ -1264,36 +1768,182 @@ function startBlackjack() {
         true;
 
 
+    blackjackBetLocked =
+        blackjackBet;
+
+
+    profile.balance -=
+        blackjackBetLocked;
+
+
+    saveProfile();
+
+
     renderBlackjack(true);
+
+
+    setBlackjackControls(
+        true
+    );
 
 
     setText(
         "#blackjackMessage",
-        "Choose HIT or STAND."
+        "Your turn. HIT or STAND."
     );
 
 
-    if (
-        handValue(
+    const playerBJ =
+        isBlackjack(
             blackjackPlayer
-        ) === 21
+        );
+
+
+    const dealerBJ =
+        isBlackjack(
+            blackjackDealer
+        );
+
+
+    if (
+        playerBJ ||
+        dealerBJ
     ) {
 
-        blackjackStand();
+        setTimeout(
+            () => {
+
+                resolveInitialBlackjack(
+                    playerBJ,
+                    dealerBJ
+                );
+
+            },
+            600
+        );
 
     }
 
 }
 
 
+/* ==========================================================
+   NATURAL BLACKJACK
+   ========================================================== */
+
+function resolveInitialBlackjack(
+    playerBJ,
+    dealerBJ
+) {
+
+    blackjackActive =
+        false;
+
+
+    renderBlackjack(false);
+
+
+    setBlackjackControls(
+        false
+    );
+
+
+    if (
+        playerBJ &&
+        dealerBJ
+    ) {
+
+        profile.balance +=
+            blackjackBetLocked;
+
+
+        saveProfile();
+
+
+        setText(
+            "#blackjackMessage",
+            "Both have Blackjack — PUSH."
+        );
+
+
+        recordResult(
+            null,
+            "blackjack"
+        );
+
+
+        prepareNextBlackjackBet();
+
+        return;
+
+    }
+
+
+    if (playerBJ) {
+
+        const profit =
+            blackjackBetLocked *
+            1.5;
+
+
+        const totalReturn =
+            blackjackBetLocked +
+            profit;
+
+
+        profile.balance +=
+            totalReturn;
+
+
+        saveProfile();
+
+
+        blackjackWinEffect();
+
+
+        setText(
+            "#blackjackMessage",
+            `BLACKJACK! You win ${formatCredits(profit)}.`
+        );
+
+
+        recordResult(
+            true,
+            "blackjack"
+        );
+
+
+        prepareNextBlackjackBet();
+
+        return;
+
+    }
+
+
+    setText(
+        "#blackjackMessage",
+        "Dealer Blackjack — house wins."
+    );
+
+
+    recordResult(
+        false,
+        "blackjack"
+    );
+
+
+    prepareNextBlackjackBet();
+
+}
+
+
+/* ==========================================================
+   BLACKJACK HIT
+   ========================================================== */
+
 function blackjackHit() {
 
     if (!blackjackActive) {
-
-        alert(
-            "Press DEAL first."
-        );
-
         return;
     }
 
@@ -1306,10 +1956,14 @@ function blackjackHit() {
     renderBlackjack(true);
 
 
-    if (
+    const total =
         handValue(
             blackjackPlayer
-        ) > 21
+        );
+
+
+    if (
+        total > 21
     ) {
 
         blackjackActive =
@@ -1319,9 +1973,14 @@ function blackjackHit() {
         renderBlackjack(false);
 
 
+        setBlackjackControls(
+            false
+        );
+
+
         setText(
             "#blackjackMessage",
-            "BUST — House wins."
+            `BUST — ${total}. House wins.`
         );
 
 
@@ -1330,19 +1989,50 @@ function blackjackHit() {
             "blackjack"
         );
 
+
+        prepareNextBlackjackBet();
+
+        return;
+
     }
+
+
+    if (
+        total === 21
+    ) {
+
+        setText(
+            "#blackjackMessage",
+            "21! Dealer's turn."
+        );
+
+
+        setTimeout(
+            blackjackStand,
+            450
+        );
+
+
+        return;
+
+    }
+
+
+    setText(
+        "#blackjackMessage",
+        `Your total is ${total}. HIT or STAND.`
+    );
 
 }
 
 
+/* ==========================================================
+   BLACKJACK STAND
+   ========================================================== */
+
 function blackjackStand() {
 
     if (!blackjackActive) {
-
-        alert(
-            "Press DEAL first."
-        );
-
         return;
     }
 
@@ -1367,29 +2057,36 @@ function blackjackStand() {
     renderBlackjack(false);
 
 
-    const player =
+    setBlackjackControls(
+        false
+    );
+
+
+    const playerTotal =
         handValue(
             blackjackPlayer
         );
 
 
-    const dealer =
+    const dealerTotal =
         handValue(
             blackjackDealer
         );
 
 
     if (
-        dealer > 21 ||
-        player > dealer
+        dealerTotal > 21
     ) {
 
-        profile.balance += 500;
+        payBlackjackWin();
+
+
+        blackjackWinEffect();
 
 
         setText(
             "#blackjackMessage",
-            "You win! +500 AC"
+            `Dealer busts with ${dealerTotal}. You win ${formatCredits(blackjackBetLocked)}.`
         );
 
 
@@ -1399,15 +2096,51 @@ function blackjackStand() {
         );
 
 
+        prepareNextBlackjackBet();
+
         return;
+
     }
 
 
-    if (player < dealer) {
+    if (
+        playerTotal >
+        dealerTotal
+    ) {
+
+        payBlackjackWin();
+
+
+        blackjackWinEffect();
+
 
         setText(
             "#blackjackMessage",
-            "House wins."
+            `${playerTotal} beats ${dealerTotal}. You win ${formatCredits(blackjackBetLocked)}.`
+        );
+
+
+        recordResult(
+            true,
+            "blackjack"
+        );
+
+
+        prepareNextBlackjackBet();
+
+        return;
+
+    }
+
+
+    if (
+        playerTotal <
+        dealerTotal
+    ) {
+
+        setText(
+            "#blackjackMessage",
+            `${dealerTotal} beats ${playerTotal}. House wins.`
         );
 
 
@@ -1417,13 +2150,23 @@ function blackjackStand() {
         );
 
 
+        prepareNextBlackjackBet();
+
         return;
+
     }
+
+
+    profile.balance +=
+        blackjackBetLocked;
+
+
+    saveProfile();
 
 
     setText(
         "#blackjackMessage",
-        "Push — tie game."
+        `${playerTotal} to ${dealerTotal} — PUSH.`
     );
 
 
@@ -1431,6 +2174,89 @@ function blackjackStand() {
         null,
         "blackjack"
     );
+
+
+    prepareNextBlackjackBet();
+
+}
+
+
+/* ==========================================================
+   NORMAL BLACKJACK WIN
+   ========================================================== */
+
+function payBlackjackWin() {
+
+    profile.balance +=
+        blackjackBetLocked * 2;
+
+
+    saveProfile();
+
+}
+
+
+/* ==========================================================
+   BLACKJACK WIN EFFECT
+   ========================================================== */
+
+function blackjackWinEffect() {
+
+    const table =
+        document.querySelector(
+            ".blackjack-casino-table"
+        );
+
+
+    if (!table) {
+        return;
+    }
+
+
+    table.classList.add(
+        "blackjack-win"
+    );
+
+
+    setTimeout(
+        () => {
+
+            table.classList.remove(
+                "blackjack-win"
+            );
+
+        },
+        2200
+    );
+
+}
+
+
+/* ==========================================================
+   PREPARE NEXT BLACKJACK BET
+   ========================================================== */
+
+function prepareNextBlackjackBet() {
+
+    if (
+        profile.balance <
+        100
+    ) {
+
+        blackjackBet = 0;
+
+    } else if (
+        blackjackBet >
+        profile.balance
+    ) {
+
+        blackjackBet =
+            profile.balance;
+
+    }
+
+
+    updateBlackjackBetDisplay();
 
 }
 
@@ -1460,6 +2286,7 @@ function spinSlots() {
 
 
     const reels = [
+
         symbols[
             Math.floor(
                 Math.random() *
@@ -1480,6 +2307,7 @@ function spinSlots() {
                 symbols.length
             )
         ]
+
     ];
 
 
@@ -1488,8 +2316,11 @@ function spinSlots() {
 
 
     const jackpot =
-        reels[0] === reels[1] &&
-        reels[1] === reels[2];
+        reels[0] ===
+        reels[1]
+        &&
+        reels[1] ===
+        reels[2];
 
 
     if (jackpot) {
@@ -1600,7 +2431,8 @@ const POCKET_COUNT =
 
 
 const POCKET_ANGLE =
-    360 / POCKET_COUNT;
+    360 /
+    POCKET_COUNT;
 
 
 let selectedRouletteBet =
@@ -1629,30 +2461,40 @@ let ballRotation =
 
 function rouletteColor(number) {
 
-    if (number === 0) {
+    if (
+        number === 0
+    ) {
 
         return "green";
 
     }
 
 
-    return RED_NUMBERS.has(number)
+    return RED_NUMBERS.has(
+        number
+    )
         ? "red"
         : "black";
 
 }
 
 
-function rouletteColorHex(number) {
+function rouletteColorHex(
+    number
+) {
 
-    if (number === 0) {
+    if (
+        number === 0
+    ) {
 
         return "#087541";
 
     }
 
 
-    return RED_NUMBERS.has(number)
+    return RED_NUMBERS.has(
+        number
+    )
         ? "#a50b20"
         : "#111111";
 
@@ -1677,7 +2519,10 @@ function buildRouletteWheel() {
         );
 
 
-    if (!wheel || !layer) {
+    if (
+        !wheel ||
+        !layer
+    ) {
 
         return;
 
@@ -1688,19 +2533,15 @@ function buildRouletteWheel() {
         "";
 
 
-    /*
-        Construct 37 exact sectors.
-
-        "-POCKET_ANGLE / 2" makes the
-        center of pocket zero line up
-        exactly with 12 o'clock.
-    */
-
-    const sectors = [];
+    const sectors =
+        [];
 
 
     EUROPEAN_WHEEL.forEach(
-        (number, index) => {
+        (
+            number,
+            index
+        ) => {
 
             const start =
                 index *
@@ -1708,7 +2549,10 @@ function buildRouletteWheel() {
 
 
             const end =
-                (index + 1) *
+                (
+                    index + 1
+                )
+                *
                 POCKET_ANGLE;
 
 
@@ -1729,13 +2573,11 @@ function buildRouletteWheel() {
         `;
 
 
-    /*
-        Draw each number directly
-        over the center of its pocket.
-    */
-
     EUROPEAN_WHEEL.forEach(
-        (number, index) => {
+        (
+            number,
+            index
+        ) => {
 
             const label =
                 document.createElement(
@@ -1756,16 +2598,10 @@ function buildRouletteWheel() {
                 POCKET_ANGLE;
 
 
-            /*
-                Wheel coordinate system:
-
-                0 degrees = top
-                positive = clockwise
-            */
-
             const radians =
                 (
-                    angle - 90
+                    angle -
+                    90
                 )
                 *
                 Math.PI
@@ -1773,24 +2609,25 @@ function buildRouletteWheel() {
                 180;
 
 
-            /*
-                44% puts the labels
-                toward the outside edge.
-            */
-
             const radius =
                 44;
 
 
             const x =
                 50 +
-                Math.cos(radians) *
+                Math.cos(
+                    radians
+                )
+                *
                 radius;
 
 
             const y =
                 50 +
-                Math.sin(radians) *
+                Math.sin(
+                    radians
+                )
+                *
                 radius;
 
 
@@ -1801,11 +2638,6 @@ function buildRouletteWheel() {
             label.style.top =
                 `${y}%`;
 
-
-            /*
-                Rotate label so its top
-                points toward the outer rim.
-            */
 
             label.style.transform =
                 `
@@ -1837,9 +2669,7 @@ function buildRouletteTable() {
 
 
     if (!grid) {
-
         return;
-
     }
 
 
@@ -1847,17 +2677,11 @@ function buildRouletteTable() {
         "";
 
 
-    /*
-        Standard roulette betting table:
-
-        3  6  9  12 15 18 21 24 27 30 33 36
-        2  5  8  11 14 17 20 23 26 29 32 35
-        1  4  7  10 13 16 19 22 25 28 31 34
-    */
-
     for (
         let column = 0;
+
         column < 12;
+
         column++
     ) {
 
@@ -1902,7 +2726,7 @@ function buildRouletteTable() {
 
                 button.addEventListener(
                     "click",
-                    function () {
+                    function() {
 
                         selectNumberBet(
                             number,
@@ -1926,7 +2750,7 @@ function buildRouletteTable() {
 
 
 /* ==========================================================
-   CLEAR ROULETTE SELECTION
+   ROULETTE SELECT BET
    ========================================================== */
 
 function clearRouletteSelection() {
@@ -1935,27 +2759,27 @@ function clearRouletteSelection() {
         .querySelectorAll(
             ".roulette-table-wrapper button"
         )
-        .forEach((button) => {
+        .forEach(
+            (button) => {
 
-            button.classList.remove(
-                "selected"
-            );
+                button.classList.remove(
+                    "selected"
+                );
 
-        });
+            }
+        );
 
 }
 
-
-/* ==========================================================
-   STRAIGHT NUMBER BET
-   ========================================================== */
 
 function selectNumberBet(
     number,
     button
 ) {
 
-    if (rouletteSpinning) {
+    if (
+        rouletteSpinning
+    ) {
 
         return;
 
@@ -1996,16 +2820,14 @@ function selectNumberBet(
 }
 
 
-/* ==========================================================
-   OUTSIDE / DOZEN BETS
-   ========================================================== */
-
 function selectRouletteBet(
     type,
     button
 ) {
 
-    if (rouletteSpinning) {
+    if (
+        rouletteSpinning
+    ) {
 
         return;
 
@@ -2067,9 +2889,7 @@ function selectRouletteBet(
 
 
     if (!bet) {
-
         return;
-
     }
 
 
@@ -2107,19 +2927,24 @@ function selectRouletteBet(
 
 
 /* ==========================================================
-   BET AMOUNT
+   ROULETTE BET AMOUNT
    ========================================================== */
 
 function changeBet(change) {
 
-    if (rouletteSpinning) {
+    if (
+        rouletteSpinning
+    ) {
 
         return;
 
     }
 
 
-    if (profile.balance < 100) {
+    if (
+        profile.balance <
+        100
+    ) {
 
         betAmount = 0;
 
@@ -2131,6 +2956,7 @@ function changeBet(change) {
 
 
         return;
+
     }
 
 
@@ -2138,9 +2964,13 @@ function changeBet(change) {
         Number(change);
 
 
-    if (betAmount < 100) {
+    if (
+        betAmount <
+        100
+    ) {
 
-        betAmount = 100;
+        betAmount =
+            100;
 
     }
 
@@ -2167,12 +2997,16 @@ function changeBet(change) {
 
 
 /* ==========================================================
-   CHECK ROULETTE WIN
+   ROULETTE WIN CHECK
    ========================================================== */
 
-function rouletteBetWins(number) {
+function rouletteBetWins(
+    number
+) {
 
-    if (!selectedRouletteBet) {
+    if (
+        !selectedRouletteBet
+    ) {
 
         return false;
 
@@ -2183,7 +3017,9 @@ function rouletteBetWins(number) {
         selectedRouletteBet.type;
 
 
-    if (type === "number") {
+    if (
+        type === "number"
+    ) {
 
         return (
             number ===
@@ -2193,46 +3029,62 @@ function rouletteBetWins(number) {
     }
 
 
-    /*
-        Zero loses standard outside bets.
-    */
-
-    if (number === 0) {
+    if (
+        number === 0
+    ) {
 
         return false;
 
     }
 
 
-    if (type === "red") {
+    if (
+        type === "red"
+    ) {
 
-        return RED_NUMBERS.has(number);
-
-    }
-
-
-    if (type === "black") {
-
-        return !RED_NUMBERS.has(number);
+        return RED_NUMBERS.has(
+            number
+        );
 
     }
 
 
-    if (type === "even") {
+    if (
+        type === "black"
+    ) {
 
-        return number % 2 === 0;
-
-    }
-
-
-    if (type === "odd") {
-
-        return number % 2 !== 0;
+        return !RED_NUMBERS.has(
+            number
+        );
 
     }
 
 
-    if (type === "low") {
+    if (
+        type === "even"
+    ) {
+
+        return (
+            number % 2 === 0
+        );
+
+    }
+
+
+    if (
+        type === "odd"
+    ) {
+
+        return (
+            number % 2 !== 0
+        );
+
+    }
+
+
+    if (
+        type === "low"
+    ) {
 
         return (
             number >= 1 &&
@@ -2242,7 +3094,9 @@ function rouletteBetWins(number) {
     }
 
 
-    if (type === "high") {
+    if (
+        type === "high"
+    ) {
 
         return (
             number >= 19 &&
@@ -2252,7 +3106,9 @@ function rouletteBetWins(number) {
     }
 
 
-    if (type === "dozen1") {
+    if (
+        type === "dozen1"
+    ) {
 
         return (
             number >= 1 &&
@@ -2262,7 +3118,9 @@ function rouletteBetWins(number) {
     }
 
 
-    if (type === "dozen2") {
+    if (
+        type === "dozen2"
+    ) {
 
         return (
             number >= 13 &&
@@ -2272,7 +3130,9 @@ function rouletteBetWins(number) {
     }
 
 
-    if (type === "dozen3") {
+    if (
+        type === "dozen3"
+    ) {
 
         return (
             number >= 25 &&
@@ -2288,35 +3148,45 @@ function rouletteBetWins(number) {
 
 
 /* ==========================================================
-   RESULT COLOR
+   ROULETTE RESULT
    ========================================================== */
 
-function rouletteResultName(number) {
+function rouletteResultName(
+    number
+) {
 
-    if (number === 0) {
+    if (
+        number === 0
+    ) {
 
         return "GREEN";
 
     }
 
 
-    return RED_NUMBERS.has(number)
+    return RED_NUMBERS.has(
+        number
+    )
         ? "RED"
         : "BLACK";
 
 }
 
 
-/* ==========================================================
-   NORMALIZE ANGLE
-   ========================================================== */
-
-function normalizeAngle(angle) {
+function normalizeAngle(
+    angle
+) {
 
     return (
-        (angle % 360) +
+        (
+            angle %
+            360
+        )
+        +
         360
-    ) % 360;
+    )
+    %
+    360;
 
 }
 
@@ -2327,26 +3197,32 @@ function normalizeAngle(angle) {
 
 function spinRoulette() {
 
-    if (rouletteSpinning) {
+    if (
+        rouletteSpinning
+    ) {
 
         return;
 
     }
 
 
-    if (!selectedRouletteBet) {
+    if (
+        !selectedRouletteBet
+    ) {
 
         alert(
             "Select a number or outside bet first."
         );
 
         return;
+
     }
 
 
     if (
         betAmount < 100 ||
-        profile.balance < betAmount
+        profile.balance <
+        betAmount
     ) {
 
         alert(
@@ -2354,6 +3230,7 @@ function spinRoulette() {
         );
 
         return;
+
     }
 
 
@@ -2375,7 +3252,10 @@ function spinRoulette() {
         );
 
 
-    if (!wheel || !ballTrack) {
+    if (
+        !wheel ||
+        !ballTrack
+    ) {
 
         return;
 
@@ -2394,10 +3274,6 @@ function spinRoulette() {
     }
 
 
-    /*
-        Select one real European pocket.
-    */
-
     const winningIndex =
         Math.floor(
             Math.random() *
@@ -2410,14 +3286,6 @@ function spinRoulette() {
             winningIndex
         ];
 
-
-    /*
-        Pocket zero is centered at
-        the pointer.
-
-        Each following pocket moves
-        clockwise POCKET_ANGLE degrees.
-    */
 
     const targetPocketAngle =
         winningIndex *
@@ -2446,7 +3314,8 @@ function spinRoulette() {
     const extraWheelSpins =
         7 +
         Math.floor(
-            Math.random() * 3
+            Math.random() *
+            3
         );
 
 
@@ -2459,15 +3328,11 @@ function spinRoulette() {
         neededRotation;
 
 
-    /*
-        Ball rotates in the opposite
-        direction around the outer track.
-    */
-
     const extraBallSpins =
         11 +
         Math.floor(
-            Math.random() * 3
+            Math.random() *
+            3
         );
 
 
@@ -2522,7 +3387,9 @@ function spinRoulette() {
                 false;
 
 
-            if (spinButton) {
+            if (
+                spinButton
+            ) {
 
                 spinButton.disabled =
                     false;
@@ -2550,17 +3417,9 @@ function finishRoulette(
         );
 
 
-    /*
-        Deduct wager.
-    */
-
     profile.balance -=
         betAmount;
 
-
-    /*
-        Return stake plus winnings.
-    */
 
     if (won) {
 
@@ -2598,8 +3457,10 @@ function finishRoulette(
 
 
     if (
-        profile.balance >= 100 &&
-        betAmount > profile.balance
+        profile.balance >=
+        100 &&
+        betAmount >
+        profile.balance
     ) {
 
         betAmount =
@@ -2609,10 +3470,12 @@ function finishRoulette(
 
 
     if (
-        profile.balance < 100
+        profile.balance <
+        100
     ) {
 
-        betAmount = 0;
+        betAmount =
+            0;
 
     }
 
@@ -2628,7 +3491,7 @@ function finishRoulette(
 
 
 /* ==========================================================
-   HIGH ROLL
+   HIGH ROLL DICE
    ========================================================== */
 
 function rollDice() {
@@ -2646,14 +3509,16 @@ function rollDice() {
     const house =
         1 +
         Math.floor(
-            Math.random() * 6
+            Math.random() *
+            6
         );
 
 
     const player =
         1 +
         Math.floor(
-            Math.random() * 6
+            Math.random() *
+            6
         );
 
 
@@ -2673,7 +3538,10 @@ function rollDice() {
     );
 
 
-    if (player > house) {
+    if (
+        player >
+        house
+    ) {
 
         profile.balance +=
             250;
@@ -2692,10 +3560,14 @@ function rollDice() {
 
 
         return;
+
     }
 
 
-    if (player < house) {
+    if (
+        player <
+        house
+    ) {
 
         setText(
             "#diceMessage",
@@ -2710,6 +3582,7 @@ function rollDice() {
 
 
         return;
+
     }
 
 
@@ -2731,16 +3604,16 @@ function rollDice() {
    LEADERBOARD
    ========================================================== */
 
-function sortLeaderboard(type) {
+function sortLeaderboard(
+    type
+) {
 
     const table =
         $("#leaderboardTable");
 
 
     if (!table) {
-
         return;
-
     }
 
 
@@ -2758,48 +3631,74 @@ function sortLeaderboard(type) {
         );
 
 
-    rows.sort((a, b) => {
+    rows.sort(
+        (a, b) => {
 
-        if (type === "balance") {
+            if (
+                type ===
+                "balance"
+            ) {
 
-            return (
-                Number(b.dataset.balance)
-                -
-                Number(a.dataset.balance)
-            );
+                return (
+                    Number(
+                        b.dataset.balance
+                    )
+                    -
+                    Number(
+                        a.dataset.balance
+                    )
+                );
+
+            }
+
+
+            if (
+                type ===
+                "wins"
+            ) {
+
+                return (
+                    Number(
+                        b.dataset.wins
+                    )
+                    -
+                    Number(
+                        a.dataset.wins
+                    )
+                );
+
+            }
+
+
+            if (
+                type ===
+                "prestige"
+            ) {
+
+                return (
+                    Number(
+                        b.dataset.prestige
+                    )
+                    -
+                    Number(
+                        a.dataset.prestige
+                    )
+                );
+
+            }
+
+
+            return 0;
 
         }
-
-
-        if (type === "wins") {
-
-            return (
-                Number(b.dataset.wins)
-                -
-                Number(a.dataset.wins)
-            );
-
-        }
-
-
-        if (type === "prestige") {
-
-            return (
-                Number(b.dataset.prestige)
-                -
-                Number(a.dataset.prestige)
-            );
-
-        }
-
-
-        return 0;
-
-    });
+    );
 
 
     rows.forEach(
-        (row, index) => {
+        (
+            row,
+            index
+        ) => {
 
             const rank =
                 row.querySelector(
@@ -2812,7 +3711,8 @@ function sortLeaderboard(type) {
                 rank.textContent =
                     String(
                         index + 1
-                    ).padStart(
+                    )
+                    .padStart(
                         2,
                         "0"
                     );
@@ -2837,51 +3737,77 @@ function sortLeaderboard(type) {
 window.claimDaily =
     claimDaily;
 
+
 window.buyItem =
     buyItem;
+
 
 window.filterCollection =
     filterCollection;
 
+
 window.changeUsername =
     changeUsername;
+
 
 window.resetGildedProfile =
     resetGildedProfile;
 
+
 window.startBlackjack =
     startBlackjack;
+
 
 window.blackjackHit =
     blackjackHit;
 
+
 window.blackjackStand =
     blackjackStand;
+
+
+window.setBlackjackBet =
+    setBlackjackBet;
+
+
+window.changeBlackjackBet =
+    changeBlackjackBet;
+
+
+window.maxBlackjackBet =
+    maxBlackjackBet;
+
 
 window.spinSlots =
     spinSlots;
 
+
 window.selectNumberBet =
     selectNumberBet;
+
 
 window.selectRouletteBet =
     selectRouletteBet;
 
+
 window.changeBet =
     changeBet;
+
 
 window.spinRoulette =
     spinRoulette;
 
+
 window.rollDice =
     rollDice;
+
 
 window.sortLeaderboard =
     sortLeaderboard;
 
 
 /* ==========================================================
-   INITIALIZE
+   INITIALIZE SITE
    ========================================================== */
 
 document.addEventListener(
@@ -2892,16 +3818,43 @@ document.addEventListener(
 
         buildRouletteTable();
 
+        renderBlackjack(false);
+
+        setBlackjackControls(
+            false
+        );
+
         updateAllDisplays();
+
+        updateBlackjackBetDisplay();
+
+
+        if (
+            profile.balance >=
+            100
+        ) {
+
+            betAmount =
+                Math.min(
+                    Math.max(
+                        100,
+                        betAmount
+                    ),
+                    profile.balance
+                );
+
+        } else {
+
+            betAmount =
+                0;
+
+        }
 
 
         setText(
             "#betAmount",
             formatCredits(
-                Math.min(
-                    betAmount,
-                    profile.balance
-                )
+                betAmount
             )
         );
 
