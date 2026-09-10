@@ -208,24 +208,9 @@ function buildTrack(){
 
         const jockeyColor = h.color === "#e6e6e6" ? "#111111" : h.color;
 
-        const horseCoats = {
-            1:"#4a2b18",
-            2:"#765136",
-            3:"#1f1b19",
-            4:"#8a5a2d",
-            5:"#51301d",
-            6:"#33251c"
-        };
-
-        const coat = horseCoats[h.id] || "#402719";
-
         lane.innerHTML = `
             <span class="lane-number">${h.id}</span>
-            <div
-                class="race-horse"
-                id="raceHorse${h.id}"
-                style="--jockey-color:${jockeyColor};--horse-coat:${coat};"
-            >
+            <div class="race-horse" id="raceHorse${h.id}" style="--jockey-color:${jockeyColor}">
                 ${svgMarkup()}
             </div>
         `;
@@ -234,9 +219,11 @@ function buildTrack(){
 }
 
 function trackDistance(){
-    const stage = document.querySelector(".track-stage");
-    const width = stage?.clientWidth || 1200;
-    return Math.max(220,width - 260);
+    const stage = document.querySelector(".real-track-stage");
+    const width = stage?.clientWidth || 1400;
+
+    // Leave enough room for the larger horse body and finish pole.
+    return Math.max(260,width - 300);
 }
 
 function commentary(progress,leader,second){
@@ -257,7 +244,7 @@ function runAnimation(winner){
 
         HORSES.forEach(h=>{
             progress[h.id]=0;
-            baseSpeed[h.id]=0.019 + Math.random()*0.004;
+            baseSpeed[h.id]=0.0145 + Math.random()*0.0032;
             form[h.id]=0.94 + Math.random()*0.10;
             $("raceHorse"+h.id)?.classList.add("running");
         });
@@ -275,7 +262,7 @@ function runAnimation(winner){
                 let pace = baseSpeed[h.id]*form[h.id]*(0.86+Math.random()*0.28);
 
                 if(h.id===winner.id && leaderProgress>60){
-                    pace *= 1.13;
+                    pace *= 1.08;
                 }
 
                 if(h.id!==winner.id && progress[h.id]>92){

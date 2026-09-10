@@ -675,84 +675,440 @@ body.horse-racing-page{
 
 
 /* =========================================================
-   RECOGNIZABLE HORSE UPGRADE v6
-   Horse silhouette: Font Awesome Free "horse" (CC BY 4.0)
+   THE GILDED DERBY — REALISTIC TRACK v20
+   This block intentionally overrides the earlier prototype
+   track styles without touching global casino styling.
 ========================================================= */
 
-.race-horse{
-    --jockey-color:#a80f1e;
-    --horse-coat:#402719;
-    width:118px !important;
-    height:72px !important;
-    transform-origin:50% 70%;
+.derby-main,
+.derby-shell{
+    width:min(1580px,calc(100% - 34px)) !important;
 }
 
-.horse-svg{
-    width:118px !important;
-    height:72px !important;
-    overflow:visible;
-    filter:drop-shadow(0 4px 3px rgba(0,0,0,.55));
+.real-track-stage{
+    position:relative;
+    height:590px;
+    overflow:hidden;
+    border:1px solid rgba(212,166,50,.78);
+    border-radius:6px;
+    background:
+        linear-gradient(to bottom,
+            transparent 0 38%,
+            #6d4a31 38% 100%);
+    box-shadow:
+        0 22px 55px rgba(0,0,0,.52),
+        inset 0 0 0 1px rgba(255,255,255,.025);
 }
 
-.horse-art{
-    transform:translate(0,0) scale(.92);
-    transform-origin:center;
+/* SKY */
+.venue-sky{
+    position:absolute;
+    inset:0 0 auto 0;
+    height:39%;
+    background:
+        radial-gradient(circle at 18% 24%,rgba(255,255,255,.95) 0 2px,transparent 3px),
+        linear-gradient(to bottom,#79a7c9 0%,#b8cad5 48%,#d9d5bf 100%);
 }
 
-.horse-shape{
-    fill:var(--horse-coat);
+/* DISTANT HILLS */
+.venue-hills{
+    position:absolute;
+    top:12%;
+    left:-2%;
+    width:104%;
+    height:25%;
+    opacity:.82;
+    background:
+        radial-gradient(80% 100% at 10% 100%,#557056 0 46%,transparent 47%),
+        radial-gradient(70% 90% at 35% 100%,#496148 0 48%,transparent 49%),
+        radial-gradient(80% 100% at 60% 100%,#5d7658 0 45%,transparent 46%),
+        radial-gradient(70% 100% at 85% 100%,#486146 0 48%,transparent 49%);
 }
 
-.saddle-pad{
-    fill:var(--jockey-color);
-    stroke:#f1e8d3;
-    stroke-width:4;
+/* GRANDSTAND */
+.grandstand{
+    position:absolute;
+    left:0;
+    top:7%;
+    width:35%;
+    height:29%;
+    z-index:2;
+    perspective:700px;
 }
 
-.saddle{
-    fill:#17120e;
-    stroke:#71533b;
-    stroke-width:4;
+.grandstand-roof{
+    position:absolute;
+    left:-1%;
+    top:0;
+    width:100%;
+    height:18%;
+    background:linear-gradient(#d6d6d3,#888b8d);
+    clip-path:polygon(0 0,94% 0,100% 100%,0 84%);
+    box-shadow:0 6px 8px rgba(0,0,0,.35);
 }
 
-.jockey-face{
-    fill:#d1a887;
+.grandstand-rows{
+    position:absolute;
+    left:2%;
+    top:16%;
+    width:91%;
+    height:80%;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            #36383a 0 10px,
+            #595b5d 10px 12px,
+            #252729 12px 22px
+        );
+    clip-path:polygon(0 0,100% 8%,92% 100%,0 100%);
+    border-left:4px solid #777;
 }
 
-.jockey-helmet,
-.jockey-shirt{
-    fill:var(--jockey-color);
+.grandstand-crowd{
+    position:absolute;
+    left:3%;
+    top:22%;
+    width:88%;
+    height:66%;
+    opacity:.95;
+    background:
+        radial-gradient(circle,#d8c3aa 0 2px,transparent 3px) 2px 2px/15px 13px,
+        radial-gradient(circle,#8a1f1f 0 2px,transparent 3px) 8px 7px/17px 14px,
+        radial-gradient(circle,#1d3156 0 2px,transparent 3px) 3px 5px/19px 15px;
+    clip-path:polygon(0 0,100% 8%,92% 100%,0 100%);
 }
 
-.jockey-arm,
-.jockey-leg{
-    fill:var(--jockey-color);
-    stroke:#111;
-    stroke-width:4;
+/* TREE LINE */
+.venue-tree-line{
+    position:absolute;
+    left:28%;
+    right:0;
+    top:23%;
+    height:15%;
+    z-index:2;
+    background:
+        radial-gradient(circle at 3% 65%,#25422a 0 26px,transparent 27px),
+        radial-gradient(circle at 9% 54%,#345636 0 35px,transparent 36px),
+        radial-gradient(circle at 17% 60%,#213a26 0 31px,transparent 32px),
+        radial-gradient(circle at 25% 52%,#3d5c3b 0 37px,transparent 38px),
+        radial-gradient(circle at 35% 62%,#28472e 0 33px,transparent 34px),
+        radial-gradient(circle at 46% 57%,#355a37 0 35px,transparent 36px),
+        radial-gradient(circle at 58% 59%,#29472e 0 34px,transparent 35px),
+        radial-gradient(circle at 70% 54%,#365c39 0 38px,transparent 39px),
+        radial-gradient(circle at 82% 62%,#25452d 0 34px,transparent 35px),
+        radial-gradient(circle at 94% 56%,#3b5f3b 0 39px,transparent 40px),
+        linear-gradient(to bottom,transparent 0 57%,#28422b 58% 100%);
 }
 
-.reins{
-    fill:none;
-    stroke:#d7c39c;
-    stroke-width:7;
-    stroke-linecap:round;
+/* SCOREBOARDS */
+.venue-scoreboard{
+    position:absolute;
+    z-index:5;
+    background:linear-gradient(180deg,#17130e,#070707);
+    color:#ddb55a;
+    border:5px solid #4d371f;
+    box-shadow:0 7px 13px rgba(0,0,0,.58);
+    text-align:center;
+    font-family:Cinzel,Georgia,serif;
 }
 
-.race-horse.running .horse-svg{
-    animation:realHorseGallop .36s ease-in-out infinite alternate !important;
+.venue-scoreboard span,
+.venue-scoreboard strong,
+.venue-scoreboard small{
+    display:block;
 }
 
-.race-horse.running .jockey-art{
-    animation:realJockeyBob .36s ease-in-out infinite alternate;
-    transform-origin:320px 160px;
+.venue-scoreboard-left{
+    left:10%;
+    top:11%;
+    width:255px;
+    padding:13px 10px;
 }
 
-@keyframes realHorseGallop{
-    from{transform:translateY(-1px) rotate(-1deg) scaleX(1)}
-    to{transform:translateY(2px) rotate(1deg) scaleX(1.015)}
+.venue-scoreboard-left span{
+    font-size:1rem;
+    letter-spacing:.08em;
 }
 
-@keyframes realJockeyBob{
-    from{transform:translateY(-3px) rotate(-2deg)}
-    to{transform:translateY(3px) rotate(1deg)}
+.venue-scoreboard-left strong{
+    margin-top:4px;
+    font-size:.68rem;
+    letter-spacing:.17em;
+}
+
+.venue-scoreboard-center{
+    left:50%;
+    top:8%;
+    width:390px;
+    transform:translateX(-50%);
+    padding:16px 12px;
+}
+
+.venue-scoreboard-center span{
+    font-size:1.7rem;
+    font-weight:700;
+}
+
+.venue-scoreboard-center strong{
+    margin-top:4px;
+    font-size:.7rem;
+    letter-spacing:.12em;
+}
+
+.venue-scoreboard-right{
+    right:8%;
+    top:12%;
+    width:255px;
+    padding:13px 10px;
+}
+
+.venue-scoreboard-right span,
+.venue-scoreboard-right strong{
+    font-size:.72rem;
+    line-height:1.4;
+}
+
+.venue-scoreboard-right small{
+    margin-top:5px;
+    font-size:.6rem;
+}
+
+/* BACK RAIL */
+.venue-back-rail{
+    position:absolute;
+    left:0;
+    right:0;
+    top:37%;
+    height:18px;
+    z-index:4;
+    background:
+        linear-gradient(#f4f1e8,#d5d1c6) 0 1px/100% 4px no-repeat,
+        linear-gradient(#f4f1e8,#cec7ba) 0 12px/100% 3px no-repeat,
+        repeating-linear-gradient(90deg,transparent 0 74px,#e6e0d4 74px 78px);
+    box-shadow:0 2px 4px rgba(0,0,0,.33);
+}
+
+/* TRACK */
+.realistic-race-track{
+    position:absolute !important;
+    left:0 !important;
+    right:0 !important;
+    top:40% !important;
+    bottom:8% !important;
+    z-index:3;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.03) 0 42px,
+            rgba(44,25,15,.12) 42px 44px
+        ),
+        radial-gradient(ellipse at 17% 20%,rgba(38,22,13,.18) 0 3%,transparent 3.5%),
+        radial-gradient(ellipse at 50% 65%,rgba(34,20,12,.17) 0 3%,transparent 3.5%),
+        linear-gradient(#805d41,#6a4932 45%,#765338);
+}
+
+.realistic-race-track::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+        repeating-linear-gradient(
+            93deg,
+            transparent 0 130px,
+            rgba(255,255,255,.022) 130px 131px
+        );
+}
+
+.realistic-race-track .race-lane{
+    height:16.6666667% !important;
+    min-height:0 !important;
+    position:relative;
+    border-bottom:1px solid rgba(248,235,211,.24) !important;
+    background:transparent !important;
+}
+
+.realistic-race-track .race-lane:last-child{
+    border-bottom:0 !important;
+}
+
+.realistic-race-track .lane-number{
+    left:16px !important;
+    width:34px !important;
+    height:34px !important;
+    font-size:1rem !important;
+    border-radius:4px !important;
+    z-index:10;
+}
+
+/* HORSE CONTAINER
+   Keep the SVG/horse drawing from the current working horse-racing.html.
+   The larger container makes them feel like actual racehorses instead of icons. */
+.realistic-race-track .race-horse{
+    left:65px !important;
+    width:150px !important;
+    height:88px !important;
+    z-index:8;
+}
+
+.realistic-race-track .horse-svg{
+    width:150px !important;
+    height:88px !important;
+    filter:
+        drop-shadow(0 7px 4px rgba(0,0,0,.42))
+        drop-shadow(0 1px 1px rgba(255,255,255,.08)) !important;
+}
+
+/* DUST */
+.realistic-race-track .race-horse.running::after{
+    content:"";
+    position:absolute;
+    left:-7px;
+    bottom:12px;
+    width:55px;
+    height:18px;
+    border-radius:50%;
+    opacity:.48;
+    background:
+        radial-gradient(ellipse at center,
+            rgba(210,174,131,.7),
+            rgba(150,106,70,.35) 46%,
+            transparent 72%);
+    animation:trackDust .65s linear infinite;
+    filter:blur(2px);
+    z-index:-1;
+}
+
+@keyframes trackDust{
+    0%{
+        transform:translateX(15px) scale(.5);
+        opacity:.08;
+    }
+    45%{
+        opacity:.52;
+    }
+    100%{
+        transform:translateX(-42px) scale(1.35);
+        opacity:0;
+    }
+}
+
+/* FINISH */
+.finish-banner{
+    position:absolute;
+    right:43px;
+    top:34%;
+    z-index:14;
+    background:#f5f2ea;
+    color:#16120d;
+    border:2px solid #46372a;
+    padding:4px 8px;
+    font-size:.78rem;
+    font-weight:900;
+    box-shadow:0 4px 8px rgba(0,0,0,.35);
+}
+
+.finish-pole{
+    position:absolute;
+    right:56px;
+    top:38%;
+    bottom:7%;
+    width:12px;
+    z-index:13;
+    border:1px solid #eee9df;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            #b21118 0 19px,
+            #f4eee5 19px 38px
+        );
+}
+
+/* FRONT RAIL */
+.venue-front-rail{
+    position:absolute;
+    left:-1%;
+    right:-1%;
+    bottom:2.5%;
+    height:22px;
+    z-index:12;
+    transform:skewX(-8deg);
+    background:
+        linear-gradient(#f3efe7,#cfc8bc) 0 0/100% 5px no-repeat,
+        repeating-linear-gradient(90deg,transparent 0 97px,#e6dfd4 97px 103px);
+    box-shadow:0 -2px 5px rgba(0,0,0,.25);
+}
+
+@media (max-width:1000px){
+    .real-track-stage{
+        height:500px;
+    }
+
+    .venue-scoreboard-center{
+        width:300px;
+    }
+
+    .venue-scoreboard-left,
+    .venue-scoreboard-right{
+        width:190px;
+    }
+
+    .realistic-race-track .race-horse{
+        width:125px !important;
+        height:76px !important;
+    }
+
+    .realistic-race-track .horse-svg{
+        width:125px !important;
+        height:76px !important;
+    }
+}
+
+@media (max-width:720px){
+    .real-track-stage{
+        height:430px;
+    }
+
+    .grandstand{
+        width:55%;
+    }
+
+    .venue-scoreboard-left,
+    .venue-scoreboard-right{
+        display:none;
+    }
+
+    .venue-scoreboard-center{
+        top:9%;
+        width:250px;
+    }
+
+    .venue-scoreboard-center span{
+        font-size:1.15rem;
+    }
+
+    .realistic-race-track .lane-number{
+        left:7px !important;
+        width:28px !important;
+        height:28px !important;
+    }
+
+    .realistic-race-track .race-horse{
+        left:40px !important;
+        width:103px !important;
+        height:66px !important;
+    }
+
+    .realistic-race-track .horse-svg{
+        width:103px !important;
+        height:66px !important;
+    }
+
+    .finish-banner{
+        right:19px;
+    }
+
+    .finish-pole{
+        right:30px;
+    }
 }
