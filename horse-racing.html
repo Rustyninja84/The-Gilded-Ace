@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Race for glory in The Gilded Derby using fictional Ace Credits.">
+    <meta name="description" content="The Gilded Derby horse racing at The Gilded Ace">
     <title>The Gilded Derby | The Gilded Ace</title>
 
     <link rel="stylesheet" href="styles.css?v=100">
-    <link rel="stylesheet" href="horse-racing.css?v=2">
+    <link rel="stylesheet" href="horse-racing.css?v=4">
 </head>
 
 <body class="horse-racing-page">
 
 <header class="site-header">
     <div class="nav-container">
-
         <a href="index.html" class="brand">
             <div class="brand-mark">A</div>
-
             <div class="brand-text">
                 <span class="brand-name">THE GILDED ACE</span>
                 <span class="brand-subtitle">CASINO &amp; SOCIAL CLUB</span>
@@ -38,115 +36,84 @@
                 <span class="balance-label">ACE CREDITS</span>
                 <span id="horseHeaderBalance" class="balance-value">10,000 AC</span>
             </div>
-
             <a href="profile.html" class="profile-button">PROFILE</a>
         </div>
-
     </div>
 </header>
 
+<main class="derby-shell">
 
-<main class="derby-main">
+    <div class="derby-game-tabs">
+        <button type="button" onclick="location.href='casino.html#blackjack'">BLACKJACK</button>
+        <button type="button" onclick="location.href='casino.html#slots'">SLOTS</button>
+        <button type="button" onclick="location.href='casino.html#roulette'">ROULETTE</button>
+        <button type="button" onclick="location.href='casino.html#dice'">HIGH ROLL</button>
+        <button type="button" class="active" onclick="location.href='horse-racing.html'">HORSE RACING</button>
+    </div>
 
-    <!-- CASINO GAME NAV -->
-    <nav class="derby-game-tabs" aria-label="Casino games">
-        <a href="casino.html#blackjack" class="derby-game-tab">BLACKJACK</a>
-        <a href="casino.html#slots" class="derby-game-tab">SLOTS</a>
-        <a href="casino.html#roulette" class="derby-game-tab">ROULETTE</a>
-        <a href="casino.html#dice" class="derby-game-tab">HIGH ROLL</a>
-        <a href="horse-racing.html" class="derby-game-tab active">HORSE RACING</a>
-    </nav>
-
-
-    <!-- DERBY TITLE / BRAND -->
-    <section class="derby-title-row">
-
-        <div class="derby-title-copy">
+    <section class="derby-hero-row">
+        <div>
             <span class="derby-kicker">RACING</span>
-
             <h1>THE GILDED DERBY</h1>
-
-            <p>
-                Place your bet, watch the race, and see if fortune is on your side.
-            </p>
+            <p>Place your bet, watch the race, and see if fortune is on your side.</p>
         </div>
 
-        <div class="derby-track-brand" aria-label="The Gilded Ace Race Track">
-            <div class="derby-track-horse">♞</div>
-
-            <div class="derby-track-brand-line">
+        <div class="track-logo">
+            <div class="track-logo-horse">♞</div>
+            <div class="track-logo-line">
                 <span></span>
                 <strong>THE GILDED ACE</strong>
                 <span></span>
             </div>
-
             <small>RACE TRACK</small>
         </div>
-
     </section>
 
+    <section class="track-stage">
 
-    <!-- LIVE TRACK -->
-    <section class="derby-track-card">
+        <div class="track-background">
+            <div class="sky"></div>
+            <div class="tree-band"></div>
+            <div class="rail rail-back"></div>
 
-        <div class="track-scenery" aria-hidden="true">
-
-            <div class="track-tree-line"></div>
-
-            <div class="track-billboard track-billboard-main">
+            <div class="track-sign sign-left">
                 <strong>THE GILDED ACE</strong>
                 <span>RACE TRACK</span>
             </div>
 
-            <div class="track-billboard track-billboard-side">
+            <div class="track-sign sign-right">
                 <strong>FORTUNE FAVORS<br>THE BOLD</strong>
             </div>
-
         </div>
 
-        <div class="track-shell">
+        <div class="finish-label">FINISH</div>
+        <div class="finish-post"></div>
 
-            <div class="finish-marker">
-                <span>FINISH</span>
-                <div class="finish-post"></div>
-            </div>
-
-            <div id="raceTrack" class="race-track"></div>
-
-        </div>
+        <div id="raceTrack" class="race-track"></div>
 
     </section>
 
+    <section class="derby-panels">
 
-    <!-- INFO GRID -->
-    <section class="derby-info-grid">
-
-        <!-- RUNNERS -->
-        <section class="derby-card runners-card">
-
+        <article class="derby-card">
             <h2>RUNNERS &amp; ODDS</h2>
+            <div id="horseSelectionGrid" class="horse-list"></div>
+        </article>
 
-            <div id="horseSelectionGrid" class="horse-selection-grid"></div>
-
-        </section>
-
-
-        <!-- BET -->
-        <section class="derby-card wager-card">
-
+        <article class="derby-card">
             <h2>PLACE YOUR BET</h2>
 
-            <label class="derby-field-label">SELECT HORSE</label>
+            <label class="field-label">SELECT HORSE</label>
 
-            <div class="selected-horse-card">
-                <span id="selectedHorseNumber" class="selected-horse-number">—</span>
+            <div class="selected-horse">
+                <span id="selectedHorseNumber" class="selected-number">—</span>
                 <strong id="selectedHorseDisplay">SELECT A HORSE</strong>
-                <span id="selectedOddsDisplay" class="selected-horse-odds">—</span>
+                <span id="selectedOddsDisplay" class="selected-odds">—</span>
             </div>
 
-            <label class="derby-field-label">BET AMOUNT (AC)</label>
+            <label class="field-label">BET AMOUNT (AC)</label>
 
-            <div class="wager-control">
+            <div class="bet-control">
                 <button id="horseBetDown" type="button">−</button>
                 <strong id="horseBetDisplay">100</strong>
                 <button id="horseBetUp" type="button">+</button>
@@ -159,122 +126,68 @@
                 <button type="button" data-horse-bet="5000">5,000</button>
             </div>
 
-            <button id="startRaceButton" class="derby-primary-button" type="button">
+            <button id="startRaceButton" class="start-race" type="button">
                 PLACE BET &amp; START RACE
             </button>
 
-            <p id="horseBetMessage" class="derby-message">
+            <p id="horseBetMessage" class="bet-message">
                 Select a horse and place your wager.
             </p>
+        </article>
 
-        </section>
-
-
-        <!-- RACE INFO -->
-        <section class="derby-card race-info-card">
-
+        <article class="derby-card race-info">
             <h2>RACE INFO</h2>
 
-            <div class="race-info-row">
-                <span>TRACK</span>
-                <strong>The Gilded Ace Race Track</strong>
-            </div>
+            <div><span>TRACK</span><strong>The Gilded Ace Race Track</strong></div>
+            <div><span>DISTANCE</span><strong>1 Mile (8 Furlongs)</strong></div>
+            <div><span>CONDITION</span><strong>Fast</strong></div>
+            <div><span>WEATHER</span><strong>Clear</strong></div>
 
-            <div class="race-info-row">
-                <span>DISTANCE</span>
-                <strong>1 Mile (8 Furlongs)</strong>
-            </div>
+            <blockquote>
+                Same roads. Different odds.<br>
+                Play bold.
+            </blockquote>
 
-            <div class="race-info-row">
-                <span>CONDITION</span>
-                <strong>Fast</strong>
-            </div>
-
-            <div class="race-info-row">
-                <span>WEATHER</span>
-                <strong>Clear</strong>
-            </div>
-
-            <div class="race-info-quote">
-                <em>Same roads. Different odds.<br>Play bold.</em>
-            </div>
-
-            <div class="race-mini-status">
-                <span>RACE</span>
-                <strong id="raceNumber">01</strong>
+            <div class="race-status-row">
+                <span>RACE <strong id="raceNumber">01</strong></span>
                 <span id="raceStatus">AWAITING WAGERS</span>
             </div>
-
-        </section>
-
+        </article>
     </section>
 
-
-    <!-- COMMENTARY -->
-    <section class="derby-card commentary-panel">
-
+    <section class="derby-card commentary-card">
         <h2>RACE COMMENTARY</h2>
-
         <div class="commentary-line">
-            <span class="commentary-icon">☁</span>
+            <span class="bubble">•••</span>
             <strong id="raceCommentary">
                 Place your bet and press “Place Bet &amp; Start Race” to begin!
             </strong>
         </div>
-
     </section>
 
-
-    <!-- RESULTS -->
     <section class="derby-card results-card">
         <h2>OFFICIAL RESULTS</h2>
-        <div id="raceResults" class="race-results empty-results">
-            No completed races yet.
-        </div>
-    </section>
-
-
-    <section class="derby-disclaimer">
-        <strong>PLAY-MONEY ENTERTAINMENT ONLY</strong>
-        <p>
-            The Gilded Derby uses fictional Ace Credits with no cash value.
-            Ace Credits cannot be purchased, withdrawn, redeemed, or exchanged
-            for real-world money, goods, services, or prizes.
-        </p>
+        <div id="raceResults" class="race-results empty-results">No completed races yet.</div>
     </section>
 
 </main>
 
-
 <div id="winnerModal" class="winner-modal" aria-hidden="true">
-
-    <div class="winner-modal-card">
-
+    <div class="winner-box">
         <span class="derby-kicker">OFFICIAL RESULT</span>
-
-        <div id="winnerModalIcon" class="winner-modal-icon">🏆</div>
-
+        <div id="winnerModalIcon" class="winner-icon">🏆</div>
         <h2 id="winnerModalTitle">WINNER</h2>
-
         <p id="winnerModalText"></p>
-
-        <button id="winnerModalClose" class="derby-primary-button" type="button">
-            CONTINUE
-        </button>
-
+        <button id="winnerModalClose" class="start-race" type="button">CONTINUE</button>
     </div>
-
 </div>
-
 
 <footer class="site-footer">
     <div class="footer-container">
-
         <div>
             <div class="footer-brand">THE GILDED ACE</div>
             <p>PLAY. WIN. BUILD YOUR LEGACY.</p>
         </div>
-
         <div class="footer-links">
             <a href="index.html">HOME</a>
             <a href="casino.html">CASINO</a>
@@ -283,18 +196,39 @@
             <a href="collection.html">COLLECTION</a>
             <a href="leaderboard.html">LEADERBOARD</a>
         </div>
-
-    </div>
-
-    <div class="footer-disclaimer">
-        THE GILDED ACE IS A PLAY-MONEY CASINO-STYLE SOCIAL EXPERIENCE.
-        ACE CREDITS HAVE NO REAL-WORLD MONETARY VALUE.
     </div>
 </footer>
 
+<template id="horseSvgTemplate">
+
+<svg class="horse-svg" viewBox="0 0 190 86" aria-hidden="true">
+  <g class="horse-shadow">
+    <ellipse cx="100" cy="73" rx="65" ry="6"></ellipse>
+  </g>
+  <g class="horse-body-shape">
+    <path d="M47 48c8-14 26-21 48-20 14 0 28 3 39 9l12-17c3-4 9-5 14-3l12 6-6 8-14-2-12 18c-7 8-17 14-29 17l-30 2c-17-2-30-7-38-18z"></path>
+    <path d="M45 45 24 38 10 23l8-4 17 12 17 2z"></path>
+    <path d="M69 58 50 80h10l22-19z"></path>
+    <path d="M93 61 81 83h10l16-23z"></path>
+    <path d="M117 59 132 82h10l-14-28z"></path>
+    <path d="M137 55 158 78h11l-21-31z"></path>
+    <path d="M145 19c9-8 18-10 26-4 5 3 7 8 6 13-6-3-12-5-19-5z"></path>
+  </g>
+
+  <g class="jockey">
+    <circle cx="119" cy="12" r="7" class="jockey-head"></circle>
+    <path d="M111 18h17l5 16-17 7-11-10z" class="jockey-shirt"></path>
+    <path d="M126 18 143 8l4 3-15 14z" class="jockey-arm"></path>
+    <path d="M114 22 98 34l3 4 17-9z" class="jockey-arm"></path>
+    <path d="M116 39 105 52h7l12-12z" class="jockey-leg"></path>
+    <path d="M125 38 135 49h7l-10-15z" class="jockey-leg"></path>
+    <path d="M113 5h14l-2 5h-12z" class="jockey-cap"></path>
+  </g>
+</svg>
+
+</template>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="horse-racing.js?v=2"></script>
-
+<script src="horse-racing.js?v=4"></script>
 </body>
 </html>
