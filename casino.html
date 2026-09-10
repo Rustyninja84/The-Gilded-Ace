@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,15 +9,12 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        The Gilded Ace | Casino
-    </title>
+    <title>The Gilded Ace | Casino</title>
 
     <link
         rel="stylesheet"
-        href="styles.css?v=11"
+        href="styles.css?v=20"
     >
-
 </head>
 
 
@@ -33,7 +29,6 @@
             href="index.html"
             class="brand"
         >
-
             <div class="brand-mark">
                 A
             </div>
@@ -49,7 +44,6 @@
                 </div>
 
             </div>
-
         </a>
 
 
@@ -120,9 +114,8 @@
     </h1>
 
     <p>
-        Enjoy classic table games, roulette,
-        slots, and high-roll challenges using
-        fictional Ace Credits.
+        Blackjack, arcade slots, European roulette
+        and high-roll games using fictional Ace Credits.
     </p>
 
 </section>
@@ -163,9 +156,9 @@
 
 
 
-<!-- =======================================================
+<!-- ======================================================
      BLACKJACK
-     ======================================================= -->
+     ====================================================== -->
 
 <section
     class="game-section blackjack-section"
@@ -200,27 +193,11 @@
             </span>
 
             <ul>
-
-                <li>
-                    Cards 2–10 are face value
-                </li>
-
-                <li>
-                    J, Q, K are worth 10
-                </li>
-
-                <li>
-                    Ace is worth 1 or 11
-                </li>
-
-                <li>
-                    Dealer hits on 16 and stands on 17
-                </li>
-
-                <li>
-                    Blackjack pays 3 to 2
-                </li>
-
+                <li>Cards 2–10 are face value</li>
+                <li>J, Q and K are worth 10</li>
+                <li>Ace is worth 1 or 11</li>
+                <li>Dealer hits below 17</li>
+                <li>Blackjack pays 3 to 2</li>
             </ul>
 
         </div>
@@ -231,10 +208,6 @@
 
     <div class="blackjack-casino-table">
 
-
-        <!-- ===================================================
-             DEALER HAND
-             =================================================== -->
 
         <div class="blackjack-dealer-area">
 
@@ -257,33 +230,11 @@
             <div
                 class="blackjack-card-hand"
                 id="dealerCards"
-            >
-
-                <div class="playing-card card-back">
-
-                    <div class="card-back-inner">
-                        <span>A</span>
-                    </div>
-
-                </div>
-
-                <div class="playing-card card-back">
-
-                    <div class="card-back-inner">
-                        <span>A</span>
-                    </div>
-
-                </div>
-
-            </div>
+            ></div>
 
         </div>
 
 
-
-        <!-- ===================================================
-             TABLE BRANDING
-             =================================================== -->
 
         <div class="blackjack-table-branding">
 
@@ -303,17 +254,9 @@
                 DEALER MUST HIT ON 16 AND STAND ON 17
             </div>
 
-            <div class="blackjack-insurance-line">
-                INSURANCE PAYS 2 TO 1
-            </div>
-
         </div>
 
 
-
-        <!-- ===================================================
-             PLAYER HAND
-             =================================================== -->
 
         <div class="blackjack-player-area">
 
@@ -336,40 +279,17 @@
             <div
                 class="blackjack-card-hand"
                 id="playerCards"
-            >
-
-                <div class="playing-card card-back">
-
-                    <div class="card-back-inner">
-                        <span>A</span>
-                    </div>
-
-                </div>
-
-                <div class="playing-card card-back">
-
-                    <div class="card-back-inner">
-                        <span>A</span>
-                    </div>
-
-                </div>
-
-            </div>
+            ></div>
 
         </div>
 
 
-
-        <!-- ===================================================
-             BETTING PANEL
-             =================================================== -->
 
         <div class="blackjack-bet-panel">
 
             <span class="eyebrow">
                 Bet Amount
             </span>
-
 
             <div
                 class="blackjack-current-bet"
@@ -388,7 +308,6 @@
                     −
                 </button>
 
-
                 <button
                     type="button"
                     onclick="changeBlackjackBet(100)"
@@ -396,12 +315,11 @@
                     +
                 </button>
 
-
                 <button
                     type="button"
                     onclick="maxBlackjackBet()"
                 >
-                    Max Bet
+                    MAX
                 </button>
 
             </div>
@@ -414,7 +332,6 @@
                 Current Balance
             </span>
 
-
             <div
                 class="blackjack-balance"
                 data-balance
@@ -426,16 +343,11 @@
 
 
 
-        <!-- ===================================================
-             GAME CONTROLS
-             =================================================== -->
-
         <div class="blackjack-control-panel">
 
             <span class="eyebrow">
                 Game Status
             </span>
-
 
             <div
                 class="blackjack-status"
@@ -483,93 +395,57 @@
 
 
 
-        <!-- ===================================================
-             CHIP RACK
-             =================================================== -->
-
         <div class="blackjack-chip-rack">
 
             <button
                 type="button"
                 class="casino-chip chip-100"
                 onclick="addBlackjackChip(100)"
-                title="Add 100 AC"
             >
-
-                <span>
-                    100
-                </span>
-
+                <span>100</span>
             </button>
-
 
             <button
                 type="button"
                 class="casino-chip chip-500"
                 onclick="addBlackjackChip(500)"
-                title="Add 500 AC"
             >
-
-                <span>
-                    500
-                </span>
-
+                <span>500</span>
             </button>
-
 
             <button
                 type="button"
                 class="casino-chip chip-1000"
                 onclick="addBlackjackChip(1000)"
-                title="Add 1,000 AC"
             >
-
-                <span>
-                    1K
-                </span>
-
+                <span>1K</span>
             </button>
-
 
             <button
                 type="button"
                 class="casino-chip chip-5000"
                 onclick="addBlackjackChip(5000)"
-                title="Add 5,000 AC"
             >
-
-                <span>
-                    5K
-                </span>
-
+                <span>5K</span>
             </button>
-
 
             <button
                 type="button"
                 class="casino-chip chip-25000"
                 onclick="addBlackjackChip(25000)"
-                title="Add 25,000 AC"
             >
-
-                <span>
-                    25K
-                </span>
-
+                <span>25K</span>
             </button>
-
 
             <button
                 type="button"
                 class="blackjack-clear-chip"
                 onclick="clearBlackjackBet()"
-                title="Clear Bet"
             >
                 CLEAR
             </button>
 
         </div>
-
 
     </div>
 
@@ -577,12 +453,12 @@
 
 
 
-<!-- =======================================================
-     SLOTS
-     ======================================================= -->
+<!-- ======================================================
+     ARCADE SLOTS
+     ====================================================== -->
 
 <section
-    class="game-section"
+    class="game-section ga-slot-section"
     id="slots"
 >
 
@@ -595,35 +471,303 @@
     </h2>
 
     <p>
-        Spin the reels and match symbols
-        for a chance to earn Ace Credits.
+        Pull the lever or press SPIN. Match the
+        center payline to win Ace Credits.
     </p>
 
 
-    <div class="simple-game">
+    <div class="ga-slot-machine">
 
-        <div
-            id="slotDisplay"
-            class="slot-display"
-        >
-            A A A
+
+        <!-- TOP LIGHTS -->
+
+        <div class="ga-slot-bulbs">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
 
 
-        <button
-            type="button"
-            onclick="spinSlots()"
-        >
-            Spin
-        </button>
+
+        <!-- MARQUEE -->
+
+        <div class="ga-slot-marquee">
+
+            <div class="ga-slot-spade">
+                ♠
+            </div>
+
+            <div class="ga-slot-title">
+                THE GILDED ACE
+            </div>
+
+            <div class="ga-slot-subtitle">
+                SLOTS
+            </div>
+
+            <div class="ga-slot-tagline">
+                SPIN ◆ MATCH ◆ WIN BIG
+            </div>
+
+        </div>
 
 
-        <p
-            id="slotMessage"
-            style="margin-top:20px;"
+
+        <div class="ga-slot-upper-body">
+
+
+            <div class="ga-slot-side-panel">
+
+                <div class="ga-slot-side-icon">
+                    ♠
+                </div>
+
+                <div>
+                    PLAY
+                    <br>
+                    BIGGER
+                    <br>
+                    WIN
+                    <br>
+                    BIGGER
+                </div>
+
+            </div>
+
+
+
+            <!-- REEL WINDOW -->
+
+            <div class="ga-slot-reel-cabinet">
+
+                <div class="ga-slot-payline"></div>
+
+
+                <div class="ga-slot-reels">
+
+
+                    <div
+                        class="ga-slot-reel"
+                        id="gaSlotReel1"
+                    >
+                        <div class="ga-slot-symbol">🍒</div>
+                        <div class="ga-slot-symbol ga-slot-center-symbol">7</div>
+                        <div class="ga-slot-symbol">BAR</div>
+                    </div>
+
+
+                    <div
+                        class="ga-slot-reel"
+                        id="gaSlotReel2"
+                    >
+                        <div class="ga-slot-symbol">🔔</div>
+                        <div class="ga-slot-symbol ga-slot-center-symbol">💎</div>
+                        <div class="ga-slot-symbol">7</div>
+                    </div>
+
+
+                    <div
+                        class="ga-slot-reel"
+                        id="gaSlotReel3"
+                    >
+                        <div class="ga-slot-symbol">👑</div>
+                        <div class="ga-slot-symbol ga-slot-center-symbol">🍒</div>
+                        <div class="ga-slot-symbol">BAR</div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <div class="ga-slot-side-panel">
+
+                <div class="ga-slot-side-icon">
+                    ♠
+                </div>
+
+                <div>
+                    GOOD
+                    <br>
+                    LUCK
+                    <br><br>
+                    SPIN
+                    <br>
+                    TO WIN
+                </div>
+
+            </div>
+
+
+
+            <!-- LEVER -->
+
+            <button
+                type="button"
+                class="ga-slot-lever"
+                id="gaSlotLever"
+                onclick="gaSpinSlots()"
+                aria-label="Pull slot lever"
+            >
+
+                <span class="ga-slot-lever-stick"></span>
+
+                <span class="ga-slot-lever-ball"></span>
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- CONTROL DECK -->
+
+        <div class="ga-slot-control-deck">
+
+
+            <div class="ga-slot-control-box">
+
+                <span class="ga-slot-control-label">
+                    Bet Amount
+                </span>
+
+
+                <div class="ga-slot-bet-row">
+
+                    <button
+                        type="button"
+                        class="ga-slot-small-button"
+                        id="gaSlotBetMinus"
+                        onclick="gaChangeSlotBet(-100)"
+                    >
+                        −
+                    </button>
+
+
+                    <div
+                        class="ga-slot-bet-display"
+                        id="gaSlotBetAmount"
+                    >
+                        100 AC
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="ga-slot-small-button"
+                        id="gaSlotBetPlus"
+                        onclick="gaChangeSlotBet(100)"
+                    >
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <button
+                type="button"
+                class="ga-slot-spin-button"
+                id="gaSlotSpinButton"
+                onclick="gaSpinSlots()"
+            >
+                SPIN
+            </button>
+
+
+
+            <div class="ga-slot-control-box">
+
+                <span class="ga-slot-control-label">
+                    Winnings
+                </span>
+
+                <div
+                    class="ga-slot-win-display"
+                    id="gaSlotWinnings"
+                >
+                    0 AC
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="ga-slot-bottom-banner">
+
+            <span>◆</span>
+
+            THREE OF A KIND PAYS BIG
+
+            <span>◆</span>
+
+        </div>
+
+
+
+        <div
+            class="ga-slot-status"
+            id="gaSlotMessage"
         >
-            Press SPIN to begin.
-        </p>
+            Press SPIN or pull the lever to begin.
+        </div>
+
+
+
+        <div class="ga-slot-paytable">
+
+            <div>
+                <span>7 7 7</span>
+                <strong>10×</strong>
+            </div>
+
+            <div>
+                <span>💎 💎 💎</span>
+                <strong>8×</strong>
+            </div>
+
+            <div>
+                <span>👑 👑 👑</span>
+                <strong>6×</strong>
+            </div>
+
+            <div>
+                <span>BAR BAR BAR</span>
+                <strong>5×</strong>
+            </div>
+
+            <div>
+                <span>🔔 🔔 🔔</span>
+                <strong>4×</strong>
+            </div>
+
+            <div>
+                <span>🍒 🍒 🍒</span>
+                <strong>3×</strong>
+            </div>
+
+            <div>
+                <span>Any 2 matching</span>
+                <strong>1×</strong>
+            </div>
+
+        </div>
+
 
     </div>
 
@@ -631,9 +775,9 @@
 
 
 
-<!-- =======================================================
+<!-- ======================================================
      ROULETTE
-     ======================================================= -->
+     ====================================================== -->
 
 <section
     class="game-section roulette-section"
@@ -649,16 +793,14 @@
     </h2>
 
     <p>
-        Select a straight number, dozen,
-        color, parity, or range and spin
-        the European wheel.
+        Select a number or outside bet and
+        spin the European wheel.
     </p>
+
 
 
     <div class="roulette-layout">
 
-
-        <!-- WHEEL -->
 
         <div class="roulette-stage">
 
@@ -676,7 +818,6 @@
                         class="roulette-pocket-layer"
                         id="roulettePocketLayer"
                     ></div>
-
 
                     <div class="roulette-inner-ring"></div>
 
@@ -707,8 +848,6 @@
 
 
 
-        <!-- ROULETTE CONTROLS -->
-
         <div class="roulette-controls">
 
 
@@ -732,7 +871,6 @@
                     Bet Amount
                 </span>
 
-
                 <div
                     class="stat"
                     id="betAmount"
@@ -750,14 +888,12 @@
                         −100
                     </button>
 
-
                     <button
                         type="button"
                         onclick="changeBet(100)"
                     >
                         +100
                     </button>
-
 
                     <button
                         type="button"
@@ -778,14 +914,12 @@
                     Selected Bet
                 </span>
 
-
                 <div
                     class="roulette-selected-bet"
                     id="selectedBet"
                 >
                     NONE
                 </div>
-
 
                 <div
                     class="roulette-payout"
@@ -813,10 +947,6 @@
 
 
 
-    <!-- ===================================================
-         ROULETTE TABLE
-         =================================================== -->
-
     <div class="roulette-table-wrapper">
 
         <div class="roulette-table-title">
@@ -833,7 +963,6 @@
 
 
         <div class="roulette-table">
-
 
             <button
                 type="button"
@@ -854,10 +983,7 @@
 
 
 
-        <!-- DOZENS -->
-
         <div class="roulette-dozens">
-
 
             <button
                 type="button"
@@ -866,14 +992,12 @@
                 1ST 12
             </button>
 
-
             <button
                 type="button"
                 onclick="selectRouletteBet('dozen2', this)"
             >
                 2ND 12
             </button>
-
 
             <button
                 type="button"
@@ -886,10 +1010,7 @@
 
 
 
-        <!-- OUTSIDE BETS -->
-
         <div class="roulette-outside-bets">
-
 
             <button
                 type="button"
@@ -898,14 +1019,12 @@
                 1 TO 18
             </button>
 
-
             <button
                 type="button"
                 onclick="selectRouletteBet('even', this)"
             >
                 EVEN
             </button>
-
 
             <button
                 type="button"
@@ -915,7 +1034,6 @@
                 RED
             </button>
 
-
             <button
                 type="button"
                 class="roulette-black-bet"
@@ -924,14 +1042,12 @@
                 BLACK
             </button>
 
-
             <button
                 type="button"
                 onclick="selectRouletteBet('odd', this)"
             >
                 ODD
             </button>
-
 
             <button
                 type="button"
@@ -943,27 +1059,20 @@
         </div>
 
 
-
         <div class="notice roulette-payout-notice">
 
-            Straight Number:
-            <strong>
-                35:1
-            </strong>
+            Straight:
+            <strong>35:1</strong>
 
-            &nbsp; • &nbsp;
+            &nbsp;•&nbsp;
 
             Dozens:
-            <strong>
-                2:1
-            </strong>
+            <strong>2:1</strong>
 
-            &nbsp; • &nbsp;
+            &nbsp;•&nbsp;
 
-            Red / Black / Odd / Even / High / Low:
-            <strong>
-                1:1
-            </strong>
+            Even Money:
+            <strong>1:1</strong>
 
         </div>
 
@@ -973,9 +1082,9 @@
 
 
 
-<!-- =======================================================
-     HIGH ROLL
-     ======================================================= -->
+<!-- ======================================================
+     DICE
+     ====================================================== -->
 
 <section
     class="game-section"
@@ -991,22 +1100,13 @@
     </h2>
 
     <p>
-        Roll higher than the house to win.
+        Roll higher than the house.
     </p>
 
 
     <div class="simple-game">
 
-
-        <div
-            style="
-                display:flex;
-                justify-content:center;
-                gap:60px;
-                margin-bottom:25px;
-            "
-        >
-
+        <div class="dice-display-row">
 
             <div>
 
@@ -1015,9 +1115,8 @@
                 </span>
 
                 <div
-                    class="stat"
+                    class="stat dice-face"
                     id="houseDice"
-                    style="font-size:60px;"
                 >
                     ⚄
                 </div>
@@ -1032,15 +1131,13 @@
                 </span>
 
                 <div
-                    class="stat"
+                    class="stat dice-face"
                     id="playerDice"
-                    style="font-size:60px;"
                 >
                     ⚂
                 </div>
 
             </div>
-
 
         </div>
 
@@ -1055,7 +1152,7 @@
 
         <p
             id="diceMessage"
-            style="margin-top:20px;"
+            class="game-message"
         >
             Press ROLL DICE to begin.
         </p>
@@ -1065,10 +1162,6 @@
 </section>
 
 
-
-<!-- =======================================================
-     PLAY MONEY NOTICE
-     ======================================================= -->
 
 <section class="section">
 
@@ -1082,8 +1175,7 @@
 
             Ace Credits are fictional virtual credits
             used only within The Gilded Ace website.
-            They have no cash value and cannot be
-            redeemed for real money.
+            They have no cash value.
 
         </div>
 
@@ -1092,10 +1184,6 @@
 </section>
 
 
-
-<!-- =======================================================
-     FOOTER
-     ======================================================= -->
 
 <footer>
 
@@ -1110,13 +1198,7 @@
 
 
 
-<!-- =======================================================
-     SCRIPT
-     ======================================================= -->
-
-<script src="script.js?v=12"></script>
-
+<script src="script.js?v=20"></script>
 
 </body>
-
 </html>
