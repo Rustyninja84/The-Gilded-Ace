@@ -162,7 +162,7 @@ function simulatePhysicsStep(ball,dt){
     const triangleBottomY = board.top + (ROWS - 1) * board.rowGap + board.rowGap * .72;
 
     const topHalfWidth = board.pegGap * .58;
-    const bottomHalfWidth = (ROWS * board.pegGap) / 2 + board.pegGap * .56;
+    const bottomHalfWidth = (ROWS * board.pegGap) / 2 + board.pegGap * .95;
 
     const wallProgress = Math.max(
         0,
@@ -181,10 +181,10 @@ function simulatePhysicsStep(ball,dt){
 
     if(ball.x < leftWall){
         ball.x = leftWall;
-        ball.vx = Math.abs(ball.vx) * PHYSICS.wallRestitution + 12;
+        ball.vx = Math.abs(ball.vx) * PHYSICS.wallRestitution + 3;
     }else if(ball.x > rightWall){
         ball.x = rightWall;
-        ball.vx = -Math.abs(ball.vx) * PHYSICS.wallRestitution - 12;
+        ball.vx = -Math.abs(ball.vx) * PHYSICS.wallRestitution - 3;
     }
 
     // Resolve peg impacts more than once per step to reduce tunneling/sticking.
@@ -205,10 +205,21 @@ function simulatePhysicsStep(ball,dt){
 
 function animatePhysicalBall(){
     return new Promise(resolve=>{
+        /*
+         * About 4% of drops become an "edge chase".
+         * The ball still uses the same gravity and peg-collision physics;
+         * it only receives a modest initial sideways velocity.
+         * This makes the 10x edge slots realistically attainable.
+         */
+        const edgeChase = Math.random() < 0.04;
+        const edgeDirection = Math.random() < 0.5 ? -1 : 1;
+
         const ball = {
             x:board.centerX + (Math.random()-.5)*4,
             y:56,
-            vx:(Math.random()-.5)*34,
+            vx:edgeChase
+                ? edgeDirection * (105 + Math.random()*25)
+                : (Math.random()-.5)*34,
             vy:0
         };
 
@@ -226,6 +237,13 @@ function animatePhysicalBall(){
 
             while(accumulator >= PHYSICS.fixedStep){
                 simulatePhysicsStep(ball,PHYSICS.fixedStep);
+
+                // Gentle late-board drift only on rare edge-chase drops.
+                // Peg collisions can still cancel or reverse it.
+                if(edgeChase && ball.y > board.top + board.rowGap*5){
+                    ball.vx += edgeDirection * 7.5 * PHYSICS.fixedStep;
+                }
+
                 accumulator -= PHYSICS.fixedStep;
             }
 
@@ -500,29 +518,6 @@ function drawBoard(ball=null,trail=[]){
     ctx.font = "700 18px Cinzel, Georgia, serif";
     ctx.fillText("THE GILDED ACE PLINKO",W/2,48);
 
-    // triangular side rails that match the physics boundaries
-    const triangleTopY = board.top - 34;
-    const triangleBottomY = board.top + (ROWS - 1) * board.rowGap + board.rowGap * .72;
-    const topHalfWidth = board.pegGap * .58;
-    const bottomHalfWidth = (ROWS * board.pegGap) / 2 + board.pegGap * .56;
-
-    ctx.save();
-    ctx.strokeStyle = "rgba(212,166,50,.50)";
-    ctx.lineWidth = 4;
-    ctx.lineCap = "round";
-
-    ctx.beginPath();
-    ctx.moveTo(board.centerX - topHalfWidth, triangleTopY);
-    ctx.lineTo(board.centerX - bottomHalfWidth, triangleBottomY);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(board.centerX + topHalfWidth, triangleTopY);
-    ctx.lineTo(board.centerX + bottomHalfWidth, triangleBottomY);
-    ctx.stroke();
-
-    ctx.restore();
-
     // peg glow + peg
     for(let row=0;row<ROWS;row++){
         for(let i=0;i<=row;i++){
@@ -764,7 +759,12 @@ async function dropBall(){
     saveHistory();
     renderHistory();
 
-    if(payout>wager){
+    if(multiplier === 10){
+        setMessage(
+            `10× JACKPOT HIT! ${money(payout)} AC returned (${money(profit)} AC profit).`,
+            "win"
+        );
+    }else if(payout>wager){
         setMessage(
             `${multiplier}× hit! ${money(payout)} AC returned (${money(profit)} AC profit).`,
             "win"
