@@ -281,10 +281,11 @@ async function enterPokerRoom(roomId) {
 async function refreshPokerTable(roomId = pokerRoom?.id) {
     if (!roomId || leavingTable) return;
 
-    const [roomResult, seatsResult, cardsResult] = await Promise.all([
+    const [roomResult, seatsResult, cardsResult, myCardsResult] = await Promise.all([
         gaPokerSupabase.from("poker_rooms").select("*").eq("id", roomId).maybeSingle(),
         gaPokerSupabase.from("poker_seats").select("*").eq("room_id", roomId).order("seat_no"),
-        gaPokerSupabase.from("poker_hole_cards").select("*").eq("room_id", roomId)
+        gaPokerSupabase.from("poker_hole_cards").select("*").eq("room_id", roomId),
+        gaPokerSupabase.rpc("poker_get_my_hole_cards", { p_room: roomId })
     ]);
 
     if (roomResult.error) {
@@ -300,6 +301,26 @@ async function refreshPokerTable(roomId = pokerRoom?.id) {
     pokerRoom = roomResult.data;
     pokerSeats = seatsResult.data || [];
     pokerHoleCards = cardsResult.data || [];
+
+    // Secure fallback for the logged-in player's own cards.
+    // This fixes browsers receiving no visible hole-card row because of RLS.
+    if (!myCardsResult.error && Array.isArray(myCardsResult.data) && myCardsResult.data.length) {
+        const mine = myCardsResult.data[0];
+
+        pokerHoleCards = pokerHoleCards.filter(row =>
+            Number(row.seat_no) !== Number(mine.seat_no)
+        );
+
+        pokerHoleCards.push({
+            room_id: roomId,
+            seat_no: mine.seat_no,
+            user_id: pokerUser.id,
+            cards: mine.cards,
+            revealed: false
+        });
+    } else if (myCardsResult.error) {
+        console.error("Could not load your private hole cards:", myCardsResult.error);
+    }
 
     const mySeat = pokerSeats.find(s => s.user_id === pokerUser.id);
     if (!mySeat && !leavingTable) {
@@ -417,7 +438,8 @@ function renderMyCards() {
     const cards = row?.cards || row?.hole_cards || [];
 
     if (!Array.isArray(cards) || cards.length < 2) {
-        target.innerHTML = `<div class="poker-card back">A</div><div class="poker-card back">A</div>`;
+        target.innerHTML =
+            `<div class="poker-message error">Your cards could not be loaded.</div>`;
         return;
     }
 
