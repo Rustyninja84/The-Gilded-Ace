@@ -39,6 +39,198 @@ const board = {
     ballRadius:12
 };
 
+
+/* =========================================================
+   PLINKO PHYSICS v2
+   Real gravity, peg collisions, side-wall collisions and slot landing.
+========================================================= */
+
+const PHYSICS = {
+    gravity: 1180,          // pixels / second^2
+    airDrag: 0.9985,
+    pegRestitution: 0.57,
+    wallRestitution: 0.62,
+    tangentialFriction: 0.985,
+    collisionJitter: 38,   // px/s random deflection after peg impact
+    maxSpeed: 980,
+    fixedStep: 1/120,
+    maxFrameDt: 0.033
+};
+
+function allPegPositions(){
+    const pegs = [];
+
+    for(let row=0; row<ROWS; row++){
+        for(let i=0; i<=row; i++){
+            pegs.push(pegPosition(row,i));
+        }
+    }
+
+    return pegs;
+}
+
+const PLINKO_PEGS = allPegPositions();
+
+function nearestSlotIndex(x){
+    let bestIndex = 0;
+    let bestDistance = Infinity;
+
+    for(let i=0; i<SLOT_COUNT; i++){
+        const d = Math.abs(x-slotX(i));
+
+        if(d < bestDistance){
+            bestDistance = d;
+            bestIndex = i;
+        }
+    }
+
+    return bestIndex;
+}
+
+function resolvePegCollision(ball,peg){
+    const dx = ball.x-peg.x;
+    const dy = ball.y-peg.y;
+    const minDistance = board.ballRadius + board.pegRadius + 1;
+
+    let distance = Math.hypot(dx,dy);
+
+    if(distance >= minDistance){
+        return false;
+    }
+
+    if(distance < .0001){
+        distance = .0001;
+    }
+
+    const nx = dx/distance;
+    const ny = dy/distance;
+
+    // Push the ball outside the peg so it cannot sink/stick.
+    const penetration = minDistance-distance;
+    ball.x += nx*(penetration+0.7);
+    ball.y += ny*(penetration+0.7);
+
+    const normalVelocity = ball.vx*nx + ball.vy*ny;
+
+    // Only reflect when moving into the peg.
+    if(normalVelocity < 0){
+        const impulse = -(1+PHYSICS.pegRestitution)*normalVelocity;
+        ball.vx += impulse*nx;
+        ball.vy += impulse*ny;
+
+        // Preserve some lateral roll while removing excessive energy.
+        const tx = -ny;
+        const ty = nx;
+        const tangentVelocity = ball.vx*tx + ball.vy*ty;
+        const normalAfter = ball.vx*nx + ball.vy*ny;
+
+        ball.vx =
+            (tangentVelocity*PHYSICS.tangentialFriction)*tx +
+            normalAfter*nx;
+
+        ball.vy =
+            (tangentVelocity*PHYSICS.tangentialFriction)*ty +
+            normalAfter*ny;
+
+        // Tiny imperfection makes each physical bounce feel less mechanical.
+        ball.vx += (Math.random()-.5)*PHYSICS.collisionJitter;
+
+        return true;
+    }
+
+    return false;
+}
+
+function simulatePhysicsStep(ball,dt){
+    ball.vy += PHYSICS.gravity*dt;
+
+    const drag = Math.pow(PHYSICS.airDrag,dt*60);
+    ball.vx *= drag;
+    ball.vy *= drag;
+
+    ball.x += ball.vx*dt;
+    ball.y += ball.vy*dt;
+
+    const leftWall = 46 + board.ballRadius;
+    const rightWall = W-46-board.ballRadius;
+
+    if(ball.x < leftWall){
+        ball.x = leftWall;
+        ball.vx = Math.abs(ball.vx)*PHYSICS.wallRestitution;
+    }else if(ball.x > rightWall){
+        ball.x = rightWall;
+        ball.vx = -Math.abs(ball.vx)*PHYSICS.wallRestitution;
+    }
+
+    // Resolve peg impacts more than once per step to reduce tunneling/sticking.
+    for(let pass=0; pass<2; pass++){
+        for(const peg of PLINKO_PEGS){
+            resolvePegCollision(ball,peg);
+        }
+    }
+
+    const speed = Math.hypot(ball.vx,ball.vy);
+
+    if(speed > PHYSICS.maxSpeed){
+        const scale = PHYSICS.maxSpeed/speed;
+        ball.vx *= scale;
+        ball.vy *= scale;
+    }
+}
+
+function animatePhysicalBall(){
+    return new Promise(resolve=>{
+        const ball = {
+            x:board.centerX + (Math.random()-.5)*4,
+            y:56,
+            vx:(Math.random()-.5)*34,
+            vy:0
+        };
+
+        const trail = [];
+        const landingY = board.bottom+40;
+
+        let last = performance.now();
+        let accumulator = 0;
+        let started = last;
+
+        function frame(now){
+            const rawDt = Math.min(PHYSICS.maxFrameDt,(now-last)/1000);
+            last = now;
+            accumulator += rawDt;
+
+            while(accumulator >= PHYSICS.fixedStep){
+                simulatePhysicsStep(ball,PHYSICS.fixedStep);
+                accumulator -= PHYSICS.fixedStep;
+            }
+
+            trail.push({x:ball.x,y:ball.y});
+            if(trail.length>14) trail.shift();
+
+            drawBoard(ball,trail);
+
+            const elapsed = now-started;
+
+            if(ball.y >= landingY || elapsed > 8500){
+                const slot = nearestSlotIndex(ball.x);
+
+                // Snap visually to the center of the payout slot.
+                ball.x = slotX(slot);
+                ball.y = landingY;
+                drawBoard(ball,[]);
+
+                resolve(slot);
+                return;
+            }
+
+            requestAnimationFrame(frame);
+        }
+
+        requestAnimationFrame(frame);
+    });
+}
+
+
 function getLocalProfile(){
     try{
         const p = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
@@ -493,10 +685,9 @@ async function dropBall(){
 
     setMessage(`Dropping ${money(wager)} AC...`);
 
-    const outcome = choosePath();
-    await animateBall(outcome.decisions);
+    const landedSlot = await animatePhysicalBall();
 
-    const multiplier = MULTIPLIERS[outcome.slot];
+    const multiplier = MULTIPLIERS[landedSlot];
     const payout = Math.floor(wager*multiplier);
     const profit = payout-wager;
 
@@ -507,7 +698,7 @@ async function dropBall(){
     await setBalance(balance+payout,resultType);
 
     $("plinkoLastResult").textContent = `${multiplier}×`;
-    renderMultiplierStrip(outcome.slot);
+    renderMultiplierStrip(landedSlot);
 
     history.unshift({
         multiplier,

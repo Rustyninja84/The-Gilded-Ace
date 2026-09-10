@@ -549,3 +549,50 @@ body.ga-plinko-page{
         font-size:.58rem;
     }
 }
+
+
+/* =========================================================
+   GAME TAB LAYOUT FIX v2
+========================================================= */
+
+.plinko-game-tabs{
+    grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+}
+
+.plinko-game-tabs button{
+    width:100%;
+    min-width:0;
+    white-space:nowrap;
+}
+
+@media(max-width:1050px){
+    .plinko-game-tabs{
+        grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    }
+}
+
+@media(max-width:650px){
+    .plinko-game-tabs{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    }
+}
+
+
+/* =========================================================
+   PHYSICS VISUAL POLISH v2
+========================================================= */
+
+#plinkoCanvas{
+    cursor:default;
+}
+
+.plinko-board-topbar::after{
+    content:"REAL-TIME PHYSICS";
+    margin-left:auto;
+    padding:5px 8px;
+    border:1px solid rgba(212,166,50,.20);
+    color:#8f8065;
+    font-size:.55rem;
+    font-weight:800;
+    letter-spacing:.10em;
+}
