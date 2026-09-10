@@ -460,6 +460,7 @@ async function startRace(){
     generateRaceField();
     renderHorseChoices();
     buildTrack();
+    processHorseSprites();
 
     racing = false;
     setDisabled(false);
@@ -492,6 +493,80 @@ function bind(){
         if(!racing) buildTrack();
     });
 }
+
+
+
+async function removeHorseWhiteBox(img){
+    if(!img || img.dataset.cutoutDone === "1") return;
+
+    try{
+        if(!img.complete){
+            await new Promise((resolve,reject)=>{
+                img.addEventListener("load",resolve,{once:true});
+                img.addEventListener("error",reject,{once:true});
+            });
+        }
+
+        const naturalW = img.naturalWidth || img.width;
+        const naturalH = img.naturalHeight || img.height;
+        if(!naturalW || !naturalH) return;
+
+        const canvas = document.createElement("canvas");
+        canvas.className = "horse-cutout-canvas";
+        canvas.width = naturalW;
+        canvas.height = naturalH;
+
+        const ctx = canvas.getContext("2d",{willReadFrequently:true});
+        ctx.drawImage(img,0,0,naturalW,naturalH);
+
+        const frame = ctx.getImageData(0,0,naturalW,naturalH);
+        const p = frame.data;
+
+        for(let i=0;i<p.length;i+=4){
+            const r=p[i], g=p[i+1], b=p[i+2];
+
+            const max=Math.max(r,g,b);
+            const min=Math.min(r,g,b);
+            const spread=max-min;
+            const brightness=(r+g+b)/3;
+
+            /*
+             * The source preview has white/light-gray checkerboard pixels baked
+             * into it. Neutral bright pixels are background; make them alpha 0.
+             *
+             * The two-stage threshold keeps colored horse/jockey detail while
+             * removing both pure white and the light checker cells.
+             */
+            if(
+                (brightness >= 238 && spread <= 24) ||
+                (brightness >= 215 && spread <= 13)
+            ){
+                p[i+3]=0;
+            }else if(brightness >= 200 && spread <= 10){
+                // Feather the edge instead of leaving a white halo.
+                const alpha=Math.max(0,255-((brightness-200)*5));
+                p[i+3]=Math.min(p[i+3],alpha);
+            }
+        }
+
+        ctx.putImageData(frame,0,0);
+
+        img.dataset.cutoutDone="1";
+        img.replaceWith(canvas);
+    }catch(err){
+        /*
+         * If the remote host blocks canvas pixel access, keep the horse visible.
+         * For guaranteed processing, store the same source image in the repo
+         * and point src to that same-origin file.
+         */
+        console.error("Horse transparency processing failed:",err);
+    }
+}
+
+function processHorseSprites(){
+    document.querySelectorAll(".horse-sprite-image").forEach(removeHorseWhiteBox);
+}
+
 
 document.addEventListener("DOMContentLoaded",async()=>{
     generateRaceField();
