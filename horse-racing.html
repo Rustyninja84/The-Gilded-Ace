@@ -7,7 +7,7 @@
     <title>The Gilded Derby | The Gilded Ace</title>
 
     <link rel="stylesheet" href="styles.css?v=100">
-    <link rel="stylesheet" href="horse-racing.css?v=20">
+    <link rel="stylesheet" href="horse-racing.css?v=30">
 </head>
 
 <body class="horse-racing-page">
@@ -216,35 +216,18 @@
 </footer>
 
 <template id="horseSvgTemplate">
-
-<svg class="horse-svg" viewBox="0 0 190 86" aria-hidden="true">
-  <g class="horse-shadow">
-    <ellipse cx="100" cy="73" rx="65" ry="6"></ellipse>
-  </g>
-  <g class="horse-body-shape">
-    <path d="M47 48c8-14 26-21 48-20 14 0 28 3 39 9l12-17c3-4 9-5 14-3l12 6-6 8-14-2-12 18c-7 8-17 14-29 17l-30 2c-17-2-30-7-38-18z"></path>
-    <path d="M45 45 24 38 10 23l8-4 17 12 17 2z"></path>
-    <path d="M69 58 50 80h10l22-19z"></path>
-    <path d="M93 61 81 83h10l16-23z"></path>
-    <path d="M117 59 132 82h10l-14-28z"></path>
-    <path d="M137 55 158 78h11l-21-31z"></path>
-    <path d="M145 19c9-8 18-10 26-4 5 3 7 8 6 13-6-3-12-5-19-5z"></path>
-  </g>
-
-  <g class="jockey">
-    <circle cx="119" cy="12" r="7" class="jockey-head"></circle>
-    <path d="M111 18h17l5 16-17 7-11-10z" class="jockey-shirt"></path>
-    <path d="M126 18 143 8l4 3-15 14z" class="jockey-arm"></path>
-    <path d="M114 22 98 34l3 4 17-9z" class="jockey-arm"></path>
-    <path d="M116 39 105 52h7l12-12z" class="jockey-leg"></path>
-    <path d="M125 38 135 49h7l-10-15z" class="jockey-leg"></path>
-    <path d="M113 5h14l-2 5h-12z" class="jockey-cap"></path>
-  </g>
-</svg>
-
+    <div class="horse-sprite-wrap">
+        <img
+            class="horse-sprite-image"
+            src="https://toppng.com/uploads/preview/race-horse-side-view-11548527021bs38dr6jx5.png"
+            alt=""
+            draggable="false"
+        >
+        <span class="sprite-number"></span>
+    </div>
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="horse-racing.js?v=20"></script>
+<script src="horse-racing.js?v=30"></script>
 </body>
 </html>

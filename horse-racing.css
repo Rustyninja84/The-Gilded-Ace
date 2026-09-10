@@ -1112,3 +1112,165 @@ body.horse-racing-page{
         right:30px;
     }
 }
+
+
+/* =========================================================
+   REAL HORSE PNG SPRITE v30
+   Uses a transparent racehorse + jockey PNG.
+   This overrides the old SVG horse rendering only.
+========================================================= */
+
+.realistic-race-track .race-horse,
+.race-horse{
+    width:176px !important;
+    height:100px !important;
+    overflow:visible !important;
+    transform-origin:50% 72%;
+}
+
+.horse-sprite-wrap{
+    position:relative;
+    width:176px;
+    height:100px;
+    pointer-events:none;
+    user-select:none;
+}
+
+.horse-sprite-image{
+    display:block;
+    width:176px;
+    height:100px;
+    object-fit:contain;
+    object-position:center;
+    pointer-events:none;
+    user-select:none;
+    -webkit-user-drag:none;
+    filter:
+        drop-shadow(0 7px 4px rgba(0,0,0,.48))
+        saturate(.95)
+        contrast(1.04);
+}
+
+.sprite-number{
+    position:absolute;
+    left:67px;
+    top:46px;
+    width:24px;
+    height:24px;
+    display:grid;
+    place-items:center;
+    border-radius:3px;
+    background:var(--runner-color,#a80f1e);
+    border:1px solid rgba(255,255,255,.86);
+    color:#fff;
+    font-family:Inter,Arial,sans-serif;
+    font-size:.72rem;
+    font-weight:900;
+    line-height:1;
+    box-shadow:0 2px 5px rgba(0,0,0,.45);
+}
+
+.race-horse[data-runner="1"] .sprite-number::after{content:"1"}
+.race-horse[data-runner="2"] .sprite-number::after{content:"2"}
+.race-horse[data-runner="3"] .sprite-number::after{content:"3"}
+.race-horse[data-runner="4"] .sprite-number::after{content:"4"}
+.race-horse[data-runner="5"] .sprite-number::after{content:"5"}
+.race-horse[data-runner="6"] .sprite-number::after{content:"6"}
+
+/* The horse PNG already looks like a horse.
+   Only add a subtle race bob instead of distorting the body. */
+.race-horse.running .horse-sprite-wrap{
+    animation:realSpriteGallop .34s ease-in-out infinite alternate;
+}
+
+@keyframes realSpriteGallop{
+    from{transform:translateY(-1px) rotate(-.35deg)}
+    to{transform:translateY(2px) rotate(.35deg)}
+}
+
+/* More realistic dirt spray behind the hind legs. */
+.race-horse.running .horse-sprite-wrap::after{
+    content:"";
+    position:absolute;
+    left:3px;
+    bottom:13px;
+    width:70px;
+    height:24px;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(219,184,139,.64) 0%,
+            rgba(160,112,72,.30) 48%,
+            transparent 72%
+        );
+    filter:blur(2px);
+    z-index:-1;
+    animation:spriteDust .68s linear infinite;
+}
+
+@keyframes spriteDust{
+    0%{
+        transform:translateX(18px) scale(.45);
+        opacity:.10;
+    }
+    45%{
+        opacity:.48;
+    }
+    100%{
+        transform:translateX(-48px) scale(1.45);
+        opacity:0;
+    }
+}
+
+/* Slight visual variation so all six runners do not look absolutely identical. */
+.race-horse[data-runner="1"] .horse-sprite-image{filter:drop-shadow(0 7px 4px rgba(0,0,0,.48)) saturate(1.00) brightness(.94)}
+.race-horse[data-runner="2"] .horse-sprite-image{filter:drop-shadow(0 7px 4px rgba(0,0,0,.48)) saturate(.82) brightness(1.09)}
+.race-horse[data-runner="3"] .horse-sprite-image{filter:drop-shadow(0 7px 4px rgba(0,0,0,.48)) saturate(.70) brightness(.78)}
+.race-horse[data-runner="4"] .horse-sprite-image{filter:drop-shadow(0 7px 4px rgba(0,0,0,.48)) saturate(1.08) brightness(.96)}
+.race-horse[data-runner="5"] .horse-sprite-image{filter:drop-shadow(0 7px 4px rgba(0,0,0,.48)) saturate(.92) brightness(.86)}
+.race-horse[data-runner="6"] .horse-sprite-image{filter:drop-shadow(0 7px 4px rgba(0,0,0,.48)) saturate(.88) brightness(.90)}
+
+@media (max-width:1000px){
+    .realistic-race-track .race-horse,
+    .race-horse{
+        width:148px !important;
+        height:86px !important;
+    }
+
+    .horse-sprite-wrap,
+    .horse-sprite-image{
+        width:148px;
+        height:86px;
+    }
+
+    .sprite-number{
+        left:56px;
+        top:39px;
+        width:21px;
+        height:21px;
+        font-size:.64rem;
+    }
+}
+
+@media (max-width:720px){
+    .realistic-race-track .race-horse,
+    .race-horse{
+        width:112px !important;
+        height:67px !important;
+    }
+
+    .horse-sprite-wrap,
+    .horse-sprite-image{
+        width:112px;
+        height:67px;
+    }
+
+    .sprite-number{
+        left:43px;
+        top:30px;
+        width:17px;
+        height:17px;
+        font-size:.52rem;
+    }
+}

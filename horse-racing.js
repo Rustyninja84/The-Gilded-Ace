@@ -210,7 +210,12 @@ function buildTrack(){
 
         lane.innerHTML = `
             <span class="lane-number">${h.id}</span>
-            <div class="race-horse" id="raceHorse${h.id}" style="--jockey-color:${jockeyColor}">
+            <div
+                class="race-horse"
+                id="raceHorse${h.id}"
+                data-runner="${h.id}"
+                style="--runner-color:${jockeyColor};"
+            >
                 ${svgMarkup()}
             </div>
         `;
