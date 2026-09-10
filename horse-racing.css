@@ -1324,15 +1324,49 @@ body.horse-racing-page{
      * preview baked into the file. Multiplying it against the dirt
      * removes the white visually instead of drawing the rectangle.
      */
-    mix-blend-mode:multiply !important;
-    filter:
-        brightness(1.18)
-        contrast(1.22)
-        saturate(1.08)
-        drop-shadow(0 6px 3px rgba(0,0,0,.34)) !important;
+    mix-blend-mode:normal !important;
+    filter:drop-shadow(0 6px 3px rgba(0,0,0,.38)) !important;
 }
 
 /* Never display an extra runner-number badge over the horse. */
+.race-horse .sprite-number,
+.race-horse::before{
+    display:none !important;
+    content:none !important;
+}
+
+
+/* =========================================================
+   TRUE TRANSPARENT HORSE FIX v40
+========================================================= */
+
+.sprite-number{
+    display:none !important;
+}
+
+.horse-sprite-wrap{
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    overflow:visible !important;
+}
+
+.horse-sprite-image{
+    display:block !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+
+    /* IMPORTANT:
+       Do not use multiply/filters to fake transparency.
+       The new horse file itself has a transparent background. */
+    mix-blend-mode:normal !important;
+    filter:drop-shadow(0 6px 3px rgba(0,0,0,.38)) !important;
+
+    object-fit:contain !important;
+}
+
+/* Remove any leftover number overlay. */
 .race-horse .sprite-number,
 .race-horse::before{
     display:none !important;
