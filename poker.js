@@ -1,2836 +1,706 @@
-"use strict";
+const GA_SUPABASE_URL = "https://wrmiylynviujwdoecvcn.supabase.co";
+const GA_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_x-OPQXsHErbHt8I9eAN1Tw_vRhqUsWX";
 
-
-// ============================================================
-// THE GILDED ACE
-// MULTIPLAYER TEXAS HOLD'EM
-// ============================================================
-
-
-// ============================================================
-// SUPABASE
-// ============================================================
-
-const GA_SUPABASE_URL =
-    "https://wrmiylynviujwdoecvcn.supabase.co";
-
-
-const GA_SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_x-OPQXsHErbHt8I9eAN1Tw_vRhqUsWX";
-
-
-const gaPokerSupabase =
-    window.supabase.createClient(
-
-        GA_SUPABASE_URL,
-
-        GA_SUPABASE_PUBLISHABLE_KEY
-
-    );
-
-
-// ============================================================
-// APPLICATION STATE
-// ============================================================
+const gaPokerSupabase = window.supabase.createClient(
+    GA_SUPABASE_URL,
+    GA_SUPABASE_PUBLISHABLE_KEY,
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+        }
+    }
+);
 
 let pokerUser = null;
-
 let pokerProfile = null;
-
 let pokerRoom = null;
-
 let pokerSeats = [];
-
 let pokerHoleCards = [];
-
-let pokerMySeat = null;
-
-let pokerRealtimeChannel = null;
-
-let pokerBotTimer = null;
-
+let pokerChannel = null;
 let pokerRefreshTimer = null;
+let pokerBotTimer = null;
+let pokerNextHandTimer = null;
+let actionBusy = false;
+let leavingTable = false;
 
-let pokerAutomaticStartTimer = null;
+document.addEventListener("DOMContentLoaded", initializePoker);
 
-let pokerAutoBotsEnabled = true;
-
-let pokerBusy = false;
-
-
-// ============================================================
-// DOM
-// ============================================================
-
-const pokerLoginRequired =
-    document.getElementById(
-        "pokerLoginRequired"
-    );
-
-
-const pokerApp =
-    document.getElementById(
-        "pokerApp"
-    );
-
-
-const pokerLobby =
-    document.getElementById(
-        "pokerLobby"
-    );
-
-
-const pokerTableScreen =
-    document.getElementById(
-        "pokerTableScreen"
-    );
-
-
-const pokerRoomList =
-    document.getElementById(
-        "pokerRoomList"
-    );
-
-
-const pokerLobbyMessage =
-    document.getElementById(
-        "pokerLobbyMessage"
-    );
-
-
-const pokerTableMessage =
-    document.getElementById(
-        "pokerTableMessage"
-    );
-
-
-// ============================================================
-// FORMAT MONEY
-// ============================================================
-
-function pokerMoney(value){
-
-    const amount =
-        Number(value || 0);
-
-
-    return (
-        amount.toLocaleString()
-        +
-        " AC"
-    );
-
+function $(id) {
+    return document.getElementById(id);
 }
 
+function fmt(value) {
+    return Math.max(0, Math.floor(Number(value) || 0)).toLocaleString();
+}
 
-// ============================================================
-// ERROR MESSAGE
-// ============================================================
+function esc(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 
-function pokerErrorMessage(error){
+function setMessage(text, type = "") {
+    const el = $("pokerStatusMessage") || $("lobbyMessage");
+    if (!el) return;
+    el.textContent = text || "";
+    el.className = "poker-message" + (type ? ` ${type}` : "");
+}
 
-    if(!error){
+function setLobbyMessage(text, type = "") {
+    const el = $("lobbyMessage");
+    if (!el) return;
+    el.textContent = text || "";
+    el.className = "poker-message" + (type ? ` ${type}` : "");
+}
 
-        return "Something went wrong.";
+function showOnly(id) {
+    ["pokerLoading", "pokerLoginRequired", "pokerLobby", "pokerTableView"]
+        .forEach(name => {
+            const el = $(name);
+            if (el) el.classList.toggle("hidden", name !== id);
+        });
+}
 
+async function initializePoker() {
+    bindPokerButtons();
+
+    const { data: { session }, error } = await gaPokerSupabase.auth.getSession();
+
+    if (error || !session?.user) {
+        showOnly("pokerLoginRequired");
+        return;
     }
 
+    pokerUser = session.user;
+    await loadPokerProfile();
 
-    return (
-        error.message
-        ||
-        error.details
-        ||
-        String(error)
-    );
-
-}
-
-
-// ============================================================
-// LOBBY MESSAGE
-// ============================================================
-
-function setPokerLobbyMessage(
-    text,
-    type = ""
-){
-
-    pokerLobbyMessage.textContent =
-        text || "";
-
-
-    pokerLobbyMessage.className =
-        "poker-message";
-
-
-    if(type){
-
-        pokerLobbyMessage.classList.add(
-            type
-        );
-
+    if (!pokerProfile) {
+        showOnly("pokerLoginRequired");
+        return;
     }
 
-}
+    const roomId = new URLSearchParams(window.location.search).get("room");
 
-
-// ============================================================
-// TABLE MESSAGE
-// ============================================================
-
-function setPokerTableMessage(
-    text,
-    type = ""
-){
-
-    pokerTableMessage.textContent =
-        text || "";
-
-
-    pokerTableMessage.className =
-        "poker-table-message";
-
-
-    if(type){
-
-        pokerTableMessage.classList.add(
-            type
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// INITIALIZE
-// ============================================================
-
-async function initializePoker(){
-
-    try{
-
-
-        const {
-            data,
-            error
-        } =
-            await gaPokerSupabase.auth
-                .getSession();
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-        const session =
-            data.session;
-
-
-        if(!session){
-
-            showPokerLoginRequired();
-
+    if (roomId) {
+        try {
+            await enterPokerRoom(roomId);
             return;
-
+        } catch (error) {
+            console.error(error);
+            history.replaceState({}, "", "poker.html");
         }
-
-
-        pokerUser =
-            session.user;
-
-
-        pokerApp.hidden =
-            false;
-
-
-        pokerLoginRequired.hidden =
-            true;
-
-
-        await loadPokerProfile();
-
-
-        await loadPokerRooms();
-
-
-        checkPokerRoomFromURL();
-
-
-    }
-    catch(error){
-
-        console.error(
-            error
-        );
-
-
-        showPokerLoginRequired();
-
     }
 
+    showOnly("pokerLobby");
+    await loadPokerRooms();
 }
 
-
-// ============================================================
-// LOGIN SCREEN
-// ============================================================
-
-function showPokerLoginRequired(){
-
-    pokerApp.hidden =
-        true;
-
-
-    pokerLoginRequired.hidden =
-        false;
-
-}
-
-
-// ============================================================
-// PROFILE
-// ============================================================
-
-async function loadPokerProfile(){
-
-    const {
-        data,
-        error
-    } =
-        await gaPokerSupabase
-
-            .from("profiles")
-
-            .select(
-                "id, username, balance"
-            )
-
-            .eq(
-                "id",
-                pokerUser.id
-            )
-
-            .single();
-
-
-    if(error){
-
-        throw error;
-
-    }
-
-
-    pokerProfile =
-        data;
-
-
-    updatePokerProfileDisplay();
-
-}
-
-
-// ============================================================
-// PROFILE DISPLAY
-// ============================================================
-
-function updatePokerProfileDisplay(){
-
-    if(!pokerProfile){
-
-        return;
-
-    }
-
-
-    const name =
-        pokerProfile.username
-        ||
-        "Gilded Player";
-
-
-    const balance =
-        pokerMoney(
-            pokerProfile.balance
-        );
-
-
-    const nameElement =
-        document.getElementById(
-            "pokerMemberName"
-        );
-
-
-    const balanceElement =
-        document.getElementById(
-            "pokerMemberBalance"
-        );
-
-
-    const navBalance =
-        document.getElementById(
-            "pokerNavBalance"
-        );
-
-
-    if(nameElement){
-
-        nameElement.textContent =
-            name;
-
-    }
-
-
-    if(balanceElement){
-
-        balanceElement.textContent =
-            balance;
-
-    }
-
-
-    if(navBalance){
-
-        navBalance.textContent =
-            balance;
-
-    }
-
-}
-
-
-// ============================================================
-// LOAD ROOMS
-// ============================================================
-
-async function loadPokerRooms(){
-
-    const {
-        data,
-        error
-    } =
-        await gaPokerSupabase
-
-            .from(
-                "poker_rooms"
-            )
-
-            .select(
-                `
-                id,
-                name,
-                max_seats,
-                buy_in,
-                small_blind,
-                big_blind,
-                status,
-                hand_complete,
-                created_at,
-                poker_seats(
-                    seat_no,
-                    is_bot,
-                    user_id
-                )
-                `
-            )
-
-            .order(
-                "created_at",
-                {
-                    ascending:false
-                }
-            );
-
-
-    if(error){
-
-        console.error(
-            error
-        );
-
-        return;
-
-    }
-
-
-    renderPokerRooms(
-        data || []
-    );
-
-}
-
-
-// ============================================================
-// RENDER ROOMS
-// ============================================================
-
-function renderPokerRooms(rooms){
-
-    pokerRoomList.innerHTML =
-        "";
-
-
-    if(!rooms.length){
-
-        pokerRoomList.innerHTML = `
-
-            <div class="poker-empty-state">
-
-                <span>♠</span>
-
-                <h3>
-                    No Open Tables
-                </h3>
-
-                <p>
-                    Create the first table and
-                    house players can fill the
-                    empty seats.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    rooms.forEach(room => {
-
-        const seats =
-            room.poker_seats
-            ||
-            [];
-
-
-        const humanCount =
-            seats.filter(
-                seat =>
-                    !seat.is_bot
-            ).length;
-
-
-        const botCount =
-            seats.filter(
-                seat =>
-                    seat.is_bot
-            ).length;
-
-
-        const total =
-            seats.length;
-
-
-        const card =
-            document.createElement(
-                "div"
-            );
-
-
-        card.className =
-            "poker-room-card";
-
-
-        card.innerHTML = `
-
-            <div class="poker-room-title">
-
-                <strong>
-                    ${escapePokerHTML(room.name)}
-                </strong>
-
-                <span>
-                    ${humanCount} HUMAN
-                    •
-                    ${botCount} HOUSE PLAYERS
-                </span>
-
-            </div>
-
-
-            <div class="poker-room-stat">
-
-                <span>
-                    SEATS
-                </span>
-
-                <strong>
-                    ${total} / ${room.max_seats}
-                </strong>
-
-            </div>
-
-
-            <div class="poker-room-stat">
-
-                <span>
-                    BUY-IN
-                </span>
-
-                <strong>
-                    ${pokerMoney(room.buy_in)}
-                </strong>
-
-            </div>
-
-
-            <div class="poker-room-stat">
-
-                <span>
-                    BLINDS
-                </span>
-
-                <strong>
-                    ${Number(room.small_blind).toLocaleString()}
-                    /
-                    ${Number(room.big_blind).toLocaleString()}
-                </strong>
-
-            </div>
-
-
-            <div class="poker-room-stat">
-
-                <span>
-                    STATUS
-                </span>
-
-                <strong>
-                    ${String(room.status).toUpperCase()}
-                </strong>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="btn secondary poker-room-join"
-                data-room-id="${room.id}"
-            >
-                JOIN
-            </button>
-
-        `;
-
-
-        card
-            .querySelector(
-                ".poker-room-join"
-            )
-            .addEventListener(
-                "click",
-                () => joinPokerRoom(
-                    room.id
-                )
-            );
-
-
-        pokerRoomList.appendChild(
-            card
-        );
-
+function bindPokerButtons() {
+    $("refreshRoomsButton")?.addEventListener("click", loadPokerRooms);
+    $("createRoomButton")?.addEventListener("click", createPokerRoom);
+    $("fillBotsButton")?.addEventListener("click", fillPokerBots);
+    $("leaveTableButton")?.addEventListener("click", leavePokerRoom);
+    $("startHandButton")?.addEventListener("click", startPokerHand);
+    $("foldButton")?.addEventListener("click", () => pokerAction("fold"));
+    $("checkButton")?.addEventListener("click", () => pokerAction("check"));
+    $("callButton")?.addEventListener("click", () => pokerAction("call"));
+    $("raiseButton")?.addEventListener("click", () => {
+        const amount = Number($("raiseAmount")?.value || 0);
+        pokerAction("raise", amount);
     });
-
 }
 
+async function loadPokerProfile() {
+    const { data, error } = await gaPokerSupabase
+        .from("profiles")
+        .select("*")
+        .eq("id", pokerUser.id)
+        .maybeSingle();
 
-// ============================================================
-// CREATE ROOM
-// ============================================================
-
-async function createPokerRoom(){
-
-    if(pokerBusy){
-
+    if (error) {
+        console.error("Profile load failed:", error);
         return;
-
     }
 
+    pokerProfile = data;
 
-    pokerBusy =
-        true;
+    const name = pokerProfile?.username || pokerUser.email || "Gilded Player";
+    const balance = Number(pokerProfile?.balance || 0);
 
-
-    setPokerLobbyMessage(
-        "Opening your table..."
-    );
-
-
-    try{
-
-
-        const name =
-            document
-                .getElementById(
-                    "pokerRoomName"
-                )
-                .value
-                .trim();
-
-
-        const buyIn =
-            Number(
-                document
-                    .getElementById(
-                        "pokerBuyIn"
-                    )
-                    .value
-            );
-
-
-        const smallBlind =
-            Number(
-                document
-                    .getElementById(
-                        "pokerSmallBlind"
-                    )
-                    .value
-            );
-
-
-        const bigBlind =
-            Number(
-                document
-                    .getElementById(
-                        "pokerBigBlind"
-                    )
-                    .value
-            );
-
-
-        const maxSeats =
-            Number(
-                document
-                    .getElementById(
-                        "pokerMaxSeats"
-                    )
-                    .value
-            );
-
-
-        pokerAutoBotsEnabled =
-            document
-                .getElementById(
-                    "pokerAutoBots"
-                )
-                .checked;
-
-
-        if(bigBlind <= smallBlind){
-
-            throw new Error(
-                "Big blind must be higher than the small blind."
-            );
-
-        }
-
-
-        const {
-            data,
-            error
-        } =
-            await gaPokerSupabase
-                .rpc(
-                    "poker_create_room",
-                    {
-
-                        p_name:
-                            name
-                            ||
-                            "Gilded Table",
-
-                        p_buy_in:
-                            buyIn,
-
-                        p_small_blind:
-                            smallBlind,
-
-                        p_big_blind:
-                            bigBlind,
-
-                        p_max_seats:
-                            maxSeats
-
-                    }
-                );
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-        setPokerLobbyMessage(
-            "Table created.",
-            "success"
-        );
-
-
-        await loadPokerProfile();
-
-
-        await enterPokerRoom(
-            data
-        );
-
-
-        if(pokerAutoBotsEnabled){
-
-            window.setTimeout(
-
-                () =>
-                    fillPokerBots(),
-
-                2500
-
-            );
-
-        }
-
-
-    }
-    catch(error){
-
-        console.error(
-            error
-        );
-
-
-        setPokerLobbyMessage(
-            pokerErrorMessage(
-                error
-            ),
-            "error"
-        );
-
-    }
-    finally{
-
-        pokerBusy =
-            false;
-
-    }
-
+    if ($("pokerPlayerName")) $("pokerPlayerName").textContent = name;
+    if ($("pokerPlayerBalance")) $("pokerPlayerBalance").textContent = `${fmt(balance)} AC`;
+    if ($("pokerHeaderBalance")) $("pokerHeaderBalance").textContent = `${fmt(balance)} AC`;
 }
 
+async function loadPokerRooms() {
+    const list = $("pokerRoomList");
+    if (!list) return;
 
-// ============================================================
-// JOIN ROOM
-// ============================================================
+    list.innerHTML = `<div class="poker-message">Loading tables...</div>`;
 
-async function joinPokerRoom(roomId){
+    const { data: rooms, error } = await gaPokerSupabase
+        .from("poker_rooms")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(30);
 
-    if(pokerBusy){
-
+    if (error) {
+        list.innerHTML = `<div class="poker-message error">${esc(error.message)}</div>`;
         return;
-
     }
 
+    const roomIds = (rooms || []).map(r => r.id);
+    let seatRows = [];
 
-    pokerBusy =
-        true;
-
-
-    setPokerLobbyMessage(
-        "Joining table..."
-    );
-
-
-    try{
-
-
-        const {
-            error
-        } =
-            await gaPokerSupabase
-                .rpc(
-                    "poker_join_room",
-                    {
-                        p_room:
-                            roomId
-                    }
-                );
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-        await loadPokerProfile();
-
-
-        await enterPokerRoom(
-            roomId
-        );
-
-
-        pokerAutoBotsEnabled =
-            true;
-
-
-        window.setTimeout(
-
-            () =>
-                fillPokerBots(),
-
-            4000
-
-        );
-
-
-    }
-    catch(error){
-
-        console.error(
-            error
-        );
-
-
-        setPokerLobbyMessage(
-            pokerErrorMessage(
-                error
-            ),
-            "error"
-        );
-
-    }
-    finally{
-
-        pokerBusy =
-            false;
-
+    if (roomIds.length) {
+        const { data } = await gaPokerSupabase
+            .from("poker_seats")
+            .select("room_id,seat_no,user_id,is_bot")
+            .in("room_id", roomIds);
+        seatRows = data || [];
     }
 
-}
-
-
-// ============================================================
-// FILL BOTS
-// ============================================================
-
-async function fillPokerBots(){
-
-    if(
-        !pokerRoom
-        ||
-        !pokerAutoBotsEnabled
-    ){
-
+    if (!rooms?.length) {
+        list.innerHTML = `<div class="poker-message">No tables yet. Create the first one.</div>`;
         return;
-
     }
 
-
-    try{
-
-
-        const {
-            error
-        } =
-            await gaPokerSupabase
-                .rpc(
-                    "poker_fill_bots",
-                    {
-                        p_room:
-                            pokerRoom.id
-                    }
-                );
-
-
-        if(error){
-
-            console.warn(
-                "Bot fill:",
-                error.message
-            );
-
-        }
-
-
-    }
-    catch(error){
-
-        console.warn(
-            error
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// ENTER ROOM
-// ============================================================
-
-async function enterPokerRoom(roomId){
-
-    pokerLobby.hidden =
-        true;
-
-
-    pokerTableScreen.hidden =
-        false;
-
-
-    history.replaceState(
-        {},
-        "",
-        `poker.html?room=${encodeURIComponent(roomId)}`
-    );
-
-
-    await subscribePokerRoom(
-        roomId
-    );
-
-
-    await refreshPokerTable(
-        roomId
-    );
-
-}
-
-
-// ============================================================
-// ROOM FROM URL
-// ============================================================
-
-async function checkPokerRoomFromURL(){
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-
-    const roomId =
-        params.get(
-            "room"
-        );
-
-
-    if(!roomId){
-
-        return;
-
-    }
-
-
-    const {
-        data
-    } =
-        await gaPokerSupabase
-
-            .from(
-                "poker_seats"
-            )
-
-            .select(
-                "seat_no"
-            )
-
-            .eq(
-                "room_id",
-                roomId
-            )
-
-            .eq(
-                "user_id",
-                pokerUser.id
-            )
-
-            .maybeSingle();
-
-
-    if(data){
-
-        await enterPokerRoom(
-            roomId
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// REFRESH TABLE
-// ============================================================
-
-async function refreshPokerTable(roomId){
-
-    if(!roomId){
-
-        return;
-
-    }
-
-
-    try{
-
-
-        const roomResult =
-            await gaPokerSupabase
-
-                .from(
-                    "poker_rooms"
-                )
-
-                .select("*")
-
-                .eq(
-                    "id",
-                    roomId
-                )
-
-                .single();
-
-
-        if(roomResult.error){
-
-            throw roomResult.error;
-
-        }
-
-
-        pokerRoom =
-            roomResult.data;
-
-
-        const seatResult =
-            await gaPokerSupabase
-
-                .from(
-                    "poker_seats"
-                )
-
-                .select("*")
-
-                .eq(
-                    "room_id",
-                    roomId
-                )
-
-                .order(
-                    "seat_no"
-                );
-
-
-        if(seatResult.error){
-
-            throw seatResult.error;
-
-        }
-
-
-        pokerSeats =
-            seatResult.data
-            ||
-            [];
-
-
-        const cardsResult =
-            await gaPokerSupabase
-
-                .from(
-                    "poker_hole_cards"
-                )
-
-                .select("*")
-
-                .eq(
-                    "room_id",
-                    roomId
-                )
-
-                .eq(
-                    "hand_no",
-                    pokerRoom.hand_no
-                );
-
-
-        if(cardsResult.error){
-
-            console.warn(
-                cardsResult.error
-            );
-
-        }
-
-
-        pokerHoleCards =
-            cardsResult.data
-            ||
-            [];
-
-
-        pokerMySeat =
-            pokerSeats.find(
-                seat =>
-                    seat.user_id
-                    ===
-                    pokerUser.id
-            )
-            ||
-            null;
-
-
-        renderPokerTable();
-
-
-        handlePokerAutomation();
-
-
-    }
-    catch(error){
-
-        console.error(
-            error
-        );
-
-
-        setPokerTableMessage(
-            pokerErrorMessage(
-                error
-            )
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// REALTIME
-// ============================================================
-
-async function subscribePokerRoom(roomId){
-
-    if(pokerRealtimeChannel){
-
-        await gaPokerSupabase
-            .removeChannel(
-                pokerRealtimeChannel
-            );
-
-    }
-
-
-    pokerRealtimeChannel =
-        gaPokerSupabase
-
-            .channel(
-                `poker-room-${roomId}`
-            )
-
-            .on(
-
-                "postgres_changes",
-
-                {
-                    event:"*",
-                    schema:"public",
-                    table:"poker_rooms",
-                    filter:`id=eq.${roomId}`
-                },
-
-                () => {
-
-                    queuePokerRefresh(
-                        roomId
-                    );
-
-                }
-
-            )
-
-            .on(
-
-                "postgres_changes",
-
-                {
-                    event:"*",
-                    schema:"public",
-                    table:"poker_seats",
-                    filter:`room_id=eq.${roomId}`
-                },
-
-                () => {
-
-                    queuePokerRefresh(
-                        roomId
-                    );
-
-                }
-
-            )
-
-            .on(
-
-                "postgres_changes",
-
-                {
-                    event:"*",
-                    schema:"public",
-                    table:"poker_hole_cards",
-                    filter:`room_id=eq.${roomId}`
-                },
-
-                () => {
-
-                    queuePokerRefresh(
-                        roomId
-                    );
-
-                }
-
-            )
-
-            .subscribe();
-
-}
-
-
-// ============================================================
-// DEBOUNCED REFRESH
-// ============================================================
-
-function queuePokerRefresh(roomId){
-
-    clearTimeout(
-        pokerRefreshTimer
-    );
-
-
-    pokerRefreshTimer =
-        window.setTimeout(
-
-            () =>
-                refreshPokerTable(
-                    roomId
-                ),
-
-            120
-
-        );
-
-}
-
-
-// ============================================================
-// RENDER TABLE
-// ============================================================
-
-function renderPokerTable(){
-
-    if(!pokerRoom){
-
-        return;
-
-    }
-
-
-    document
-        .getElementById(
-            "pokerTableName"
-        )
-        .textContent =
-            pokerRoom.name;
-
-
-    document
-        .getElementById(
-            "pokerBlindDisplay"
-        )
-        .textContent =
-            `${Number(pokerRoom.small_blind).toLocaleString()} / ${Number(pokerRoom.big_blind).toLocaleString()}`;
-
-
-    document
-        .getElementById(
-            "pokerBuyInDisplay"
-        )
-        .textContent =
-            pokerMoney(
-                pokerRoom.buy_in
-            );
-
-
-    document
-        .getElementById(
-            "pokerPot"
-        )
-        .textContent =
-            pokerMoney(
-                pokerRoom.pot
-            );
-
-
-    document
-        .getElementById(
-            "pokerStreet"
-        )
-        .textContent =
-            String(
-                pokerRoom.street
-                ||
-                "waiting"
-            )
-            .toUpperCase();
-
-
-    renderCommunityCards();
-
-    renderSeats();
-
-    renderMyCards();
-
-    renderPokerActionControls();
-
-    renderPokerStatus();
-
-}
-
-
-// ============================================================
-// COMMUNITY CARDS
-// ============================================================
-
-function renderCommunityCards(){
-
-    const holder =
-        document.getElementById(
-            "pokerCommunityCards"
-        );
-
-
-    holder.innerHTML =
-        "";
-
-
-    const cards =
-        pokerRoom.community_cards
-        ||
-        [];
-
-
-    for(let i = 0; i < 5; i++){
-
-
-        if(cards[i]){
-
-            holder.appendChild(
-                createPokerCard(
-                    cards[i]
-                )
-            );
-
-        }
-        else{
-
-            const back =
-                document.createElement(
-                    "div"
-                );
-
-
-            back.className =
-                "poker-card poker-card-back";
-
-
-            holder.appendChild(
-                back
-            );
-
-        }
-
-    }
-
-}
-
-
-// ============================================================
-// SEATS
-// ============================================================
-
-function renderSeats(){
-
-    for(
-        let seatNumber = 1;
-        seatNumber <= 6;
-        seatNumber++
-    ){
-
-        const holder =
-            document.getElementById(
-                `pokerSeat${seatNumber}`
-            );
-
-
-        if(!holder){
-
-            continue;
-
-        }
-
-
-        holder.innerHTML =
-            "";
-
-
-        if(
-            seatNumber
-            >
-            pokerRoom.max_seats
-        ){
-
-            holder.style.display =
-                "none";
-
-            continue;
-
-        }
-
-
-        holder.style.display =
-            "";
-
-
-        const seat =
-            pokerSeats.find(
-                player =>
-                    player.seat_no
-                    ===
-                    seatNumber
-            );
-
-
-        if(!seat){
-
-            holder.innerHTML = `
-
-                <div class="poker-player-box">
-
-                    <div class="poker-player-name">
-                        EMPTY SEAT
-                    </div>
-
-                    <div class="poker-player-stack">
-                        OPEN
-                    </div>
-
-                </div>
-
-            `;
-
-            continue;
-
-        }
-
-
-        const currentTurn =
-            pokerRoom.current_turn
-            ===
-            seat.seat_no;
-
-
-        const dealer =
-            pokerRoom.dealer_seat
-            ===
-            seat.seat_no;
-
-
-        let classes =
-            "poker-player-box";
-
-
-        if(currentTurn){
-
-            classes +=
-                " current-turn";
-
-        }
-
-
-        if(seat.folded){
-
-            classes +=
-                " folded";
-
-        }
-
-
-        const holeCards =
-            pokerHoleCards.find(
-                row =>
-                    row.seat_no
-                    ===
-                    seat.seat_no
-            );
-
-
-        let cardsHTML =
-            "";
-
-
-        if(
-            pokerRoom.hand_no > 0
-            &&
-            !pokerRoom.hand_complete
-        ){
-
-            if(
-                holeCards
-                &&
-                (
-                    seat.user_id
-                    ===
-                    pokerUser.id
-                    ||
-                    holeCards.revealed
-                )
-            ){
-
-                cardsHTML =
-                    holeCards.cards
-                        .map(
-                            card =>
-                                pokerCardHTML(
-                                    card
-                                )
-                        )
-                        .join("");
-
-            }
-            else{
-
-                cardsHTML = `
-
-                    <div class="poker-card poker-card-back"></div>
-
-                    <div class="poker-card poker-card-back"></div>
-
-                `;
-
-            }
-
-        }
-        else if(
-            holeCards
-            &&
-            holeCards.revealed
-        ){
-
-            cardsHTML =
-                holeCards.cards
-                    .map(
-                        card =>
-                            pokerCardHTML(
-                                card
-                            )
-                    )
-                    .join("");
-
-        }
-
-
-        holder.innerHTML = `
-
-            <div class="${classes}">
-
-                ${
-                    dealer
-                    ?
-                    '<div class="poker-dealer-chip">D</div>'
-                    :
-                    ''
-                }
-
-                <div class="poker-player-name">
-
-                    ${escapePokerHTML(seat.display_name)}
-
-                    ${
-                        seat.is_bot
-                        ?
-                        '<span class="poker-bot-badge">HOUSE</span>'
-                        :
-                        ''
-                    }
-
-                </div>
-
-                <div class="poker-player-stack">
-
-                    ${pokerMoney(seat.stack)}
-
-                </div>
-
-                <div class="poker-player-bet">
-
-                    ${
-                        seat.folded
-                        ?
-                        "FOLDED"
-                        :
-                        (
-                            seat.bet_round > 0
-                            ?
-                            `BET ${pokerMoney(seat.bet_round)}`
-                            :
-                            "&nbsp;"
-                        )
-                    }
-
-                </div>
-
-                <div class="poker-seat-cards">
-
-                    ${cardsHTML}
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-}
-
-
-// ============================================================
-// MY CARDS
-// ============================================================
-
-function renderMyCards(){
-
-    const holder =
-        document.getElementById(
-            "pokerMyCards"
-        );
-
-
-    holder.innerHTML =
-        "";
-
-
-    if(!pokerMySeat){
-
-        return;
-
-    }
-
-
-    const cardRecord =
-        pokerHoleCards.find(
-            row =>
-                row.seat_no
-                ===
-                pokerMySeat.seat_no
-        );
-
-
-    if(
-        !cardRecord
-        ||
-        !cardRecord.cards
-        ||
-        !cardRecord.cards.length
-    ){
-
-        for(let i = 0; i < 2; i++){
-
-            const back =
-                document.createElement(
-                    "div"
-                );
-
-
-            back.className =
-                "poker-card poker-card-back";
-
-
-            holder.appendChild(
-                back
-            );
-
-        }
-
-        return;
-
-    }
-
-
-    cardRecord.cards.forEach(
-        card => {
-
-            holder.appendChild(
-                createPokerCard(
-                    card
-                )
-            );
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// CREATE CARD ELEMENT
-// ============================================================
-
-function createPokerCard(card){
-
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-
-    wrapper.innerHTML =
-        pokerCardHTML(
-            card
-        );
-
-
-    return wrapper.firstElementChild;
-
-}
-
-
-// ============================================================
-// CARD HTML
-// ============================================================
-
-function pokerCardHTML(card){
-
-    if(!card){
+    list.innerHTML = rooms.map(room => {
+        const occupied = seatRows.filter(s => s.room_id === room.id).length;
+        const mine = seatRows.some(s => s.room_id === room.id && s.user_id === pokerUser.id);
 
         return `
-            <div class="poker-card poker-card-back"></div>
+            <div class="poker-room">
+                <div>
+                    <div class="poker-room-name">${esc(room.name || "Gilded Table")}</div>
+                    <div class="poker-room-meta">
+                        ${occupied}/${room.max_seats} seats •
+                        Buy-in ${fmt(room.buy_in)} AC •
+                        Blinds ${fmt(room.small_blind)}/${fmt(room.big_blind)}
+                    </div>
+                </div>
+                <button class="poker-primary-button" type="button"
+                    onclick="${mine ? `enterPokerRoom('${room.id}')` : `joinPokerRoom('${room.id}')`}">
+                    ${mine ? "RETURN" : "JOIN"}
+                </button>
+            </div>
         `;
+    }).join("");
+}
 
+async function createPokerRoom() {
+    if (actionBusy) return;
+    actionBusy = true;
+
+    try {
+        const name = ($("createRoomName")?.value || "Gilded Table").trim().slice(0, 30);
+        const buyIn = Number($("createRoomBuyIn")?.value || 5000);
+        const [smallBlind, bigBlind] = String($("createRoomBlinds")?.value || "50,100")
+            .split(",")
+            .map(Number);
+        const maxSeats = Number($("createRoomSeats")?.value || 6);
+
+        setLobbyMessage("Creating table...");
+
+        const { data: roomId, error } = await gaPokerSupabase.rpc("poker_create_room", {
+            p_name: name,
+            p_buy_in: buyIn,
+            p_small_blind: smallBlind,
+            p_big_blind: bigBlind,
+            p_max_seats: maxSeats
+        });
+
+        if (error) throw error;
+
+        const id = Array.isArray(roomId) ? roomId[0] : roomId;
+        await joinPokerRoom(id, false);
+
+        if ($("createRoomFillBots")?.checked) {
+            await gaPokerSupabase.rpc("poker_fill_bots", { p_room: id });
+        }
+
+        await enterPokerRoom(id);
+    } catch (error) {
+        console.error(error);
+        setLobbyMessage(error.message || "Could not create table.", "error");
+    } finally {
+        actionBusy = false;
+    }
+}
+
+async function joinPokerRoom(roomId, enter = true) {
+    if (actionBusy && enter) return;
+
+    try {
+        if (enter) actionBusy = true;
+        setLobbyMessage("Joining table...");
+
+        const { error } = await gaPokerSupabase.rpc("poker_join_room", {
+            p_room: roomId
+        });
+
+        if (error) throw error;
+
+        if (enter) await enterPokerRoom(roomId);
+    } catch (error) {
+        console.error(error);
+        setLobbyMessage(error.message || "Could not join table.", "error");
+    } finally {
+        if (enter) actionBusy = false;
+    }
+}
+
+async function enterPokerRoom(roomId) {
+    leavingTable = false;
+    clearPokerTimers();
+
+    const { data: room, error: roomError } = await gaPokerSupabase
+        .from("poker_rooms")
+        .select("*")
+        .eq("id", roomId)
+        .maybeSingle();
+
+    if (roomError || !room) {
+        throw roomError || new Error("Poker room was not found.");
     }
 
+    pokerRoom = room;
 
-    const rank =
-        card.substring(
-            0,
-            1
-        );
+    history.replaceState({}, "", `poker.html?room=${encodeURIComponent(roomId)}`);
+    showOnly("pokerTableView");
 
+    await subscribePokerRoom(roomId);
+    await refreshPokerTable(roomId);
+}
 
-    const suitCode =
-        card.substring(
-            1,
-            2
-        );
+async function refreshPokerTable(roomId = pokerRoom?.id) {
+    if (!roomId || leavingTable) return;
 
+    const [roomResult, seatsResult, cardsResult] = await Promise.all([
+        gaPokerSupabase.from("poker_rooms").select("*").eq("id", roomId).maybeSingle(),
+        gaPokerSupabase.from("poker_seats").select("*").eq("room_id", roomId).order("seat_no"),
+        gaPokerSupabase.from("poker_hole_cards").select("*").eq("room_id", roomId)
+    ]);
 
-    const suitMap = {
+    if (roomResult.error) {
+        console.error(roomResult.error);
+        return;
+    }
 
-        S:"♠",
+    if (!roomResult.data) {
+        await returnToLobby();
+        return;
+    }
 
-        H:"♥",
+    pokerRoom = roomResult.data;
+    pokerSeats = seatsResult.data || [];
+    pokerHoleCards = cardsResult.data || [];
 
-        D:"♦",
+    const mySeat = pokerSeats.find(s => s.user_id === pokerUser.id);
+    if (!mySeat && !leavingTable) {
+        setMessage("You are no longer seated at this table.", "error");
+    }
 
-        C:"♣"
+    renderPokerTable();
+    handlePokerAutomation();
+}
 
+async function subscribePokerRoom(roomId) {
+    if (pokerChannel) {
+        await gaPokerSupabase.removeChannel(pokerChannel);
+        pokerChannel = null;
+    }
+
+    pokerChannel = gaPokerSupabase
+        .channel(`poker-room-${roomId}-${pokerUser.id}`)
+        .on("postgres_changes",
+            { event: "*", schema: "public", table: "poker_rooms", filter: `id=eq.${roomId}` },
+            queuePokerRefresh
+        )
+        .on("postgres_changes",
+            { event: "*", schema: "public", table: "poker_seats", filter: `room_id=eq.${roomId}` },
+            queuePokerRefresh
+        )
+        .on("postgres_changes",
+            { event: "*", schema: "public", table: "poker_hole_cards", filter: `room_id=eq.${roomId}` },
+            queuePokerRefresh
+        )
+        .subscribe();
+}
+
+function queuePokerRefresh() {
+    clearTimeout(pokerRefreshTimer);
+    pokerRefreshTimer = setTimeout(() => {
+        if (pokerRoom?.id && !leavingTable) refreshPokerTable(pokerRoom.id);
+    }, 120);
+}
+
+function renderPokerTable() {
+    if (!pokerRoom) return;
+
+    $("pokerRoomName").textContent = pokerRoom.name || "Gilded Table";
+    $("pokerStreet").textContent = String(pokerRoom.street || "waiting").toUpperCase();
+    $("pokerPot").textContent = `${fmt(pokerRoom.pot)} AC`;
+    $("pokerCurrentBet").textContent = `${fmt(pokerRoom.current_bet)} AC`;
+
+    const turnSeat = pokerSeats.find(s => Number(s.seat_no) === Number(pokerRoom.current_turn));
+    $("pokerTurnName").textContent = turnSeat?.display_name || "—";
+
+    renderCommunityCards();
+    renderSeats();
+    renderMyCards();
+    renderPokerActionControls();
+    renderPokerStatus();
+}
+
+function renderCommunityCards() {
+    const cards = Array.isArray(pokerRoom.community_cards) ? pokerRoom.community_cards : [];
+    const target = $("communityCards");
+    if (!target) return;
+
+    const display = [...cards];
+    while (display.length < 5) display.push(null);
+
+    target.innerHTML = display.map(card => card ? pokerCardHTML(card) : `<div class="poker-card back">A</div>`).join("");
+}
+
+function renderSeats() {
+    for (let i = 1; i <= 6; i++) {
+        const el = $(`seat${i}`);
+        if (!el) continue;
+
+        const seat = pokerSeats.find(s => Number(s.seat_no) === i);
+        if (!seat) {
+            el.className = `poker-seat seat-${i}`;
+            el.innerHTML = `<div class="seat-name">OPEN SEAT</div><div class="seat-tag">AVAILABLE</div>`;
+            continue;
+        }
+
+        const current = Number(pokerRoom.current_turn) === i;
+        const mine = seat.user_id === pokerUser.id;
+        el.className =
+            `poker-seat seat-${i}` +
+            (current ? " current-turn" : "") +
+            (mine ? " me" : "") +
+            (seat.folded ? " folded" : "");
+
+        el.innerHTML = `
+            ${Number(pokerRoom.dealer_seat) === i ? `<div class="dealer-chip">D</div>` : ""}
+            <div class="seat-name">${esc(seat.display_name || (seat.is_bot ? "House Bot" : "Player"))}</div>
+            <div class="seat-stack">${fmt(seat.stack)} AC</div>
+            <div class="seat-bet">Bet: ${fmt(seat.bet_round)} AC</div>
+            <div class="seat-tag">${seat.is_bot ? `BOT • ${esc(seat.bot_style || "balanced")}` : (mine ? "YOU" : "PLAYER")}</div>
+        `;
+    }
+}
+
+function renderMyCards() {
+    const target = $("myHoleCards");
+    if (!target) return;
+
+    const mine = pokerSeats.find(s => s.user_id === pokerUser.id);
+    if (!mine) {
+        target.innerHTML = `<div class="poker-message">You are not seated.</div>`;
+        return;
+    }
+
+    const row = pokerHoleCards.find(c =>
+        Number(c.seat_no) === Number(mine.seat_no) ||
+        c.user_id === pokerUser.id
+    );
+
+    const cards = row?.cards || row?.hole_cards || [];
+
+    if (!Array.isArray(cards) || cards.length < 2) {
+        target.innerHTML = `<div class="poker-card back">A</div><div class="poker-card back">A</div>`;
+        return;
+    }
+
+    target.innerHTML = cards.map(pokerCardHTML).join("");
+}
+
+function pokerCardHTML(card) {
+    const text = String(card || "");
+    const rank = text.slice(0, -1) || "?";
+    const suitCode = text.slice(-1).toUpperCase();
+
+    const suits = {
+        H: ["♥", true],
+        D: ["♦", true],
+        C: ["♣", false],
+        S: ["♠", false]
     };
 
-
-    const rankMap = {
-
-        T:"10",
-
-        J:"J",
-
-        Q:"Q",
-
-        K:"K",
-
-        A:"A"
-
-    };
-
-
-    const suit =
-        suitMap[suitCode]
-        ||
-        suitCode;
-
-
-    const displayRank =
-        rankMap[rank]
-        ||
-        rank;
-
-
-    const red =
-        suitCode === "H"
-        ||
-        suitCode === "D";
-
+    const [suit, red] = suits[suitCode] || [suitCode, false];
 
     return `
-
         <div class="poker-card ${red ? "red" : ""}">
-
-            <span class="poker-card-rank">
-                ${displayRank}
-            </span>
-
-            <span class="poker-card-suit">
-                ${suit}
-            </span>
-
+            <span>${esc(rank)}</span>
+            <span>${esc(suit)}</span>
         </div>
-
     `;
-
 }
 
+function renderPokerActionControls() {
+    const mySeat = pokerSeats.find(s => s.user_id === pokerUser.id);
+    const myTurn =
+        mySeat &&
+        !mySeat.folded &&
+        !pokerRoom.hand_complete &&
+        Number(pokerRoom.current_turn) === Number(mySeat.seat_no);
 
-// ============================================================
-// ACTION CONTROLS
-// ============================================================
+    const callAmount = mySeat
+        ? Math.max(0, Number(pokerRoom.current_bet || 0) - Number(mySeat.bet_round || 0))
+        : 0;
 
-function renderPokerActionControls(){
+    const canCheck = myTurn && callAmount === 0;
+    const canCall = myTurn && callAmount > 0 && Number(mySeat.stack || 0) >= callAmount;
+    const canRaise = myTurn && Number(mySeat.stack || 0) > callAmount;
 
-    const foldButton =
-        document.getElementById(
-            "pokerFoldButton"
-        );
+    $("foldButton").disabled = !myTurn || actionBusy;
+    $("checkButton").disabled = !canCheck || actionBusy;
+    $("callButton").disabled = !canCall || actionBusy;
+    $("raiseButton").disabled = !canRaise || actionBusy;
 
+    $("callButton").textContent = callAmount > 0 ? `CALL ${fmt(callAmount)}` : "CALL";
 
-    const checkButton =
-        document.getElementById(
-            "pokerCheckButton"
-        );
-
-
-    const callButton =
-        document.getElementById(
-            "pokerCallButton"
-        );
-
-
-    const raiseButton =
-        document.getElementById(
-            "pokerRaiseButton"
-        );
-
-
-    const raiseInput =
-        document.getElementById(
-            "pokerRaiseAmount"
-        );
-
-
-    const callDisplay =
-        document.getElementById(
-            "pokerCallAmount"
-        );
-
-
-    const myTurn = Boolean(
-
-        pokerRoom
-
-        &&
-        pokerMySeat
-
-        &&
-        !pokerRoom.hand_complete
-
-        &&
-        pokerRoom.current_turn
-        ===
-        pokerMySeat.seat_no
-
-        &&
-        !pokerMySeat.folded
-
-    );
-
-
-    const callAmount =
-        pokerMySeat
-
-        ?
+    const minRaiseTo =
         Math.max(
-
-            0,
-
-            Number(
-                pokerRoom.current_bet
-                ||
-                0
-            )
-            -
-            Number(
-                pokerMySeat.bet_round
-                ||
-                0
-            )
-
-        )
-
-        :
-        0;
-
-
-    callDisplay.textContent =
-        pokerMoney(
-            callAmount
+            Number(pokerRoom.current_bet || 0) + Number(pokerRoom.minimum_raise || pokerRoom.big_blind || 1),
+            Number(pokerRoom.big_blind || 1)
         );
 
-
-    foldButton.disabled =
-        !myTurn;
-
-
-    checkButton.disabled =
-        !myTurn
-        ||
-        callAmount > 0;
-
-
-    callButton.disabled =
-        !myTurn
-        ||
-        callAmount <= 0
-        ||
-        callAmount >
-            Number(
-                pokerMySeat?.stack
-                ||
-                0
-            );
-
-
-    raiseButton.disabled =
-        !myTurn;
-
-
-    raiseInput.disabled =
-        !myTurn;
-
-
-    const minimumRaiseTo =
-        Number(
-            pokerRoom.current_bet
-            ||
-            0
-        )
-        +
-        Number(
-            pokerRoom.minimum_raise
-            ||
-            pokerRoom.big_blind
-            ||
-            100
-        );
-
-
-    raiseInput.min =
-        minimumRaiseTo;
-
-
-    if(
-        document.activeElement
-        !==
-        raiseInput
-    ){
-
-        raiseInput.value =
-            minimumRaiseTo;
-
-    }
-
-
-    callButton.textContent =
-
-        callAmount > 0
-
-        ?
-        `CALL ${Number(callAmount).toLocaleString()}`
-
-        :
-        "CALL";
-
-}
-
-
-// ============================================================
-// STATUS
-// ============================================================
-
-function renderPokerStatus(){
-
-    if(!pokerRoom){
-
-        return;
-
-    }
-
-
-    if(pokerRoom.hand_complete){
-
-        if(pokerRoom.winner_text){
-
-            setPokerTableMessage(
-                pokerRoom.winner_text,
-                "win"
-            );
-
+    if ($("raiseAmount")) {
+        $("raiseAmount").min = String(minRaiseTo);
+        if (Number($("raiseAmount").value) < minRaiseTo) {
+            $("raiseAmount").value = String(minRaiseTo);
         }
-        else{
-
-            setPokerTableMessage(
-                "Waiting for the next hand."
-            );
-
-        }
-
-
-        return;
-
     }
 
-
-    const turnSeat =
-        pokerSeats.find(
-            seat =>
-                seat.seat_no
-                ===
-                pokerRoom.current_turn
-        );
-
-
-    if(!turnSeat){
-
-        setPokerTableMessage(
-            "Preparing the next action..."
-        );
-
-        return;
-
-    }
-
-
-    if(
-        pokerMySeat
-        &&
-        turnSeat.seat_no
-        ===
-        pokerMySeat.seat_no
-    ){
-
-        setPokerTableMessage(
-            "YOUR TURN — choose Fold, Check, Call or Raise."
-        );
-
-    }
-    else if(turnSeat.is_bot){
-
-        setPokerTableMessage(
-            `${turnSeat.display_name} is thinking...`
-        );
-
-    }
-    else{
-
-        setPokerTableMessage(
-            `Waiting for ${turnSeat.display_name}...`
-        );
-
-    }
-
+    const enoughPlayers = pokerSeats.filter(s => Number(s.stack || 0) > 0).length >= 2;
+    $("startHandButton").disabled =
+        !enoughPlayers ||
+        (!pokerRoom.hand_complete && String(pokerRoom.street || "").toLowerCase() !== "waiting") ||
+        actionBusy;
 }
 
+function renderPokerStatus() {
+    const alive = pokerSeats.filter(s => !s.folded && Number(s.stack || 0) >= 0);
 
-// ============================================================
-// AUTOMATION
-// ============================================================
-
-function handlePokerAutomation(){
-
-    clearTimeout(
-        pokerBotTimer
-    );
-
-
-    clearTimeout(
-        pokerAutomaticStartTimer
-    );
-
-
-    if(!pokerRoom){
-
+    if (pokerRoom.hand_complete) {
+        setMessage(pokerRoom.winner_text || "Hand complete.", "success");
         return;
-
     }
 
-
-    const playableSeats =
-        pokerSeats.filter(
-            seat =>
-                Number(
-                    seat.stack
-                ) > 0
-        );
-
-
-    // Start hand automatically
-
-    if(
-        pokerRoom.hand_complete
-        &&
-        playableSeats.length >= 2
-    ){
-
-        pokerAutomaticStartTimer =
-            window.setTimeout(
-
-                () =>
-                    startPokerHand(),
-
-                3500
-
-            );
-
-
+    if (String(pokerRoom.street || "").toLowerCase() === "waiting") {
+        setMessage(pokerSeats.length < 2 ? "Waiting for at least two players." : "Table ready. Start the hand.");
         return;
-
     }
 
-
-    if(pokerRoom.hand_complete){
-
+    if (alive.length <= 1 && pokerSeats.length >= 2) {
+        setMessage("Resolving hand...");
         return;
-
     }
 
-
-    const current =
-        pokerSeats.find(
-            seat =>
-                seat.seat_no
-                ===
-                pokerRoom.current_turn
-        );
-
-
-    if(
-        current
-        &&
-        current.is_bot
-    ){
-
-        pokerBotTimer =
-            window.setTimeout(
-
-                () =>
-                    runPokerBot(),
-
-                1200
-                +
-                Math.floor(
-                    Math.random()
-                    *
-                    1300
-                )
-
-            );
-
+    const turnSeat = pokerSeats.find(s => Number(s.seat_no) === Number(pokerRoom.current_turn));
+    if (turnSeat) {
+        setMessage(`${turnSeat.display_name}'s turn • ${String(pokerRoom.street || "").toUpperCase()}`);
+    } else {
+        setMessage("Advancing the hand...");
     }
-
 }
 
+async function pokerAction(action, amount = null) {
+    if (actionBusy || !pokerRoom?.id) return;
 
-// ============================================================
-// START HAND
-// ============================================================
+    actionBusy = true;
+    renderPokerActionControls();
 
-async function startPokerHand(){
-
-    if(
-        !pokerRoom
-        ||
-        pokerBusy
-    ){
-
-        return;
-
-    }
-
-
-    pokerBusy =
-        true;
-
-
-    try{
-
-
-        const {
-            error
-        } =
-            await gaPokerSupabase
-                .rpc(
-                    "poker_start_hand",
-                    {
-                        p_room:
-                            pokerRoom.id
-                    }
-                );
-
-
-        if(
-            error
-            &&
-            !String(
-                error.message
-            )
-            .includes(
-                "already"
-            )
-        ){
-
-            console.warn(
-                error.message
-            );
-
-        }
-
-
-    }
-    catch(error){
-
-        console.warn(
-            error
-        );
-
-    }
-    finally{
-
-        pokerBusy =
-            false;
-
-    }
-
-}
-
-
-// ============================================================
-// BOT MOVE
-// ============================================================
-
-async function runPokerBot(){
-
-    if(
-        !pokerRoom
-        ||
-        pokerBusy
-    ){
-
-        return;
-
-    }
-
-
-    const current =
-        pokerSeats.find(
-            seat =>
-                seat.seat_no
-                ===
-                pokerRoom.current_turn
-        );
-
-
-    if(
-        !current
-        ||
-        !current.is_bot
-        ||
-        pokerRoom.hand_complete
-    ){
-
-        return;
-
-    }
-
-
-    pokerBusy =
-        true;
-
-
-    try{
-
-
-        const {
-            error
-        } =
-            await gaPokerSupabase
-                .rpc(
-                    "poker_bot_act",
-                    {
-                        p_room:
-                            pokerRoom.id
-                    }
-                );
-
-
-        if(error){
-
-            console.warn(
-                "Bot action:",
-                error.message
-            );
-
-        }
-
-
-    }
-    finally{
-
-        pokerBusy =
-            false;
-
-    }
-
-}
-
-
-// ============================================================
-// HUMAN ACTION
-// ============================================================
-
-async function pokerAction(
-    action,
-    amount = null
-){
-
-    if(
-        !pokerRoom
-        ||
-        pokerBusy
-    ){
-
-        return;
-
-    }
-
-
-    pokerBusy =
-        true;
-
-
-    disablePokerActions();
-
-
-    try{
-
-
+    try {
         const args = {
-
-            p_room:
-                pokerRoom.id,
-
-            p_action:
-                action,
-
-            p_amount:
-                amount
-
+            p_room: pokerRoom.id,
+            p_action: action,
+            p_amount: amount === null ? null : Number(amount)
         };
 
+        const { error } = await gaPokerSupabase.rpc("poker_player_action", args);
+        if (error) throw error;
 
-        const {
-            error
-        } =
-            await gaPokerSupabase
-                .rpc(
-                    "poker_player_action",
-                    args
-                );
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-        await refreshPokerTable(
-            pokerRoom.id
-        );
-
-
+        await refreshPokerTable(pokerRoom.id);
+    } catch (error) {
+        console.error(error);
+        setMessage(error.message || "Poker action failed.", "error");
+    } finally {
+        actionBusy = false;
+        renderPokerActionControls();
     }
-    catch(error){
-
-        console.error(
-            error
-        );
-
-
-        setPokerTableMessage(
-            pokerErrorMessage(
-                error
-            )
-        );
-
-    }
-    finally{
-
-        pokerBusy =
-            false;
-
-    }
-
 }
 
+async function startPokerHand() {
+    if (actionBusy || !pokerRoom?.id) return;
+    actionBusy = true;
 
-// ============================================================
-// DISABLE ACTIONS
-// ============================================================
-
-function disablePokerActions(){
-
-    [
-        "pokerFoldButton",
-        "pokerCheckButton",
-        "pokerCallButton",
-        "pokerRaiseButton"
-
-    ].forEach(id => {
-
-        const button =
-            document.getElementById(
-                id
-            );
-
-
-        if(button){
-
-            button.disabled =
-                true;
-
-        }
-
-    });
-
+    try {
+        const { error } = await gaPokerSupabase.rpc("poker_start_hand", {
+            p_room: pokerRoom.id
+        });
+        if (error) throw error;
+        await refreshPokerTable(pokerRoom.id);
+    } catch (error) {
+        console.error(error);
+        setMessage(error.message || "Could not start the hand.", "error");
+    } finally {
+        actionBusy = false;
+    }
 }
 
+async function fillPokerBots() {
+    if (actionBusy || !pokerRoom?.id) return;
+    actionBusy = true;
 
-// ============================================================
-// LEAVE ROOM
-// ============================================================
+    try {
+        const { error } = await gaPokerSupabase.rpc("poker_fill_bots", {
+            p_room: pokerRoom.id
+        });
+        if (error) throw error;
+        await refreshPokerTable(pokerRoom.id);
+    } catch (error) {
+        console.error(error);
+        setMessage(error.message || "Could not add bots.", "error");
+    } finally {
+        actionBusy = false;
+    }
+}
 
-async function leavePokerRoom(){
+function handlePokerAutomation() {
+    clearTimeout(pokerBotTimer);
+    clearTimeout(pokerNextHandTimer);
 
-    if(
-        !pokerRoom
-        ||
-        pokerBusy
-    ){
+    if (!pokerRoom || leavingTable) return;
 
+    if (pokerRoom.hand_complete) {
+        const playable = pokerSeats.filter(s => Number(s.stack || 0) > 0).length;
+        if (playable >= 2) {
+            pokerNextHandTimer = setTimeout(async () => {
+                if (!pokerRoom?.id || leavingTable) return;
+                try {
+                    await gaPokerSupabase.rpc("poker_start_hand", { p_room: pokerRoom.id });
+                    await refreshPokerTable(pokerRoom.id);
+                } catch (error) {
+                    console.debug("Automatic next hand did not start:", error.message);
+                }
+            }, 3500);
+        }
         return;
-
     }
 
+    const turnSeat = pokerSeats.find(s =>
+        Number(s.seat_no) === Number(pokerRoom.current_turn)
+    );
 
-    pokerBusy =
-        true;
+    if (turnSeat?.is_bot) {
+        pokerBotTimer = setTimeout(async () => {
+            if (!pokerRoom?.id || leavingTable) return;
+            try {
+                const { error } = await gaPokerSupabase.rpc("poker_bot_act", {
+                    p_room: pokerRoom.id
+                });
 
+                if (error) {
+                    console.error("Bot action failed:", error);
+                    setMessage(`Bot action error: ${error.message}`, "error");
+                    return;
+                }
 
-    try{
+                await refreshPokerTable(pokerRoom.id);
+            } catch (error) {
+                console.error(error);
+            }
+        }, 700 + Math.floor(Math.random() * 650));
+    }
+}
 
+async function leavePokerRoom() {
+    if (!pokerRoom?.id || leavingTable) return;
 
-        const {
-            error
-        } =
-            await gaPokerSupabase
-                .rpc(
-                    "poker_leave_room",
-                    {
-                        p_room:
-                            pokerRoom.id
-                    }
-                );
+    const confirmed = window.confirm(
+        "Leave this poker table? Your remaining table stack will be returned to your Ace Credits."
+    );
 
+    if (!confirmed) return;
 
-        if(error){
+    leavingTable = true;
+    actionBusy = true;
+    clearPokerTimers();
+    $("leaveTableButton").disabled = true;
+    $("leaveTableButton").textContent = "LEAVING...";
 
-            throw error;
+    const roomId = pokerRoom.id;
 
+    try {
+        // Backend patch returns the remaining player's table stack to profiles.balance,
+        // removes their hole cards, and deletes their seat.
+        const { error } = await gaPokerSupabase.rpc("poker_leave_room", {
+            p_room: roomId
+        });
+
+        if (error) throw error;
+
+        if (pokerChannel) {
+            await gaPokerSupabase.removeChannel(pokerChannel);
+            pokerChannel = null;
         }
 
+        pokerRoom = null;
+        pokerSeats = [];
+        pokerHoleCards = [];
 
-        if(pokerRealtimeChannel){
-
-            await gaPokerSupabase
-                .removeChannel(
-                    pokerRealtimeChannel
-                );
-
-            pokerRealtimeChannel =
-                null;
-
-        }
-
-
-        pokerRoom =
-            null;
-
-
-        pokerSeats =
-            [];
-
-
-        pokerHoleCards =
-            [];
-
-
-        pokerMySeat =
-            null;
-
-
-        pokerTableScreen.hidden =
-            true;
-
-
-        pokerLobby.hidden =
-            false;
-
-
-        history.replaceState(
-            {},
-            "",
-            "poker.html"
-        );
-
-
+        history.replaceState({}, "", "poker.html");
         await loadPokerProfile();
-
+        showOnly("pokerLobby");
         await loadPokerRooms();
-
-
+        setLobbyMessage("You left the table and your remaining stack was returned.", "success");
+    } catch (error) {
+        console.error(error);
+        leavingTable = false;
+        setMessage(error.message || "Could not leave the table.", "error");
+        $("leaveTableButton").disabled = false;
+        $("leaveTableButton").textContent = "LEAVE TABLE";
+    } finally {
+        actionBusy = false;
     }
-    catch(error){
-
-        console.error(
-            error
-        );
-
-
-        setPokerTableMessage(
-            pokerErrorMessage(
-                error
-            )
-        );
-
-    }
-    finally{
-
-        pokerBusy =
-            false;
-
-    }
-
 }
 
+async function returnToLobby() {
+    clearPokerTimers();
 
-// ============================================================
-// ESCAPE HTML
-// ============================================================
-
-function escapePokerHTML(value){
-
-    return String(
-        value ?? ""
-    )
-
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
-}
-
-
-// ============================================================
-// EVENT LISTENERS
-// ============================================================
-
-document
-    .getElementById(
-        "pokerCreateRoomButton"
-    )
-    ?.addEventListener(
-        "click",
-        createPokerRoom
-    );
-
-
-document
-    .getElementById(
-        "pokerRefreshRooms"
-    )
-    ?.addEventListener(
-        "click",
-        loadPokerRooms
-    );
-
-
-document
-    .getElementById(
-        "pokerLeaveTable"
-    )
-    ?.addEventListener(
-        "click",
-        leavePokerRoom
-    );
-
-
-document
-    .getElementById(
-        "pokerFoldButton"
-    )
-    ?.addEventListener(
-        "click",
-        () =>
-            pokerAction(
-                "fold"
-            )
-    );
-
-
-document
-    .getElementById(
-        "pokerCheckButton"
-    )
-    ?.addEventListener(
-        "click",
-        () =>
-            pokerAction(
-                "check"
-            )
-    );
-
-
-document
-    .getElementById(
-        "pokerCallButton"
-    )
-    ?.addEventListener(
-        "click",
-        () =>
-            pokerAction(
-                "call"
-            )
-    );
-
-
-document
-    .getElementById(
-        "pokerRaiseButton"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
-
-            const value =
-                Number(
-                    document
-                        .getElementById(
-                            "pokerRaiseAmount"
-                        )
-                        .value
-                );
-
-
-            pokerAction(
-                "raise",
-                value
-            );
-
-        }
-    );
-
-
-// ============================================================
-// AUTH CHANGES
-// ============================================================
-
-gaPokerSupabase.auth.onAuthStateChange(
-
-    (
-        event,
-        session
-    ) => {
-
-
-        if(
-            event === "SIGNED_OUT"
-            ||
-            !session
-        ){
-
-            showPokerLoginRequired();
-
-        }
-
+    if (pokerChannel) {
+        await gaPokerSupabase.removeChannel(pokerChannel);
+        pokerChannel = null;
     }
 
-);
+    pokerRoom = null;
+    pokerSeats = [];
+    pokerHoleCards = [];
+    history.replaceState({}, "", "poker.html");
+    await loadPokerProfile();
+    showOnly("pokerLobby");
+    await loadPokerRooms();
+}
 
+function clearPokerTimers() {
+    clearTimeout(pokerRefreshTimer);
+    clearTimeout(pokerBotTimer);
+    clearTimeout(pokerNextHandTimer);
+    pokerRefreshTimer = null;
+    pokerBotTimer = null;
+    pokerNextHandTimer = null;
+}
 
-// ============================================================
-// START
-// ============================================================
-
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    initializePoker
-
-);
+window.joinPokerRoom = joinPokerRoom;
+window.enterPokerRoom = enterPokerRoom;

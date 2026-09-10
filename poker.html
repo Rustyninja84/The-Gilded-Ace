@@ -1,882 +1,209 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Poker Room | The Gilded Ace
-    </title>
-
-
-    <link
-        rel="stylesheet"
-        href="styles.css?v=40"
-    >
-
-
-    <link
-        rel="stylesheet"
-        href="poker.css?v=1"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poker | The Gilded Ace</title>
+    <meta name="description" content="Multiplayer Texas Hold'em at The Gilded Ace. Play-money only.">
+    <link rel="stylesheet" href="styles.css?v=50">
+    <link rel="stylesheet" href="poker.css?v=50">
 </head>
-
-
 <body class="poker-page">
 
-
-<!-- =========================================================
-     HEADER
-     ========================================================= -->
-
 <header class="site-header">
-
     <div class="nav-container">
-
-
-        <a
-            href="index.html"
-            class="brand"
-        >
-
-            <div class="brand-mark">
-                A
-            </div>
-
-
+        <a href="index.html" class="brand">
+            <div class="brand-mark">A</div>
             <div class="brand-text">
-
-                <span class="brand-name">
-                    THE GILDED ACE
-                </span>
-
-                <span class="brand-subtitle">
-                    PRIVATE CASINO & SOCIAL CLUB
-                </span>
-
+                <span class="brand-name">THE GILDED ACE</span>
+                <span class="brand-subtitle">CASINO & SOCIAL CLUB</span>
             </div>
-
         </a>
-
-
 
         <nav class="main-nav">
-
-            <a href="index.html">
-                HOME
-            </a>
-
-            <a href="casino.html">
-                CASINO
-            </a>
-
-            <a
-                href="poker.html"
-                class="active"
-            >
-                POKER
-            </a>
-
-            <a href="store.html">
-                STORE
-            </a>
-
-            <a href="collection.html">
-                COLLECTION
-            </a>
-
-            <a href="leaderboard.html">
-                LEADERBOARD
-            </a>
-
+            <a href="index.html">HOME</a>
+            <a href="casino.html">CASINO</a>
+            <a href="poker.html" class="active">POKER</a>
+            <a href="store.html">STORE</a>
+            <a href="collection.html">COLLECTION</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
         </nav>
 
-
-
         <div class="nav-account">
-
-            <div class="nav-balance-block">
-
-                <span>
-                    ACE CREDITS
-                </span>
-
-                <strong
-                    id="pokerNavBalance"
-                >
-                    -- AC
-                </strong>
-
+            <div class="nav-balance">
+                <span class="balance-label">ACE CREDITS</span>
+                <span class="balance-value" id="pokerHeaderBalance">—</span>
             </div>
-
-
-            <a
-                href="profile.html"
-                class="profile-button"
-            >
-                PROFILE
-            </a>
-
+            <a href="profile.html" class="profile-button">PROFILE</a>
         </div>
-
     </div>
-
 </header>
 
+<main>
+    <section class="poker-hero">
+        <div class="section-container">
+            <span class="section-kicker">THE GILDED POKER ROOM</span>
+            <h1>TEXAS HOLD'EM</h1>
+            <p>Join a live table, play against other members, or fill empty seats with adaptive house bots.</p>
+        </div>
+    </section>
 
-
-<!-- =========================================================
-     LOGIN REQUIRED
-     ========================================================= -->
-
-<section
-    id="pokerLoginRequired"
-    class="poker-auth-screen"
-    hidden
->
-
-    <div class="poker-auth-card">
-
-        <div class="poker-gold-icon">
-            ♠
+    <section class="section-container poker-shell">
+        <div id="pokerLoading" class="poker-state-card">
+            <h2>Connecting to the poker room...</h2>
+            <p>Please wait while your account and live tables are loaded.</p>
         </div>
 
-        <span class="eyebrow">
-            MEMBER ACCESS REQUIRED
-        </span>
-
-        <h1>
-            The Gilded Poker Room
-        </h1>
-
-        <p>
-            Multiplayer poker requires a Gilded Ace
-            member account so your seat, chip stack,
-            statistics, and table activity can be synchronized.
-        </p>
-
-        <a
-            href="profile.html"
-            class="btn"
-        >
-            SIGN IN OR CREATE ACCOUNT
-        </a>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     MAIN APPLICATION
-     ========================================================= -->
-
-<main
-    id="pokerApp"
-    hidden
->
-
-
-<!-- =========================================================
-     POKER HERO
-     ========================================================= -->
-
-<section class="poker-hero">
-
-    <div class="container poker-hero-inner">
-
-        <div>
-
-            <span class="eyebrow">
-                THE GILDED ACE
-            </span>
-
-            <h1>
-                TEXAS HOLD'EM
-            </h1>
-
-            <p>
-                Take a seat against other club members.
-                Empty seats can be filled automatically by
-                adaptive house players.
-            </p>
-
+        <div id="pokerLoginRequired" class="poker-state-card hidden">
+            <h2>Member Login Required</h2>
+            <p>You must be signed in to join multiplayer poker.</p>
+            <a href="profile.html" class="poker-primary-button">OPEN PROFILE</a>
         </div>
 
-
-        <div class="poker-member-widget">
-
-            <span>
-                SIGNED IN AS
-            </span>
-
-            <strong
-                id="pokerMemberName"
-            >
-                MEMBER
-            </strong>
-
-            <div>
-                AVAILABLE BALANCE
+        <section id="pokerLobby" class="hidden">
+            <div class="poker-lobby-head">
+                <div>
+                    <span class="section-kicker">MULTIPLAYER LOBBY</span>
+                    <h2>Available Tables</h2>
+                </div>
+                <button id="refreshRoomsButton" class="poker-secondary-button" type="button">REFRESH TABLES</button>
             </div>
 
-            <b
-                id="pokerMemberBalance"
-            >
-                0 AC
-            </b>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     LOBBY
-     ========================================================= -->
-
-<section
-    id="pokerLobby"
-    class="poker-lobby"
->
-
-    <div class="container">
-
-
-        <div class="poker-section-header">
-
-            <div>
-
-                <span class="eyebrow">
-                    MULTIPLAYER LOBBY
-                </span>
-
-                <h2>
-                    Poker Tables
-                </h2>
-
-                <p>
-                    Join an existing table or open your own
-                    private-club table.
-                </p>
-
+            <div class="poker-member-strip">
+                <div><span>PLAYER</span><strong id="pokerPlayerName">—</strong></div>
+                <div><span>BALANCE</span><strong id="pokerPlayerBalance">—</strong></div>
             </div>
 
-
-            <button
-                id="pokerRefreshRooms"
-                type="button"
-                class="btn secondary"
-            >
-                REFRESH TABLES
-            </button>
-
-        </div>
-
-
-
-        <div class="poker-lobby-layout">
-
-
-            <!-- ROOM LIST -->
-
-            <div>
-
-                <div
-                    id="pokerRoomList"
-                    class="poker-room-list"
-                >
-
-                    <div class="poker-empty-state">
-
-                        <span>
-                            ♠
-                        </span>
-
-                        <h3>
-                            Loading Tables
-                        </h3>
-
-                    </div>
-
+            <div class="poker-lobby-grid">
+                <div class="poker-panel">
+                    <h3>OPEN TABLES</h3>
+                    <div id="pokerRoomList" class="poker-room-list"></div>
                 </div>
 
-            </div>
+                <div class="poker-panel">
+                    <h3>CREATE TABLE</h3>
 
-
-
-            <!-- CREATE TABLE -->
-
-            <aside class="poker-create-panel">
-
-                <span class="eyebrow">
-                    HOST A TABLE
-                </span>
-
-                <h3>
-                    Create New Table
-                </h3>
-
-
-                <div class="poker-form-field">
-
-                    <label for="pokerRoomName">
-                        TABLE NAME
+                    <label class="poker-field">
+                        <span>TABLE NAME</span>
+                        <input id="createRoomName" type="text" maxlength="30" value="Gilded Table">
                     </label>
 
-                    <input
-                        id="pokerRoomName"
-                        type="text"
-                        maxlength="40"
-                        value="Gilded Table"
-                    >
-
-                </div>
-
-
-                <div class="poker-form-field">
-
-                    <label for="pokerBuyIn">
-                        BUY-IN
-                    </label>
-
-                    <select id="pokerBuyIn">
-
-                        <option value="1000">
-                            1,000 AC
-                        </option>
-
-                        <option
-                            value="5000"
-                            selected
-                        >
-                            5,000 AC
-                        </option>
-
-                        <option value="10000">
-                            10,000 AC
-                        </option>
-
-                        <option value="25000">
-                            25,000 AC
-                        </option>
-
-                        <option value="50000">
-                            50,000 AC
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="poker-form-row">
-
-                    <div class="poker-form-field">
-
-                        <label for="pokerSmallBlind">
-                            SMALL BLIND
-                        </label>
-
-                        <select id="pokerSmallBlind">
-
-                            <option value="10">
-                                10
-                            </option>
-
-                            <option
-                                value="50"
-                                selected
-                            >
-                                50
-                            </option>
-
-                            <option value="100">
-                                100
-                            </option>
-
-                            <option value="250">
-                                250
-                            </option>
-
+                    <label class="poker-field">
+                        <span>BUY-IN</span>
+                        <select id="createRoomBuyIn">
+                            <option value="1000">1,000 AC</option>
+                            <option value="2500">2,500 AC</option>
+                            <option value="5000" selected>5,000 AC</option>
+                            <option value="10000">10,000 AC</option>
+                            <option value="25000">25,000 AC</option>
                         </select>
+                    </label>
 
-                    </div>
-
-
-                    <div class="poker-form-field">
-
-                        <label for="pokerBigBlind">
-                            BIG BLIND
-                        </label>
-
-                        <select id="pokerBigBlind">
-
-                            <option value="20">
-                                20
-                            </option>
-
-                            <option
-                                value="100"
-                                selected
-                            >
-                                100
-                            </option>
-
-                            <option value="200">
-                                200
-                            </option>
-
-                            <option value="500">
-                                500
-                            </option>
-
+                    <label class="poker-field">
+                        <span>BLINDS</span>
+                        <select id="createRoomBlinds">
+                            <option value="25,50">25 / 50</option>
+                            <option value="50,100" selected>50 / 100</option>
+                            <option value="100,200">100 / 200</option>
+                            <option value="250,500">250 / 500</option>
                         </select>
-
-                    </div>
-
-                </div>
-
-
-                <div class="poker-form-field">
-
-                    <label for="pokerMaxSeats">
-                        TABLE SIZE
                     </label>
 
-                    <select id="pokerMaxSeats">
-
-                        <option value="2">
-                            Heads-Up — 2 Players
-                        </option>
-
-                        <option value="4">
-                            4 Players
-                        </option>
-
-                        <option
-                            value="6"
-                            selected
-                        >
-                            6 Players
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="poker-bot-option">
-
-                    <div>
-
-                        <strong>
-                            AUTO-FILL WITH BOTS
-                        </strong>
-
-                        <span>
-                            Empty seats fill after you enter.
-                        </span>
-
-                    </div>
-
-                    <label class="poker-switch">
-
-                        <input
-                            id="pokerAutoBots"
-                            type="checkbox"
-                            checked
-                        >
-
-                        <span></span>
-
+                    <label class="poker-field">
+                        <span>SEATS</span>
+                        <select id="createRoomSeats">
+                            <option value="2">2</option>
+                            <option value="4">4</option>
+                            <option value="6" selected>6</option>
+                        </select>
                     </label>
 
+                    <label class="poker-check">
+                        <input id="createRoomFillBots" type="checkbox" checked>
+                        <span>Fill empty seats with bots after I join</span>
+                    </label>
+
+                    <button id="createRoomButton" class="poker-primary-button" type="button">CREATE TABLE</button>
+                    <div id="lobbyMessage" class="poker-message"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pokerTableView" class="hidden">
+            <div class="poker-table-toolbar">
+                <div>
+                    <span class="section-kicker">LIVE TABLE</span>
+                    <h2 id="pokerRoomName">Poker Table</h2>
                 </div>
 
-
-                <button
-                    id="pokerCreateRoomButton"
-                    type="button"
-                    class="btn poker-full-button"
-                >
-                    CREATE TABLE
-                </button>
-
-
-                <div
-                    id="pokerLobbyMessage"
-                    class="poker-message"
-                ></div>
-
-            </aside>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     ACTIVE TABLE
-     ========================================================= -->
-
-<section
-    id="pokerTableScreen"
-    class="poker-table-screen"
-    hidden
->
-
-    <div class="container poker-table-topbar">
-
-
-        <div>
-
-            <span class="eyebrow">
-                LIVE TABLE
-            </span>
-
-            <h2
-                id="pokerTableName"
-            >
-                Gilded Table
-            </h2>
-
-        </div>
-
-
-        <div class="poker-table-top-actions">
-
-            <div class="poker-top-stat">
-
-                <span>
-                    BLINDS
-                </span>
-
-                <strong
-                    id="pokerBlindDisplay"
-                >
-                    50 / 100
-                </strong>
-
+                <div class="poker-toolbar-actions">
+                    <button id="fillBotsButton" class="poker-secondary-button" type="button">FILL BOTS</button>
+                    <button id="leaveTableButton" class="poker-danger-button" type="button">LEAVE TABLE</button>
+                </div>
             </div>
 
-
-            <div class="poker-top-stat">
-
-                <span>
-                    BUY-IN
-                </span>
-
-                <strong
-                    id="pokerBuyInDisplay"
-                >
-                    5,000 AC
-                </strong>
-
+            <div class="poker-status-row">
+                <div><span>STREET</span><strong id="pokerStreet">WAITING</strong></div>
+                <div><span>POT</span><strong id="pokerPot">0 AC</strong></div>
+                <div><span>CURRENT BET</span><strong id="pokerCurrentBet">0 AC</strong></div>
+                <div><span>TURN</span><strong id="pokerTurnName">—</strong></div>
             </div>
 
+            <div class="poker-table-stage">
+                <div class="poker-table">
+                    <div class="poker-table-logo">THE GILDED ACE</div>
 
-            <button
-                id="pokerLeaveTable"
-                type="button"
-                class="btn secondary"
-            >
-                LEAVE TABLE
-            </button>
+                    <div class="community-area">
+                        <div class="community-label">COMMUNITY CARDS</div>
+                        <div id="communityCards" class="poker-cards"></div>
+                    </div>
 
-        </div>
+                    <div id="seat1" class="poker-seat seat-1"></div>
+                    <div id="seat2" class="poker-seat seat-2"></div>
+                    <div id="seat3" class="poker-seat seat-3"></div>
+                    <div id="seat4" class="poker-seat seat-4"></div>
+                    <div id="seat5" class="poker-seat seat-5"></div>
+                    <div id="seat6" class="poker-seat seat-6"></div>
+                </div>
+            </div>
 
-    </div>
-
-
-
-    <!-- =====================================================
-         TABLE
-         ===================================================== -->
-
-    <div class="poker-table-area">
-
-        <div class="poker-table-rail">
-
-            <div class="poker-table-felt">
-
-
-                <div class="poker-table-logo">
-
-                    <span>
-                        THE GILDED ACE
-                    </span>
-
-                    <strong>
-                        TEXAS HOLD'EM
-                    </strong>
-
+            <div class="poker-hand-panel">
+                <div>
+                    <span class="section-kicker">YOUR HAND</span>
+                    <div id="myHoleCards" class="poker-cards"></div>
                 </div>
 
+                <div id="pokerActionPanel" class="poker-actions">
+                    <button id="foldButton" class="poker-danger-button" type="button">FOLD</button>
+                    <button id="checkButton" class="poker-secondary-button" type="button">CHECK</button>
+                    <button id="callButton" class="poker-secondary-button" type="button">CALL</button>
 
-
-                <!-- COMMUNITY -->
-
-                <div class="poker-community-area">
-
-                    <span>
-                        COMMUNITY CARDS
-                    </span>
-
-                    <div
-                        id="pokerCommunityCards"
-                        class="poker-community-cards"
-                    ></div>
-
+                    <div class="raise-box">
+                        <input id="raiseAmount" type="number" min="0" step="50" value="200">
+                        <button id="raiseButton" class="poker-primary-button" type="button">RAISE</button>
+                    </div>
                 </div>
-
-
-
-                <!-- POT -->
-
-                <div class="poker-pot-display">
-
-                    <span>
-                        POT
-                    </span>
-
-                    <strong
-                        id="pokerPot"
-                    >
-                        0 AC
-                    </strong>
-
-                </div>
-
-
-
-                <!-- SEATS -->
-
-                <div
-                    id="pokerSeat1"
-                    class="poker-seat poker-seat-1"
-                ></div>
-
-
-                <div
-                    id="pokerSeat2"
-                    class="poker-seat poker-seat-2"
-                ></div>
-
-
-                <div
-                    id="pokerSeat3"
-                    class="poker-seat poker-seat-3"
-                ></div>
-
-
-                <div
-                    id="pokerSeat4"
-                    class="poker-seat poker-seat-4"
-                ></div>
-
-
-                <div
-                    id="pokerSeat5"
-                    class="poker-seat poker-seat-5"
-                ></div>
-
-
-                <div
-                    id="pokerSeat6"
-                    class="poker-seat poker-seat-6"
-                ></div>
-
-
             </div>
 
-        </div>
-
-    </div>
-
-
-
-    <!-- =====================================================
-         PLAYER CARDS
-         ===================================================== -->
-
-    <div class="container poker-player-console">
-
-        <div class="poker-player-hand-panel">
-
-            <div>
-
-                <span class="eyebrow">
-                    YOUR HAND
-                </span>
-
-                <div
-                    id="pokerMyCards"
-                    class="poker-my-cards"
-                ></div>
-
+            <div class="poker-bottom-bar">
+                <div id="pokerStatusMessage" class="poker-message">Waiting for players...</div>
+                <button id="startHandButton" class="poker-primary-button" type="button">START HAND</button>
             </div>
-
-
-            <div class="poker-turn-info">
-
-                <span>
-                    CURRENT STREET
-                </span>
-
-                <strong
-                    id="pokerStreet"
-                >
-                    WAITING
-                </strong>
-
-                <span>
-                    TO CALL
-                </span>
-
-                <strong
-                    id="pokerCallAmount"
-                >
-                    0 AC
-                </strong>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- =================================================
-             ACTIONS
-             ================================================= -->
-
-        <div class="poker-action-panel">
-
-
-            <button
-                id="pokerFoldButton"
-                type="button"
-                class="poker-action poker-fold"
-            >
-                FOLD
-            </button>
-
-
-            <button
-                id="pokerCheckButton"
-                type="button"
-                class="poker-action"
-            >
-                CHECK
-            </button>
-
-
-            <button
-                id="pokerCallButton"
-                type="button"
-                class="poker-action"
-            >
-                CALL
-            </button>
-
-
-            <div class="poker-raise-box">
-
-                <label for="pokerRaiseAmount">
-                    RAISE TO
-                </label>
-
-                <input
-                    id="pokerRaiseAmount"
-                    type="number"
-                    min="0"
-                    step="100"
-                >
-
-            </div>
-
-
-            <button
-                id="pokerRaiseButton"
-                type="button"
-                class="poker-action poker-raise"
-            >
-                RAISE
-            </button>
-
-
-        </div>
-
-
-
-        <div
-            id="pokerTableMessage"
-            class="poker-table-message"
-        >
-            Waiting for the table...
-        </div>
-
-    </div>
-
-</section>
-
-
+        </section>
+    </section>
 </main>
 
-
-
-<!-- =========================================================
-     FOOTER
-     ========================================================= -->
-
-<footer>
-
-    <strong>
-        THE GILDED ACE
-    </strong>
-
-    TEXAS HOLD'EM POKER ROOM
-
-    <br>
-
-    PLAY-MONEY ENTERTAINMENT ONLY
-    •
-    ACE CREDITS HAVE NO CASH VALUE
-
+<footer class="site-footer">
+    <div class="footer-container">
+        <div>
+            <strong>THE GILDED ACE</strong>
+            <div>Casino & Social Club</div>
+        </div>
+        <div>PLAY-MONEY ONLY • ACE CREDITS HAVE NO CASH VALUE</div>
+    </div>
 </footer>
 
-
-
-<!-- =========================================================
-     SUPABASE
-     ========================================================= -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
-
-
-<script
-    src="poker.js?v=1"
-></script>
-
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="poker.js?v=50"></script>
 </body>
-
 </html>
