@@ -10,14 +10,883 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <meta
+        name="description"
+        content="The Gilded Ace player profile and membership account."
+    >
+
     <title>
         The Gilded Ace | Profile
     </title>
+
+
+    <!-- ==================================================
+         MAIN WEBSITE CSS
+         ================================================== -->
 
     <link
         rel="stylesheet"
         href="styles.css?v=30"
     >
+
+
+    <!-- ==================================================
+         PROFILE PAGE CSS
+
+         This is included here so the profile page works
+         even before we add these styles to styles.css.
+         ================================================== -->
+
+    <style>
+
+        /* ==================================================
+           PROFILE PAGE
+           ================================================== */
+
+        .ga-profile-page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 60px 0 100px;
+        }
+
+
+        .ga-profile-hero {
+            margin-bottom: 35px;
+        }
+
+
+        .ga-profile-hero .eyebrow {
+            display: block;
+            margin-bottom: 10px;
+            color: #d4a632;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+
+        .ga-profile-hero h1 {
+            margin: 0;
+            color: #f3ead7;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: clamp(38px, 5vw, 64px);
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+
+        .ga-profile-hero p {
+            max-width: 720px;
+            margin: 14px 0 0;
+            color: #99938a;
+            line-height: 1.8;
+        }
+
+
+
+        /* ==================================================
+           LOADING
+           ================================================== */
+
+        .ga-profile-loading {
+            padding: 80px 25px;
+            border: 1px solid rgba(212, 166, 50, .25);
+            border-radius: 10px;
+            background: #0c0c0c;
+            text-align: center;
+        }
+
+
+        .ga-loading-ring {
+            width: 46px;
+            height: 46px;
+            margin: 0 auto 20px;
+            border: 3px solid rgba(212, 166, 50, .18);
+            border-top-color: #d4a632;
+            border-radius: 50%;
+            animation: gaProfileSpin .8s linear infinite;
+        }
+
+
+        @keyframes gaProfileSpin {
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+
+        .ga-profile-loading p {
+            margin: 0;
+            color: #aaa49a;
+        }
+
+
+
+        /* ==================================================
+           AUTHENTICATION PANEL
+           ================================================== */
+
+        .ga-auth-shell {
+            max-width: 620px;
+            margin: 20px auto 0;
+            overflow: hidden;
+            border: 1px solid rgba(212, 166, 50, .35);
+            border-radius: 12px;
+            background:
+                radial-gradient(
+                    circle at top,
+                    rgba(82, 8, 21, .22),
+                    transparent 45%
+                ),
+                #0b0b0b;
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, .5);
+        }
+
+
+        .ga-auth-header {
+            padding: 35px 35px 28px;
+            border-bottom: 1px solid rgba(212, 166, 50, .18);
+            text-align: center;
+        }
+
+
+        .ga-auth-mark {
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d4a632;
+            border-radius: 50%;
+            background:
+                radial-gradient(
+                    circle,
+                    #271b08,
+                    #080808
+                );
+            color: #f3d675;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 34px;
+            box-shadow:
+                0 0 30px rgba(212, 166, 50, .12);
+        }
+
+
+        .ga-auth-header h2 {
+            margin: 0;
+            color: #f3ead7;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+
+        .ga-auth-header p {
+            margin: 12px 0 0;
+            color: #918b82;
+            line-height: 1.6;
+        }
+
+
+
+        /* ==================================================
+           AUTH TABS
+           ================================================== */
+
+        .ga-auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid rgba(212, 166, 50, .18);
+        }
+
+
+        .ga-auth-tab {
+            min-height: 55px;
+            border: 0;
+            border-radius: 0;
+            background: #080808;
+            color: #777168;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+
+        .ga-auth-tab:hover {
+            color: #f3d675;
+        }
+
+
+        .ga-auth-tab.active {
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(212, 166, 50, .12),
+                    rgba(212, 166, 50, .03)
+                );
+            color: #f3d675;
+            box-shadow:
+                inset 0 -2px 0 #d4a632;
+        }
+
+
+
+        /* ==================================================
+           AUTH FORMS
+           ================================================== */
+
+        .ga-auth-form {
+            padding: 35px;
+        }
+
+
+        .ga-auth-form[hidden] {
+            display: none !important;
+        }
+
+
+        .ga-form-group {
+            margin-bottom: 22px;
+        }
+
+
+        .ga-form-group label {
+            display: block;
+            margin-bottom: 9px;
+            color: #d4a632;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+
+        .ga-form-group input {
+            box-sizing: border-box;
+            width: 100%;
+            height: 52px;
+            padding: 0 16px;
+            outline: none;
+            border: 1px solid rgba(212, 166, 50, .25);
+            border-radius: 6px;
+            background: #111;
+            color: #f1eadc;
+            font: inherit;
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+
+        .ga-form-group input:focus {
+            border-color: #d4a632;
+            box-shadow:
+                0 0 0 3px rgba(212, 166, 50, .08);
+        }
+
+
+        .ga-form-group input::placeholder {
+            color: #57534e;
+        }
+
+
+        .ga-auth-button {
+            width: 100%;
+            min-height: 54px;
+            border: 1px solid #e1b63d;
+            border-radius: 5px;
+            background:
+                linear-gradient(
+                    180deg,
+                    #e1b63d,
+                    #a9750e
+                );
+            color: #080604;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+
+        .ga-auth-button:hover {
+            filter: brightness(1.08);
+        }
+
+
+        .ga-auth-button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+
+        .ga-auth-message {
+            min-height: 24px;
+            margin: 18px 0 0;
+            color: #9c968d;
+            font-size: 13px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+
+        .ga-auth-message.error {
+            color: #e76a72;
+        }
+
+
+        .ga-auth-message.success {
+            color: #75d39b;
+        }
+
+
+
+        /* ==================================================
+           MEMBER DASHBOARD
+           ================================================== */
+
+        .ga-member-dashboard[hidden] {
+            display: none !important;
+        }
+
+
+        .ga-profile-card {
+            position: relative;
+            overflow: hidden;
+            padding: 36px;
+            border: 1px solid rgba(212, 166, 50, .32);
+            border-radius: 12px;
+            background:
+                radial-gradient(
+                    circle at 15% 0%,
+                    rgba(82, 8, 21, .28),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    145deg,
+                    #111,
+                    #080808
+                );
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, .38);
+        }
+
+
+        .ga-profile-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    #d4a632,
+                    transparent
+                );
+        }
+
+
+        .ga-profile-identity {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+
+        .ga-profile-avatar {
+            width: 95px;
+            height: 95px;
+            flex: 0 0 95px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #d4a632;
+            border-radius: 50%;
+            background:
+                radial-gradient(
+                    circle,
+                    #32120e,
+                    #090909 70%
+                );
+            color: #f3d675;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 42px;
+            font-weight: 700;
+            box-shadow:
+                0 0 35px rgba(212, 166, 50, .12);
+        }
+
+
+        .ga-profile-name-block {
+            flex: 1;
+        }
+
+
+        .ga-profile-name-block .eyebrow {
+            display: block;
+            margin-bottom: 7px;
+            color: #d4a632;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+
+        .ga-profile-name-block h2 {
+            margin: 0;
+            color: #f3ead7;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: clamp(26px, 4vw, 40px);
+            letter-spacing: 1px;
+        }
+
+
+        .ga-profile-email {
+            margin: 8px 0 0;
+            color: #888279;
+            font-size: 14px;
+        }
+
+
+        .ga-membership-badge {
+            padding: 10px 15px;
+            border: 1px solid rgba(212, 166, 50, .4);
+            border-radius: 4px;
+            background: rgba(212, 166, 50, .07);
+            color: #f3d675;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+
+
+        /* ==================================================
+           BALANCE
+           ================================================== */
+
+        .ga-profile-balance {
+            margin-top: 30px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(212, 166, 50, .18);
+            text-align: center;
+        }
+
+
+        .ga-profile-balance span {
+            display: block;
+            color: #8f897f;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+
+        .ga-profile-balance strong {
+            display: block;
+            margin-top: 8px;
+            color: #f3d675;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: clamp(32px, 5vw, 50px);
+            font-weight: 700;
+        }
+
+
+
+        /* ==================================================
+           STAT CARDS
+           ================================================== */
+
+        .ga-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 22px;
+        }
+
+
+        .ga-stat-card {
+            padding: 25px 18px;
+            border: 1px solid rgba(212, 166, 50, .2);
+            border-radius: 8px;
+            background: #0c0c0c;
+            text-align: center;
+        }
+
+
+        .ga-stat-card span {
+            display: block;
+            color: #807a72;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+
+        .ga-stat-card strong {
+            display: block;
+            margin-top: 10px;
+            color: #f3ead7;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 27px;
+        }
+
+
+
+        /* ==================================================
+           GAME RECORD
+           ================================================== */
+
+        .ga-profile-section {
+            margin-top: 22px;
+            padding: 30px;
+            border: 1px solid rgba(212, 166, 50, .2);
+            border-radius: 9px;
+            background: #0c0c0c;
+        }
+
+
+        .ga-section-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+
+        .ga-section-heading .eyebrow {
+            display: block;
+            margin-bottom: 7px;
+            color: #d4a632;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+
+        .ga-section-heading h3 {
+            margin: 0;
+            color: #f3ead7;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 24px;
+        }
+
+
+        .ga-game-record-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+
+        .ga-game-record {
+            padding: 20px;
+            border: 1px solid rgba(212, 166, 50, .15);
+            border-radius: 6px;
+            background: #111;
+        }
+
+
+        .ga-game-record span {
+            display: block;
+            color: #817b72;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+
+        .ga-game-record strong {
+            display: block;
+            margin-top: 9px;
+            color: #e4bb4d;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 17px;
+        }
+
+
+
+        /* ==================================================
+           MEMBERSHIP PROGRESS
+           ================================================== */
+
+        .ga-membership-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 12px;
+            color: #a7a198;
+            font-size: 13px;
+        }
+
+
+        .ga-membership-row strong {
+            color: #f3d675;
+        }
+
+
+        .ga-progress-track {
+            height: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 166, 50, .18);
+            border-radius: 20px;
+            background: #050505;
+        }
+
+
+        .ga-progress-bar {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background:
+                linear-gradient(
+                    90deg,
+                    #8c5b09,
+                    #e3b638,
+                    #f3d675
+                );
+            transition: width .5s ease;
+        }
+
+
+        .ga-membership-progress-text {
+            margin: 12px 0 0;
+            color: #777168;
+            font-size: 12px;
+        }
+
+
+
+        /* ==================================================
+           COLLECTION SUMMARY
+           ================================================== */
+
+        .ga-collection-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+
+        .ga-collection-summary > div {
+            padding: 20px;
+            border: 1px solid rgba(212, 166, 50, .15);
+            border-radius: 6px;
+            background: #111;
+        }
+
+
+        .ga-collection-summary span {
+            display: block;
+            color: #777168;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+
+        .ga-collection-summary strong {
+            display: block;
+            margin-top: 10px;
+            color: #f3d675;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 18px;
+        }
+
+
+
+        /* ==================================================
+           ACCOUNT SETTINGS
+           ================================================== */
+
+        .ga-settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+
+        .ga-settings-box {
+            padding: 25px;
+            border: 1px solid rgba(212, 166, 50, .15);
+            border-radius: 7px;
+            background: #101010;
+        }
+
+
+        .ga-settings-box h4 {
+            margin: 0 0 20px;
+            color: #f3ead7;
+            font-family: "Cinzel", Georgia, serif;
+            letter-spacing: 1px;
+        }
+
+
+        .ga-account-line {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+        }
+
+
+        .ga-account-line:last-child {
+            border-bottom: 0;
+        }
+
+
+        .ga-account-line span {
+            display: block;
+            margin-bottom: 5px;
+            color: #777168;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+
+        .ga-account-line strong {
+            color: #d7d0c3;
+            font-size: 13px;
+            word-break: break-word;
+        }
+
+
+        .ga-save-button,
+        .ga-logout-button {
+            width: 100%;
+            min-height: 48px;
+            margin-top: 8px;
+            border-radius: 5px;
+            font-family: "Cinzel", Georgia, serif;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+
+        .ga-save-button {
+            border: 1px solid #d4a632;
+            background:
+                linear-gradient(
+                    #d9ac32,
+                    #9c6c0c
+                );
+            color: #080604;
+        }
+
+
+        .ga-logout-button {
+            border: 1px solid #751525;
+            background:
+                linear-gradient(
+                    #3c0b13,
+                    #1b0509
+                );
+            color: #e6a8ae;
+        }
+
+
+        .ga-save-button:disabled,
+        .ga-logout-button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+
+
+        /* ==================================================
+           RESPONSIVE
+           ================================================== */
+
+        @media (max-width: 850px) {
+
+            .ga-stat-grid,
+            .ga-game-record-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+
+            .ga-settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .ga-collection-summary {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .ga-profile-page {
+                width: min(100% - 22px, 1180px);
+                padding-top: 35px;
+            }
+
+
+            .ga-profile-card {
+                padding: 25px 20px;
+            }
+
+
+            .ga-profile-identity {
+                flex-direction: column;
+                text-align: center;
+            }
+
+
+            .ga-membership-badge {
+                margin: 0 auto;
+            }
+
+
+            .ga-stat-grid,
+            .ga-game-record-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+
+            .ga-profile-section {
+                padding: 22px 18px;
+            }
+
+
+            .ga-auth-form,
+            .ga-auth-header {
+                padding-left: 22px;
+                padding-right: 22px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -25,214 +894,185 @@
 <body>
 
 
-<!-- ======================================================
-     HEADER
-     ====================================================== -->
+    <!-- ==================================================
+         HEADER
+         ================================================== -->
 
-<header class="site-header">
+    <header class="site-header">
 
-    <div class="nav-container">
-
-        <a
-            href="index.html"
-            class="brand"
-        >
-
-            <div class="brand-mark">
-                A
-            </div>
-
-            <div class="brand-text">
-
-                <div class="brand-name">
-                    THE GILDED ACE
-                </div>
-
-                <div class="brand-subtitle">
-                    PRIVATE SOCIAL CLUB
-                </div>
-
-            </div>
-
-        </a>
+        <div class="nav-wrap">
 
 
-        <nav class="main-nav">
-
-            <a href="index.html">
-                HOME
-            </a>
-
-            <a href="casino.html">
-                CASINO
-            </a>
-
-            <a href="store.html">
-                STORE
-            </a>
-
-            <a href="collection.html">
-                COLLECTION
-            </a>
-
-            <a href="leaderboard.html">
-                LEADERBOARD
-            </a>
-
-        </nav>
-
-
-        <div class="nav-account">
-
-            <span>
-                BALANCE
-            </span>
-
-            <span
-                class="balance-value"
-                data-balance
-            >
-                10,000 AC
-            </span>
+            <!-- BRAND -->
 
             <a
-                href="profile.html"
-                class="profile-button"
+                class="brand"
+                href="index.html"
             >
-                PROFILE
-            </a>
 
-        </div>
-
-    </div>
-
-</header>
-
-
-
-<!-- ======================================================
-     HERO
-     ====================================================== -->
-
-<section class="page-hero ga-profile-hero">
-
-    <span class="eyebrow">
-        Member Account
-    </span>
-
-    <h1>
-        Player Profile
-    </h1>
-
-    <p>
-        Manage your Gilded Ace identity,
-        membership, statistics and account.
-    </p>
-
-</section>
-
-
-
-<!-- ======================================================
-     PROFILE PAGE
-     ====================================================== -->
-
-<main class="ga-profile-page">
-
-
-
-    <!-- ==================================================
-         LOADING
-         ================================================== -->
-
-    <div
-        class="ga-profile-loading"
-        id="gaProfileLoading"
-    >
-
-        <div class="ga-profile-loading-logo">
-            A
-        </div>
-
-        <div>
-            CHECKING ACCOUNT...
-        </div>
-
-    </div>
-
-
-
-    <!-- ==================================================
-         LOGIN / SIGNUP AREA
-         ================================================== -->
-
-    <section
-        class="ga-auth-section"
-        id="gaAuthSection"
-        hidden
-    >
-
-
-        <div class="ga-auth-shell">
-
-
-            <!-- LEFT BRAND SIDE -->
-
-            <div class="ga-auth-brand-panel">
-
-                <div class="ga-auth-emblem">
+                <div class="brand-mark">
                     A
                 </div>
 
-                <span class="eyebrow">
-                    The Gilded Ace
-                </span>
+                <div>
 
-                <h2>
-                    Member Access
-                </h2>
+                    <span class="brand-small">
+                        THE
+                    </span>
 
-                <p>
-                    Sign in to access your saved
-                    player profile, Ace Credits,
-                    statistics and collection.
-                </p>
+                    <strong>
+                        GILDED ACE
+                    </strong>
+
+                </div>
+
+            </a>
 
 
-                <div class="ga-auth-feature-list">
 
-                    <div>
-                        <span>◆</span>
-                        Saved player profile
-                    </div>
+            <!-- NAVIGATION -->
 
-                    <div>
-                        <span>◆</span>
-                        Persistent Ace Credit balance
-                    </div>
+            <nav class="main-nav">
 
-                    <div>
-                        <span>◆</span>
-                        Casino statistics
-                    </div>
+                <a href="index.html">
+                    Home
+                </a>
 
-                    <div>
-                        <span>◆</span>
-                        Collection progress
-                    </div>
+                <a href="casino.html">
+                    Casino
+                </a>
+
+                <a href="store.html">
+                    Store
+                </a>
+
+                <a href="collection.html">
+                    Collection
+                </a>
+
+                <a href="leaderboard.html">
+                    Leaderboard
+                </a>
+
+                <a
+                    href="profile.html"
+                    class="active"
+                >
+                    Profile
+                </a>
+
+            </nav>
+
+
+
+            <!-- BALANCE -->
+
+            <div class="account-area">
+
+                <div class="balance-box">
+
+                    <span>
+                        BALANCE
+                    </span>
+
+                    <strong data-balance>
+                        10,000 AC
+                    </strong>
 
                 </div>
 
             </div>
 
 
+        </div>
 
-            <!-- AUTH FORMS -->
-
-            <div class="ga-auth-form-panel">
+    </header>
 
 
-                <!-- TAB BUTTONS -->
+
+    <!-- ==================================================
+         MAIN PROFILE PAGE
+         ================================================== -->
+
+    <main class="ga-profile-page">
+
+
+        <!-- PAGE TITLE -->
+
+        <section class="ga-profile-hero">
+
+            <span class="eyebrow">
+                THE GILDED ACE
+            </span>
+
+            <h1>
+                Player Profile
+            </h1>
+
+            <p>
+                Sign in to your Gilded Ace account to keep your
+                display name, Ace Credits, casino statistics,
+                membership progress, and collection connected
+                to your account.
+            </p>
+
+        </section>
+
+
+
+        <!-- ==================================================
+             LOADING
+             ================================================== -->
+
+        <section
+            class="ga-profile-loading"
+            id="gaProfileLoading"
+        >
+
+            <div class="ga-loading-ring"></div>
+
+            <p>
+                Connecting to The Gilded Ace...
+            </p>
+
+        </section>
+
+
+
+        <!-- ==================================================
+             LOGIN / SIGN UP
+             ================================================== -->
+
+        <section
+            id="gaAuthSection"
+            hidden
+        >
+
+            <div class="ga-auth-shell">
+
+
+                <!-- AUTH HEADER -->
+
+                <div class="ga-auth-header">
+
+                    <div class="ga-auth-mark">
+                        A
+                    </div>
+
+                    <h2>
+                        Member Access
+                    </h2>
+
+                    <p>
+                        Sign in to your existing account or
+                        create a new Gilded Ace membership.
+                    </p>
+
+                </div>
+
+
+
+                <!-- AUTH TABS -->
 
                 <div class="ga-auth-tabs">
 
@@ -242,9 +1082,8 @@
                         id="gaLoginTab"
                         onclick="gaShowLogin()"
                     >
-                        Login
+                        Sign In
                     </button>
-
 
                     <button
                         type="button"
@@ -259,9 +1098,9 @@
 
 
 
-                <!-- ==============================
+                <!-- ==================================================
                      LOGIN FORM
-                     ============================== -->
+                     ================================================== -->
 
                 <form
                     class="ga-auth-form"
@@ -269,77 +1108,61 @@
                     onsubmit="gaLogin(event)"
                 >
 
-                    <div class="ga-auth-form-title">
+                    <div class="ga-form-group">
 
-                        <span class="eyebrow">
-                            Welcome Back
-                        </span>
+                        <label for="gaLoginEmail">
+                            Email Address
+                        </label>
 
-                        <h3>
-                            Sign In
-                        </h3>
+                        <input
+                            type="email"
+                            id="gaLoginEmail"
+                            autocomplete="email"
+                            placeholder="you@example.com"
+                            required
+                        >
 
                     </div>
 
 
-                    <label
-                        class="ga-form-label"
-                        for="gaLoginEmail"
-                    >
-                        Email Address
-                    </label>
+                    <div class="ga-form-group">
 
+                        <label for="gaLoginPassword">
+                            Password
+                        </label>
 
-                    <input
-                        type="email"
-                        id="gaLoginEmail"
-                        class="ga-form-input"
-                        placeholder="player@example.com"
-                        autocomplete="email"
-                        required
-                    >
+                        <input
+                            type="password"
+                            id="gaLoginPassword"
+                            autocomplete="current-password"
+                            placeholder="Enter your password"
+                            required
+                        >
 
-
-                    <label
-                        class="ga-form-label"
-                        for="gaLoginPassword"
-                    >
-                        Password
-                    </label>
-
-
-                    <input
-                        type="password"
-                        id="gaLoginPassword"
-                        class="ga-form-input"
-                        placeholder="Enter your password"
-                        autocomplete="current-password"
-                        minlength="6"
-                        required
-                    >
+                    </div>
 
 
                     <button
                         type="submit"
-                        class="ga-auth-submit"
+                        class="ga-auth-button"
                         id="gaLoginButton"
                     >
                         Sign In
                     </button>
 
 
-                    <div
+                    <p
                         class="ga-auth-message"
                         id="gaLoginMessage"
-                    ></div>
+                    ></p>
 
                 </form>
 
 
 
-                <!-- ==============================
-                     SIGNUP FORM
-                     ============================== -->
+                <!-- ==================================================
+                     SIGN UP FORM
+                     ================================================== -->
 
                 <form
                     class="ga-auth-form"
@@ -348,428 +1171,260 @@
                     hidden
                 >
 
-                    <div class="ga-auth-form-title">
+                    <div class="ga-form-group">
 
-                        <span class="eyebrow">
-                            New Membership
-                        </span>
+                        <label for="gaSignupUsername">
+                            Display Name
+                        </label>
 
-                        <h3>
-                            Create Account
-                        </h3>
+                        <input
+                            type="text"
+                            id="gaSignupUsername"
+                            minlength="3"
+                            maxlength="20"
+                            autocomplete="nickname"
+                            placeholder="Gilded Player"
+                            required
+                        >
 
                     </div>
 
 
-                    <label
-                        class="ga-form-label"
-                        for="gaSignupUsername"
-                    >
-                        Display Name
-                    </label>
+                    <div class="ga-form-group">
+
+                        <label for="gaSignupEmail">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="gaSignupEmail"
+                            autocomplete="email"
+                            placeholder="you@example.com"
+                            required
+                        >
+
+                    </div>
 
 
-                    <input
-                        type="text"
-                        id="gaSignupUsername"
-                        class="ga-form-input"
-                        placeholder="Choose a player name"
-                        autocomplete="nickname"
-                        minlength="3"
-                        maxlength="20"
-                        required
-                    >
+                    <div class="ga-form-group">
+
+                        <label for="gaSignupPassword">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="gaSignupPassword"
+                            minlength="6"
+                            autocomplete="new-password"
+                            placeholder="Minimum 6 characters"
+                            required
+                        >
+
+                    </div>
 
 
-                    <label
-                        class="ga-form-label"
-                        for="gaSignupEmail"
-                    >
-                        Email Address
-                    </label>
+                    <div class="ga-form-group">
 
+                        <label for="gaSignupPasswordConfirm">
+                            Confirm Password
+                        </label>
 
-                    <input
-                        type="email"
-                        id="gaSignupEmail"
-                        class="ga-form-input"
-                        placeholder="player@example.com"
-                        autocomplete="email"
-                        required
-                    >
+                        <input
+                            type="password"
+                            id="gaSignupPasswordConfirm"
+                            minlength="6"
+                            autocomplete="new-password"
+                            placeholder="Enter password again"
+                            required
+                        >
 
-
-                    <label
-                        class="ga-form-label"
-                        for="gaSignupPassword"
-                    >
-                        Password
-                    </label>
-
-
-                    <input
-                        type="password"
-                        id="gaSignupPassword"
-                        class="ga-form-input"
-                        placeholder="Minimum 6 characters"
-                        autocomplete="new-password"
-                        minlength="6"
-                        required
-                    >
-
-
-                    <label
-                        class="ga-form-label"
-                        for="gaSignupPasswordConfirm"
-                    >
-                        Confirm Password
-                    </label>
-
-
-                    <input
-                        type="password"
-                        id="gaSignupPasswordConfirm"
-                        class="ga-form-input"
-                        placeholder="Enter password again"
-                        autocomplete="new-password"
-                        minlength="6"
-                        required
-                    >
+                    </div>
 
 
                     <button
                         type="submit"
-                        class="ga-auth-submit"
+                        class="ga-auth-button"
                         id="gaSignupButton"
                     >
                         Create Account
                     </button>
 
 
-                    <div
+                    <p
                         class="ga-auth-message"
                         id="gaSignupMessage"
-                    ></div>
+                    ></p>
 
                 </form>
 
 
             </div>
 
-        </div>
+        </section>
 
-    </section>
-
-
-
-    <!-- ==================================================
-         LOGGED-IN PROFILE
-         ================================================== -->
-
-    <section
-        class="ga-member-dashboard"
-        id="gaMemberDashboard"
-        hidden
-    >
 
 
         <!-- ==================================================
-             IDENTITY CARD
+             LOGGED-IN PROFILE
              ================================================== -->
 
-        <div class="ga-profile-identity-card">
+        <section
+            class="ga-member-dashboard"
+            id="gaMemberDashboard"
+            hidden
+        >
 
 
-            <div class="ga-profile-avatar">
+            <!-- ==================================================
+                 MAIN PLAYER CARD
+                 ================================================== -->
 
-                <div class="ga-profile-avatar-ring">
+            <div class="ga-profile-card">
 
-                    <span id="gaProfileInitial">
+
+                <div class="ga-profile-identity">
+
+
+                    <!-- AVATAR -->
+
+                    <div
+                        class="ga-profile-avatar"
+                        id="gaProfileInitial"
+                    >
                         G
-                    </span>
-
-                </div>
-
-            </div>
+                    </div>
 
 
 
-            <div class="ga-profile-identity-main">
+                    <!-- NAME -->
 
-                <span class="eyebrow">
-                    Player Identity
-                </span>
+                    <div class="ga-profile-name-block">
+
+                        <span class="eyebrow">
+                            Gilded Ace Member
+                        </span>
+
+                        <h2 id="profileUsername">
+                            Gilded Player
+                        </h2>
+
+                        <p
+                            class="ga-profile-email"
+                            id="gaProfileEmail"
+                        >
+                            —
+                        </p>
+
+                    </div>
 
 
-                <h2 id="profileUsername">
-                    Gilded Player
-                </h2>
 
+                    <!-- MEMBERSHIP -->
 
-                <div class="ga-profile-status-row">
-
-                    <span
-                        class="ga-profile-tier-badge"
+                    <div
+                        class="ga-membership-badge"
                         id="profileStatus"
                     >
                         STANDARD MEMBER
-                    </span>
+                    </div>
 
-
-                    <span
-                        class="ga-profile-online"
-                    >
-                        <span></span>
-
-                        ACCOUNT ACTIVE
-                    </span>
 
                 </div>
 
 
-                <div
-                    class="ga-profile-email"
-                    id="gaProfileEmail"
-                >
-                    —
-                </div>
 
-            </div>
+                <!-- BALANCE -->
 
-
-
-            <div class="ga-profile-balance-box">
-
-                <span>
-                    AVAILABLE BALANCE
-                </span>
-
-
-                <strong data-balance>
-                    10,000 AC
-                </strong>
-
-
-                <a
-                    href="casino.html"
-                    class="btn"
-                >
-                    Enter Casino
-                </a>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- ==================================================
-             MEMBERSHIP PROGRESS
-             ================================================== -->
-
-        <div class="ga-profile-membership-card">
-
-            <div class="ga-profile-card-header">
-
-                <div>
-
-                    <span class="eyebrow">
-                        Membership
-                    </span>
-
-                    <h3>
-                        Club Status
-                    </h3>
-
-                </div>
-
-
-                <div class="ga-membership-current">
+                <div class="ga-profile-balance">
 
                     <span>
-                        CURRENT TIER
+                        Available Ace Credits
                     </span>
 
-                    <strong id="currentTier">
-                        STANDARD
+                    <strong data-balance>
+                        10,000 AC
                     </strong>
 
                 </div>
 
-            </div>
-
-
-
-            <div class="ga-membership-progress-labels">
-
-                <span id="currentTierLabel">
-                    STANDARD
-                </span>
-
-                <span id="nextTier">
-                    GOLD MEMBER
-                </span>
 
             </div>
 
 
 
-            <div class="ga-membership-track">
+            <!-- ==================================================
+                 PLAYER STATS
+                 ================================================== -->
 
-                <div
-                    class="ga-membership-progress"
-                    id="membershipProgress"
-                ></div>
+            <div class="ga-stat-grid">
+
+
+                <div class="ga-stat-card">
+
+                    <span>
+                        Games Played
+                    </span>
+
+                    <strong id="profileGames">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="ga-stat-card">
+
+                    <span>
+                        Wins
+                    </span>
+
+                    <strong id="profileWins">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="ga-stat-card">
+
+                    <span>
+                        Losses
+                    </span>
+
+                    <strong id="profileLosses">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="ga-stat-card">
+
+                    <span>
+                        Win Rate
+                    </span>
+
+                    <strong id="gaProfileWinRate">
+                        0.0%
+                    </strong>
+
+                </div>
+
 
             </div>
 
 
 
-            <div class="ga-membership-progress-info">
+            <!-- ==================================================
+                 GAME RECORD
+                 ================================================== -->
 
-                <span>
-                    Balance determines membership level.
-                </span>
-
-                <span id="gaMembershipProgressText">
-                    Progress toward next tier
-                </span>
-
-            </div>
-
-        </div>
+            <section class="ga-profile-section">
 
 
-
-        <!-- ==================================================
-             STAT CARDS
-             ================================================== -->
-
-        <div class="ga-profile-stat-grid">
-
-
-            <div class="ga-profile-stat-card">
-
-                <span>
-                    TOTAL GAMES
-                </span>
-
-                <strong id="profileGames">
-                    0
-                </strong>
-
-                <small>
-                    Lifetime games played
-                </small>
-
-            </div>
-
-
-
-            <div class="ga-profile-stat-card">
-
-                <span>
-                    WINS
-                </span>
-
-                <strong id="profileWins">
-                    0
-                </strong>
-
-                <small>
-                    Lifetime victories
-                </small>
-
-            </div>
-
-
-
-            <div class="ga-profile-stat-card">
-
-                <span>
-                    LOSSES
-                </span>
-
-                <strong id="profileLosses">
-                    0
-                </strong>
-
-                <small>
-                    Lifetime losses
-                </small>
-
-            </div>
-
-
-
-            <div class="ga-profile-stat-card">
-
-                <span>
-                    WIN RATE
-                </span>
-
-                <strong id="gaProfileWinRate">
-                    0%
-                </strong>
-
-                <small>
-                    Overall performance
-                </small>
-
-            </div>
-
-
-
-            <div class="ga-profile-stat-card">
-
-                <span>
-                    ITEMS OWNED
-                </span>
-
-                <strong id="profileItemsOwned">
-                    0
-                </strong>
-
-                <small>
-                    Collection inventory
-                </small>
-
-            </div>
-
-
-
-            <div class="ga-profile-stat-card">
-
-                <span>
-                    COLLECTION VALUE
-                </span>
-
-                <strong id="gaProfileCollectionValue">
-                    0 AC
-                </strong>
-
-                <small>
-                    Total purchase value
-                </small>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- ==================================================
-             GAME STATISTICS
-             ================================================== -->
-
-        <div class="ga-profile-two-column">
-
-
-            <div class="ga-profile-panel">
-
-                <div class="ga-profile-card-header">
+                <div class="ga-section-heading">
 
                     <div>
 
@@ -787,22 +1442,14 @@
 
 
 
-                <div class="ga-game-stat-list">
+                <div class="ga-game-record-grid">
 
 
-                    <div class="ga-game-stat-row">
+                    <div class="ga-game-record">
 
-                        <div>
-
-                            <span class="ga-game-icon">
-                                ♠
-                            </span>
-
-                            <span>
-                                Blackjack
-                            </span>
-
-                        </div>
+                        <span>
+                            Blackjack
+                        </span>
 
                         <strong id="blackjackWins">
                             0 WINS
@@ -811,20 +1458,11 @@
                     </div>
 
 
+                    <div class="ga-game-record">
 
-                    <div class="ga-game-stat-row">
-
-                        <div>
-
-                            <span class="ga-game-icon">
-                                7
-                            </span>
-
-                            <span>
-                                Slots
-                            </span>
-
-                        </div>
+                        <span>
+                            Slots
+                        </span>
 
                         <strong id="slotWins">
                             0 WINS
@@ -833,20 +1471,11 @@
                     </div>
 
 
+                    <div class="ga-game-record">
 
-                    <div class="ga-game-stat-row">
-
-                        <div>
-
-                            <span class="ga-game-icon">
-                                ◆
-                            </span>
-
-                            <span>
-                                Roulette
-                            </span>
-
-                        </div>
+                        <span>
+                            Roulette
+                        </span>
 
                         <strong id="rouletteWins">
                             0 WINS
@@ -855,20 +1484,11 @@
                     </div>
 
 
+                    <div class="ga-game-record">
 
-                    <div class="ga-game-stat-row">
-
-                        <div>
-
-                            <span class="ga-game-icon">
-                                ⚄
-                            </span>
-
-                            <span>
-                                High Roll
-                            </span>
-
-                        </div>
+                        <span>
+                            High Roll
+                        </span>
 
                         <strong id="diceWins">
                             0 WINS
@@ -879,7 +1499,75 @@
 
                 </div>
 
-            </div>
+
+            </section>
+
+
+
+            <!-- ==================================================
+                 MEMBERSHIP
+                 ================================================== -->
+
+            <section class="ga-profile-section">
+
+
+                <div class="ga-section-heading">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            Club Status
+                        </span>
+
+                        <h3>
+                            Membership
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="ga-membership-row">
+
+                    <div>
+                        Current Tier:
+                        <strong id="currentTier">
+                            STANDARD
+                        </strong>
+                    </div>
+
+                    <div>
+                        Next Tier:
+                        <strong id="nextTier">
+                            GOLD MEMBER
+                        </strong>
+                    </div>
+
+                </div>
+
+
+
+                <div class="ga-progress-track">
+
+                    <div
+                        class="ga-progress-bar"
+                        id="membershipProgress"
+                    ></div>
+
+                </div>
+
+
+                <p
+                    class="ga-membership-progress-text"
+                    id="gaMembershipProgressText"
+                >
+                    90,000 AC until GOLD MEMBER
+                </p>
+
+
+            </section>
 
 
 
@@ -887,14 +1575,15 @@
                  COLLECTION SUMMARY
                  ================================================== -->
 
-            <div class="ga-profile-panel">
+            <section class="ga-profile-section">
 
-                <div class="ga-profile-card-header">
+
+                <div class="ga-section-heading">
 
                     <div>
 
                         <span class="eyebrow">
-                            Inventory
+                            Vault
                         </span>
 
                         <h3>
@@ -903,12 +1592,11 @@
 
                     </div>
 
-
                     <a
                         href="collection.html"
-                        class="ga-profile-small-link"
+                        class="btn-secondary"
                     >
-                        VIEW COLLECTION
+                        View Collection
                     </a>
 
                 </div>
@@ -924,26 +1612,24 @@
                             Items Owned
                         </span>
 
-                        <strong id="profileCollection">
-                            0 ITEMS
+                        <strong id="profileItemsOwned">
+                            0
                         </strong>
 
                     </div>
-
 
 
                     <div>
 
                         <span>
-                            Total Value
+                            Collection Value
                         </span>
 
-                        <strong id="gaCollectionValue">
+                        <strong id="gaProfileCollectionValue">
                             0 AC
                         </strong>
 
                     </div>
-
 
 
                     <div>
@@ -961,34 +1647,28 @@
 
                 </div>
 
-            </div>
 
-
-        </div>
+            </section>
 
 
 
-        <!-- ==================================================
-             ACCOUNT SETTINGS
-             ================================================== -->
+            <!-- ==================================================
+                 ACCOUNT SETTINGS
+                 ================================================== -->
 
-        <div class="ga-profile-two-column">
+            <section class="ga-profile-section">
 
 
-            <!-- EDIT PROFILE -->
-
-            <div class="ga-profile-panel">
-
-                <div class="ga-profile-card-header">
+                <div class="ga-section-heading">
 
                     <div>
 
                         <span class="eyebrow">
-                            Account Settings
+                            Member Account
                         </span>
 
                         <h3>
-                            Edit Profile
+                            Profile Settings
                         </h3>
 
                     </div>
@@ -996,116 +1676,101 @@
                 </div>
 
 
-                <div class="ga-profile-form">
+
+                <div class="ga-settings-grid">
 
 
-                    <label
-                        class="ga-form-label"
-                        for="gaEditUsername"
-                    >
-                        Display Name
-                    </label>
+                    <!-- EDIT NAME -->
+
+                    <div class="ga-settings-box">
+
+                        <h4>
+                            Display Name
+                        </h4>
 
 
-                    <input
-                        type="text"
-                        id="gaEditUsername"
-                        class="ga-form-input"
-                        placeholder="Enter display name"
-                        minlength="3"
-                        maxlength="20"
-                    >
+                        <div class="ga-form-group">
+
+                            <label for="gaEditUsername">
+                                Player Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="gaEditUsername"
+                                minlength="3"
+                                maxlength="20"
+                                autocomplete="nickname"
+                                placeholder="Gilded Player"
+                            >
+
+                        </div>
 
 
-                    <p class="ga-profile-form-help">
-                        This is the name displayed throughout
-                        The Gilded Ace.
-                    </p>
+                        <button
+                            type="button"
+                            class="ga-save-button"
+                            id="gaSaveProfileButton"
+                            onclick="gaSaveDisplayName()"
+                        >
+                            Save Changes
+                        </button>
 
 
-                    <button
-                        type="button"
-                        class="ga-profile-save-button"
-                        id="gaSaveProfileButton"
-                        onclick="gaSaveDisplayName()"
-                    >
-                        Save Changes
-                    </button>
+                        <p
+                            class="ga-auth-message"
+                            id="gaProfileSaveMessage"
+                        ></p>
 
 
-                    <div
-                        class="ga-auth-message"
-                        id="gaProfileSaveMessage"
-                    ></div>
-
-
-                </div>
-
-            </div>
+                    </div>
 
 
 
-            <!-- ACCOUNT INFORMATION -->
+                    <!-- ACCOUNT INFO -->
 
-            <div class="ga-profile-panel">
+                    <div class="ga-settings-box">
 
-                <div class="ga-profile-card-header">
-
-                    <div>
-
-                        <span class="eyebrow">
-                            Security
-                        </span>
-
-                        <h3>
+                        <h4>
                             Account
-                        </h3>
-
-                    </div>
-
-                </div>
+                        </h4>
 
 
-                <div class="ga-account-details">
+                        <div class="ga-account-line">
+
+                            <span>
+                                Email
+                            </span>
+
+                            <strong id="gaAccountEmail">
+                                —
+                            </strong>
+
+                        </div>
 
 
-                    <div>
+                        <div class="ga-account-line">
 
-                        <span>
-                            ACCOUNT EMAIL
-                        </span>
+                            <span>
+                                Member ID
+                            </span>
 
-                        <strong id="gaAccountEmail">
-                            —
-                        </strong>
+                            <strong id="gaAccountId">
+                                —
+                            </strong>
 
-                    </div>
-
-
-
-                    <div>
-
-                        <span>
-                            PLAYER ID
-                        </span>
-
-                        <strong id="gaAccountId">
-                            —
-                        </strong>
-
-                    </div>
+                        </div>
 
 
+                        <button
+                            type="button"
+                            class="ga-logout-button"
+                            id="gaLogoutButton"
+                            onclick="gaLogout()"
+                        >
+                            Log Out
+                        </button>
 
-                    <div>
-
-                        <span>
-                            ACCOUNT STATUS
-                        </span>
-
-                        <strong class="ga-account-active">
-                            ACTIVE
-                        </strong>
 
                     </div>
 
@@ -1113,114 +1778,71 @@
                 </div>
 
 
-                <button
-                    type="button"
-                    class="ga-logout-button"
-                    id="gaLogoutButton"
-                    onclick="gaLogout()"
-                >
-                    Log Out
-                </button>
-
-            </div>
+            </section>
 
 
-        </div>
+        </section>
+
+
+    </main>
 
 
 
-        <!-- ==================================================
-             LOCAL SAVE NOTICE
-             ================================================== -->
+    <!-- ==================================================
+         FOOTER
+         ================================================== -->
 
-        <div class="ga-profile-sync-notice">
+    <footer class="site-footer">
 
-            <div class="ga-profile-sync-icon">
-                ◆
-            </div>
+        <div class="footer-inner">
 
             <div>
 
                 <strong>
-                    Cloud Profile Connected
+                    THE GILDED ACE
                 </strong>
 
                 <p>
-                    Your Gilded Ace account is connected
-                    to Supabase. Profile information can
-                    be restored when you sign in again.
+                    A fictional virtual casino and social club.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p>
+                    Ace Credits are virtual entertainment credits
+                    with no cash value.
                 </p>
 
             </div>
 
         </div>
 
-
-    </section>
-
-
-</main>
+    </footer>
 
 
 
-<!-- ======================================================
-     PLAY MONEY NOTICE
-     ====================================================== -->
+    <!-- ==================================================
+         SUPABASE JAVASCRIPT LIBRARY
 
-<section class="section">
+         IMPORTANT:
+         The publishable key is stored in script.js.
+         Never put your Supabase secret key in this page.
+         ================================================== -->
 
-    <div class="container">
-
-        <div class="notice">
-
-            <strong>
-                Play-Money Entertainment Only
-            </strong>
-
-            Ace Credits are fictional virtual credits
-            used only within The Gilded Ace website.
-            They have no cash value and cannot be
-            redeemed for real money.
-
-        </div>
-
-    </div>
-
-</section>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
 
 
 
-<!-- ======================================================
-     FOOTER
-     ====================================================== -->
+    <!-- ==================================================
+         THE GILDED ACE MAIN JAVASCRIPT
+         ================================================== -->
 
-<footer>
-
-    <strong>
-        THE GILDED ACE
-    </strong>
-
-    FICTIONAL PRIVATE SOCIAL CLUB
-    • PLAY-MONEY ENTERTAINMENT ONLY
-
-</footer>
-
-
-
-<!-- ======================================================
-     SUPABASE
-     ====================================================== -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
-
-
-<!-- ======================================================
-     SITE SCRIPT
-     ====================================================== -->
-
-<script src="script.js?v=30"></script>
+    <script src="script.js?v=30"></script>
 
 
 </body>
