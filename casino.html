@@ -1,1058 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="description"
-        content="Play Blackjack, Slots, Roulette, and Dice at The Gilded Ace."
-    >
-
-    <title>
-        Casino | The Gilded Ace
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="styles.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="roulette.css"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Gilded Ace Casino">
+    <title>Casino | The Gilded Ace</title>
+    <link rel="stylesheet" href="styles.css?v=100">
+    <link rel="stylesheet" href="casino-repair.css?v=100">
 </head>
+<body class="ga-casino-page">
 
-
-<body>
-
-
-    <!-- =========================================================
-         HEADER
-    ========================================================== -->
-
-    <header class="site-header">
-
-        <div class="nav-container">
-
-            <a
-                href="index.html"
-                class="brand"
-            >
-
-                <div class="brand-mark">
-                    A
-                </div>
-
-                <div class="brand-text">
-
-                    <span class="brand-name">
-                        THE GILDED ACE
-                    </span>
-
-                    <span class="brand-subtitle">
-                        CASINO & SOCIAL CLUB
-                    </span>
-
-                </div>
-
-            </a>
-
-
-            <nav class="main-nav">
-
-                <a href="index.html">
-                    HOME
-                </a>
-
-                <a
-                    href="casino.html"
-                    class="active"
-                >
-                    CASINO
-                </a>
-
-                <a href="store.html">
-                    STORE
-                </a>
-
-                <a href="collection.html">
-                    COLLECTION
-                </a>
-
-                <a href="leaderboard.html">
-                    LEADERBOARD
-                </a>
-
-            </nav>
-
-
-            <div class="nav-account">
-
-                <div class="nav-balance">
-
-                    <span class="balance-label">
-                        ACE CREDITS
-                    </span>
-
-                    <span class="balance-value">
-                        10,000 AC
-                    </span>
-
-                </div>
-
-
-                <a
-                    href="profile.html"
-                    class="profile-button"
-                >
-                    PROFILE
-                </a>
-
+<header class="site-header">
+    <div class="nav-container">
+        <a href="index.html" class="brand">
+            <div class="brand-mark">A</div>
+            <div class="brand-text">
+                <span class="brand-name">THE GILDED ACE</span>
+                <span class="brand-subtitle">CASINO &amp; SOCIAL CLUB</span>
             </div>
+        </a>
 
+        <nav class="main-nav">
+            <a href="index.html">HOME</a>
+            <a href="casino.html" class="active">CASINO</a>
+            <a href="poker.html">POKER</a>
+            <a href="store.html">STORE</a>
+            <a href="collection.html">COLLECTION</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
+        </nav>
+
+        <div class="nav-account">
+            <div class="nav-balance">
+                <span class="balance-label">ACE CREDITS</span>
+                <span class="balance-value" data-ga-balance>— AC</span>
+            </div>
+            <a href="profile.html" class="profile-button">PROFILE</a>
+        </div>
+    </div>
+</header>
+
+<section class="casino-page-hero">
+    <div class="section-container">
+        <span class="section-kicker">THE GILDED ACE CASINO</span>
+        <h1>CHOOSE YOUR GAME</h1>
+        <p>Test your luck using fictional Ace Credits. Play bold. Build your legacy.</p>
+    </div>
+</section>
+
+<main class="casino-page">
+    <div class="section-container">
+
+        <div id="casinoSystemMessage" class="casino-system-message" hidden></div>
+
+        <div class="casino-tabs" role="tablist" aria-label="Casino games">
+            <button class="casino-tab active" data-game="blackjack" type="button">BLACKJACK</button>
+            <button class="casino-tab" data-game="slots" type="button">SLOTS</button>
+            <button class="casino-tab" data-game="roulette" type="button">ROULETTE</button>
+            <button class="casino-tab" data-game="dice" type="button">HIGH ROLL</button>
         </div>
 
-    </header>
-
-
-
-    <!-- =========================================================
-         CASINO HERO
-    ========================================================== -->
-
-    <section class="casino-page-hero">
-
-        <div class="section-container">
-
-            <span class="section-kicker">
-                THE GILDED ACE CASINO
-            </span>
-
-            <h1>
-                CHOOSE YOUR GAME
-            </h1>
-
-            <p>
-                Test your luck using fictional Ace Credits.
-                Play bold. Build your legacy.
-            </p>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================================================
-         CASINO
-    ========================================================== -->
-
-    <main class="casino-page">
-
-        <div class="section-container">
-
-
-            <!-- =================================================
-                 GAME TABS
-            ================================================== -->
-
-            <div class="casino-tabs">
-
-                <button
-                    class="casino-tab active"
-                    data-game="blackjack"
-                    type="button"
-                >
-                    BLACKJACK
-                </button>
-
-                <button
-                    class="casino-tab"
-                    data-game="slots"
-                    type="button"
-                >
-                    SLOTS
-                </button>
-
-                <button
-                    class="casino-tab"
-                    data-game="roulette"
-                    type="button"
-                >
-                    ROULETTE
-                </button>
-
-                <button
-                    class="casino-tab"
-                    data-game="dice"
-                    type="button"
-                >
-                    HIGH ROLL
-                </button>
-
+        <!-- BLACKJACK -->
+        <section id="blackjack" class="casino-game-panel active">
+            <div class="casino-game-heading">
+                <div>
+                    <span class="game-type">TABLE GAME</span>
+                    <h2>Blackjack</h2>
+                    <p>Beat the dealer without going over 21.</p>
+                </div>
             </div>
 
-
-
-            <!-- =================================================
-                 BLACKJACK
-            ================================================== -->
-
-            <section
-                id="blackjack"
-                class="casino-game-panel active"
-            >
-
-                <div class="casino-game-heading">
-
-                    <div>
-
-                        <span class="game-type">
-                            TABLE GAME
-                        </span>
-
-                        <h2>
-                            Blackjack
-                        </h2>
-
-                        <p>
-                            Beat the dealer without going over 21.
-                        </p>
-
-                    </div>
-
+            <div class="blackjack-table">
+                <div class="blackjack-hand">
+                    <span class="blackjack-label">DEALER</span>
+                    <div id="dealerCards" class="playing-card-row"></div>
+                    <div id="dealerValue" class="blackjack-value">Dealer: —</div>
                 </div>
 
+                <div class="blackjack-divider"><span>THE GILDED ACE</span></div>
 
-                <div class="blackjack-table">
+                <div class="blackjack-hand">
+                    <span class="blackjack-label">YOUR HAND</span>
+                    <div id="playerCards" class="playing-card-row"></div>
+                    <div id="playerValue" class="blackjack-value">Your Hand: —</div>
+                </div>
+            </div>
 
-                    <div class="blackjack-hand">
+            <div class="casino-control-panel">
+                <div class="casino-bet-control">
+                    <span>BET AMOUNT</span>
+                    <div class="casino-bet-selector">
+                        <button id="blackjackBetDown" type="button">−</button>
+                        <strong id="blackjackBet">100 AC</strong>
+                        <button id="blackjackBetUp" type="button">+</button>
+                    </div>
+                </div>
 
-                        <span class="blackjack-label">
-                            DEALER
-                        </span>
+                <div class="casino-action-buttons">
+                    <button id="blackjackDeal" class="casino-primary-button" type="button">DEAL</button>
+                    <button id="blackjackHit" class="casino-secondary-button" type="button" disabled>HIT</button>
+                    <button id="blackjackStand" class="casino-secondary-button" type="button" disabled>STAND</button>
+                    <button id="blackjackDouble" class="casino-secondary-button" type="button" disabled>DOUBLE</button>
+                </div>
+            </div>
 
-                        <div
-                            id="dealerCards"
-                            class="playing-card-row"
-                        ></div>
+            <div id="blackjackMessage" class="game-message">Place your bet and deal.</div>
+        </section>
 
-                        <div
-                            id="dealerValue"
-                            class="blackjack-value"
-                        >
-                            Dealer: —
+        <!-- SLOTS -->
+        <section id="slots" class="casino-game-panel">
+            <div class="casino-game-heading">
+                <div>
+                    <span class="game-type">SLOT GAME</span>
+                    <h2>Gilded Slots</h2>
+                    <p>Match symbols and chase the jackpot.</p>
+                </div>
+            </div>
+
+            <div class="slot-machine">
+                <div id="slotReel1" class="slot-reel">7</div>
+                <div id="slotReel2" class="slot-reel">A</div>
+                <div id="slotReel3" class="slot-reel">♠</div>
+            </div>
+
+            <div class="casino-control-panel">
+                <div class="casino-bet-control">
+                    <span>BET AMOUNT</span>
+                    <div class="casino-bet-selector">
+                        <button id="slotBetDown" type="button">−</button>
+                        <strong id="slotBet">100 AC</strong>
+                        <button id="slotBetUp" type="button">+</button>
+                    </div>
+                </div>
+                <button id="slotSpin" class="casino-primary-button" type="button">SPIN</button>
+            </div>
+
+            <div id="slotMessage" class="game-message">Match three symbols for the largest prizes.</div>
+        </section>
+
+        <!-- ROULETTE -->
+        <section id="roulette" class="casino-game-panel">
+            <div class="casino-game-heading">
+                <div>
+                    <span class="game-type">EUROPEAN ROULETTE</span>
+                    <h2>Roulette</h2>
+                    <p>Place one wager, spin the wheel, and test your luck.</p>
+                </div>
+            </div>
+
+            <div class="ga-roulette-layout">
+                <div class="ga-roulette-wheel-area">
+                    <div id="rouletteWheel" class="ga-roulette-wheel">
+                        <div class="ga-roulette-wheel-inner">
+                            <div id="rouletteResult" class="ga-roulette-result">0</div>
                         </div>
-
                     </div>
-
-
-                    <div class="blackjack-divider">
-
-                        <span>
-                            THE GILDED ACE
-                        </span>
-
-                    </div>
-
-
-                    <div class="blackjack-hand">
-
-                        <span class="blackjack-label">
-                            YOUR HAND
-                        </span>
-
-                        <div
-                            id="playerCards"
-                            class="playing-card-row"
-                        ></div>
-
-                        <div
-                            id="playerValue"
-                            class="blackjack-value"
-                        >
-                            Your Hand: —
-                        </div>
-
-                    </div>
-
+                    <div id="rouletteStatus" class="roulette-spin-status">PLACE YOUR BET</div>
                 </div>
 
+                <aside class="ga-roulette-history">
+                    <span class="game-type">LAST RESULTS</span>
+                    <div id="rouletteHistoryList" class="ga-history-list">
+                        <span class="ga-history-empty">NO SPINS YET</span>
+                    </div>
+                </aside>
+            </div>
 
-                <div class="casino-control-panel">
-
-                    <div class="casino-bet-control">
-
-                        <span>
-                            BET AMOUNT
-                        </span>
-
-                        <div class="casino-bet-selector">
-
-                            <button
-                                id="blackjackBetDown"
-                                type="button"
-                            >
-                                −
-                            </button>
-
-                            <strong id="blackjackBet">
-                                100 AC
-                            </strong>
-
-                            <button
-                                id="blackjackBetUp"
-                                type="button"
-                            >
-                                +
-                            </button>
-
-                        </div>
-
+            <div class="ga-roulette-floor">
+                <aside class="ga-roulette-sidebar">
+                    <div class="roulette-balance-card">
+                        <span>YOUR BALANCE</span>
+                        <strong data-ga-balance>— AC</strong>
                     </div>
 
+                    <div class="roulette-bet-label">BET AMOUNT</div>
 
-                    <div class="casino-action-buttons">
-
-                        <button
-                            id="blackjackDeal"
-                            type="button"
-                            class="casino-primary-button"
-                        >
-                            DEAL
-                        </button>
-
-                        <button
-                            id="blackjackHit"
-                            type="button"
-                            class="casino-secondary-button"
-                        >
-                            HIT
-                        </button>
-
-                        <button
-                            id="blackjackStand"
-                            type="button"
-                            class="casino-secondary-button"
-                        >
-                            STAND
-                        </button>
-
-                        <button
-                            id="blackjackDouble"
-                            type="button"
-                            class="casino-secondary-button"
-                        >
-                            DOUBLE
-                        </button>
-
+                    <div class="ga-roulette-bet-control">
+                        <button id="rouletteBetMinus500" type="button">−500</button>
+                        <button id="rouletteBetDown" type="button">−100</button>
+                        <strong id="rouletteBetDisplay">100 AC</strong>
+                        <button id="rouletteBetUp" type="button">+100</button>
                     </div>
 
-                </div>
-
-
-                <div
-                    id="blackjackMessage"
-                    class="game-message"
-                >
-                    Place your bet and deal.
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 SLOTS
-            ================================================== -->
-
-            <section
-                id="slots"
-                class="casino-game-panel"
-            >
-
-                <div class="casino-game-heading">
-
-                    <div>
-
-                        <span class="game-type">
-                            SLOT GAME
-                        </span>
-
-                        <h2>
-                            Gilded Slots
-                        </h2>
-
-                        <p>
-                            Match symbols and chase the jackpot.
-                        </p>
-
+                    <div class="roulette-current-bet">
+                        <span>SELECTED BET</span>
+                        <strong id="rouletteSelectedBet">NONE</strong>
                     </div>
 
-                </div>
+                    <button id="rouletteClearBet" class="ga-clear-bet-button" type="button">CLEAR BET</button>
+                    <button id="rouletteSpin" class="roulette-luxury-spin-button" type="button">SPIN</button>
 
-
-                <div class="slot-machine">
-
-                    <div
-                        id="slotReel1"
-                        class="slot-reel"
-                    >
-                        7
+                    <div id="rouletteMessage" class="roulette-luxury-message">
+                        Select a number or outside bet.
                     </div>
+                </aside>
 
-                    <div
-                        id="slotReel2"
-                        class="slot-reel"
-                    >
-                        A
+                <div class="ga-roulette-board-wrap">
+                    <div id="rouletteNumberBoard" class="ga-number-board"></div>
+
+                    <div class="ga-outside-bets">
+                        <button class="ga-roulette-choice" data-bet-type="low" type="button">1 TO 18</button>
+                        <button class="ga-roulette-choice" data-bet-type="even" type="button">EVEN</button>
+                        <button class="ga-roulette-choice red-choice" data-bet-type="red" type="button">RED</button>
+                        <button class="ga-roulette-choice black-choice" data-bet-type="black" type="button">BLACK</button>
+                        <button class="ga-roulette-choice" data-bet-type="odd" type="button">ODD</button>
+                        <button class="ga-roulette-choice" data-bet-type="high" type="button">19 TO 36</button>
                     </div>
-
-                    <div
-                        id="slotReel3"
-                        class="slot-reel"
-                    >
-                        ♠
-                    </div>
-
-                </div>
-
-
-                <div class="casino-control-panel">
-
-                    <div class="casino-bet-control">
-
-                        <span>
-                            BET AMOUNT
-                        </span>
-
-                        <div class="casino-bet-selector">
-
-                            <button
-                                id="slotBetDown"
-                                type="button"
-                            >
-                                −
-                            </button>
-
-                            <strong id="slotBet">
-                                100 AC
-                            </strong>
-
-                            <button
-                                id="slotBetUp"
-                                type="button"
-                            >
-                                +
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        id="slotSpin"
-                        type="button"
-                        class="casino-primary-button"
-                    >
-                        SPIN
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="slotMessage"
-                    class="game-message"
-                >
-                    Match three symbols for the largest prizes.
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 NEW LUXURY ROULETTE
-            ================================================== -->
-
-            <section
-                id="roulette"
-                class="casino-game-panel"
-            >
-
-                <div class="gilded-roulette">
-
-
-                    <!-- =========================================
-                         TOP TITLE
-                    ========================================== -->
-
-                    <div class="roulette-luxury-title">
-
-                        <span class="game-type">
-                            EUROPEAN ROULETTE
-                        </span>
-
-                        <h2>
-                            Roulette
-                        </h2>
-
-                        <p>
-                            Spin the wheel. Test your luck.
-                            Build your legacy.
-                        </p>
-
-                    </div>
-
-
-
-                    <!-- =========================================
-                         WHEEL + HISTORY
-                    ========================================== -->
-
-                    <div class="roulette-stage-layout">
-
-
-                        <div class="roulette-stage">
-
-
-                            <div
-                                id="gildedRouletteWheel"
-                                class="gilded-roulette-wheel"
-                            >
-
-
-                                <div
-                                    id="rouletteNumberRing"
-                                    class="roulette-number-ring"
-                                ></div>
-
-
-                                <div
-                                    id="rouletteBallTrack"
-                                    class="roulette-ball-track"
-                                >
-
-                                    <div
-                                        id="rouletteBall"
-                                        class="roulette-ball"
-                                    ></div>
-
-                                </div>
-
-
-                                <div class="roulette-inner-ring">
-
-
-                                    <div class="roulette-inner-decoration">
-
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-
-                                    </div>
-
-
-                                    <div class="roulette-spindle">
-
-                                        <div class="roulette-spindle-top">
-                                            A
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-
-
-                            <div
-                                id="luxuryRouletteStatus"
-                                class="roulette-spin-status"
-                            >
-                                PLACE YOUR BET
-                            </div>
-
-
-                        </div>
-
-
-
-                        <!-- =====================================
-                             RECENT RESULTS
-                        ====================================== -->
-
-                        <aside class="roulette-history">
-
-                            <span class="game-type">
-                                LAST RESULTS
-                            </span>
-
-                            <div class="roulette-history-line"></div>
-
-                            <div
-                                id="rouletteHistoryList"
-                                class="roulette-history-list"
-                            >
-
-                                <div class="roulette-history-empty">
-                                    NO SPINS YET
-                                </div>
-
-                            </div>
-
-                        </aside>
-
-
-                    </div>
-
-
-
-                    <!-- =========================================
-                         BETTING TABLE
-                    ========================================== -->
-
-                    <div class="roulette-betting-floor">
-
-
-                        <!-- =====================================
-                             CONTROLS
-                        ====================================== -->
-
-                        <div class="roulette-bet-sidebar">
-
-
-                            <div class="roulette-balance-card">
-
-                                <span>
-                                    YOUR BALANCE
-                                </span>
-
-                                <strong class="balance-value">
-                                    10,000 AC
-                                </strong>
-
-                            </div>
-
-
-                            <div class="roulette-bet-label">
-                                BET AMOUNT
-                            </div>
-
-
-                            <div class="roulette-luxury-bet-control">
-
-                                <button
-                                    id="luxuryRouletteBetDown"
-                                    type="button"
-                                >
-                                    −
-                                </button>
-
-                                <strong id="luxuryRouletteBetDisplay">
-                                    100 AC
-                                </strong>
-
-                                <button
-                                    id="luxuryRouletteBetUp"
-                                    type="button"
-                                >
-                                    +
-                                </button>
-
-                            </div>
-
-
-                            <div class="roulette-current-bet">
-
-                                <span>
-                                    SELECTED BET
-                                </span>
-
-                                <strong id="rouletteSelectedBet">
-                                    NONE
-                                </strong>
-
-                            </div>
-
-
-                            <button
-                                id="luxuryRouletteSpin"
-                                class="roulette-luxury-spin-button"
-                                type="button"
-                            >
-                                SPIN
-                            </button>
-
-
-                            <div
-                                id="luxuryRouletteMessage"
-                                class="roulette-luxury-message"
-                            >
-                                Select a number or outside bet.
-                            </div>
-
-
-                        </div>
-
-
-
-                        <!-- =====================================
-                             NUMBER TABLE
-                        ====================================== -->
-
-                        <div class="roulette-table-wrapper">
-
-
-                            <div
-                                id="rouletteNumberBoard"
-                                class="roulette-number-board"
-                            ></div>
-
-
-                            <div class="roulette-outside-bets">
-
-
-                                <button
-                                    class="luxury-roulette-choice"
-                                    data-bet-type="low"
-                                    type="button"
-                                >
-                                    1 TO 18
-                                </button>
-
-
-                                <button
-                                    class="luxury-roulette-choice"
-                                    data-bet-type="even"
-                                    type="button"
-                                >
-                                    EVEN
-                                </button>
-
-
-                                <button
-                                    class="luxury-roulette-choice roulette-red-choice"
-                                    data-bet-type="red"
-                                    type="button"
-                                >
-                                    RED
-                                </button>
-
-
-                                <button
-                                    class="luxury-roulette-choice roulette-black-choice"
-                                    data-bet-type="black"
-                                    type="button"
-                                >
-                                    BLACK
-                                </button>
-
-
-                                <button
-                                    class="luxury-roulette-choice"
-                                    data-bet-type="odd"
-                                    type="button"
-                                >
-                                    ODD
-                                </button>
-
-
-                                <button
-                                    class="luxury-roulette-choice"
-                                    data-bet-type="high"
-                                    type="button"
-                                >
-                                    19 TO 36
-                                </button>
-
-
-                            </div>
-
-
-                        </div>
-
-
-                    </div>
-
-
-                    <!-- =========================================
-                         PAYOUT INFO
-                    ========================================== -->
 
                     <div class="roulette-payout-strip">
-
-                        <span>
-                            STRAIGHT NUMBER
-                            <strong>35:1</strong>
-                        </span>
-
-                        <span>
-                            RED / BLACK
-                            <strong>1:1</strong>
-                        </span>
-
-                        <span>
-                            ODD / EVEN
-                            <strong>1:1</strong>
-                        </span>
-
-                        <span>
-                            LOW / HIGH
-                            <strong>1:1</strong>
-                        </span>
-
+                        <span>STRAIGHT NUMBER <strong>35:1</strong></span>
+                        <span>RED / BLACK <strong>1:1</strong></span>
+                        <span>ODD / EVEN <strong>1:1</strong></span>
+                        <span>LOW / HIGH <strong>1:1</strong></span>
                     </div>
-
-
                 </div>
+            </div>
+        </section>
 
-            </section>
-
-
-
-            <!-- =================================================
-                 DICE
-            ================================================== -->
-
-            <section
-                id="dice"
-                class="casino-game-panel"
-            >
-
-                <div class="casino-game-heading">
-
-                    <div>
-
-                        <span class="game-type">
-                            HIGH ROLL
-                        </span>
-
-                        <h2>
-                            Dice
-                        </h2>
-
-                        <p>
-                            Roll higher than the house to win.
-                        </p>
-
-                    </div>
-
+        <!-- DICE -->
+        <section id="dice" class="casino-game-panel">
+            <div class="casino-game-heading">
+                <div>
+                    <span class="game-type">HIGH ROLL</span>
+                    <h2>Dice</h2>
+                    <p>Roll higher than the house to win.</p>
                 </div>
-
-
-                <div class="dice-table">
-
-
-                    <div class="dice-player">
-
-                        <span>
-                            HOUSE
-                        </span>
-
-                        <div
-                            id="houseDie"
-                            class="casino-die"
-                        >
-                            ⚀
-                        </div>
-
-                        <strong id="houseDieValue">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="dice-versus">
-                        VS
-                    </div>
-
-
-                    <div class="dice-player">
-
-                        <span>
-                            YOU
-                        </span>
-
-                        <div
-                            id="playerDie"
-                            class="casino-die"
-                        >
-                            ⚀
-                        </div>
-
-                        <strong id="playerDieValue">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-
-                <div class="casino-control-panel">
-
-                    <div class="casino-bet-control">
-
-                        <span>
-                            BET AMOUNT
-                        </span>
-
-                        <div class="casino-bet-selector">
-
-                            <button
-                                id="diceBetDown"
-                                type="button"
-                            >
-                                −
-                            </button>
-
-                            <strong id="diceBet">
-                                100 AC
-                            </strong>
-
-                            <button
-                                id="diceBetUp"
-                                type="button"
-                            >
-                                +
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        id="diceRoll"
-                        type="button"
-                        class="casino-primary-button"
-                    >
-                        ROLL
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="diceMessage"
-                    class="game-message"
-                >
-                    Highest roll wins.
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 DISCLAIMER
-            ================================================== -->
-
-            <section class="casino-disclaimer">
-
-                <strong>
-                    PLAY-MONEY ENTERTAINMENT ONLY
-                </strong>
-
-                <p>
-                    Ace Credits are fictional virtual currency
-                    with no cash value. They cannot be purchased,
-                    withdrawn, redeemed, or exchanged for
-                    real-world money, goods, services, or prizes.
-                </p>
-
-            </section>
-
-
-        </div>
-
-    </main>
-
-
-
-    <!-- =========================================================
-         FOOTER
-    ========================================================== -->
-
-    <footer class="site-footer">
-
-        <div class="footer-container">
-
-            <div>
-
-                <div class="footer-brand">
-                    THE GILDED ACE
-                </div>
-
-                <p>
-                    PLAY. WIN. BUILD YOUR LEGACY.
-                </p>
-
             </div>
 
-
-            <div class="footer-links">
-
-                <a href="index.html">
-                    HOME
-                </a>
-
-                <a href="store.html">
-                    STORE
-                </a>
-
-                <a href="collection.html">
-                    COLLECTION
-                </a>
-
-                <a href="leaderboard.html">
-                    LEADERBOARD
-                </a>
-
+            <div class="dice-table">
+                <div class="dice-player">
+                    <span>HOUSE</span>
+                    <div id="houseDie" class="casino-die">⚀</div>
+                    <strong id="houseDieValue">—</strong>
+                </div>
+                <div class="dice-versus">VS</div>
+                <div class="dice-player">
+                    <span>YOU</span>
+                    <div id="playerDie" class="casino-die">⚀</div>
+                    <strong id="playerDieValue">—</strong>
+                </div>
             </div>
 
+            <div class="casino-control-panel">
+                <div class="casino-bet-control">
+                    <span>BET AMOUNT</span>
+                    <div class="casino-bet-selector">
+                        <button id="diceBetDown" type="button">−</button>
+                        <strong id="diceBet">100 AC</strong>
+                        <button id="diceBetUp" type="button">+</button>
+                    </div>
+                </div>
+                <button id="diceRoll" class="casino-primary-button" type="button">ROLL</button>
+            </div>
+
+            <div id="diceMessage" class="game-message">Highest roll wins.</div>
+        </section>
+
+        <section class="casino-disclaimer">
+            <strong>PLAY-MONEY ENTERTAINMENT ONLY</strong>
+            <p>Ace Credits are fictional virtual currency with no cash value. They cannot be purchased, withdrawn, redeemed, or exchanged for real-world money, goods, services, or prizes.</p>
+        </section>
+
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-container">
+        <div>
+            <div class="footer-brand">THE GILDED ACE</div>
+            <p>PLAY. WIN. BUILD YOUR LEGACY.</p>
         </div>
-
-
-        <div class="footer-disclaimer">
-
-            THE GILDED ACE IS A PLAY-MONEY
-            CASINO-STYLE SOCIAL EXPERIENCE.
-            ACE CREDITS HAVE NO REAL-WORLD
-            MONETARY VALUE.
-
+        <div class="footer-links">
+            <a href="index.html">HOME</a>
+            <a href="casino.html">CASINO</a>
+            <a href="poker.html">POKER</a>
+            <a href="store.html">STORE</a>
+            <a href="collection.html">COLLECTION</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
         </div>
+    </div>
+    <div class="footer-disclaimer">
+        THE GILDED ACE IS A PLAY-MONEY CASINO-STYLE SOCIAL EXPERIENCE. ACE CREDITS HAVE NO REAL-WORLD MONETARY VALUE.
+    </div>
+</footer>
 
-    </footer>
-
-
-
-    <!-- =========================================================
-         SCRIPTS
-    ========================================================== -->
-
-    <script src="script.js"></script>
-    <script src="roulette.js"></script>
-
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="casino-repair.js?v=100"></script>
 </body>
-
 </html>
