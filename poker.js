@@ -469,7 +469,8 @@ function renderMyCards() {
 
 function pokerCardHTML(card) {
     const text = String(card || "");
-    const rank = text.slice(0, -1) || "?";
+    const rawRank = text.slice(0, -1) || "?";
+    const rank = rawRank === "T" ? "10" : rawRank;
     const suitCode = text.slice(-1).toUpperCase();
 
     const suits = {
