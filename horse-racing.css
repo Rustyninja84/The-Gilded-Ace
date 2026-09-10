@@ -1274,3 +1274,25 @@ body.horse-racing-page{
         font-size:.52rem;
     }
 }
+
+
+/* =========================================================
+   HORSE CLEANUP v31
+========================================================= */
+
+.sprite-number{
+    display:none !important;
+}
+
+.horse-sprite-wrap,
+.horse-sprite-image{
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+}
+
+.horse-sprite-image{
+    display:block;
+    object-fit:contain !important;
+    mix-blend-mode:normal !important;
+}

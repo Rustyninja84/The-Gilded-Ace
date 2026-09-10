@@ -5,18 +5,69 @@ const SUPABASE_URL = "https://wrmiylynviujwdoecvcn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_x-OPQXsHErbHt8I9eAN1Tw_vRhqUsWX";
 const PROFILE_KEY = "gildedAceProfile";
 
-const HORSES = [
-    {id:1,name:"Midnight Crown",odds:3,color:"#a90f1e"},
-    {id:2,name:"Golden Fury",odds:4,color:"#e6e6e6"},
-    {id:3,name:"Royal Flush",odds:6,color:"#20589c"},
-    {id:4,name:"High Society",odds:8,color:"#d6c617"},
-    {id:5,name:"Ace of Spades",odds:12,color:"#167c2e"},
-    {id:6,name:"Long Shot",odds:20,color:"#61289a"}
+const HORSE_NAMES = [
+    "Midnight Crown",
+    "Golden Fury",
+    "Royal Flush",
+    "High Society",
+    "Ace of Spades",
+    "Long Shot",
+    "Silver Comet",
+    "Desert King",
+    "Crimson Route",
+    "Lucky Bourbon",
+    "Storm Runner",
+    "Velvet Thunder",
+    "Golden Promise",
+    "Night Charger",
+    "Royal Ember",
+    "Blue Ribbon",
+    "Black Diamond",
+    "Southern Glory"
 ];
+
+const HORSE_COLORS = [
+    "#a90f1e",
+    "#e6e6e6",
+    "#20589c",
+    "#d6c617",
+    "#167c2e",
+    "#61289a"
+];
+
+const ODDS_POOL = [2,3,4,5,6,7,8,10,12,15,18,20];
+
+let HORSES = [];
 
 const BET_STEPS = [100,250,500,1000,2500,5000,10000,25000,50000];
 
-let selectedHorse = HORSES[0];
+
+function shuffleArray(items){
+    const a = [...items];
+
+    for(let i = a.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i],a[j]] = [a[j],a[i]];
+    }
+
+    return a;
+}
+
+function generateRaceField(){
+    const names = shuffleArray(HORSE_NAMES).slice(0,6);
+    const odds = shuffleArray(ODDS_POOL).slice(0,6);
+
+    HORSES = names.map((name,index) => ({
+        id:index + 1,
+        name,
+        odds:odds[index],
+        color:HORSE_COLORS[index]
+    }));
+
+    selectedHorse = HORSES[0];
+}
+
+let selectedHorse = null;
 let bet = 100;
 let balance = 10000;
 let racing = false;
@@ -405,6 +456,11 @@ async function startRace(){
     raceNo++;
     $("raceNumber").textContent = String(raceNo).padStart(2,"0");
 
+    // Create a new randomized field and fresh odds for the next race.
+    generateRaceField();
+    renderHorseChoices();
+    buildTrack();
+
     racing = false;
     setDisabled(false);
 }
@@ -438,6 +494,7 @@ function bind(){
 }
 
 document.addEventListener("DOMContentLoaded",async()=>{
+    generateRaceField();
     renderHorseChoices();
     buildTrack();
     renderBet();
