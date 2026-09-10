@@ -24,6 +24,7 @@ let pokerBotTimer = null;
 let pokerNextHandTimer = null;
 let actionBusy = false;
 let leavingTable = false;
+let lastWinnerNotificationKey = null;
 
 document.addEventListener("DOMContentLoaded", initializePoker);
 
@@ -184,10 +185,18 @@ async function loadPokerRooms() {
                         Blinds ${fmt(room.small_blind)}/${fmt(room.big_blind)}
                     </div>
                 </div>
-                <button class="poker-primary-button" type="button"
-                    onclick="${mine ? `enterPokerRoom('${room.id}')` : `joinPokerRoom('${room.id}')`}">
-                    ${mine ? "RETURN" : "JOIN"}
-                </button>
+                <div class="poker-room-actions">
+                    <button class="poker-primary-button" type="button"
+                        onclick="${mine ? `enterPokerRoom('${room.id}')` : `joinPokerRoom('${room.id}')`}">
+                        ${mine ? "RETURN" : "JOIN"}
+                    </button>
+                    ${room.created_by === pokerUser.id ? `
+                        <button class="poker-danger-button poker-delete-table-button" type="button"
+                            onclick="deletePokerRoom('${room.id}', '${esc(room.name || "Gilded Table")}')">
+                            DELETE
+                        </button>
+                    ` : ""}
+                </div>
             </div>
         `;
     }).join("");
@@ -302,8 +311,6 @@ async function refreshPokerTable(roomId = pokerRoom?.id) {
     pokerSeats = seatsResult.data || [];
     pokerHoleCards = cardsResult.data || [];
 
-    // Secure fallback for the logged-in player's own cards.
-    // This fixes browsers receiving no visible hole-card row because of RLS.
     if (!myCardsResult.error && Array.isArray(myCardsResult.data) && myCardsResult.data.length) {
         const mine = myCardsResult.data[0];
 
@@ -328,6 +335,7 @@ async function refreshPokerTable(roomId = pokerRoom?.id) {
     }
 
     renderPokerTable();
+    maybeShowWinnerNotification();
     handlePokerAutomation();
 }
 
@@ -438,8 +446,7 @@ function renderMyCards() {
     const cards = row?.cards || row?.hole_cards || [];
 
     if (!Array.isArray(cards) || cards.length < 2) {
-        target.innerHTML =
-            `<div class="poker-message error">Your cards could not be loaded.</div>`;
+        target.innerHTML = `<div class="poker-card back">A</div><div class="poker-card back">A</div>`;
         return;
     }
 
@@ -698,6 +705,102 @@ async function leavePokerRoom() {
     }
 }
 
+
+function maybeShowWinnerNotification() {
+    if (!pokerRoom?.hand_complete || !pokerRoom?.winner_text) {
+        return;
+    }
+
+    const key = `${pokerRoom.id}:${pokerRoom.hand_no}:${pokerRoom.winner_text}`;
+
+    if (lastWinnerNotificationKey === key) {
+        return;
+    }
+
+    const storageKey = `gildedAcePokerWinner:${key}`;
+
+    if (sessionStorage.getItem(storageKey) === "shown") {
+        lastWinnerNotificationKey = key;
+        return;
+    }
+
+    lastWinnerNotificationKey = key;
+    sessionStorage.setItem(storageKey, "shown");
+    showPokerWinnerNotification(pokerRoom.winner_text);
+}
+
+
+function showPokerWinnerNotification(message) {
+    document.querySelector(".poker-winner-overlay")?.remove();
+
+    const overlay = document.createElement("div");
+    overlay.className = "poker-winner-overlay";
+
+    overlay.innerHTML = `
+        <div class="poker-winner-modal" role="dialog" aria-modal="true" aria-label="Poker winner">
+            <button class="poker-winner-close" type="button" aria-label="Close">×</button>
+            <div class="poker-winner-kicker">HAND COMPLETE</div>
+            <div class="poker-winner-icon">♠</div>
+            <h2>WINNER</h2>
+            <p>${esc(message)}</p>
+            <button class="poker-primary-button poker-winner-ok" type="button">CONTINUE</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+
+    overlay.querySelector(".poker-winner-close")?.addEventListener("click", close);
+    overlay.querySelector(".poker-winner-ok")?.addEventListener("click", close);
+
+    overlay.addEventListener("click", event => {
+        if (event.target === overlay) close();
+    });
+
+    setTimeout(() => {
+        if (document.body.contains(overlay)) {
+            overlay.classList.add("poker-winner-fade");
+            setTimeout(close, 300);
+        }
+    }, 6500);
+}
+
+
+async function deletePokerRoom(roomId, roomName = "this table") {
+    if (actionBusy) return;
+
+    const confirmed = window.confirm(
+        `Delete ${roomName}? This permanently removes the table. Any remaining human table stacks will be returned first.`
+    );
+
+    if (!confirmed) return;
+
+    actionBusy = true;
+    setLobbyMessage(`Deleting ${roomName}...`);
+
+    try {
+        const { error } = await gaPokerSupabase.rpc("poker_delete_room", {
+            p_room: roomId
+        });
+
+        if (error) throw error;
+
+        setLobbyMessage(`${roomName} was deleted.`, "success");
+        await loadPokerProfile();
+        await loadPokerRooms();
+    } catch (error) {
+        console.error(error);
+        setLobbyMessage(
+            error.message || "Could not delete this table.",
+            "error"
+        );
+    } finally {
+        actionBusy = false;
+    }
+}
+
+
 async function returnToLobby() {
     clearPokerTimers();
 
@@ -726,3 +829,5 @@ function clearPokerTimers() {
 
 window.joinPokerRoom = joinPokerRoom;
 window.enterPokerRoom = enterPokerRoom;
+
+window.deletePokerRoom = deletePokerRoom;

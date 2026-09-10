@@ -328,3 +328,124 @@ button:disabled{opacity:.38;cursor:not-allowed}
     .poker-toolbar-actions{width:100%}
     .poker-toolbar-actions button{flex:1}
 }
+
+
+/* =========================================================
+   LOBBY TABLE ACTIONS
+========================================================= */
+
+.poker-room-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.poker-delete-table-button{
+    min-width:74px;
+}
+
+
+/* =========================================================
+   WINNER NOTIFICATION
+========================================================= */
+
+.poker-winner-overlay{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    display:grid;
+    place-items:center;
+    padding:24px;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(8px);
+    animation:pokerWinnerIn .2s ease-out;
+}
+
+.poker-winner-modal{
+    position:relative;
+    width:min(92vw,520px);
+    padding:38px 34px 32px;
+    text-align:center;
+    border:1px solid var(--poker-gold);
+    background:
+        radial-gradient(circle at top,rgba(214,179,90,.14),transparent 45%),
+        linear-gradient(145deg,#171717,#090909);
+    box-shadow:
+        0 35px 90px rgba(0,0,0,.7),
+        0 0 45px rgba(214,179,90,.12);
+}
+
+.poker-winner-modal::before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    pointer-events:none;
+    border:1px solid rgba(214,179,90,.22);
+}
+
+.poker-winner-close{
+    position:absolute;
+    top:10px;
+    right:12px;
+    width:34px;
+    height:34px;
+    border:0;
+    background:transparent;
+    color:#aaa;
+    font-size:26px;
+    cursor:pointer;
+    z-index:2;
+}
+
+.poker-winner-kicker{
+    color:var(--poker-gold);
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:2.4px;
+}
+
+.poker-winner-icon{
+    margin:14px 0 4px;
+    color:var(--poker-gold2);
+    font-size:44px;
+}
+
+.poker-winner-modal h2{
+    margin:0;
+    font-family:Cinzel,serif;
+    font-size:38px;
+    color:var(--poker-gold2);
+    letter-spacing:2px;
+}
+
+.poker-winner-modal p{
+    margin:14px auto 22px;
+    max-width:420px;
+    color:#f4f0e8;
+    font-size:15px;
+    line-height:1.65;
+}
+
+.poker-winner-fade{
+    opacity:0;
+    transition:opacity .3s ease;
+}
+
+@keyframes pokerWinnerIn{
+    from{opacity:0;transform:scale(.985)}
+    to{opacity:1;transform:scale(1)}
+}
+
+@media(max-width:650px){
+    .poker-room{
+        grid-template-columns:1fr;
+    }
+
+    .poker-room-actions{
+        width:100%;
+    }
+
+    .poker-room-actions button{
+        flex:1;
+    }
+}
