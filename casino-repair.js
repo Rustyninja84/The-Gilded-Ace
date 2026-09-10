@@ -346,16 +346,43 @@ function buildPhysicalRouletteWheel(){
     if(!ring) return;
 
     ring.innerHTML = "";
-    const step = 360 / ROULETTE_WHEEL.length;
 
+    const step = 360 / ROULETTE_WHEEL.length;
+    const radius = 43.2;
+
+    /*
+      European single-zero wheel order, clockwise from 0:
+      0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13,
+      36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14,
+      31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
+
+      0 is placed at exactly 12 o'clock.
+      Every following number advances clockwise by one pocket.
+    */
     ROULETTE_WHEEL.forEach((number, index) => {
+        const angleFromTop = index * step;
+        const theta = (angleFromTop - 90) * Math.PI / 180;
+
+        const x = 50 + Math.cos(theta) * radius;
+        const y = 50 + Math.sin(theta) * radius;
+
         const pocket = document.createElement("div");
         pocket.className = "roulette-pocket";
-        pocket.style.transform = `translate(-50%, -50%) rotate(${index * step}deg) translateY(-50%)`;
+        pocket.dataset.number = String(number);
+        pocket.style.left = `${x}%`;
+        pocket.style.top = `${y}%`;
+
+        /*
+          Rotate the pocket radially so the number follows the wheel.
+          +90 converts our top-based angle into CSS's horizontal baseline.
+        */
+        pocket.style.transform =
+            `translate(-50%, -50%) rotate(${angleFromTop}deg)`;
 
         const face = document.createElement("div");
-        face.className = `roulette-pocket-face ${rouletteColor(number)}`;
-        face.textContent = number;
+        face.className =
+            `roulette-pocket-face ${rouletteColor(number)}`;
+        face.textContent = String(number);
 
         pocket.appendChild(face);
         ring.appendChild(pocket);
@@ -469,43 +496,52 @@ function animateRouletteToNumber(number){
     const pocketAngle = getPocketAngle(number);
 
     /*
-      The wheel spins clockwise.
-      The ball travels counter-clockwise.
-      Final math places the ball over the chosen pocket.
+      Pocket 0 begins at 12 o'clock.
+      pocketAngle is therefore measured clockwise from 12 o'clock.
+
+      The wheel turns clockwise several full rotations.
+      The ball turns counter-clockwise several full rotations.
+      At the end, the ball's world angle exactly matches the
+      selected pocket's world angle.
     */
     const wheelExtraTurns = 6 + rand(3);
-    const ballExtraTurns = 8 + rand(4);
+    const ballExtraTurns = 9 + rand(4);
 
     const newWheelRotation =
         wheelRotation +
         (wheelExtraTurns * 360) +
-        (360 - pocketAngle);
+        (120 + rand(160));
 
-    const finalWheelAngle = normalizeAngle(newWheelRotation);
+    const targetWorldAngle =
+        normalizeAngle(newWheelRotation + pocketAngle);
 
-    const targetBallAngle =
-        normalizeAngle(finalWheelAngle + pocketAngle);
+    const currentBallAngle =
+        normalizeAngle(ballRotation);
 
-    const currentBallAngle = normalizeAngle(ballRotation);
-    let deltaToTarget = targetBallAngle - currentBallAngle;
+    let counterClockwiseDelta =
+        targetWorldAngle - currentBallAngle;
 
-    if(deltaToTarget > 0){
-        deltaToTarget -= 360;
+    while(counterClockwiseDelta >= 0){
+        counterClockwiseDelta -= 360;
     }
 
     const newBallRotation =
         ballRotation -
         (ballExtraTurns * 360) +
-        deltaToTarget;
+        counterClockwiseDelta;
 
     wheel.style.transition =
         "transform 3.8s cubic-bezier(.10,.72,.12,1)";
+
     ballTrack.style.transition =
         "transform 4.35s cubic-bezier(.08,.74,.12,1)";
 
     requestAnimationFrame(() => {
-        wheel.style.transform = `rotate(${newWheelRotation}deg)`;
-        ballTrack.style.transform = `rotate(${newBallRotation}deg)`;
+        wheel.style.transform =
+            `rotate(${newWheelRotation}deg)`;
+
+        ballTrack.style.transform =
+            `rotate(${newBallRotation}deg)`;
     });
 
     wheelRotation = newWheelRotation;

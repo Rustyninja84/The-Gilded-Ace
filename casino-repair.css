@@ -1024,31 +1024,32 @@
 
 .ga-casino-page .roulette-pocket{
     position:absolute;
-    left:50%;
-    top:50%;
-    width:9.9%;
-    height:17.5%;
-    transform-origin:50% 0;
+    width:7.2%;
+    height:12.8%;
     display:flex;
+    align-items:center;
     justify-content:center;
     pointer-events:none;
+    transform-origin:center center;
 }
 
 .ga-casino-page .roulette-pocket-face{
     width:100%;
     height:100%;
-    padding-top:9px;
-    clip-path:polygon(35% 0,65% 0,100% 100%,0 100%);
     display:flex;
+    align-items:center;
     justify-content:center;
-    align-items:flex-start;
-    border-top:1px solid rgba(255,255,255,.26);
+    clip-path:polygon(28% 0,72% 0,100% 100%,0 100%);
+    border:1px solid rgba(243,214,117,.42);
     color:#fff;
     font-family:Georgia,serif;
-    font-size:clamp(9px,1.8vw,16px);
-    font-weight:800;
-    text-shadow:0 1px 2px #000;
-    box-shadow:inset 0 0 10px rgba(0,0,0,.35);
+    font-size:clamp(8px,1.55vw,15px);
+    font-weight:900;
+    line-height:1;
+    text-shadow:0 1px 3px #000;
+    box-shadow:
+        inset 0 0 9px rgba(0,0,0,.45),
+        0 0 2px rgba(0,0,0,.45);
 }
 
 .ga-casino-page .roulette-pocket-face.red{
@@ -1065,7 +1066,7 @@
 
 .ga-casino-page .roulette-ball-track{
     position:absolute;
-    inset:5.5%;
+    inset:7.3%;
     border-radius:50%;
     border:2px solid rgba(243,214,117,.45);
     box-shadow:
