@@ -10,13 +10,18 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <meta
+        name="description"
+        content="The Gilded Ace fictional play-money casino and social club."
+    >
+
     <title>
         The Gilded Ace | Casino & Social Club
     </title>
 
     <link
         rel="stylesheet"
-        href="styles.css?v=31"
+        href="styles.css?v=40"
     >
 
 </head>
@@ -32,6 +37,9 @@
 <header class="site-header">
 
     <div class="nav-container">
+
+
+        <!-- BRAND -->
 
         <a
             href="index.html"
@@ -50,7 +58,7 @@
                 </span>
 
                 <span class="brand-subtitle">
-                    CASINO & SOCIAL CLUB
+                    PRIVATE CASINO & SOCIAL CLUB
                 </span>
 
             </div>
@@ -58,6 +66,8 @@
         </a>
 
 
+
+        <!-- NAVIGATION -->
 
         <nav class="main-nav">
 
@@ -88,19 +98,21 @@
 
 
 
+        <!-- ACCOUNT -->
+
         <div class="nav-account">
 
-            <span>
-                ACE CREDITS
-            </span>
+            <div class="nav-balance-block">
 
+                <span>
+                    ACE CREDITS
+                </span>
 
-            <span
-                class="balance-value"
-                data-balance
-            >
-                10,000 AC
-            </span>
+                <strong data-balance>
+                    10,000 AC
+                </strong>
+
+            </div>
 
 
             <a
@@ -112,6 +124,7 @@
 
         </div>
 
+
     </div>
 
 </header>
@@ -122,47 +135,150 @@
      HERO
      ========================================================= -->
 
-<section class="hero">
+<section class="home-hero">
 
-    <div class="container">
-
-        <span class="eyebrow">
-            THE PREMIER PLAY-MONEY SOCIAL CLUB
-        </span>
+    <div class="home-hero-overlay"></div>
 
 
-        <h1>
-            PLAY BOLD.
-            <br>
-            LIVE GOLD.
-        </h1>
+    <div class="container home-hero-inner">
 
 
-        <p>
-            Step inside The Gilded Ace, where casino-style games,
-            competition, collectibles, and prestige come together
-            in one play-money experience.
-        </p>
+        <div class="home-hero-copy">
+
+            <span class="eyebrow">
+                THE PREMIER PLAY-MONEY SOCIAL CLUB
+            </span>
 
 
-        <div class="hero-actions">
+            <h1>
+                PLAY BOLD.
+                <br>
+                <span>LIVE GOLD.</span>
+            </h1>
+
+
+            <p>
+                Step into a private club experience built around
+                casino-style games, competition, collectibles,
+                membership prestige, and fictional Ace Credits.
+            </p>
+
+
+            <div class="home-hero-actions">
+
+                <a
+                    href="casino.html"
+                    class="btn home-primary-button"
+                >
+                    ENTER THE CASINO
+                </a>
+
+
+                <a
+                    href="store.html"
+                    class="btn secondary"
+                >
+                    EXPLORE THE STORE
+                </a>
+
+            </div>
+
+
+            <div class="home-hero-meta">
+
+                <div>
+
+                    <span>
+                        PLAY-MONEY
+                    </span>
+
+                    <strong>
+                        NO CASH VALUE
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        MEMBER ACCESS
+                    </span>
+
+                    <strong>
+                        CLOUD PROFILE
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        CASINO FLOOR
+                    </span>
+
+                    <strong>
+                        4 FEATURED GAMES
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="home-hero-card">
+
+            <span class="eyebrow">
+                MEMBER STATUS
+            </span>
+
+
+            <div class="home-hero-card-title">
+                Welcome to The Gilded Ace
+            </div>
+
+
+            <div class="home-hero-card-divider"></div>
+
+
+            <div class="home-hero-balance">
+
+                <span>
+                    AVAILABLE BALANCE
+                </span>
+
+                <strong data-balance>
+                    10,000 AC
+                </strong>
+
+            </div>
+
+
+            <div class="home-hero-status">
+
+                <span>
+                    CLUB STATUS
+                </span>
+
+                <strong id="homeClubStatus">
+                    STANDARD
+                </strong>
+
+            </div>
+
 
             <a
-                class="btn"
-                href="casino.html"
+                href="profile.html"
+                class="btn secondary home-hero-profile-button"
             >
-                ENTER THE CASINO
-            </a>
-
-
-            <a
-                class="btn secondary"
-                href="store.html"
-            >
-                EXPLORE THE STORE
+                VIEW MEMBER PROFILE
             </a>
 
         </div>
+
 
     </div>
 
@@ -171,15 +287,15 @@
 
 
 <!-- =========================================================
-     YOUR CLUB
+     MEMBERSHIP SUMMARY
      ========================================================= -->
 
-<section class="section">
+<section class="section home-membership-section">
 
     <div class="container">
 
 
-        <div class="section-head">
+        <div class="section-head home-section-heading">
 
             <div>
 
@@ -188,15 +304,20 @@
                 </span>
 
                 <h2>
-                    Welcome to The Gilded Ace
+                    Member Overview
                 </h2>
+
+                <p>
+                    Your account, balance, membership status,
+                    and daily benefits in one place.
+                </p>
 
             </div>
 
 
             <a
-                class="btn secondary"
                 href="profile.html"
+                class="btn secondary"
             >
                 VIEW PROFILE
             </a>
@@ -205,12 +326,17 @@
 
 
 
-        <div class="grid">
+        <div class="home-member-grid">
 
 
             <!-- BALANCE -->
 
-            <div class="card">
+            <article class="home-info-card">
+
+                <div class="home-card-icon">
+                    ◆
+                </div>
+
 
                 <span class="tag">
                     CURRENT BALANCE
@@ -218,7 +344,7 @@
 
 
                 <div
-                    class="stat"
+                    class="home-card-stat"
                     data-balance
                 >
                     10,000 AC
@@ -226,17 +352,22 @@
 
 
                 <p>
-                    Ace Credits are fictional in-game currency
-                    used throughout the club.
+                    Your fictional Ace Credit balance
+                    used throughout The Gilded Ace.
                 </p>
 
-            </div>
+            </article>
 
 
 
             <!-- STATUS -->
 
-            <div class="card">
+            <article class="home-info-card">
+
+                <div class="home-card-icon">
+                    ♛
+                </div>
+
 
                 <span class="tag">
                     CLUB STATUS
@@ -244,53 +375,56 @@
 
 
                 <div
-                    class="stat"
-                    id="homeClubStatus"
+                    class="home-card-stat"
+                    id="homeClubStatusCard"
                 >
                     STANDARD
                 </div>
 
 
                 <p>
-                    Play, collect, and progress to unlock
-                    higher levels of club prestige.
+                    Increase your balance and collection
+                    to reach higher levels of club prestige.
                 </p>
 
-            </div>
+            </article>
 
 
 
-            <!-- DAILY REWARD -->
+            <!-- DAILY -->
 
-            <div class="card">
+            <article class="home-info-card">
+
+                <div class="home-card-icon">
+                    ✦
+                </div>
+
 
                 <span class="tag">
                     DAILY REWARD
                 </span>
 
 
-                <div class="stat">
+                <div class="home-card-stat">
                     +1,000 AC
                 </div>
 
 
                 <p>
-                    Return each day to collect your
-                    complimentary club reward.
+                    Return each day to receive your
+                    complimentary member reward.
                 </p>
-
-
-                <br>
 
 
                 <button
                     type="button"
+                    class="home-reward-button"
                     onclick="claimDaily()"
                 >
                     CLAIM DAILY REWARD
                 </button>
 
-            </div>
+            </article>
 
 
         </div>
@@ -305,12 +439,12 @@
      FEATURED GAMES
      ========================================================= -->
 
-<section class="section">
+<section class="section home-games-section">
 
     <div class="container">
 
 
-        <div class="section-head">
+        <div class="section-head home-section-heading">
 
             <div>
 
@@ -322,12 +456,16 @@
                     Featured Games
                 </h2>
 
+                <p>
+                    Choose your table, machine, or challenge.
+                </p>
+
             </div>
 
 
             <a
-                class="btn secondary"
                 href="casino.html"
+                class="btn secondary"
             >
                 VIEW ALL GAMES
             </a>
@@ -336,18 +474,28 @@
 
 
 
-        <div class="grid">
+        <div class="home-game-grid">
 
 
             <!-- BLACKJACK -->
 
             <a
-                class="card"
                 href="casino.html#blackjack"
+                class="home-game-card"
             >
 
+                <div class="home-game-number">
+                    01
+                </div>
+
+
+                <div class="home-game-symbol">
+                    ♠
+                </div>
+
+
                 <span class="tag">
-                    ♠ TABLE GAME
+                    CLASSIC TABLE
                 </span>
 
 
@@ -361,6 +509,11 @@
                     twenty-one.
                 </p>
 
+
+                <span class="home-game-link">
+                    PLAY BLACKJACK →
+                </span>
+
             </a>
 
 
@@ -368,12 +521,22 @@
             <!-- SLOTS -->
 
             <a
-                class="card"
                 href="casino.html#slots"
+                class="home-game-card"
             >
 
+                <div class="home-game-number">
+                    02
+                </div>
+
+
+                <div class="home-game-symbol">
+                    777
+                </div>
+
+
                 <span class="tag">
-                    777 SLOT MACHINE
+                    ARCADE MACHINE
                 </span>
 
 
@@ -383,9 +546,14 @@
 
 
                 <p>
-                    Spin the reels and chase the
-                    Gilded Ace jackpot.
+                    Spin the reels and chase premium
+                    symbol combinations.
                 </p>
+
+
+                <span class="home-game-link">
+                    PLAY SLOTS →
+                </span>
 
             </a>
 
@@ -394,12 +562,22 @@
             <!-- ROULETTE -->
 
             <a
-                class="card"
                 href="casino.html#roulette"
+                class="home-game-card"
             >
 
+                <div class="home-game-number">
+                    03
+                </div>
+
+
+                <div class="home-game-symbol">
+                    ◆
+                </div>
+
+
                 <span class="tag">
-                    21 TABLE GAME
+                    EUROPEAN TABLE
                 </span>
 
 
@@ -409,9 +587,14 @@
 
 
                 <p>
-                    Place your Ace Credits and watch
-                    the wheel decide.
+                    Select your wager and let the wheel
+                    decide the outcome.
                 </p>
+
+
+                <span class="home-game-link">
+                    PLAY ROULETTE →
+                </span>
 
             </a>
 
@@ -420,25 +603,40 @@
             <!-- HIGH ROLL -->
 
             <a
-                class="card"
                 href="casino.html#highroll"
+                class="home-game-card"
             >
 
+                <div class="home-game-number">
+                    04
+                </div>
+
+
+                <div class="home-game-symbol">
+                    ⚄
+                </div>
+
+
                 <span class="tag">
-                    ⚄ DICE GAME
+                    HIGH ROLL
                 </span>
 
 
                 <h3>
-                    High Roll
+                    Dice Challenge
                 </h3>
 
 
                 <p>
-                    Put your luck to the test with
-                    a roll of the dice.
+                    Roll against the house and win
+                    when your die comes out higher.
                 </p>
 
+
+                <span class="home-game-link">
+                    PLAY HIGH ROLL →
+                </span>
+
             </a>
 
 
@@ -451,7 +649,7 @@
 
 
 <!-- =========================================================
-     STORE PROMOTION
+     STORE FEATURE
      ========================================================= -->
 
 <section class="section">
@@ -459,53 +657,56 @@
     <div class="container">
 
 
-        <div
-            class="card"
-            style="
-                text-align:center;
-                padding:55px 30px;
-                background:
-                    radial-gradient(
-                        circle at center top,
-                        rgba(111,8,28,.30),
-                        transparent 55%
-                    ),
-                    linear-gradient(
-                        145deg,
-                        #151515,
-                        #090909
-                    );
-            "
-        >
-
-            <span class="eyebrow">
-                THE GILDED STORE
-            </span>
+        <div class="home-feature-banner">
 
 
-            <h2>
-                Turn Your Winnings Into Prestige
-            </h2>
+            <div class="home-feature-copy">
+
+                <span class="eyebrow">
+                    THE GILDED STORE
+                </span>
 
 
-            <p
-                style="
-                    max-width:650px;
-                    margin:15px auto 25px;
-                "
-            >
-                Build your collection with profile cosmetics,
-                collectibles, luxury vehicles, properties,
-                casino cosmetics, and prestige rewards.
-            </p>
+                <h2>
+                    Turn Winnings Into Prestige
+                </h2>
 
 
-            <a
-                href="store.html"
-                class="btn"
-            >
-                VISIT THE STORE
-            </a>
+                <p>
+                    Expand your collection with profile cosmetics,
+                    luxury vehicles, property, casino upgrades,
+                    collectibles, and prestige items.
+                </p>
+
+
+                <a
+                    href="store.html"
+                    class="btn"
+                >
+                    VISIT THE STORE
+                </a>
+
+            </div>
+
+
+            <div class="home-feature-side">
+
+                <div class="home-feature-emblem">
+                    A
+                </div>
+
+
+                <span>
+                    MEMBER COLLECTIONS
+                </span>
+
+
+                <strong>
+                    BUILD YOUR LEGACY
+                </strong>
+
+            </div>
+
 
         </div>
 
@@ -516,7 +717,7 @@
 
 
 <!-- =========================================================
-     TOP PLAYERS
+     LEADERBOARD
      ========================================================= -->
 
 <section class="section">
@@ -524,7 +725,7 @@
     <div class="container">
 
 
-        <div class="section-head">
+        <div class="section-head home-section-heading">
 
             <div>
 
@@ -536,12 +737,17 @@
                     Top Players
                 </h2>
 
+                <p>
+                    Featured members currently leading
+                    the club rankings.
+                </p>
+
             </div>
 
 
             <a
-                class="btn secondary"
                 href="leaderboard.html"
+                class="btn secondary"
             >
                 FULL LEADERBOARD
             </a>
@@ -550,100 +756,116 @@
 
 
 
-        <table>
+        <div class="home-leaderboard-shell">
 
-            <thead>
+            <table class="home-leaderboard">
 
-                <tr>
+                <thead>
 
-                    <th>
-                        RANK
-                    </th>
+                    <tr>
 
-                    <th>
-                        PLAYER
-                    </th>
+                        <th>
+                            RANK
+                        </th>
 
-                    <th>
-                        STATUS
-                    </th>
+                        <th>
+                            PLAYER
+                        </th>
 
-                    <th>
-                        BALANCE
-                    </th>
+                        <th>
+                            STATUS
+                        </th>
 
-                </tr>
+                        <th>
+                            BALANCE
+                        </th>
 
-            </thead>
+                    </tr>
 
-
-            <tbody>
-
-                <tr>
-
-                    <td>
-                        01
-                    </td>
-
-                    <td>
-                        HighRoller
-                    </td>
-
-                    <td>
-                        CASINO OWNER
-                    </td>
-
-                    <td>
-                        5,250,000 AC
-                    </td>
-
-                </tr>
+                </thead>
 
 
-                <tr>
+                <tbody>
 
-                    <td>
-                        02
-                    </td>
+                    <tr>
 
-                    <td>
-                        GoldenAce
-                    </td>
+                        <td>
+                            <span class="home-rank">
+                                01
+                            </span>
+                        </td>
 
-                    <td>
-                        DIAMOND CLUB
-                    </td>
+                        <td>
+                            HighRoller
+                        </td>
 
-                    <td>
-                        3,850,000 AC
-                    </td>
+                        <td>
+                            <span class="home-status-pill">
+                                CASINO OWNER
+                            </span>
+                        </td>
 
-                </tr>
+                        <td>
+                            5,250,000 AC
+                        </td>
+
+                    </tr>
 
 
-                <tr>
+                    <tr>
 
-                    <td>
-                        03
-                    </td>
+                        <td>
+                            <span class="home-rank">
+                                02
+                            </span>
+                        </td>
 
-                    <td>
-                        LuckySeven
-                    </td>
+                        <td>
+                            GoldenAce
+                        </td>
 
-                    <td>
-                        HIGH ROLLER
-                    </td>
+                        <td>
+                            <span class="home-status-pill">
+                                DIAMOND CLUB
+                            </span>
+                        </td>
 
-                    <td>
-                        2,975,000 AC
-                    </td>
+                        <td>
+                            3,850,000 AC
+                        </td>
 
-                </tr>
+                    </tr>
 
-            </tbody>
 
-        </table>
+                    <tr>
+
+                        <td>
+                            <span class="home-rank">
+                                03
+                            </span>
+                        </td>
+
+                        <td>
+                            LuckySeven
+                        </td>
+
+                        <td>
+                            <span class="home-status-pill">
+                                HIGH ROLLER
+                            </span>
+                        </td>
+
+                        <td>
+                            2,975,000 AC
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
 
     </div>
 
@@ -652,20 +874,22 @@
 
 
 <!-- =========================================================
-     COLLECTION / PROFILE
+     COLLECTION + PROFILE
      ========================================================= -->
 
-<section class="section">
+<section class="section home-final-section">
 
     <div class="container">
 
 
-        <div class="grid">
+        <div class="home-final-grid">
 
 
-            <div class="card">
+            <!-- COLLECTION -->
 
-                <span class="tag">
+            <div class="home-final-card">
+
+                <span class="eyebrow">
                     YOUR COLLECTION
                 </span>
 
@@ -676,12 +900,10 @@
 
 
                 <p>
-                    View everything you've collected
-                    throughout The Gilded Ace.
+                    View the items, collectibles, cosmetics,
+                    property, and prestige rewards you've
+                    acquired throughout the club.
                 </p>
-
-
-                <br>
 
 
                 <a
@@ -695,9 +917,11 @@
 
 
 
-            <div class="card">
+            <!-- PROFILE -->
 
-                <span class="tag">
+            <div class="home-final-card">
+
+                <span class="eyebrow">
                     YOUR LEGACY
                 </span>
 
@@ -708,12 +932,10 @@
 
 
                 <p>
-                    Track your club status, balance,
-                    achievements, performance and progression.
+                    Track your balance, game statistics,
+                    membership progression, collection value,
+                    and saved account identity.
                 </p>
-
-
-                <br>
 
 
                 <a
@@ -735,24 +957,38 @@
 
 
 <!-- =========================================================
-     PLAY-MONEY NOTICE
+     PLAY MONEY NOTICE
      ========================================================= -->
 
-<section class="section">
+<section class="section home-notice-section">
 
-    <div class="container notice">
+    <div class="container">
 
-        <h3>
-            PLAY-MONEY ENTERTAINMENT
-        </h3>
+        <div class="notice home-notice">
+
+            <div class="home-notice-icon">
+                ◆
+            </div>
 
 
-        <p>
-            The Gilded Ace is a fictional play-money casino
-            and social club. Ace Credits are virtual currency
-            with no monetary value and cannot be redeemed,
-            exchanged, purchased, or withdrawn for real money.
-        </p>
+            <div>
+
+                <h3>
+                    PLAY-MONEY ENTERTAINMENT
+                </h3>
+
+                <p>
+                    The Gilded Ace is a fictional play-money
+                    casino and social club. Ace Credits are
+                    virtual entertainment credits with no
+                    monetary value and cannot be redeemed,
+                    purchased, exchanged, or withdrawn for
+                    real money.
+                </p>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -770,7 +1006,7 @@
         THE GILDED ACE
     </strong>
 
-    CASINO & SOCIAL CLUB
+    PRIVATE CASINO & SOCIAL CLUB
 
     <br>
 
@@ -783,10 +1019,10 @@
 
 
 <!-- =========================================================
-     JAVASCRIPT
+     MAIN SCRIPT
      ========================================================= -->
 
-<script src="script.js?v=31"></script>
+<script src="script.js?v=40"></script>
 
 
 </body>
