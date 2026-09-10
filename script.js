@@ -113,10 +113,6 @@ function loadProfile() {
     }
 
 
-    /*
-        OLD BALANCE MIGRATION
-    */
-
     const oldBalance =
         Number(
             localStorage.getItem(
@@ -1102,49 +1098,42 @@ function resetGildedProfile() {
    ==========================================================
    ========================================================== */
 
+let blackjackDeck = [];
 
-let blackjackDeck =
-    [];
+let blackjackPlayer = [];
 
+let blackjackDealer = [];
 
-let blackjackPlayer =
-    [];
-
-
-let blackjackDealer =
-    [];
+let blackjackActive = false;
 
 
-let blackjackActive =
-    false;
+/*
+    START AT ZERO.
 
+    USERS BUILD THEIR BET
+    BY CLICKING CHIPS.
+*/
 
-let blackjackBet =
-    500;
+let blackjackBet = 0;
 
-
-let blackjackLockedBet =
-    0;
+let blackjackLockedBet = 0;
 
 
 /* ==========================================================
-   CREATE BLACKJACK DECK
+   BUILD BLACKJACK DECK
    ========================================================== */
 
 function buildBlackjackDeck() {
 
     const suits = [
-
         "♠",
         "♥",
         "♦",
         "♣"
-
     ];
 
 
     const ranks = [
-
         "A",
         "2",
         "3",
@@ -1158,7 +1147,6 @@ function buildBlackjackDeck() {
         "J",
         "Q",
         "K"
-
     ];
 
 
@@ -1172,11 +1160,8 @@ function buildBlackjackDeck() {
                 (rank) => {
 
                     deck.push({
-
                         rank,
-
                         suit
-
                     });
 
                 }
@@ -1186,16 +1171,9 @@ function buildBlackjackDeck() {
     );
 
 
-    /*
-        FISHER-YATES SHUFFLE
-    */
-
     for (
-        let i =
-            deck.length - 1;
-
+        let i = deck.length - 1;
         i > 0;
-
         i--
     ) {
 
@@ -1226,10 +1204,12 @@ function buildBlackjackDeck() {
 
 
 /* ==========================================================
-   CARD VALUES
+   BLACKJACK CARD VALUES
    ========================================================== */
 
-function blackjackCardValue(card) {
+function blackjackCardValue(
+    card
+) {
 
     if (
         card.rank === "J" ||
@@ -1320,7 +1300,7 @@ function blackjackNatural(
 
 
 /* ==========================================================
-   CREATE VISIBLE PLAYING CARD
+   CREATE BLACKJACK CARD
    ========================================================== */
 
 function createBlackjackCard(
@@ -1333,10 +1313,6 @@ function createBlackjackCard(
             "div"
         );
 
-
-    /*
-        FACEDOWN DEALER CARD
-    */
 
     if (hidden) {
 
@@ -1369,9 +1345,7 @@ function createBlackjackCard(
 
     cardElement.className =
         isRed
-
             ? "playing-card red-card"
-
             : "playing-card black-card";
 
 
@@ -1396,7 +1370,9 @@ function createBlackjackCard(
 
 
         <div class="card-center-suit">
+
             ${card.suit}
+
         </div>
 
 
@@ -1426,7 +1402,7 @@ function createBlackjackCard(
 
 
 /* ==========================================================
-   RENDER BLACKJACK HANDS
+   RENDER BLACKJACK
    ========================================================== */
 
 function renderBlackjack(
@@ -1445,13 +1421,10 @@ function renderBlackjack(
         );
 
 
-    /*
-        PLAYER CARDS
-    */
-
     if (playerArea) {
 
-        playerArea.innerHTML = "";
+        playerArea.innerHTML =
+            "";
 
 
         if (
@@ -1500,13 +1473,10 @@ function renderBlackjack(
     }
 
 
-    /*
-        DEALER CARDS
-    */
-
     if (dealerArea) {
 
-        dealerArea.innerHTML = "";
+        dealerArea.innerHTML =
+            "";
 
 
         if (
@@ -1545,12 +1515,9 @@ function renderBlackjack(
 
                     dealerArea.appendChild(
                         createBlackjackCard(
-
                             card,
-
                             hideDealerCard &&
                             index === 1
-
                         )
                     );
 
@@ -1561,10 +1528,6 @@ function renderBlackjack(
 
     }
 
-
-    /*
-        PLAYER TOTAL
-    */
 
     if (
         blackjackPlayer.length
@@ -1588,10 +1551,6 @@ function renderBlackjack(
 
     }
 
-
-    /*
-        DEALER TOTAL
-    */
 
     if (
         blackjackDealer.length === 0
@@ -1632,7 +1591,7 @@ function renderBlackjack(
 
 
 /* ==========================================================
-   BLACKJACK BUTTON CONTROL
+   BLACKJACK BUTTON CONTROLS
    ========================================================== */
 
 function setBlackjackControls(
@@ -1657,25 +1616,12 @@ function setBlackjackControls(
         );
 
 
-    /*
-        GAME ACTIVE:
-
-        DEAL OFF
-        HIT ON
-        STAND ON
-    */
-
     if (gameActive) {
 
         if (dealButton) {
 
             dealButton.disabled =
                 true;
-
-            dealButton.setAttribute(
-                "disabled",
-                "disabled"
-            );
 
         }
 
@@ -1711,15 +1657,6 @@ function setBlackjackControls(
 
     }
 
-
-    /*
-        GAME OVER / READY:
-
-        DEAL ON
-        HIT OFF
-        STAND OFF
-    */
-
     else {
 
         if (dealButton) {
@@ -1739,11 +1676,6 @@ function setBlackjackControls(
             hitButton.disabled =
                 true;
 
-            hitButton.setAttribute(
-                "disabled",
-                "disabled"
-            );
-
         }
 
 
@@ -1751,11 +1683,6 @@ function setBlackjackControls(
 
             standButton.disabled =
                 true;
-
-            standButton.setAttribute(
-                "disabled",
-                "disabled"
-            );
 
         }
 
@@ -1765,25 +1692,15 @@ function setBlackjackControls(
 
 
 /* ==========================================================
-   BLACKJACK BET DISPLAY
+   BLACKJACK CHIP CONTROLS
    ========================================================== */
 
 function updateBlackjackBetDisplay() {
 
     if (
-        !blackjackActive &&
-        profile.balance < 100
-    ) {
-
-        blackjackBet = 0;
-
-    }
-
-
-    if (
-        !blackjackActive &&
         blackjackBet >
-        profile.balance
+        profile.balance &&
+        !blackjackActive
     ) {
 
         blackjackBet =
@@ -1802,9 +1719,88 @@ function updateBlackjackBetDisplay() {
 }
 
 
-/* ==========================================================
-   SET BLACKJACK BET
-   ========================================================== */
+function addBlackjackChip(
+    amount
+) {
+
+    if (
+        blackjackActive
+    ) {
+
+        return;
+
+    }
+
+
+    amount =
+        Number(amount);
+
+
+    if (
+        !Number.isFinite(amount) ||
+        amount <= 0
+    ) {
+
+        return;
+
+    }
+
+
+    const newBet =
+        blackjackBet +
+        amount;
+
+
+    blackjackBet =
+        Math.min(
+            newBet,
+            profile.balance
+        );
+
+
+    updateBlackjackBetDisplay();
+
+
+    setText(
+        "#blackjackMessage",
+        blackjackBet > 0
+            ? `Bet set to ${formatCredits(blackjackBet)}.`
+            : "Place your bet and press DEAL."
+    );
+
+}
+
+
+function clearBlackjackBet() {
+
+    if (
+        blackjackActive
+    ) {
+
+        return;
+
+    }
+
+
+    blackjackBet =
+        0;
+
+
+    updateBlackjackBetDisplay();
+
+
+    setText(
+        "#blackjackMessage",
+        "Bet cleared. Select your chips."
+    );
+
+}
+
+
+/*
+    KEPT FOR COMPATIBILITY
+    WITH ANY OLD BUTTONS
+*/
 
 function setBlackjackBet(
     amount
@@ -1823,27 +1819,13 @@ function setBlackjackBet(
         Number(amount);
 
 
-    if (
-        profile.balance <
-        100
-    ) {
-
-        blackjackBet = 0;
-
-        updateBlackjackBetDisplay();
-
-        return;
-
-    }
-
-
     blackjackBet =
-        Math.max(
-            100,
-            Math.min(
-                amount,
-                profile.balance
-            )
+        Math.min(
+            Math.max(
+                0,
+                amount
+            ),
+            profile.balance
         );
 
 
@@ -1851,10 +1833,6 @@ function setBlackjackBet(
 
 }
 
-
-/* ==========================================================
-   CHANGE BLACKJACK BET
-   ========================================================== */
 
 function changeBlackjackBet(
     amount
@@ -1869,27 +1847,13 @@ function changeBlackjackBet(
     }
 
 
-    if (
-        profile.balance <
-        100
-    ) {
-
-        blackjackBet = 0;
-
-        updateBlackjackBetDisplay();
-
-        return;
-
-    }
-
-
     blackjackBet +=
         Number(amount);
 
 
     blackjackBet =
         Math.max(
-            100,
+            0,
             blackjackBet
         );
 
@@ -1906,10 +1870,6 @@ function changeBlackjackBet(
 }
 
 
-/* ==========================================================
-   MAX BLACKJACK BET
-   ========================================================== */
-
 function maxBlackjackBet() {
 
     if (
@@ -1921,30 +1881,23 @@ function maxBlackjackBet() {
     }
 
 
-    if (
-        profile.balance <
-        100
-    ) {
-
-        blackjackBet = 0;
-
-    }
-
-    else {
-
-        blackjackBet =
-            profile.balance;
-
-    }
+    blackjackBet =
+        profile.balance;
 
 
     updateBlackjackBetDisplay();
+
+
+    setText(
+        "#blackjackMessage",
+        `Maximum bet selected: ${formatCredits(blackjackBet)}.`
+    );
 
 }
 
 
 /* ==========================================================
-   DEAL BLACKJACK
+   START BLACKJACK
    ========================================================== */
 
 function startBlackjack() {
@@ -1972,22 +1925,18 @@ function startBlackjack() {
 
 
     if (
-        profile.balance <
-        blackjackBet
+        blackjackBet >
+        profile.balance
     ) {
 
         alert(
-            "You do not have enough Ace Credits."
+            "You do not have enough Ace Credits for that bet."
         );
 
         return;
 
     }
 
-
-    /*
-        RESET TABLE WIN EFFECT
-    */
 
     const table =
         document.querySelector(
@@ -2004,51 +1953,29 @@ function startBlackjack() {
     }
 
 
-    /*
-        NEW DECK
-    */
-
     blackjackDeck =
         buildBlackjackDeck();
 
 
-    /*
-        DEAL PLAYER
-    */
-
     blackjackPlayer = [
-
         blackjackDeck.pop(),
-
         blackjackDeck.pop()
-
     ];
 
-
-    /*
-        DEAL HOUSE
-    */
 
     blackjackDealer = [
-
         blackjackDeck.pop(),
-
         blackjackDeck.pop()
-
     ];
-
-
-    blackjackActive =
-        true;
 
 
     blackjackLockedBet =
         blackjackBet;
 
 
-    /*
-        TAKE WAGER
-    */
+    blackjackActive =
+        true;
+
 
     profile.balance -=
         blackjackLockedBet;
@@ -2057,26 +1984,12 @@ function startBlackjack() {
     saveProfile();
 
 
-    /*
-        IMPORTANT:
-
-        ENABLE HIT AND STAND
-        IMMEDIATELY AFTER DEAL.
-    */
-
-    setBlackjackControls(
+    renderBlackjack(
         true
     );
 
 
-    /*
-        DISPLAY CARDS
-
-        PLAYER BOTH FACE UP
-        DEALER SECOND CARD DOWN
-    */
-
-    renderBlackjack(
+    setBlackjackControls(
         true
     );
 
@@ -2087,41 +2000,29 @@ function startBlackjack() {
     );
 
 
-    /*
-        NATURAL BLACKJACK CHECK
-    */
-
-    const playerHasBlackjack =
+    const playerBJ =
         blackjackNatural(
             blackjackPlayer
         );
 
 
-    const dealerHasBlackjack =
+    const dealerBJ =
         blackjackNatural(
             blackjackDealer
         );
 
 
     if (
-        playerHasBlackjack ||
-        dealerHasBlackjack
+        playerBJ ||
+        dealerBJ
     ) {
-
-        /*
-            Brief delay so cards can be seen
-            before resolving natural blackjack.
-        */
 
         setTimeout(
             () => {
 
                 resolveNaturalBlackjack(
-
-                    playerHasBlackjack,
-
-                    dealerHasBlackjack
-
+                    playerBJ,
+                    dealerBJ
                 );
 
             },
@@ -2134,7 +2035,7 @@ function startBlackjack() {
 
 
 /* ==========================================================
-   NATURAL BLACKJACK RESULT
+   NATURAL BLACKJACK
    ========================================================== */
 
 function resolveNaturalBlackjack(
@@ -2165,10 +2066,6 @@ function resolveNaturalBlackjack(
     );
 
 
-    /*
-        BOTH BLACKJACK = PUSH
-    */
-
     if (
         playerBJ &&
         dealerBJ
@@ -2176,9 +2073,6 @@ function resolveNaturalBlackjack(
 
         profile.balance +=
             blackjackLockedBet;
-
-
-        saveProfile();
 
 
         setText(
@@ -2200,11 +2094,6 @@ function resolveNaturalBlackjack(
     }
 
 
-    /*
-        PLAYER BLACKJACK
-        PAYS 3:2
-    */
-
     if (
         playerBJ
     ) {
@@ -2217,9 +2106,6 @@ function resolveNaturalBlackjack(
         profile.balance +=
             blackjackLockedBet +
             profit;
-
-
-        saveProfile();
 
 
         blackjackWinEffect();
@@ -2244,10 +2130,6 @@ function resolveNaturalBlackjack(
     }
 
 
-    /*
-        DEALER BLACKJACK
-    */
-
     setText(
         "#blackjackMessage",
         "Dealer Blackjack — house wins."
@@ -2266,14 +2148,10 @@ function resolveNaturalBlackjack(
 
 
 /* ==========================================================
-   HIT
+   BLACKJACK HIT
    ========================================================== */
 
 function blackjackHit() {
-
-    /*
-        HIT ONLY WORKS DURING ACTIVE HAND
-    */
 
     if (
         !blackjackActive
@@ -2284,18 +2162,10 @@ function blackjackHit() {
     }
 
 
-    /*
-        ADD CARD
-    */
-
     blackjackPlayer.push(
         blackjackDeck.pop()
     );
 
-
-    /*
-        KEEP DEALER HOLE CARD HIDDEN
-    */
 
     renderBlackjack(
         true
@@ -2308,10 +2178,6 @@ function blackjackHit() {
         );
 
 
-    /*
-        BUST
-    */
-
     if (
         playerTotal > 21
     ) {
@@ -2319,10 +2185,6 @@ function blackjackHit() {
         blackjackActive =
             false;
 
-
-        /*
-            REVEAL DEALER
-        */
 
         renderBlackjack(
             false
@@ -2353,11 +2215,6 @@ function blackjackHit() {
     }
 
 
-    /*
-        EXACTLY 21
-        AUTOMATICALLY STAND
-    */
-
     if (
         playerTotal === 21
     ) {
@@ -2383,19 +2240,11 @@ function blackjackHit() {
     }
 
 
-    /*
-        STILL PLAYING
-    */
-
     setText(
         "#blackjackMessage",
-        `Your hand is ${playerTotal}. HIT or STAND.`
+        `Your total is ${playerTotal}. HIT or STAND.`
     );
 
-
-    /*
-        KEEP HIT/STAND ENABLED
-    */
 
     setBlackjackControls(
         true
@@ -2405,7 +2254,7 @@ function blackjackHit() {
 
 
 /* ==========================================================
-   STAND
+   BLACKJACK STAND
    ========================================================== */
 
 function blackjackStand() {
@@ -2420,24 +2269,9 @@ function blackjackStand() {
 
 
     /*
-        LOCK PLAYER HAND
-    */
-
-    blackjackActive =
-        false;
-
-
-    /*
-        REVEAL DEALER FIRST
-    */
-
-    renderBlackjack(
-        false
-    );
-
-
-    /*
-        DEALER HITS BELOW 17
+        KEEP ACTIVE UNTIL DEALER
+        FINISHES. THIS ALSO FIXES
+        THE AUTOMATIC STAND AT 21.
     */
 
     while (
@@ -2453,9 +2287,9 @@ function blackjackStand() {
     }
 
 
-    /*
-        SHOW FINAL HOUSE HAND
-    */
+    blackjackActive =
+        false;
+
 
     renderBlackjack(
         false
@@ -2478,10 +2312,6 @@ function blackjackStand() {
             blackjackDealer
         );
 
-
-    /*
-        DEALER BUSTS
-    */
 
     if (
         dealerTotal > 21
@@ -2511,10 +2341,6 @@ function blackjackStand() {
 
     }
 
-
-    /*
-        PLAYER WINS
-    */
 
     if (
         playerTotal >
@@ -2546,10 +2372,6 @@ function blackjackStand() {
     }
 
 
-    /*
-        DEALER WINS
-    */
-
     if (
         playerTotal <
         dealerTotal
@@ -2574,15 +2396,8 @@ function blackjackStand() {
     }
 
 
-    /*
-        PUSH
-    */
-
     profile.balance +=
         blackjackLockedBet;
-
-
-    saveProfile();
 
 
     setText(
@@ -2603,27 +2418,14 @@ function blackjackStand() {
 
 
 /* ==========================================================
-   NORMAL BLACKJACK WIN
+   BLACKJACK NORMAL WIN
    ========================================================== */
 
 function payBlackjackNormalWin() {
 
-    /*
-        WAGER WAS REMOVED ON DEAL.
-
-        1:1 WIN RETURNS:
-
-        ORIGINAL BET
-        +
-        SAME AMOUNT PROFIT
-    */
-
     profile.balance +=
         blackjackLockedBet *
         2;
-
-
-    saveProfile();
 
 }
 
@@ -2665,7 +2467,7 @@ function blackjackWinEffect() {
 
 
 /* ==========================================================
-   NEXT BLACKJACK BET
+   BLACKJACK NEXT HAND
    ========================================================== */
 
 function prepareNextBlackjackBet() {
@@ -2680,15 +2482,6 @@ function prepareNextBlackjackBet() {
 
 
     if (
-        profile.balance <
-        100
-    ) {
-
-        blackjackBet = 0;
-
-    }
-
-    else if (
         blackjackBet >
         profile.balance
     ) {
@@ -2697,6 +2490,19 @@ function prepareNextBlackjackBet() {
             profile.balance;
 
     }
+
+
+    if (
+        profile.balance <= 0
+    ) {
+
+        blackjackBet =
+            0;
+
+    }
+
+
+    saveProfile();
 
 
     updateBlackjackBetDisplay();
@@ -2709,7 +2515,6 @@ function prepareNextBlackjackBet() {
    SLOTS
    ==========================================================
    ========================================================== */
-
 
 function spinSlots() {
 
@@ -2725,13 +2530,11 @@ function spinSlots() {
 
 
     const symbols = [
-
         "7",
         "A",
         "♠",
         "♦",
         "★"
-
     ];
 
 
@@ -2812,7 +2615,6 @@ function spinSlots() {
    EUROPEAN ROULETTE
    ==========================================================
    ========================================================== */
-
 
 const EUROPEAN_WHEEL = [
 
@@ -2931,9 +2733,7 @@ function rouletteColor(
     return RED_NUMBERS.has(
         number
     )
-
         ? "red"
-
         : "black";
 
 }
@@ -2955,16 +2755,14 @@ function rouletteColorHex(
     return RED_NUMBERS.has(
         number
     )
-
         ? "#a50b20"
-
         : "#111111";
 
 }
 
 
 /* ==========================================================
-   BUILD WHEEL
+   BUILD ROULETTE WHEEL
    ========================================================== */
 
 function buildRouletteWheel() {
@@ -2991,10 +2789,12 @@ function buildRouletteWheel() {
     }
 
 
-    layer.innerHTML = "";
+    layer.innerHTML =
+        "";
 
 
-    const sectors = [];
+    const sectors =
+        [];
 
 
     EUROPEAN_WHEEL.forEach(
@@ -3017,9 +2817,7 @@ function buildRouletteWheel() {
 
 
             sectors.push(
-
                 `${rouletteColorHex(number)} ${start}deg ${end}deg`
-
             );
 
         }
@@ -3114,7 +2912,7 @@ function buildRouletteWheel() {
 
 
 /* ==========================================================
-   BUILD ROULETTE BET TABLE
+   BUILD ROULETTE TABLE
    ========================================================== */
 
 function buildRouletteTable() {
@@ -3130,14 +2928,13 @@ function buildRouletteTable() {
     }
 
 
-    grid.innerHTML = "";
+    grid.innerHTML =
+        "";
 
 
     for (
         let column = 0;
-
         column < 12;
-
         column++
     ) {
 
@@ -3148,13 +2945,9 @@ function buildRouletteTable() {
 
 
         const numbers = [
-
             first + 2,
-
             first + 1,
-
             first
-
         ];
 
 
@@ -3205,7 +2998,7 @@ function buildRouletteTable() {
 
 
 /* ==========================================================
-   CLEAR ROULETTE SELECTION
+   ROULETTE BET SELECTION
    ========================================================== */
 
 function clearRouletteSelection() {
@@ -3226,10 +3019,6 @@ function clearRouletteSelection() {
 
 }
 
-
-/* ==========================================================
-   NUMBER BET
-   ========================================================== */
 
 function selectNumberBet(
     number,
@@ -3285,10 +3074,6 @@ function selectNumberBet(
 }
 
 
-/* ==========================================================
-   OUTSIDE ROULETTE BET
-   ========================================================== */
-
 function selectRouletteBet(
     type,
     button
@@ -3306,66 +3091,48 @@ function selectRouletteBet(
     const bets = {
 
         low: {
-            label:
-                "1 TO 18",
-            payout:
-                1
+            label: "1 TO 18",
+            payout: 1
         },
 
         even: {
-            label:
-                "EVEN",
-            payout:
-                1
+            label: "EVEN",
+            payout: 1
         },
 
         red: {
-            label:
-                "RED",
-            payout:
-                1
+            label: "RED",
+            payout: 1
         },
 
         black: {
-            label:
-                "BLACK",
-            payout:
-                1
+            label: "BLACK",
+            payout: 1
         },
 
         odd: {
-            label:
-                "ODD",
-            payout:
-                1
+            label: "ODD",
+            payout: 1
         },
 
         high: {
-            label:
-                "19 TO 36",
-            payout:
-                1
+            label: "19 TO 36",
+            payout: 1
         },
 
         dozen1: {
-            label:
-                "1ST 12",
-            payout:
-                2
+            label: "1ST 12",
+            payout: 2
         },
 
         dozen2: {
-            label:
-                "2ND 12",
-            payout:
-                2
+            label: "2ND 12",
+            payout: 2
         },
 
         dozen3: {
-            label:
-                "3RD 12",
-            payout:
-                2
+            label: "3RD 12",
+            payout: 2
         }
 
     };
@@ -3417,7 +3184,7 @@ function selectRouletteBet(
 
 
 /* ==========================================================
-   ROULETTE BET AMOUNT
+   ROULETTE WAGER
    ========================================================== */
 
 function changeBet(
@@ -3883,15 +3650,11 @@ function finishRoulette(
 
     const color =
         number === 0
-
             ? "GREEN"
-
             : RED_NUMBERS.has(
                 number
             )
-
                 ? "RED"
-
                 : "BLACK";
 
 
@@ -3939,20 +3702,18 @@ function finishRoulette(
 
 
 /* ==========================================================
-   HIGH ROLL
+   HIGH ROLL DICE
    ========================================================== */
 
 function rollDice() {
 
     const symbols = [
-
         "⚀",
         "⚁",
         "⚂",
         "⚃",
         "⚄",
         "⚅"
-
     ];
 
 
@@ -4140,7 +3901,7 @@ function sortLeaderboard(
 
 
 /* ==========================================================
-   EXPOSE FUNCTIONS FOR HTML
+   EXPOSE FUNCTIONS TO HTML
    ========================================================== */
 
 window.claimDaily =
@@ -4163,9 +3924,7 @@ window.resetGildedProfile =
     resetGildedProfile;
 
 
-/*
-    BLACKJACK
-*/
+/* BLACKJACK */
 
 window.startBlackjack =
     startBlackjack;
@@ -4177,6 +3936,14 @@ window.blackjackHit =
 
 window.blackjackStand =
     blackjackStand;
+
+
+window.addBlackjackChip =
+    addBlackjackChip;
+
+
+window.clearBlackjackBet =
+    clearBlackjackBet;
 
 
 window.setBlackjackBet =
@@ -4191,17 +3958,13 @@ window.maxBlackjackBet =
     maxBlackjackBet;
 
 
-/*
-    SLOTS
-*/
+/* SLOTS */
 
 window.spinSlots =
     spinSlots;
 
 
-/*
-    ROULETTE
-*/
+/* ROULETTE */
 
 window.selectNumberBet =
     selectNumberBet;
@@ -4219,9 +3982,7 @@ window.spinRoulette =
     spinRoulette;
 
 
-/*
-    DICE
-*/
+/* DICE */
 
 window.rollDice =
     rollDice;
@@ -4232,16 +3993,12 @@ window.sortLeaderboard =
 
 
 /* ==========================================================
-   INITIALIZE WEBSITE
+   INITIALIZE
    ========================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
-
-        /*
-            GENERAL
-        */
 
         updateBalanceDisplays();
 
@@ -4260,14 +4017,6 @@ document.addEventListener(
             false
         );
 
-
-        /*
-            START WITH:
-
-            DEAL = ENABLED
-            HIT = DISABLED
-            STAND = DISABLED
-        */
 
         setBlackjackControls(
             false
