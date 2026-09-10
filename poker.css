@@ -477,3 +477,44 @@ button:disabled{opacity:.38;cursor:not-allowed}
     opacity:.38;
     cursor:not-allowed;
 }
+
+
+/* =========================================================
+   SHOWDOWN / WINNER HOLE CARDS
+========================================================= */
+
+.seat-showdown-cards{
+    display:flex;
+    justify-content:center;
+    gap:4px;
+    margin:0 auto 6px;
+}
+
+.poker-mini-card{
+    width:30px;
+    height:42px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border-radius:4px;
+    border:1px solid rgba(0,0,0,.22);
+    background:#f7f3e9;
+    color:#111;
+    font-family:Georgia,serif;
+    line-height:1;
+    box-shadow:0 4px 10px rgba(0,0,0,.28);
+}
+
+.poker-mini-card strong{
+    font-size:13px;
+}
+
+.poker-mini-card span{
+    margin-top:2px;
+    font-size:13px;
+}
+
+.poker-mini-card.red{
+    color:#a5091c;
+}

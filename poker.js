@@ -324,11 +324,12 @@ async function enterPokerRoom(roomId) {
 async function refreshPokerTable(roomId = pokerRoom?.id) {
     if (!roomId || leavingTable) return;
 
-    const [roomResult, seatsResult, cardsResult, myCardsResult] = await Promise.all([
+    const [roomResult, seatsResult, cardsResult, myCardsResult, showdownCardsResult] = await Promise.all([
         gaPokerSupabase.from("poker_rooms").select("*").eq("id", roomId).maybeSingle(),
         gaPokerSupabase.from("poker_seats").select("*").eq("room_id", roomId).order("seat_no"),
         gaPokerSupabase.from("poker_hole_cards").select("*").eq("room_id", roomId),
-        gaPokerSupabase.rpc("poker_get_my_hole_cards", { p_room: roomId })
+        gaPokerSupabase.rpc("poker_get_my_hole_cards", { p_room: roomId }),
+        gaPokerSupabase.rpc("poker_get_showdown_cards", { p_room: roomId })
     ]);
 
     if (roomResult.error) {
@@ -347,6 +348,9 @@ async function refreshPokerTable(roomId = pokerRoom?.id) {
 
     if (!myCardsResult.error && Array.isArray(myCardsResult.data) && myCardsResult.data.length) {
         const mine = myCardsResult.data[0];
+        const existingMine = pokerHoleCards.find(row =>
+            Number(row.seat_no) === Number(mine.seat_no)
+        );
 
         pokerHoleCards = pokerHoleCards.filter(row =>
             Number(row.seat_no) !== Number(mine.seat_no)
@@ -357,10 +361,31 @@ async function refreshPokerTable(roomId = pokerRoom?.id) {
             seat_no: mine.seat_no,
             user_id: pokerUser.id,
             cards: mine.cards,
-            revealed: false
+            revealed: Boolean(existingMine?.revealed || pokerRoom?.hand_complete)
         });
     } else if (myCardsResult.error) {
         console.error("Could not load your private hole cards:", myCardsResult.error);
+    }
+
+    if (!showdownCardsResult.error &&
+        Array.isArray(showdownCardsResult.data) &&
+        showdownCardsResult.data.length) {
+
+        for (const shown of showdownCardsResult.data) {
+            pokerHoleCards = pokerHoleCards.filter(row =>
+                Number(row.seat_no) !== Number(shown.seat_no)
+            );
+
+            pokerHoleCards.push({
+                room_id: roomId,
+                seat_no: shown.seat_no,
+                user_id: shown.user_id || null,
+                cards: shown.cards,
+                revealed: true
+            });
+        }
+    } else if (showdownCardsResult.error) {
+        console.error("Could not load showdown cards:", showdownCardsResult.error);
     }
 
     const mySeat = pokerSeats.find(s => s.user_id === pokerUser.id);
@@ -465,8 +490,22 @@ function renderSeats() {
             (mine ? " me" : "") +
             (seat.folded ? " folded" : "");
 
+        const shownCardRow = pokerHoleCards.find(c =>
+            Number(c.seat_no) === i && c.revealed === true
+        );
+        const shownCards = Array.isArray(shownCardRow?.cards) ? shownCardRow.cards : [];
+        const showShowdownCards =
+            Boolean(pokerRoom.hand_complete) &&
+            !seat.folded &&
+            shownCards.length >= 2;
+
         el.innerHTML = `
             ${Number(pokerRoom.dealer_seat) === i ? `<div class="dealer-chip">D</div>` : ""}
+            ${showShowdownCards ? `
+                <div class="seat-showdown-cards" aria-label="${esc(seat.display_name)} showdown cards">
+                    ${shownCards.slice(0, 2).map(pokerMiniCardHTML).join("")}
+                </div>
+            ` : ""}
             <div class="seat-name">${esc(seat.display_name || (seat.is_bot ? "House Bot" : "Player"))}</div>
             <div class="seat-stack">${fmt(seat.stack)} AC</div>
             <div class="seat-bet">Bet: ${fmt(seat.bet_round)} AC</div>
@@ -474,6 +513,31 @@ function renderSeats() {
         `;
     }
 }
+
+
+function pokerMiniCardHTML(card) {
+    const text = String(card || "");
+    const rawRank = text.slice(0, -1) || "?";
+    const rank = rawRank === "T" ? "10" : rawRank;
+    const suitCode = text.slice(-1).toUpperCase();
+
+    const suits = {
+        H: ["♥", true],
+        D: ["♦", true],
+        C: ["♣", false],
+        S: ["♠", false]
+    };
+
+    const [suit, red] = suits[suitCode] || [suitCode, false];
+
+    return `
+        <span class="poker-mini-card ${red ? "red" : ""}">
+            <strong>${esc(rank)}</strong>
+            <span>${esc(suit)}</span>
+        </span>
+    `;
+}
+
 
 function renderMyCards() {
     const target = $("myHoleCards");
