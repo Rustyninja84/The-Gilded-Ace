@@ -5,15 +5,11 @@
     --bg:#050505;
     --panel:#101010;
     --panel2:#171717;
-
     --burg:#520815;
-
     --gold:#d4a632;
     --gold2:#f3d675;
-
     --text:#c9c4b9;
     --muted:#7c776f;
-
     --border:rgba(212,166,50,.22);
 
     --roulette-red:#a5091c;
@@ -43,11 +39,14 @@ body{
             rgba(82,8,21,.17),
             transparent 35%
         ),
-        #050505;
+        var(--bg);
 
     color:var(--text);
 
-    font-family:"Inter",Arial,sans-serif;
+    font-family:
+        "Inter",
+        Arial,
+        sans-serif;
 }
 
 
@@ -69,8 +68,9 @@ button{
 
 
 button:disabled{
+    opacity:.42;
     cursor:not-allowed;
-    opacity:.45;
+    transform:none !important;
 }
 
 
@@ -82,14 +82,16 @@ button:disabled{
 .site-header{
     position:sticky;
     top:0;
-
     z-index:1000;
 
-    border-bottom:1px solid var(--border);
+    border-bottom:
+        1px solid var(--border);
 
-    background:rgba(5,5,5,.95);
+    background:
+        rgba(5,5,5,.95);
 
-    backdrop-filter:blur(16px);
+    backdrop-filter:
+        blur(16px);
 }
 
 
@@ -127,7 +129,8 @@ button:disabled{
 
     place-items:center;
 
-    border:1px solid rgba(243,214,117,.75);
+    border:
+        1px solid rgba(243,214,117,.75);
 
     background:
         linear-gradient(
@@ -202,15 +205,16 @@ button:disabled{
 
     letter-spacing:1.2px;
 
-    transition:.2s;
+    transition:.2s ease;
 }
 
 
 .main-nav a:hover,
 .main-nav a.active{
-    color:#f3d675;
+    color:var(--gold2);
 
-    background:rgba(212,166,50,.07);
+    background:
+        rgba(212,166,50,.07);
 }
 
 
@@ -234,7 +238,7 @@ button:disabled{
 
 
 .balance-value{
-    color:#f3d675;
+    color:var(--gold2);
 
     font-family:"Cinzel",serif;
 
@@ -247,7 +251,8 @@ button:disabled{
 .profile-button{
     padding:9px 12px;
 
-    border:1px solid rgba(212,166,50,.28);
+    border:
+        1px solid rgba(212,166,50,.28);
 
     border-radius:5px;
 
@@ -261,11 +266,12 @@ button:disabled{
    ========================================================= */
 
 .page-hero{
-    text-align:center;
-
     padding:90px 24px 70px;
 
-    border-bottom:1px solid rgba(212,166,50,.12);
+    text-align:center;
+
+    border-bottom:
+        1px solid rgba(212,166,50,.12);
 
     background:
         radial-gradient(
@@ -283,7 +289,12 @@ button:disabled{
 
     font-family:"Cinzel",serif;
 
-    font-size:clamp(36px,6vw,76px);
+    font-size:
+        clamp(
+            36px,
+            6vw,
+            76px
+        );
 
     letter-spacing:3px;
 }
@@ -303,7 +314,7 @@ button:disabled{
 .eyebrow{
     display:inline-block;
 
-    color:#d4a632;
+    color:var(--gold);
 
     font-size:10px;
 
@@ -327,7 +338,8 @@ button,
 
     padding:11px 18px;
 
-    border:1px solid #d4a632;
+    border:
+        1px solid var(--gold);
 
     border-radius:4px;
 
@@ -347,13 +359,17 @@ button,
 
     text-transform:uppercase;
 
-    transition:.16s ease;
+    transition:
+        transform .16s ease,
+        box-shadow .16s ease,
+        filter .16s ease;
 }
 
 
 button:hover,
 .btn:hover{
-    transform:translateY(-1px);
+    transform:
+        translateY(-1px);
 
     box-shadow:
         0 8px 24px rgba(212,166,50,.15);
@@ -365,7 +381,8 @@ button:hover,
 
     color:#cfc7b8;
 
-    border-color:rgba(212,166,50,.22);
+    border-color:
+        rgba(212,166,50,.22);
 }
 
 
@@ -384,22 +401,30 @@ button:hover,
 
     padding:14px 20px;
 
-    border-bottom:1px solid rgba(212,166,50,.12);
+    border-bottom:
+        1px solid rgba(212,166,50,.12);
 
-    background:rgba(6,6,6,.95);
+    background:
+        rgba(6,6,6,.95);
 
-    backdrop-filter:blur(12px);
+    backdrop-filter:
+        blur(12px);
 }
 
 
 .game-section{
-    width:min(1180px,calc(100% - 40px));
+    width:
+        min(
+            1180px,
+            calc(100% - 40px)
+        );
 
     margin:auto;
 
     padding:72px 0;
 
-    border-bottom:1px solid rgba(212,166,50,.1);
+    border-bottom:
+        1px solid rgba(212,166,50,.1);
 }
 
 
@@ -410,7 +435,12 @@ button:hover,
 
     font-family:"Cinzel",serif;
 
-    font-size:clamp(27px,4vw,43px);
+    font-size:
+        clamp(
+            27px,
+            4vw,
+            43px
+        );
 }
 
 
@@ -426,7 +456,11 @@ button:hover,
 
 
 .container{
-    width:min(1180px,calc(100% - 40px));
+    width:
+        min(
+            1180px,
+            calc(100% - 40px)
+        );
 
     margin:auto;
 }
@@ -440,7 +474,8 @@ button:hover,
 .card{
     padding:24px;
 
-    border:1px solid var(--border);
+    border:
+        1px solid var(--border);
 
     border-radius:8px;
 
@@ -455,7 +490,7 @@ button:hover,
 .stat{
     margin-top:10px;
 
-    color:#f3d675;
+    color:var(--gold2);
 
     font-family:"Cinzel",serif;
 
@@ -468,60 +503,24 @@ button:hover,
 .notice{
     padding:20px;
 
-    border:1px solid rgba(212,166,50,.18);
+    border:
+        1px solid rgba(212,166,50,.18);
 
     border-radius:7px;
 
+    background:
+        rgba(212,166,50,.035);
+
     color:#918b81;
 
-    background:rgba(212,166,50,.035);
+    font-size:12px;
 
     line-height:1.75;
-
-    font-size:12px;
 }
 
 
 .notice strong{
     color:#d9bd65;
-}
-
-
-.simple-game{
-    max-width:900px;
-
-    margin:32px auto 0;
-
-    padding:34px;
-
-    text-align:center;
-
-    border:1px solid rgba(212,166,50,.2);
-
-    border-radius:10px;
-
-    background:#0d0d0d;
-}
-
-
-.dice-display-row{
-    display:flex;
-
-    justify-content:center;
-
-    gap:60px;
-
-    margin-bottom:25px;
-}
-
-
-.dice-face{
-    font-size:60px;
-}
-
-
-.game-message{
-    margin-top:20px;
 }
 
 
@@ -531,7 +530,11 @@ button:hover,
    ========================================================= */
 
 .blackjack-section{
-    width:min(1320px,calc(100% - 32px));
+    width:
+        min(
+            1320px,
+            calc(100% - 32px)
+        );
 }
 
 
@@ -567,22 +570,30 @@ button:hover,
 
     padding:18px 20px;
 
-    border:1px solid rgba(212,166,50,.28);
+    border:
+        1px solid rgba(212,166,50,.28);
 
     border-radius:7px;
 
-    background:rgba(9,9,9,.88);
+    background:
+        rgba(9,9,9,.88);
 }
 
 
 .blackjack-rules ul{
-    margin:12px 0 0 17px;
+    margin:
+        12px 0 0 17px;
 
     color:#aaa49a;
 
     font-size:12px;
 
     line-height:1.8;
+}
+
+
+.blackjack-rules li::marker{
+    color:var(--gold);
 }
 
 
@@ -593,7 +604,8 @@ button:hover,
 
     overflow:hidden;
 
-    border:8px solid #422708;
+    border:
+        8px solid #422708;
 
     border-radius:
         46% 46% 28px 28px
@@ -605,6 +617,13 @@ button:hover,
             ellipse at 50% 35%,
             rgba(24,132,82,.26),
             transparent 50%
+        ),
+        repeating-linear-gradient(
+            45deg,
+            rgba(255,255,255,.012) 0,
+            rgba(255,255,255,.012) 2px,
+            transparent 2px,
+            transparent 7px
         ),
         #075334;
 
@@ -622,9 +641,11 @@ button:hover,
 
     inset:18px;
 
-    border:2px solid rgba(212,166,50,.48);
+    border:
+        2px solid rgba(212,166,50,.48);
 
-    border-radius:44% 44% 18px 18px;
+    border-radius:
+        44% 44% 18px 18px;
 
     pointer-events:none;
 }
@@ -636,7 +657,8 @@ button:hover,
 
     left:50%;
 
-    transform:translateX(-50%);
+    transform:
+        translateX(-50%);
 
     text-align:center;
 
@@ -663,15 +685,18 @@ button:hover,
 
     align-items:center;
 
-    margin:auto auto 10px;
+    margin:
+        auto auto 10px;
 
     overflow:hidden;
 
-    border:1px solid rgba(212,166,50,.65);
+    border:
+        1px solid rgba(212,166,50,.65);
 
     border-radius:5px;
 
-    background:rgba(9,9,9,.9);
+    background:
+        rgba(9,9,9,.9);
 
     color:#e1bb4d;
 
@@ -705,9 +730,10 @@ button:hover,
 
     justify-content:center;
 
-    border-left:1px solid rgba(212,166,50,.45);
+    border-left:
+        1px solid rgba(212,166,50,.45);
 
-    color:#f3d675;
+    color:var(--gold2);
 
     font-size:18px;
 }
@@ -739,11 +765,13 @@ button:hover,
 
     min-width:92px;
 
-    flex:0 0 92px;
+    flex:
+        0 0 92px;
 
     overflow:hidden;
 
-    border:2px solid rgba(30,30,30,.35);
+    border:
+        2px solid rgba(30,30,30,.35);
 
     border-radius:8px;
 
@@ -761,6 +789,30 @@ button:hover,
 
     box-shadow:
         0 9px 20px rgba(0,0,0,.55);
+
+    animation:
+        blackjackDealCard .3s ease-out;
+}
+
+
+@keyframes blackjackDealCard{
+
+    from{
+        opacity:0;
+
+        transform:
+            translateY(-25px)
+            scale(.95);
+    }
+
+    to{
+        opacity:1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
 }
 
 
@@ -801,7 +853,8 @@ button:hover,
 
     bottom:7px;
 
-    transform:rotate(180deg);
+    transform:
+        rotate(180deg);
 }
 
 
@@ -835,7 +888,8 @@ button:hover,
 
 
 .card-back{
-    border:4px solid #efe2bd;
+    border:
+        4px solid #efe2bd;
 
     background:
         repeating-linear-gradient(
@@ -863,7 +917,8 @@ button:hover,
 
     justify-content:center;
 
-    border:2px solid rgba(230,190,80,.65);
+    border:
+        2px solid rgba(230,190,80,.65);
 
     color:#e0b346;
 
@@ -884,11 +939,13 @@ button:hover,
 
     width:610px;
 
-    transform:translateX(-50%);
+    transform:
+        translateX(-50%);
 
     text-align:center;
 
-    color:rgba(218,169,63,.76);
+    color:
+        rgba(218,169,63,.76);
 
     font-family:"Cinzel",serif;
 
@@ -936,11 +993,13 @@ button:hover,
 
     padding:25px;
 
-    border:1px solid rgba(212,166,50,.45);
+    border:
+        1px solid rgba(212,166,50,.45);
 
     border-radius:8px;
 
-    background:rgba(6,10,8,.92);
+    background:
+        rgba(6,10,8,.92);
 }
 
 
@@ -969,11 +1028,19 @@ button:hover,
 .blackjack-bet-controls{
     display:grid;
 
-    grid-template-columns:52px 52px 1fr;
+    grid-template-columns:
+        52px 52px 1fr;
 
     gap:10px;
 
     margin-top:18px;
+}
+
+
+.blackjack-bet-controls button{
+    min-width:0;
+
+    padding:8px;
 }
 
 
@@ -982,7 +1049,8 @@ button:hover,
 
     margin:20px 0;
 
-    background:rgba(212,166,50,.28);
+    background:
+        rgba(212,166,50,.28);
 }
 
 
@@ -1013,23 +1081,26 @@ button:hover,
 
     bottom:18px;
 
-    transform:translateX(-50%);
+    transform:
+        translateX(-50%);
 
     z-index:30;
 
     display:flex;
 
-    gap:12px;
-
     align-items:center;
+
+    gap:12px;
 
     padding:10px 20px;
 
-    border:1px solid rgba(212,166,50,.22);
+    border:
+        1px solid rgba(212,166,50,.22);
 
     border-radius:50px;
 
-    background:rgba(5,5,5,.88);
+    background:
+        rgba(5,5,5,.88);
 }
 
 
@@ -1042,7 +1113,8 @@ button:hover,
 
     padding:0;
 
-    border:6px dashed rgba(255,255,255,.75);
+    border:
+        6px dashed rgba(255,255,255,.75);
 
     border-radius:50%;
 
@@ -1103,13 +1175,14 @@ button:hover,
 
     background:#17110b;
 
-    color:#f3d675;
+    color:var(--gold2);
 }
 
 
 .blackjack-win{
     box-shadow:
-        inset 0 0 0 3px #f3d675,
+        inset 0 0 0 3px var(--gold2),
+        inset 0 0 90px rgba(212,166,50,.2),
         0 0 45px rgba(212,166,50,.25);
 }
 
@@ -1117,11 +1190,14 @@ button:hover,
 
 /* =========================================================
    ARCADE SLOT MACHINE
-   EVERYTHING IS PREFIXED ga-slot-
    ========================================================= */
 
 .ga-slot-section{
-    width:min(1280px,calc(100% - 30px));
+    width:
+        min(
+            1280px,
+            calc(100% - 30px)
+        );
 }
 
 
@@ -1164,10 +1240,11 @@ button:hover,
 
     pointer-events:none;
 
+    border:
+        2px solid rgba(255,55,15,.55);
+
     border-radius:
         78px 78px 22px 22px;
-
-    border:2px solid rgba(255,55,15,.55);
 
     box-shadow:
         inset 0 0 16px rgba(255,31,0,.35),
@@ -1210,13 +1287,15 @@ button:hover,
 
 
 @keyframes gaSlotBulbPulse{
+
     from{
-        opacity:.5;
+        opacity:.45;
     }
 
     to{
         opacity:1;
     }
+
 }
 
 
@@ -1225,9 +1304,11 @@ button:hover,
 
     width:76%;
 
-    margin:0 auto 22px;
+    margin:
+        0 auto 22px;
 
-    padding:22px 30px 16px;
+    padding:
+        22px 30px 16px;
 
     text-align:center;
 
@@ -1261,7 +1342,12 @@ button:hover,
 
     font-family:"Cinzel",serif;
 
-    font-size:clamp(24px,4vw,43px);
+    font-size:
+        clamp(
+            24px,
+            4vw,
+            43px
+        );
 
     font-weight:900;
 
@@ -1360,9 +1446,9 @@ button:hover,
 .ga-slot-side-icon{
     margin-bottom:14px;
 
-    font-size:35px;
-
     color:#f3c45c;
+
+    font-size:35px;
 }
 
 
@@ -1454,9 +1540,9 @@ button:hover,
 .ga-slot-symbol[data-symbol="7"]{
     color:#d21817;
 
-    font-size:74px;
-
     font-family:Georgia,serif;
+
+    font-size:74px;
 
     font-weight:bold;
 
@@ -1466,9 +1552,12 @@ button:hover,
 
 
 .ga-slot-symbol[data-symbol="BAR"]{
-    color:#f2ca62;
+    height:50px;
 
-    font-size:27px;
+    margin:30px 16px;
+
+    border:
+        3px solid #aa7623;
 
     border-radius:7px;
 
@@ -1478,11 +1567,9 @@ button:hover,
             #050505
         );
 
-    margin:30px 16px;
+    color:#f2ca62;
 
-    height:50px;
-
-    border:3px solid #aa7623;
+    font-size:27px;
 
     text-shadow:none;
 }
@@ -1497,17 +1584,18 @@ button:hover,
 .ga-slot-payline{
     position:absolute;
 
+    top:50%;
+
     left:0;
 
     right:0;
-
-    top:50%;
 
     z-index:20;
 
     height:4px;
 
-    transform:translateY(-50%);
+    transform:
+        translateY(-50%);
 
     pointer-events:none;
 
@@ -1533,37 +1621,44 @@ button:hover,
 
 
 @keyframes gaSlotReelShake{
+
     0%{
-        transform:translateY(-2px);
+        transform:
+            translateY(-2px);
     }
 
     50%{
-        transform:translateY(2px);
+        transform:
+            translateY(2px);
     }
 
     100%{
-        transform:translateY(-2px);
+        transform:
+            translateY(-2px);
     }
+
 }
 
 
 .ga-slot-reel.ga-slot-winner{
-    box-shadow:
-        inset 0 0 28px rgba(255,209,76,.8);
-
     animation:
         gaSlotWinFlash .28s ease-in-out 6 alternate;
 }
 
 
 @keyframes gaSlotWinFlash{
+
     from{
         filter:brightness(1);
     }
 
     to{
-        filter:brightness(1.35);
+        filter:brightness(1.4);
+
+        box-shadow:
+            inset 0 0 35px rgba(255,209,76,.8);
     }
+
 }
 
 
@@ -1644,11 +1739,11 @@ button:hover,
 .ga-slot-small-button{
     min-width:0;
 
-    padding:0;
-
     height:45px;
 
     min-height:45px;
+
+    padding:0;
 
     font-size:25px;
 }
@@ -1664,7 +1759,7 @@ button:hover,
 
     justify-content:center;
 
-    color:#f3d675;
+    color:var(--gold2);
 
     font-family:"Cinzel",serif;
 
@@ -1683,10 +1778,10 @@ button:hover,
 
     justify-self:center;
 
-    border-radius:55%;
-
     border:
         7px solid #d59b2b;
+
+    border-radius:55%;
 
     background:
         radial-gradient(
@@ -1706,9 +1801,6 @@ button:hover,
 
     letter-spacing:2px;
 
-    text-shadow:
-        0 2px 2px #611;
-
     box-shadow:
         inset 0 0 0 3px #6e0704,
         0 7px 0 #402004,
@@ -1717,7 +1809,8 @@ button:hover,
 
 
 .ga-slot-spin-button:active{
-    transform:translateY(5px);
+    transform:
+        translateY(5px);
 
     box-shadow:
         inset 0 0 0 3px #6e0704,
@@ -1812,14 +1905,11 @@ button:hover,
 
     margin-top:5px;
 
-    color:#f3d675;
+    color:var(--gold2);
 
     font-family:"Cinzel",serif;
 }
 
-
-
-/* SLOT LEVER */
 
 .ga-slot-lever{
     position:absolute;
@@ -1839,8 +1929,6 @@ button:hover,
     background:transparent;
 
     box-shadow:none;
-
-    transform:none;
 }
 
 
@@ -1864,7 +1952,8 @@ button:hover,
 
     border-radius:7px;
 
-    transform-origin:bottom center;
+    transform-origin:
+        bottom center;
 
     background:
         linear-gradient(
@@ -1873,9 +1962,6 @@ button:hover,
             #ffe27d,
             #8e611b
         );
-
-    box-shadow:
-        0 0 6px rgba(255,205,80,.35);
 
     transition:
         transform .35s ease;
@@ -1893,6 +1979,9 @@ button:hover,
 
     height:46px;
 
+    border:
+        3px solid #e5aa38;
+
     border-radius:50%;
 
     background:
@@ -1902,9 +1991,6 @@ button:hover,
             #d80e0c 40%,
             #650101 80%
         );
-
-    border:
-        3px solid #e5aa38;
 
     box-shadow:
         0 0 18px rgba(255,17,0,.5);
@@ -1934,7 +2020,11 @@ button:hover,
    ========================================================= */
 
 .roulette-section{
-    width:min(1320px,calc(100% - 30px));
+    width:
+        min(
+            1320px,
+            calc(100% - 30px)
+        );
 }
 
 
@@ -1982,7 +2072,11 @@ button:hover,
 .roulette-cabinet{
     position:relative;
 
-    width:min(620px,86vw);
+    width:
+        min(
+            620px,
+            86vw
+        );
 
     aspect-ratio:1;
 
@@ -2005,6 +2099,9 @@ button:hover,
             #1d1004 88%,
             #050505 100%
         );
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.65);
 }
 
 
@@ -2017,7 +2114,12 @@ button:hover,
 
     z-index:60;
 
-    transform:translateX(-50%);
+    transform:
+        translateX(-50%);
+
+    width:0;
+
+    height:0;
 
     border-left:
         15px solid transparent;
@@ -2026,7 +2128,7 @@ button:hover,
         15px solid transparent;
 
     border-top:
-        28px solid #f3d675;
+        28px solid var(--gold2);
 }
 
 
@@ -2043,6 +2145,11 @@ button:hover,
         8px solid #b98b2e;
 
     border-radius:50%;
+
+    background:#111;
+
+    box-shadow:
+        inset 0 0 35px rgba(0,0,0,.7);
 
     transition:
         transform 6.2s cubic-bezier(.12,.72,.08,1);
@@ -2077,7 +2184,7 @@ button:hover,
 
     justify-content:center;
 
-    color:white;
+    color:#fff;
 
     font-family:"Cinzel",serif;
 
@@ -2086,7 +2193,7 @@ button:hover,
     font-weight:900;
 
     text-shadow:
-        0 1px 3px black;
+        0 1px 3px #000;
 }
 
 
@@ -2151,7 +2258,7 @@ button:hover,
 
     background:
         linear-gradient(
-            #f3d675,
+            var(--gold2),
             #a97517
         );
 
@@ -2194,13 +2301,15 @@ button:hover,
 
     height:14px;
 
-    transform:translateX(-50%);
+    transform:
+        translateX(-50%);
 
     border-radius:50%;
 
     background:white;
 
-    transition:top 2.1s ease;
+    transition:
+        top 2.1s ease;
 }
 
 
@@ -2238,7 +2347,7 @@ button:hover,
 
     margin-top:10px;
 
-    color:#f3d675;
+    color:var(--gold2);
 
     font-family:"Cinzel",serif;
 
@@ -2254,7 +2363,7 @@ button:hover,
 .roulette-selected-bet{
     margin-top:10px;
 
-    color:#f3d675;
+    color:var(--gold2);
 
     font-family:"Cinzel",serif;
 
@@ -2285,7 +2394,8 @@ button:hover,
 
     color:#cfc7b8;
 
-    border-color:rgba(212,166,50,.22);
+    border-color:
+        rgba(212,166,50,.22);
 }
 
 
@@ -2345,11 +2455,19 @@ button:hover,
 .roulette-table-zero{
     min-height:216px;
 
+    padding:0;
+
+    background:
+        linear-gradient(
+            #128150,
+            #075334
+        );
+
+    color:#fff;
+
+    font-family:"Cinzel",serif;
+
     font-size:26px;
-
-    color:white;
-
-    background:#087541;
 }
 
 
@@ -2369,13 +2487,13 @@ button:hover,
 
 
 .roulette-number-cell{
-    min-height:0;
-
     min-width:0;
+
+    min-height:0;
 
     padding:0;
 
-    color:white;
+    color:#fff;
 
     font-family:"Cinzel",serif;
 
@@ -2435,22 +2553,26 @@ button:hover,
 
     color:#efe8dc;
 
-    border-color:rgba(255,255,255,.16);
+    border-color:
+        rgba(255,255,255,.16);
 }
 
 
 .roulette-red-bet{
-    background:#a5091c !important;
+    background:
+        #a5091c !important;
 }
 
 
 .roulette-black-bet{
-    background:#101010 !important;
+    background:
+        #101010 !important;
 }
 
 
 .roulette-table-wrapper button.selected{
-    border-color:#f3d675;
+    border-color:
+        var(--gold2);
 
     box-shadow:
         inset 0 0 0 2px rgba(243,214,117,.35),
@@ -2462,6 +2584,831 @@ button:hover,
     margin-top:22px;
 
     text-align:center;
+}
+
+
+
+/* =========================================================
+   HIGH ROLL DICE
+   ========================================================= */
+
+.ga-dice-section{
+    width:
+        min(
+            1180px,
+            calc(100% - 32px)
+        );
+}
+
+
+.ga-dice-table{
+    position:relative;
+
+    margin-top:38px;
+
+    overflow:hidden;
+
+    border:
+        5px solid #4c300d;
+
+    border-radius:34px;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 35%,
+            rgba(28,130,79,.28),
+            transparent 52%
+        ),
+        repeating-linear-gradient(
+            45deg,
+            rgba(255,255,255,.012) 0,
+            rgba(255,255,255,.012) 2px,
+            transparent 2px,
+            transparent 7px
+        ),
+        #06472d;
+
+    box-shadow:
+        inset 0 0 0 3px #b88425,
+        inset 0 0 90px rgba(0,0,0,.58),
+        0 30px 90px rgba(0,0,0,.55);
+}
+
+
+.ga-dice-table::before{
+    content:"";
+
+    position:absolute;
+
+    inset:15px;
+
+    border:
+        2px solid rgba(212,166,50,.35);
+
+    border-radius:24px;
+
+    pointer-events:none;
+}
+
+
+.ga-dice-table-header{
+    position:relative;
+
+    z-index:5;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    padding:28px 35px;
+
+    border-bottom:
+        1px solid rgba(212,166,50,.34);
+
+    background:
+        linear-gradient(
+            rgba(12,12,12,.96),
+            rgba(5,5,5,.88)
+        );
+}
+
+
+.ga-dice-table-header h3{
+    margin-top:6px;
+
+    color:#f5df99;
+
+    font-family:"Cinzel",serif;
+
+    font-size:31px;
+
+    letter-spacing:5px;
+}
+
+
+.ga-dice-rule-badge{
+    padding:11px 18px;
+
+    border:
+        1px solid rgba(212,166,50,.45);
+
+    border-radius:5px;
+
+    background:#090909;
+
+    color:#e0b957;
+
+    font-family:"Cinzel",serif;
+
+    font-size:10px;
+
+    font-weight:800;
+
+    letter-spacing:2px;
+}
+
+
+.ga-dice-play-area{
+    position:relative;
+
+    z-index:5;
+
+    display:grid;
+
+    grid-template-columns:
+        1fr .75fr 1fr;
+
+    align-items:center;
+
+    gap:28px;
+
+    min-height:360px;
+
+    padding:40px 70px;
+}
+
+
+.ga-dice-player-side{
+    text-align:center;
+}
+
+
+.ga-dice-side-title{
+    display:block;
+
+    margin-bottom:18px;
+
+    color:#edbc4d;
+
+    font-family:"Cinzel",serif;
+
+    font-size:13px;
+
+    font-weight:900;
+
+    letter-spacing:4px;
+}
+
+
+.ga-die{
+    position:relative;
+
+    width:160px;
+
+    height:160px;
+
+    margin:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border:
+        4px solid var(--gold);
+
+    border-radius:25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fff9df,
+            #dcbf68 55%,
+            #866018
+        );
+
+    box-shadow:
+        inset 0 0 0 4px rgba(255,255,255,.25),
+        inset 0 -15px 25px rgba(83,48,4,.28),
+        0 15px 25px rgba(0,0,0,.45),
+        0 0 30px rgba(212,166,50,.12);
+}
+
+
+.ga-die-face{
+    color:#171008;
+
+    font-size:112px;
+
+    line-height:1;
+}
+
+
+.ga-dice-roll-value{
+    margin-top:14px;
+
+    color:#f4d26e;
+
+    font-family:"Cinzel",serif;
+
+    font-size:26px;
+
+    font-weight:900;
+}
+
+
+.ga-dice-center{
+    text-align:center;
+}
+
+
+.ga-dice-versus{
+    color:
+        rgba(243,214,117,.4);
+
+    font-family:"Cinzel",serif;
+
+    font-size:40px;
+
+    font-weight:900;
+
+    letter-spacing:4px;
+}
+
+
+.ga-dice-status{
+    min-height:76px;
+
+    margin-top:20px;
+
+    padding:16px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border:
+        1px solid rgba(212,166,50,.28);
+
+    border-radius:8px;
+
+    background:
+        rgba(4,11,7,.78);
+
+    color:#eee4d1;
+
+    font-size:14px;
+
+    line-height:1.6;
+}
+
+
+.ga-die.ga-dice-rolling{
+    animation:
+        gaDiceRollAnimation .12s linear infinite;
+}
+
+
+@keyframes gaDiceRollAnimation{
+
+    0%{
+        transform:
+            rotate(-5deg)
+            translateY(-2px);
+    }
+
+    25%{
+        transform:
+            rotate(7deg)
+            translateY(3px);
+    }
+
+    50%{
+        transform:
+            rotate(-8deg)
+            translateY(-5px);
+    }
+
+    75%{
+        transform:
+            rotate(5deg)
+            translateY(2px);
+    }
+
+    100%{
+        transform:
+            rotate(-5deg)
+            translateY(-2px);
+    }
+
+}
+
+
+.ga-die.ga-dice-winner{
+    animation:
+        gaDiceWinner .28s ease-in-out 6 alternate;
+}
+
+
+@keyframes gaDiceWinner{
+
+    from{
+        filter:brightness(1);
+    }
+
+    to{
+        filter:brightness(1.25);
+
+        box-shadow:
+            inset 0 0 0 4px rgba(255,255,255,.35),
+            0 0 45px rgba(255,213,79,.85);
+    }
+
+}
+
+
+.ga-dice-console{
+    position:relative;
+
+    z-index:5;
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 230px 1fr;
+
+    align-items:center;
+
+    gap:22px;
+
+    padding:24px 34px;
+
+    border-top:
+        1px solid rgba(212,166,50,.34);
+
+    border-bottom:
+        1px solid rgba(212,166,50,.34);
+
+    background:
+        linear-gradient(
+            #16100a,
+            #070707
+        );
+}
+
+
+.ga-dice-console-box{
+    padding:18px;
+
+    border:
+        1px solid rgba(212,166,50,.3);
+
+    border-radius:10px;
+
+    background:#080808;
+
+    text-align:center;
+}
+
+
+.ga-dice-console-label,
+.ga-dice-balance-label{
+    display:block;
+
+    color:#c69d3d;
+
+    font-family:"Cinzel",serif;
+
+    font-size:10px;
+
+    font-weight:800;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+}
+
+
+.ga-dice-bet-value,
+.ga-dice-last-win,
+.ga-dice-balance{
+    margin-top:8px;
+
+    color:var(--gold2);
+
+    font-family:"Cinzel",serif;
+
+    font-size:23px;
+
+    font-weight:900;
+}
+
+
+.ga-dice-balance-label{
+    margin-top:15px;
+
+    padding-top:15px;
+
+    border-top:
+        1px solid rgba(212,166,50,.18);
+}
+
+
+.ga-dice-balance{
+    font-size:16px;
+}
+
+
+.ga-dice-bet-adjust{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:7px;
+
+    margin-top:14px;
+}
+
+
+.ga-dice-bet-adjust button{
+    min-width:0;
+
+    padding:8px 7px;
+
+    background:#15110a;
+
+    color:#e0b958;
+}
+
+
+.ga-dice-roll-control{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+}
+
+
+.ga-dice-roll-button{
+    width:190px;
+
+    height:100px;
+
+    min-height:100px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    border:
+        7px solid #d59b2b;
+
+    border-radius:55%;
+
+    background:
+        radial-gradient(
+            circle at 50% 30%,
+            #eb3b24,
+            #a90808 55%,
+            #5e0202
+        );
+
+    color:#ffe493;
+
+    font-family:"Cinzel",serif;
+
+    font-size:18px;
+
+    font-weight:900;
+
+    letter-spacing:2px;
+
+    box-shadow:
+        inset 0 0 0 3px #580604,
+        0 8px 0 #3c2407,
+        0 0 25px rgba(255,34,10,.28);
+}
+
+
+.ga-dice-roll-button:active{
+    transform:
+        translateY(5px);
+
+    box-shadow:
+        inset 0 0 0 3px #580604,
+        0 3px 0 #3c2407;
+}
+
+
+.ga-dice-roll-icon{
+    display:block;
+
+    margin-bottom:3px;
+
+    font-size:13px;
+}
+
+
+.ga-dice-chip-area{
+    position:relative;
+
+    z-index:5;
+
+    padding:24px 30px;
+
+    text-align:center;
+
+    background:
+        linear-gradient(
+            rgba(4,34,20,.85),
+            rgba(3,23,14,.92)
+        );
+}
+
+
+.ga-dice-chip-label{
+    display:block;
+
+    margin-bottom:13px;
+
+    color:#bf983b;
+
+    font-family:"Cinzel",serif;
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:3px;
+}
+
+
+.ga-dice-chip-rack{
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:14px;
+}
+
+
+.ga-dice-chip{
+    width:70px;
+
+    height:70px;
+
+    min-height:70px;
+
+    padding:0;
+
+    border:
+        6px dashed rgba(255,255,255,.75);
+
+    border-radius:50%;
+
+    color:#fff;
+
+    font-family:"Cinzel",serif;
+
+    font-size:12px;
+
+    box-shadow:
+        inset 0 0 0 5px rgba(0,0,0,.3),
+        0 8px 14px rgba(0,0,0,.45);
+}
+
+
+.ga-dice-chip span{
+    width:39px;
+
+    height:39px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#15100a;
+}
+
+
+.ga-dice-chip:hover{
+    transform:
+        translateY(-6px);
+}
+
+
+.ga-dice-chip-100{
+    background:#14734a;
+}
+
+
+.ga-dice-chip-500{
+    background:#a31921;
+}
+
+
+.ga-dice-chip-1000{
+    background:#252525;
+}
+
+
+.ga-dice-chip-5000{
+    background:#5e2777;
+}
+
+
+.ga-dice-clear-button{
+    height:54px;
+
+    min-height:54px;
+
+    padding:
+        0 18px;
+
+    border-radius:27px;
+
+    background:#17110a;
+
+    color:#e9bf59;
+}
+
+
+.ga-dice-rules{
+    position:relative;
+
+    z-index:5;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    border-top:
+        1px solid rgba(212,166,50,.32);
+
+    background:#080808;
+}
+
+
+.ga-dice-rules > div{
+    padding:18px;
+
+    text-align:center;
+
+    border-right:
+        1px solid rgba(212,166,50,.18);
+}
+
+
+.ga-dice-rules > div:last-child{
+    border-right:0;
+}
+
+
+.ga-dice-rules span{
+    display:block;
+
+    color:#7f786f;
+
+    font-size:9px;
+
+    font-weight:800;
+
+    letter-spacing:1.7px;
+}
+
+
+.ga-dice-rules strong{
+    display:block;
+
+    margin-top:6px;
+
+    color:#e3ba55;
+
+    font-family:"Cinzel",serif;
+
+    font-size:13px;
+}
+
+
+
+/* =========================================================
+   COMMON SITE ELEMENTS
+   ========================================================= */
+
+.grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:18px;
+}
+
+
+.card h3{
+    margin:10px 0 8px;
+
+    color:#ece6dc;
+
+    font-family:"Cinzel",serif;
+}
+
+
+.card p{
+    color:#8d877e;
+
+    line-height:1.7;
+}
+
+
+.tag{
+    color:var(--gold);
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:1.6px;
+
+    text-transform:uppercase;
+}
+
+
+.price{
+    margin:18px 0;
+
+    color:var(--gold2);
+
+    font-family:"Cinzel",serif;
+
+    font-size:21px;
+
+    font-weight:800;
+}
+
+
+table{
+    width:100%;
+
+    border-collapse:collapse;
+
+    border:
+        1px solid rgba(212,166,50,.18);
+
+    background:#0b0b0b;
+}
+
+
+th,
+td{
+    padding:15px 16px;
+
+    border-bottom:
+        1px solid rgba(212,166,50,.1);
+
+    text-align:left;
+}
+
+
+th{
+    background:#111;
+
+    color:#c8aa53;
+
+    font-size:9px;
+
+    letter-spacing:1.5px;
+}
+
+
+td{
+    color:#aaa49a;
+
+    font-size:12px;
+}
+
+
+.empty-state{
+    padding:60px 24px;
+
+    text-align:center;
+}
+
+
+.empty-state .icon{
+    margin-bottom:12px;
+
+    color:var(--gold);
+
+    font-size:48px;
 }
 
 
@@ -2516,9 +3463,9 @@ footer strong{
 
         width:100%;
 
-        overflow-x:auto;
-
         justify-content:flex-start;
+
+        overflow-x:auto;
     }
 
 
@@ -2559,15 +3506,15 @@ footer strong{
 
 
     .ga-slot-machine{
-        margin-right:45px;
-
         margin-left:20px;
+
+        margin-right:45px;
     }
 
 }
 
 
-@media(max-width:800px){
+@media(max-width:850px){
 
     .blackjack-heading-row{
         flex-direction:column;
@@ -2582,8 +3529,7 @@ footer strong{
 
 
     .ga-slot-upper-body{
-        grid-template-columns:
-            1fr;
+        grid-template-columns:1fr;
     }
 
 
@@ -2624,6 +3570,28 @@ footer strong{
 
     .ga-slot-marquee{
         width:95%;
+    }
+
+
+    .ga-dice-play-area{
+        grid-template-columns:
+            1fr 1fr;
+
+        padding:
+            35px 25px;
+    }
+
+
+    .ga-dice-center{
+        grid-column:
+            1 / -1;
+
+        grid-row:2;
+    }
+
+
+    .ga-dice-console{
+        grid-template-columns:1fr;
     }
 
 
@@ -2719,14 +3687,15 @@ footer strong{
 @media(max-width:600px){
 
     .game-tabs{
-        overflow-x:auto;
-
         justify-content:flex-start;
+
+        overflow-x:auto;
     }
 
 
     .game-section{
-        width:calc(100% - 20px);
+        width:
+            calc(100% - 20px);
     }
 
 
@@ -2749,12 +3718,57 @@ footer strong{
 
 
     .ga-slot-paytable{
-        grid-template-columns:1fr 1fr;
+        grid-template-columns:
+            1fr 1fr;
     }
 
 
-    .dice-display-row{
-        gap:30px;
+    .ga-dice-table-header{
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+
+    .ga-dice-play-area{
+        padding:
+            28px 10px;
+    }
+
+
+    .ga-die{
+        width:120px;
+
+        height:120px;
+    }
+
+
+    .ga-die-face{
+        font-size:84px;
+    }
+
+
+    .ga-dice-console{
+        padding:
+            20px 12px;
+    }
+
+
+    .ga-dice-rules{
+        grid-template-columns:1fr;
+    }
+
+
+    .ga-dice-rules > div{
+        border-right:0;
+
+        border-bottom:
+            1px solid rgba(212,166,50,.18);
+    }
+
+
+    .grid{
+        grid-template-columns:1fr;
     }
 
 }
