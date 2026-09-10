@@ -1,12 +1,59 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 23
+   VERSION 30
+
+   Includes:
+   - Supabase Login
+   - Supabase Sign Up
+   - Logout
+   - Cloud Profiles
+   - Editable Display Name
+   - Persistent Balance
+   - Persistent Game Statistics
+   - Persistent Collection
+   - Blackjack
+   - Arcade Slots
+   - Roulette
+   - High Roll Dice
+   - Store
+   - Collection
+   - Profile
+   - Leaderboard
    ========================================================== */
 
 
 /* ==========================================================
-   HELPERS
+   SUPABASE CONFIGURATION
+   ========================================================== */
+
+const GA_SUPABASE_URL =
+    "https://wrmiylynviujwdoecvcn.supabase.co";
+
+
+const GA_SUPABASE_KEY =
+    "sb_publishable_x-OPQXsHErbHt8I9eAN1Tw_vRhqUsWX";
+
+
+let gaSupabaseClient =
+    null;
+
+
+let gaCurrentUser =
+    null;
+
+
+let gaAuthReady =
+    false;
+
+
+let gaCloudSaveChain =
+    Promise.resolve();
+
+
+
+/* ==========================================================
+   BASIC HELPERS
    ========================================================== */
 
 const $ = (selector) =>
@@ -17,19 +64,30 @@ const $$ = (selector) =>
     document.querySelectorAll(selector);
 
 
-function setText(selector, value) {
+function setText(
+    selector,
+    value
+) {
 
     const element =
-        document.querySelector(selector);
+        document.querySelector(
+            selector
+        );
+
 
     if (element) {
-        element.textContent = value;
+
+        element.textContent =
+            value;
+
     }
 
 }
 
 
-function formatCredits(amount) {
+function formatCredits(
+    amount
+) {
 
     return (
         Math.floor(
@@ -42,8 +100,26 @@ function formatCredits(amount) {
 }
 
 
+function gaClamp(
+    value,
+    minimum,
+    maximum
+) {
+
+    return Math.min(
+        maximum,
+        Math.max(
+            minimum,
+            value
+        )
+    );
+
+}
+
+
+
 /* ==========================================================
-   PROFILE
+   DEFAULT PROFILE
    ========================================================== */
 
 const DEFAULT_PROFILE = {
@@ -81,7 +157,12 @@ const DEFAULT_PROFILE = {
 };
 
 
-function loadProfile() {
+
+/* ==========================================================
+   LOCAL PROFILE
+   ========================================================== */
+
+function loadLocalProfile() {
 
     const saved =
         localStorage.getItem(
@@ -94,7 +175,9 @@ function loadProfile() {
         try {
 
             const parsed =
-                JSON.parse(saved);
+                JSON.parse(
+                    saved
+                );
 
 
             return {
@@ -117,7 +200,7 @@ function loadProfile() {
         catch (error) {
 
             console.error(
-                "Could not load profile.",
+                "Local profile could not be loaded.",
                 error
             );
 
@@ -125,10 +208,6 @@ function loadProfile() {
 
     }
 
-
-    /*
-        MIGRATE OLD BALANCE
-    */
 
     const oldBalance =
         Number(
@@ -149,7 +228,10 @@ function loadProfile() {
 
 
     if (
-        Number.isFinite(oldBalance) &&
+        Number.isFinite(
+            oldBalance
+        )
+        &&
         oldBalance > 0
     ) {
 
@@ -161,7 +243,9 @@ function loadProfile() {
 
     localStorage.setItem(
         "gildedAceProfile",
-        JSON.stringify(fresh)
+        JSON.stringify(
+            fresh
+        )
     );
 
 
@@ -171,24 +255,49 @@ function loadProfile() {
 
 
 let profile =
-    loadProfile();
+    loadLocalProfile();
 
+
+
+/* ==========================================================
+   SAVE PROFILE
+   ========================================================== */
 
 function saveProfile() {
 
     localStorage.setItem(
         "gildedAceProfile",
-        JSON.stringify(profile)
+        JSON.stringify(
+            profile
+        )
     );
 
 
     updateAllDisplays();
 
+
+    /*
+        Cloud saving only happens after
+        Supabase authentication has finished
+        and a user is logged in.
+    */
+
+    if (
+        gaAuthReady &&
+        gaCurrentUser &&
+        gaSupabaseClient
+    ) {
+
+        gaQueueCloudProfileSave();
+
+    }
+
 }
 
 
+
 /* ==========================================================
-   DISPLAY SYSTEM
+   PROFILE DISPLAY HELPERS
    ========================================================== */
 
 function updateBalanceDisplays() {
@@ -211,11 +320,6 @@ function updateBalanceDisplays() {
 }
 
 
-/*
-    IMPORTANT:
-    THIS WAS THE MISSING FUNCTION.
-*/
-
 function updateAllDisplays() {
 
     updateBalanceDisplays();
@@ -229,6 +333,1873 @@ function updateAllDisplays() {
 }
 
 
+
+/* ==========================================================
+   LOAD SUPABASE LIBRARY AUTOMATICALLY
+   ========================================================== */
+
+function gaLoadSupabaseLibrary() {
+
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+            if (
+                window.supabase &&
+                typeof window.supabase.createClient ===
+                "function"
+            ) {
+
+                resolve();
+
+                return;
+
+            }
+
+
+            const existing =
+                document.querySelector(
+                    'script[data-ga-supabase]'
+                );
+
+
+            if (existing) {
+
+                existing.addEventListener(
+                    "load",
+                    resolve
+                );
+
+
+                existing.addEventListener(
+                    "error",
+                    reject
+                );
+
+
+                return;
+
+            }
+
+
+            const script =
+                document.createElement(
+                    "script"
+                );
+
+
+            script.src =
+                "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
+
+            script.async =
+                true;
+
+
+            script.dataset.gaSupabase =
+                "true";
+
+
+            script.onload =
+                () => resolve();
+
+
+            script.onerror =
+                () => reject(
+                    new Error(
+                        "Supabase library failed to load."
+                    )
+                );
+
+
+            document.head.appendChild(
+                script
+            );
+
+        }
+    );
+
+}
+
+
+
+/* ==========================================================
+   INITIALIZE SUPABASE
+   ========================================================== */
+
+async function gaInitializeSupabase() {
+
+    try {
+
+        await gaLoadSupabaseLibrary();
+
+
+        gaSupabaseClient =
+            window.supabase.createClient(
+                GA_SUPABASE_URL,
+                GA_SUPABASE_KEY,
+                {
+
+                    auth: {
+
+                        persistSession:
+                            true,
+
+                        autoRefreshToken:
+                            true,
+
+                        detectSessionInUrl:
+                            true
+
+                    }
+
+                }
+            );
+
+
+        const {
+            data,
+            error
+        } =
+            await gaSupabaseClient
+                .auth
+                .getSession();
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        const session =
+            data.session;
+
+
+        if (
+            session &&
+            session.user
+        ) {
+
+            gaCurrentUser =
+                session.user;
+
+
+            await gaLoadCloudProfile(
+                gaCurrentUser
+            );
+
+
+            gaShowAuthenticatedProfile();
+
+        }
+
+        else {
+
+            gaCurrentUser =
+                null;
+
+
+            gaShowAuthenticationPage();
+
+        }
+
+
+        gaAuthReady =
+            true;
+
+
+        /*
+            Listen for future login/logout
+            changes.
+        */
+
+        gaSupabaseClient
+            .auth
+            .onAuthStateChange(
+                async (
+                    event,
+                    session
+                ) => {
+
+                    if (
+                        event ===
+                        "SIGNED_IN"
+                        &&
+                        session &&
+                        session.user
+                    ) {
+
+                        gaCurrentUser =
+                            session.user;
+
+
+                        await gaLoadCloudProfile(
+                            gaCurrentUser
+                        );
+
+
+                        gaShowAuthenticatedProfile();
+
+                    }
+
+
+                    if (
+                        event ===
+                        "SIGNED_OUT"
+                    ) {
+
+                        gaCurrentUser =
+                            null;
+
+
+                        gaResetToGuestProfile();
+
+
+                        gaShowAuthenticationPage();
+
+                    }
+
+                }
+            );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Supabase initialization failed:",
+            error
+        );
+
+
+        gaAuthReady =
+            true;
+
+
+        gaHideProfileLoading();
+
+
+        /*
+            Casino still works locally if
+            Supabase cannot be reached.
+        */
+
+        const authSection =
+            document.getElementById(
+                "gaAuthSection"
+            );
+
+
+        if (authSection) {
+
+            authSection.hidden =
+                false;
+
+        }
+
+
+        gaSetAuthMessage(
+            "gaLoginMessage",
+            "Cloud account service could not be reached. Please refresh and try again.",
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   CONVERT CLOUD PROFILE TO LOCAL FORMAT
+   ========================================================== */
+
+function gaCloudToLocalProfile(
+    row
+) {
+
+    return {
+
+        username:
+            row.username ||
+            "Gilded Player",
+
+        balance:
+            Number(
+                row.balance ?? 10000
+            ),
+
+        wins:
+            Number(
+                row.wins ?? 0
+            ),
+
+        losses:
+            Number(
+                row.losses ?? 0
+            ),
+
+        gamesPlayed:
+            Number(
+                row.games_played ?? 0
+            ),
+
+        blackjackWins:
+            Number(
+                row.blackjack_wins ?? 0
+            ),
+
+        slotWins:
+            Number(
+                row.slot_wins ?? 0
+            ),
+
+        rouletteWins:
+            Number(
+                row.roulette_wins ?? 0
+            ),
+
+        diceWins:
+            Number(
+                row.dice_wins ?? 0
+            ),
+
+        collection:
+            Array.isArray(
+                row.collection
+            )
+                ? row.collection
+                : []
+
+    };
+
+}
+
+
+
+/* ==========================================================
+   CONVERT LOCAL PROFILE TO CLOUD FORMAT
+   ========================================================== */
+
+function gaLocalToCloudProfile() {
+
+    if (
+        !gaCurrentUser
+    ) {
+
+        return null;
+
+    }
+
+
+    return {
+
+        id:
+            gaCurrentUser.id,
+
+        email:
+            gaCurrentUser.email || null,
+
+        username:
+            profile.username,
+
+        balance:
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        profile.balance
+                    ) || 0
+                )
+            ),
+
+        wins:
+            Math.max(
+                0,
+                Number(
+                    profile.wins
+                ) || 0
+            ),
+
+        losses:
+            Math.max(
+                0,
+                Number(
+                    profile.losses
+                ) || 0
+            ),
+
+        games_played:
+            Math.max(
+                0,
+                Number(
+                    profile.gamesPlayed
+                ) || 0
+            ),
+
+        blackjack_wins:
+            Math.max(
+                0,
+                Number(
+                    profile.blackjackWins
+                ) || 0
+            ),
+
+        slot_wins:
+            Math.max(
+                0,
+                Number(
+                    profile.slotWins
+                ) || 0
+            ),
+
+        roulette_wins:
+            Math.max(
+                0,
+                Number(
+                    profile.rouletteWins
+                ) || 0
+            ),
+
+        dice_wins:
+            Math.max(
+                0,
+                Number(
+                    profile.diceWins
+                ) || 0
+            ),
+
+        collection:
+            Array.isArray(
+                profile.collection
+            )
+                ? profile.collection
+                : []
+
+    };
+
+}
+
+
+
+/* ==========================================================
+   LOAD CLOUD PROFILE
+   ========================================================== */
+
+async function gaLoadCloudProfile(
+    user
+) {
+
+    if (
+        !gaSupabaseClient ||
+        !user
+    ) {
+
+        return false;
+
+    }
+
+
+    try {
+
+        let {
+            data,
+            error
+        } =
+            await gaSupabaseClient
+                .from(
+                    "profiles"
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "id",
+                    user.id
+                )
+                .maybeSingle();
+
+
+        /*
+            Trigger should normally create
+            the profile automatically.
+
+            If the row has not appeared yet,
+            create one safely.
+        */
+
+        if (
+            !data &&
+            !error
+        ) {
+
+            const newProfile = {
+
+                id:
+                    user.id,
+
+                email:
+                    user.email,
+
+                username:
+                    user.user_metadata
+                        ?.username
+                        ||
+                    "Gilded Player",
+
+                balance:
+                    10000,
+
+                wins:
+                    0,
+
+                losses:
+                    0,
+
+                games_played:
+                    0,
+
+                blackjack_wins:
+                    0,
+
+                slot_wins:
+                    0,
+
+                roulette_wins:
+                    0,
+
+                dice_wins:
+                    0,
+
+                collection:
+                    []
+
+            };
+
+
+            const insertResult =
+                await gaSupabaseClient
+                    .from(
+                        "profiles"
+                    )
+                    .insert(
+                        newProfile
+                    )
+                    .select(
+                        "*"
+                    )
+                    .single();
+
+
+            data =
+                insertResult.data;
+
+
+            error =
+                insertResult.error;
+
+        }
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        if (!data) {
+
+            throw new Error(
+                "No profile record was returned."
+            );
+
+        }
+
+
+        profile =
+            gaCloudToLocalProfile(
+                data
+            );
+
+
+        localStorage.setItem(
+            "gildedAceProfile",
+            JSON.stringify(
+                profile
+            )
+        );
+
+
+        updateAllDisplays();
+
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Could not load cloud profile:",
+            error
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   CLOUD PROFILE SAVE QUEUE
+   ========================================================== */
+
+function gaQueueCloudProfileSave() {
+
+    if (
+        !gaCurrentUser ||
+        !gaSupabaseClient
+    ) {
+
+        return;
+
+    }
+
+
+    const snapshot =
+        gaLocalToCloudProfile();
+
+
+    if (!snapshot) {
+
+        return;
+
+    }
+
+
+    gaCloudSaveChain =
+        gaCloudSaveChain
+            .then(
+                async () => {
+
+                    const {
+                        error
+                    } =
+                        await gaSupabaseClient
+                            .from(
+                                "profiles"
+                            )
+                            .update(
+                                {
+
+                                    email:
+                                        snapshot.email,
+
+                                    username:
+                                        snapshot.username,
+
+                                    balance:
+                                        snapshot.balance,
+
+                                    wins:
+                                        snapshot.wins,
+
+                                    losses:
+                                        snapshot.losses,
+
+                                    games_played:
+                                        snapshot.games_played,
+
+                                    blackjack_wins:
+                                        snapshot.blackjack_wins,
+
+                                    slot_wins:
+                                        snapshot.slot_wins,
+
+                                    roulette_wins:
+                                        snapshot.roulette_wins,
+
+                                    dice_wins:
+                                        snapshot.dice_wins,
+
+                                    collection:
+                                        snapshot.collection
+
+                                }
+                            )
+                            .eq(
+                                "id",
+                                snapshot.id
+                            );
+
+
+                    if (error) {
+
+                        throw error;
+
+                    }
+
+                }
+            )
+            .catch(
+                (error) => {
+
+                    console.error(
+                        "Cloud profile save failed:",
+                        error
+                    );
+
+                }
+            );
+
+}
+
+
+
+/* ==========================================================
+   PROFILE PAGE UI
+   ========================================================== */
+
+function gaHideProfileLoading() {
+
+    const loading =
+        document.getElementById(
+            "gaProfileLoading"
+        );
+
+
+    if (loading) {
+
+        loading.style.display =
+            "none";
+
+    }
+
+}
+
+
+function gaShowAuthenticationPage() {
+
+    gaHideProfileLoading();
+
+
+    const authSection =
+        document.getElementById(
+            "gaAuthSection"
+        );
+
+
+    const dashboard =
+        document.getElementById(
+            "gaMemberDashboard"
+        );
+
+
+    if (authSection) {
+
+        authSection.hidden =
+            false;
+
+    }
+
+
+    if (dashboard) {
+
+        dashboard.hidden =
+            true;
+
+    }
+
+}
+
+
+function gaShowAuthenticatedProfile() {
+
+    gaHideProfileLoading();
+
+
+    const authSection =
+        document.getElementById(
+            "gaAuthSection"
+        );
+
+
+    const dashboard =
+        document.getElementById(
+            "gaMemberDashboard"
+        );
+
+
+    if (authSection) {
+
+        authSection.hidden =
+            true;
+
+    }
+
+
+    if (dashboard) {
+
+        dashboard.hidden =
+            false;
+
+    }
+
+
+    gaUpdateAccountUI();
+
+
+    updateAllDisplays();
+
+}
+
+
+
+/* ==========================================================
+   LOGIN/SIGNUP TABS
+   ========================================================== */
+
+function gaShowLogin() {
+
+    const loginForm =
+        document.getElementById(
+            "gaLoginForm"
+        );
+
+
+    const signupForm =
+        document.getElementById(
+            "gaSignupForm"
+        );
+
+
+    const loginTab =
+        document.getElementById(
+            "gaLoginTab"
+        );
+
+
+    const signupTab =
+        document.getElementById(
+            "gaSignupTab"
+        );
+
+
+    if (loginForm) {
+
+        loginForm.hidden =
+            false;
+
+    }
+
+
+    if (signupForm) {
+
+        signupForm.hidden =
+            true;
+
+    }
+
+
+    if (loginTab) {
+
+        loginTab.classList.add(
+            "active"
+        );
+
+    }
+
+
+    if (signupTab) {
+
+        signupTab.classList.remove(
+            "active"
+        );
+
+    }
+
+}
+
+
+function gaShowSignup() {
+
+    const loginForm =
+        document.getElementById(
+            "gaLoginForm"
+        );
+
+
+    const signupForm =
+        document.getElementById(
+            "gaSignupForm"
+        );
+
+
+    const loginTab =
+        document.getElementById(
+            "gaLoginTab"
+        );
+
+
+    const signupTab =
+        document.getElementById(
+            "gaSignupTab"
+        );
+
+
+    if (loginForm) {
+
+        loginForm.hidden =
+            true;
+
+    }
+
+
+    if (signupForm) {
+
+        signupForm.hidden =
+            false;
+
+    }
+
+
+    if (loginTab) {
+
+        loginTab.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    if (signupTab) {
+
+        signupTab.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   AUTH MESSAGE
+   ========================================================== */
+
+function gaSetAuthMessage(
+    id,
+    message,
+    type = ""
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "success",
+        "error"
+    );
+
+
+    if (type) {
+
+        element.classList.add(
+            type
+        );
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   LOGIN
+   ========================================================== */
+
+async function gaLogin(
+    event
+) {
+
+    if (event) {
+
+        event.preventDefault();
+
+    }
+
+
+    if (
+        !gaSupabaseClient
+    ) {
+
+        gaSetAuthMessage(
+            "gaLoginMessage",
+            "Account service is still loading.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const email =
+        document
+            .getElementById(
+                "gaLoginEmail"
+            )
+            ?.value
+            .trim();
+
+
+    const password =
+        document
+            .getElementById(
+                "gaLoginPassword"
+            )
+            ?.value;
+
+
+    if (
+        !email ||
+        !password
+    ) {
+
+        gaSetAuthMessage(
+            "gaLoginMessage",
+            "Enter your email and password.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "gaLoginButton"
+        );
+
+
+    if (button) {
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "SIGNING IN...";
+
+    }
+
+
+    gaSetAuthMessage(
+        "gaLoginMessage",
+        "Connecting to your account..."
+    );
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await gaSupabaseClient
+                .auth
+                .signInWithPassword(
+                    {
+                        email,
+                        password
+                    }
+                );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        if (
+            !data.user
+        ) {
+
+            throw new Error(
+                "No user was returned."
+            );
+
+        }
+
+
+        gaCurrentUser =
+            data.user;
+
+
+        await gaLoadCloudProfile(
+            data.user
+        );
+
+
+        gaSetAuthMessage(
+            "gaLoginMessage",
+            "Login successful.",
+            "success"
+        );
+
+
+        gaShowAuthenticatedProfile();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Login failed:",
+            error
+        );
+
+
+        gaSetAuthMessage(
+            "gaLoginMessage",
+            error.message ||
+            "Login failed.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "SIGN IN";
+
+        }
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   SIGN UP
+   ========================================================== */
+
+async function gaSignup(
+    event
+) {
+
+    if (event) {
+
+        event.preventDefault();
+
+    }
+
+
+    if (
+        !gaSupabaseClient
+    ) {
+
+        gaSetAuthMessage(
+            "gaSignupMessage",
+            "Account service is still loading.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const username =
+        document
+            .getElementById(
+                "gaSignupUsername"
+            )
+            ?.value
+            .trim();
+
+
+    const email =
+        document
+            .getElementById(
+                "gaSignupEmail"
+            )
+            ?.value
+            .trim();
+
+
+    const password =
+        document
+            .getElementById(
+                "gaSignupPassword"
+            )
+            ?.value;
+
+
+    const confirmPassword =
+        document
+            .getElementById(
+                "gaSignupPasswordConfirm"
+            )
+            ?.value;
+
+
+    if (
+        !username ||
+        username.length < 3
+    ) {
+
+        gaSetAuthMessage(
+            "gaSignupMessage",
+            "Display name must be at least 3 characters.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !email
+    ) {
+
+        gaSetAuthMessage(
+            "gaSignupMessage",
+            "Enter a valid email address.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !password ||
+        password.length < 6
+    ) {
+
+        gaSetAuthMessage(
+            "gaSignupMessage",
+            "Password must be at least 6 characters.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        password !==
+        confirmPassword
+    ) {
+
+        gaSetAuthMessage(
+            "gaSignupMessage",
+            "Passwords do not match.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "gaSignupButton"
+        );
+
+
+    if (button) {
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "CREATING ACCOUNT...";
+
+    }
+
+
+    gaSetAuthMessage(
+        "gaSignupMessage",
+        "Creating your Gilded Ace account..."
+    );
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await gaSupabaseClient
+                .auth
+                .signUp(
+                    {
+
+                        email,
+
+                        password,
+
+                        options: {
+
+                            data: {
+
+                                username:
+                                    username.substring(
+                                        0,
+                                        20
+                                    )
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        if (
+            !data.user
+        ) {
+
+            throw new Error(
+                "Account was not created."
+            );
+
+        }
+
+
+        /*
+            If email confirmation is disabled,
+            Supabase will give us a session now.
+        */
+
+        if (
+            data.session
+        ) {
+
+            gaCurrentUser =
+                data.user;
+
+
+            /*
+                Give the database trigger a
+                moment to finish creating the
+                profile record.
+            */
+
+            await new Promise(
+                (resolve) =>
+                    setTimeout(
+                        resolve,
+                        400
+                    )
+            );
+
+
+            await gaLoadCloudProfile(
+                data.user
+            );
+
+
+            gaSetAuthMessage(
+                "gaSignupMessage",
+                "Account created successfully.",
+                "success"
+            );
+
+
+            gaShowAuthenticatedProfile();
+
+        }
+
+        else {
+
+            gaSetAuthMessage(
+                "gaSignupMessage",
+                "Account created. Check your email to confirm the account, then log in.",
+                "success"
+            );
+
+
+            gaShowLogin();
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Signup failed:",
+            error
+        );
+
+
+        gaSetAuthMessage(
+            "gaSignupMessage",
+            error.message ||
+            "Account creation failed.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "CREATE ACCOUNT";
+
+        }
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   LOG OUT
+   ========================================================== */
+
+async function gaLogout() {
+
+    if (
+        !gaSupabaseClient
+    ) {
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "gaLogoutButton"
+        );
+
+
+    if (button) {
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "LOGGING OUT...";
+
+    }
+
+
+    try {
+
+        /*
+            Wait for queued profile saves
+            before ending session.
+        */
+
+        await gaCloudSaveChain;
+
+
+        const {
+            error
+        } =
+            await gaSupabaseClient
+                .auth
+                .signOut();
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        gaCurrentUser =
+            null;
+
+
+        gaResetToGuestProfile();
+
+
+        gaShowAuthenticationPage();
+
+
+        gaShowLogin();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Logout failed:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Logout failed."
+        );
+
+    }
+
+    finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "LOG OUT";
+
+        }
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   RESET LOCAL DISPLAY AFTER LOGOUT
+   ========================================================== */
+
+function gaResetToGuestProfile() {
+
+    profile = {
+
+        ...DEFAULT_PROFILE,
+
+        collection:
+            []
+
+    };
+
+
+    localStorage.setItem(
+        "gildedAceProfile",
+        JSON.stringify(
+            profile
+        )
+    );
+
+
+    updateAllDisplays();
+
+}
+
+
+
+/* ==========================================================
+   ACCOUNT DETAILS UI
+   ========================================================== */
+
+function gaUpdateAccountUI() {
+
+    if (
+        !gaCurrentUser
+    ) {
+
+        return;
+
+    }
+
+
+    const email =
+        gaCurrentUser.email ||
+        "—";
+
+
+    setText(
+        "#gaProfileEmail",
+        email
+    );
+
+
+    setText(
+        "#gaAccountEmail",
+        email
+    );
+
+
+    const shortId =
+        gaCurrentUser.id
+            ? `${gaCurrentUser.id.substring(0, 8)}...`
+            : "—";
+
+
+    setText(
+        "#gaAccountId",
+        shortId
+    );
+
+
+    const usernameInput =
+        document.getElementById(
+            "gaEditUsername"
+        );
+
+
+    if (usernameInput) {
+
+        usernameInput.value =
+            profile.username;
+
+    }
+
+
+    const initial =
+        document.getElementById(
+            "gaProfileInitial"
+        );
+
+
+    if (initial) {
+
+        initial.textContent =
+            (
+                profile.username
+                    ?.charAt(0)
+                    ||
+                "G"
+            )
+            .toUpperCase();
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   SAVE DISPLAY NAME
+   ========================================================== */
+
+async function gaSaveDisplayName() {
+
+    if (
+        !gaCurrentUser ||
+        !gaSupabaseClient
+    ) {
+
+        gaSetAuthMessage(
+            "gaProfileSaveMessage",
+            "You must be logged in.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const input =
+        document.getElementById(
+            "gaEditUsername"
+        );
+
+
+    if (!input) {
+
+        return;
+
+    }
+
+
+    const username =
+        input.value
+            .trim();
+
+
+    if (
+        username.length < 3
+    ) {
+
+        gaSetAuthMessage(
+            "gaProfileSaveMessage",
+            "Display name must contain at least 3 characters.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        username.length > 20
+    ) {
+
+        gaSetAuthMessage(
+            "gaProfileSaveMessage",
+            "Display name cannot exceed 20 characters.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "gaSaveProfileButton"
+        );
+
+
+    if (button) {
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "SAVING...";
+
+    }
+
+
+    try {
+
+        const {
+            error
+        } =
+            await gaSupabaseClient
+                .from(
+                    "profiles"
+                )
+                .update(
+                    {
+
+                        username:
+                            username
+
+                    }
+                )
+                .eq(
+                    "id",
+                    gaCurrentUser.id
+                );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        profile.username =
+            username;
+
+
+        localStorage.setItem(
+            "gildedAceProfile",
+            JSON.stringify(
+                profile
+            )
+        );
+
+
+        updateAllDisplays();
+
+
+        gaUpdateAccountUI();
+
+
+        gaSetAuthMessage(
+            "gaProfileSaveMessage",
+            "Display name saved.",
+            "success"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Name save failed:",
+            error
+        );
+
+
+        gaSetAuthMessage(
+            "gaProfileSaveMessage",
+            error.message ||
+            "Could not save display name.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "SAVE CHANGES";
+
+        }
+
+    }
+
+}
+
+
+
 /* ==========================================================
    DAILY REWARD
    ========================================================== */
@@ -240,14 +2211,21 @@ function claimDaily() {
             .toDateString();
 
 
+    const storageKey =
+        gaCurrentUser
+            ? `gildedAceDailyReward_${gaCurrentUser.id}`
+            : "gildedAceDailyReward";
+
+
     const lastClaim =
         localStorage.getItem(
-            "gildedAceDailyReward"
+            storageKey
         );
 
 
     if (
-        lastClaim === today
+        lastClaim ===
+        today
     ) {
 
         alert(
@@ -264,7 +2242,7 @@ function claimDaily() {
 
 
     localStorage.setItem(
-        "gildedAceDailyReward",
+        storageKey,
         today
     );
 
@@ -279,8 +2257,9 @@ function claimDaily() {
 }
 
 
+
 /* ==========================================================
-   STORE
+   STORE ITEMS
    ========================================================== */
 
 const STORE_ITEMS = {
@@ -388,12 +2367,21 @@ const STORE_ITEMS = {
 };
 
 
-function buyItem(name, price) {
+
+/* ==========================================================
+   BUY STORE ITEM
+   ========================================================== */
+
+function buyItem(
+    name,
+    price
+) {
 
     const owned =
         profile.collection.some(
             (item) =>
-                item.name === name
+                item.name ===
+                name
         );
 
 
@@ -409,7 +2397,9 @@ function buyItem(name, price) {
 
 
     price =
-        Number(price);
+        Number(
+            price
+        );
 
 
     if (
@@ -427,7 +2417,8 @@ function buyItem(name, price) {
 
 
     const storeItem =
-        STORE_ITEMS[name] || {
+        STORE_ITEMS[name] ||
+        {
 
             category:
                 "collectible",
@@ -441,20 +2432,22 @@ function buyItem(name, price) {
         price;
 
 
-    profile.collection.push({
+    profile.collection.push(
+        {
 
-        name,
+            name,
 
-        price,
+            price,
 
-        category:
-            storeItem.category,
+            category:
+                storeItem.category,
 
-        purchased:
-            new Date()
-                .toISOString()
+            purchased:
+                new Date()
+                    .toISOString()
 
-    });
+        }
+    );
 
 
     saveProfile();
@@ -466,6 +2459,11 @@ function buyItem(name, price) {
 
 }
 
+
+
+/* ==========================================================
+   STORE BUTTONS
+   ========================================================== */
 
 function updateStoreButtons() {
 
@@ -483,7 +2481,9 @@ function updateStoreButtons() {
 
 
                 if (!onclick) {
+
                     return;
+
                 }
 
 
@@ -494,7 +2494,9 @@ function updateStoreButtons() {
 
 
                 if (!match) {
+
                     return;
+
                 }
 
 
@@ -505,7 +2507,8 @@ function updateStoreButtons() {
                 const owned =
                     profile.collection.some(
                         (item) =>
-                            item.name === name
+                            item.name ===
+                            name
                     );
 
 
@@ -513,6 +2516,7 @@ function updateStoreButtons() {
 
                     button.textContent =
                         "OWNED";
+
 
                     button.disabled =
                         true;
@@ -523,6 +2527,7 @@ function updateStoreButtons() {
         );
 
 }
+
 
 
 /* ==========================================================
@@ -571,6 +2576,11 @@ function filterCollection(
 }
 
 
+
+/* ==========================================================
+   COLLECTION PAGE
+   ========================================================== */
+
 function updateCollectionPage() {
 
     const grid =
@@ -579,8 +2589,123 @@ function updateCollectionPage() {
         );
 
 
+    const collection =
+        Array.isArray(
+            profile.collection
+        )
+            ? profile.collection
+            : [];
+
+
+    /*
+        Profile summary values should
+        update even when Collection page
+        itself isn't open.
+    */
+
+    const totalValue =
+        collection.reduce(
+            (
+                total,
+                item
+            ) =>
+                total +
+                Number(
+                    item.price || 0
+                ),
+            0
+        );
+
+
+    let highest =
+        null;
+
+
+    collection.forEach(
+        (item) => {
+
+            if (
+                !highest ||
+                Number(
+                    item.price
+                )
+                >
+                Number(
+                    highest.price
+                )
+            ) {
+
+                highest =
+                    item;
+
+            }
+
+        }
+    );
+
+
+    setText(
+        "#collectionCount",
+        collection.length
+    );
+
+
+    setText(
+        "#profileItemsOwned",
+        collection.length
+    );
+
+
+    setText(
+        "#profileCollection",
+        `${collection.length} ITEMS`
+    );
+
+
+    setText(
+        "#collectionValue",
+        formatCredits(
+            totalValue
+        )
+    );
+
+
+    setText(
+        "#gaCollectionValue",
+        formatCredits(
+            totalValue
+        )
+    );
+
+
+    setText(
+        "#gaProfileCollectionValue",
+        formatCredits(
+            totalValue
+        )
+    );
+
+
+    setText(
+        "#highestPurchase",
+        highest
+            ? highest.name
+            : "—"
+    );
+
+
+    setText(
+        "#gaHighestPurchase",
+        highest
+            ? highest.name
+            : "—"
+    );
+
+
     if (!grid) {
+
         return;
+
     }
 
 
@@ -588,9 +2713,9 @@ function updateCollectionPage() {
         currentCollectionFilter ===
         "all"
 
-            ? profile.collection
+            ? collection
 
-            : profile.collection.filter(
+            : collection.filter(
                 (item) =>
                     item.category ===
                     currentCollectionFilter
@@ -614,25 +2739,67 @@ function updateCollectionPage() {
                 "card collection-item";
 
 
-            card.innerHTML = `
+            const tag =
+                document.createElement(
+                    "span"
+                );
 
-                <span class="tag">
-                    ${item.category.toUpperCase()}
-                </span>
 
-                <h3>
-                    ${item.name}
-                </h3>
+            tag.className =
+                "tag";
 
-                <p>
-                    Owned Gilded Ace virtual item.
-                </p>
 
-                <div class="price">
-                    ${formatCredits(item.price)}
-                </div>
+            tag.textContent =
+                String(
+                    item.category ||
+                    "collectible"
+                )
+                .toUpperCase();
 
-            `;
+
+            const heading =
+                document.createElement(
+                    "h3"
+                );
+
+
+            heading.textContent =
+                item.name ||
+                "Gilded Item";
+
+
+            const description =
+                document.createElement(
+                    "p"
+                );
+
+
+            description.textContent =
+                "Owned Gilded Ace virtual item.";
+
+
+            const price =
+                document.createElement(
+                    "div"
+                );
+
+
+            price.className =
+                "price";
+
+
+            price.textContent =
+                formatCredits(
+                    item.price
+                );
+
+
+            card.append(
+                tag,
+                heading,
+                description,
+                price
+            );
 
 
             grid.appendChild(
@@ -658,67 +2825,23 @@ function updateCollectionPage() {
 
     }
 
-
-    setText(
-        "#collectionCount",
-        profile.collection.length
-    );
-
-
-    const totalValue =
-        profile.collection.reduce(
-            (sum, item) =>
-                sum +
-                Number(
-                    item.price || 0
-                ),
-            0
-        );
-
-
-    setText(
-        "#collectionValue",
-        formatCredits(totalValue)
-    );
-
-
-    let highest =
-        null;
-
-
-    profile.collection.forEach(
-        (item) => {
-
-            if (
-                !highest ||
-                Number(item.price) >
-                Number(highest.price)
-            ) {
-
-                highest =
-                    item;
-
-            }
-
-        }
-    );
-
-
-    setText(
-        "#highestPurchase",
-        highest
-            ? highest.name
-            : "—"
-    );
-
 }
 
 
+
 /* ==========================================================
-   PROFILE / MEMBERSHIP
+   MEMBERSHIP TIERS
    ========================================================== */
 
-function getMembershipTier(balance) {
+function getMembershipTier(
+    balance
+) {
+
+    balance =
+        Number(
+            balance
+        ) || 0;
+
 
     if (
         balance >=
@@ -734,7 +2857,10 @@ function getMembershipTier(balance) {
                 "MAXIMUM TIER",
 
             progress:
-                100
+                100,
+
+            remaining:
+                0
 
         };
 
@@ -764,7 +2890,11 @@ function getMembershipTier(balance) {
                     5000000
                 )
                 *
-                100
+                100,
+
+            remaining:
+                10000000 -
+                balance
 
         };
 
@@ -794,7 +2924,11 @@ function getMembershipTier(balance) {
                     4000000
                 )
                 *
-                100
+                100,
+
+            remaining:
+                5000000 -
+                balance
 
         };
 
@@ -824,7 +2958,11 @@ function getMembershipTier(balance) {
                     900000
                 )
                 *
-                100
+                100,
+
+            remaining:
+                1000000 -
+                balance
 
         };
 
@@ -840,20 +2978,26 @@ function getMembershipTier(balance) {
             "GOLD MEMBER",
 
         progress:
-            Math.min(
-                100,
-                (
-                    balance /
-                    100000
-                )
-                *
-                100
+            (
+                balance /
+                100000
             )
+            *
+            100,
+
+        remaining:
+            100000 -
+            balance
 
     };
 
 }
 
+
+
+/* ==========================================================
+   PROFILE PAGE
+   ========================================================== */
 
 function updateProfilePage() {
 
@@ -888,6 +3032,12 @@ function updateProfilePage() {
 
 
     setText(
+        "#currentTierLabel",
+        tier.current
+    );
+
+
+    setText(
         "#nextTier",
         tier.next
     );
@@ -902,13 +3052,33 @@ function updateProfilePage() {
     if (progress) {
 
         progress.style.width =
-            `${Math.max(
+            `${gaClamp(
+                tier.progress,
                 0,
-                Math.min(
-                    100,
-                    tier.progress
-                )
+                100
             )}%`;
+
+    }
+
+
+    if (
+        tier.next ===
+        "MAXIMUM TIER"
+    ) {
+
+        setText(
+            "#gaMembershipProgressText",
+            "Maximum membership tier reached"
+        );
+
+    }
+
+    else {
+
+        setText(
+            "#gaMembershipProgressText",
+            `${formatCredits(tier.remaining)} until ${tier.next}`
+        );
 
     }
 
@@ -928,18 +3098,6 @@ function updateProfilePage() {
     setText(
         "#profileGames",
         profile.gamesPlayed
-    );
-
-
-    setText(
-        "#profileCollection",
-        `${profile.collection.length} ITEMS`
-    );
-
-
-    setText(
-        "#profileItemsOwned",
-        profile.collection.length
     );
 
 
@@ -966,10 +3124,87 @@ function updateProfilePage() {
         `${profile.diceWins} WINS`
     );
 
+
+    const completedGames =
+        Number(
+            profile.wins
+        )
+        +
+        Number(
+            profile.losses
+        );
+
+
+    const winRate =
+        completedGames > 0
+
+            ? (
+                (
+                    Number(
+                        profile.wins
+                    )
+                    /
+                    completedGames
+                )
+                *
+                100
+            )
+
+            : 0;
+
+
+    setText(
+        "#gaProfileWinRate",
+        `${winRate.toFixed(1)}%`
+    );
+
+
+    const initial =
+        document.getElementById(
+            "gaProfileInitial"
+        );
+
+
+    if (initial) {
+
+        initial.textContent =
+            (
+                profile.username
+                    ?.charAt(0)
+                    ||
+                "G"
+            )
+            .toUpperCase();
+
+    }
+
 }
 
 
+
+/* ==========================================================
+   LEGACY USERNAME CHANGE SUPPORT
+   ========================================================== */
+
 function changeUsername() {
+
+    const modernInput =
+        document.getElementById(
+            "gaEditUsername"
+        );
+
+
+    if (
+        modernInput &&
+        gaCurrentUser
+    ) {
+
+        gaSaveDisplayName();
+
+        return;
+
+    }
+
 
     const input =
         document.getElementById(
@@ -978,12 +3213,15 @@ function changeUsername() {
 
 
     if (!input) {
+
         return;
+
     }
 
 
     const username =
-        input.value.trim();
+        input.value
+            .trim();
 
 
     if (
@@ -1020,35 +3258,40 @@ function changeUsername() {
 }
 
 
+
+/* ==========================================================
+   RESET PROFILE
+   ========================================================== */
+
 function resetGildedProfile() {
+
+    if (
+        gaCurrentUser
+    ) {
+
+        alert(
+            "Cloud accounts cannot be reset from the browser. Your account information is being protected."
+        );
+
+        return;
+
+    }
+
 
     const confirmed =
         confirm(
-            "Reset your entire Gilded Ace profile?"
+            "Reset your local Gilded Ace profile?"
         );
 
 
     if (!confirmed) {
+
         return;
+
     }
 
 
-    profile = {
-
-        ...DEFAULT_PROFILE,
-
-        collection:
-            []
-
-    };
-
-
-    localStorage.removeItem(
-        "gildedAceDailyReward"
-    );
-
-
-    saveProfile();
+    gaResetToGuestProfile();
 
 
     location.reload();
@@ -1056,8 +3299,9 @@ function resetGildedProfile() {
 }
 
 
+
 /* ==========================================================
-   GAME STATISTICS
+   RECORD GAME RESULT
    ========================================================== */
 
 function recordResult(
@@ -1087,7 +3331,8 @@ function recordResult(
 
     if (
         won === true &&
-        game === "blackjack"
+        game ===
+        "blackjack"
     ) {
 
         profile.blackjackWins++;
@@ -1097,7 +3342,8 @@ function recordResult(
 
     if (
         won === true &&
-        game === "slots"
+        game ===
+        "slots"
     ) {
 
         profile.slotWins++;
@@ -1107,7 +3353,8 @@ function recordResult(
 
     if (
         won === true &&
-        game === "roulette"
+        game ===
+        "roulette"
     ) {
 
         profile.rouletteWins++;
@@ -1117,7 +3364,8 @@ function recordResult(
 
     if (
         won === true &&
-        game === "dice"
+        game ===
+        "dice"
     ) {
 
         profile.diceWins++;
@@ -1128,6 +3376,7 @@ function recordResult(
     saveProfile();
 
 }
+
 
 
 /* ==========================================================
@@ -1158,6 +3407,7 @@ let blackjackBet =
 
 let blackjackLockedBet =
     0;
+
 
 
 /* ==========================================================
@@ -1201,10 +3451,12 @@ function buildBlackjackDeck() {
             ranks.forEach(
                 (rank) => {
 
-                    deck.push({
-                        rank,
-                        suit
-                    });
+                    deck.push(
+                        {
+                            rank,
+                            suit
+                        }
+                    );
 
                 }
             );
@@ -1225,7 +3477,9 @@ function buildBlackjackDeck() {
         const j =
             Math.floor(
                 Math.random() *
-                (i + 1)
+                (
+                    i + 1
+                )
             );
 
 
@@ -1247,11 +3501,14 @@ function buildBlackjackDeck() {
 }
 
 
+
 /* ==========================================================
-   BLACKJACK CARD VALUE
+   BLACKJACK VALUES
    ========================================================== */
 
-function blackjackCardValue(card) {
+function blackjackCardValue(
+    card
+) {
 
     if (
         card.rank === "J" ||
@@ -1280,7 +3537,9 @@ function blackjackCardValue(card) {
 }
 
 
-function blackjackHandValue(hand) {
+function blackjackHandValue(
+    hand
+) {
 
     let total =
         0;
@@ -1300,7 +3559,8 @@ function blackjackHandValue(hand) {
 
 
             if (
-                card.rank === "A"
+                card.rank ===
+                "A"
             ) {
 
                 aces++;
@@ -1330,18 +3590,26 @@ function blackjackHandValue(hand) {
 }
 
 
-function blackjackNatural(hand) {
+function blackjackNatural(
+    hand
+) {
 
     return (
-        hand.length === 2 &&
-        blackjackHandValue(hand) === 21
+        hand.length ===
+        2
+        &&
+        blackjackHandValue(
+            hand
+        ) ===
+        21
     );
 
 }
 
 
+
 /* ==========================================================
-   BLACKJACK CARD RENDERER
+   BLACKJACK CARD DISPLAY
    ========================================================== */
 
 function createBlackjackCard(
@@ -1361,13 +3629,8 @@ function createBlackjackCard(
             "playing-card card-back";
 
 
-        element.innerHTML = `
-
-            <div class="card-back-inner">
-                A
-            </div>
-
-        `;
+        element.innerHTML =
+            `<div class="card-back-inner">A</div>`;
 
 
         return element;
@@ -1382,7 +3645,9 @@ function createBlackjackCard(
 
     element.className =
         red
+
             ? "playing-card red-card"
+
             : "playing-card black-card";
 
 
@@ -1426,12 +3691,14 @@ function createBlackjackCard(
 }
 
 
+
 /* ==========================================================
-   BLACKJACK DISPLAY
+   RENDER BLACKJACK
    ========================================================== */
 
 function renderBlackjack(
-    hideDealer = false
+    hideDealer =
+        false
 ) {
 
     const playerArea =
@@ -1527,7 +3794,8 @@ function renderBlackjack(
                         createBlackjackCard(
                             card,
                             hideDealer &&
-                            index === 1
+                            index ===
+                            1
                         )
                     );
 
@@ -1543,9 +3811,11 @@ function renderBlackjack(
         "#playerTotal",
 
         blackjackPlayer.length
+
             ? blackjackHandValue(
                 blackjackPlayer
             )
+
             : "—"
     );
 
@@ -1591,8 +3861,9 @@ function renderBlackjack(
 }
 
 
+
 /* ==========================================================
-   BLACKJACK BUTTON STATE
+   BLACKJACK CONTROLS
    ========================================================== */
 
 function setBlackjackControls(
@@ -1643,6 +3914,7 @@ function setBlackjackControls(
 }
 
 
+
 /* ==========================================================
    BLACKJACK BETTING
    ========================================================== */
@@ -1663,7 +3935,6 @@ function updateBlackjackBetDisplay() {
 
     setText(
         "#blackjackBetAmount",
-
         formatCredits(
             blackjackBet
         )
@@ -1672,7 +3943,9 @@ function updateBlackjackBetDisplay() {
 }
 
 
-function addBlackjackChip(amount) {
+function addBlackjackChip(
+    amount
+) {
 
     if (
         blackjackActive
@@ -1684,7 +3957,9 @@ function addBlackjackChip(amount) {
 
 
     blackjackBet +=
-        Number(amount);
+        Number(
+            amount
+        );
 
 
     blackjackBet =
@@ -1736,7 +4011,9 @@ function clearBlackjackBet() {
 }
 
 
-function changeBlackjackBet(amount) {
+function changeBlackjackBet(
+    amount
+) {
 
     if (
         blackjackActive
@@ -1748,7 +4025,9 @@ function changeBlackjackBet(amount) {
 
 
     blackjackBet +=
-        Number(amount);
+        Number(
+            amount
+        );
 
 
     blackjackBet =
@@ -1790,6 +4069,7 @@ function maxBlackjackBet() {
 }
 
 
+
 /* ==========================================================
    BLACKJACK DEAL
    ========================================================== */
@@ -1806,7 +4086,8 @@ function startBlackjack() {
 
 
     if (
-        blackjackBet < 100
+        blackjackBet <
+        100
     ) {
 
         alert(
@@ -1837,14 +4118,20 @@ function startBlackjack() {
 
 
     blackjackPlayer = [
+
         blackjackDeck.pop(),
+
         blackjackDeck.pop()
+
     ];
 
 
     blackjackDealer = [
+
         blackjackDeck.pop(),
+
         blackjackDeck.pop()
+
     ];
 
 
@@ -1913,8 +4200,9 @@ function startBlackjack() {
 }
 
 
+
 /* ==========================================================
-   NATURAL BLACKJACK
+   BLACKJACK NATURAL
    ========================================================== */
 
 function resolveBlackjackNatural(
@@ -2027,6 +4315,7 @@ function resolveBlackjackNatural(
 }
 
 
+
 /* ==========================================================
    BLACKJACK HIT
    ========================================================== */
@@ -2059,7 +4348,8 @@ function blackjackHit() {
 
 
     if (
-        total > 21
+        total >
+        21
     ) {
 
         blackjackActive =
@@ -2097,7 +4387,8 @@ function blackjackHit() {
 
 
     if (
-        total === 21
+        total ===
+        21
     ) {
 
         setText(
@@ -2126,6 +4417,7 @@ function blackjackHit() {
 }
 
 
+
 /* ==========================================================
    BLACKJACK STAND
    ========================================================== */
@@ -2144,7 +4436,8 @@ function blackjackStand() {
     while (
         blackjackHandValue(
             blackjackDealer
-        ) < 17
+        ) <
+        17
     ) {
 
         blackjackDealer.push(
@@ -2181,8 +4474,11 @@ function blackjackStand() {
 
 
     if (
-        dealer > 21 ||
-        player > dealer
+        dealer >
+        21
+        ||
+        player >
+        dealer
     ) {
 
         profile.balance +=
@@ -2211,9 +4507,9 @@ function blackjackStand() {
 
     }
 
-
     else if (
-        dealer > player
+        dealer >
+        player
     ) {
 
         setText(
@@ -2229,7 +4525,6 @@ function blackjackStand() {
         );
 
     }
-
 
     else {
 
@@ -2306,7 +4601,9 @@ function blackjackWinEffect() {
 
 
     if (!table) {
+
         return;
+
     }
 
 
@@ -2329,9 +4626,10 @@ function blackjackWinEffect() {
 }
 
 
+
 /* ==========================================================
    ==========================================================
-   ARCADE SLOT MACHINE
+   SLOTS
    ==========================================================
    ========================================================== */
 
@@ -2378,17 +4676,23 @@ const GA_SLOT_SYMBOLS = [
 
 const GA_SLOT_PAYOUTS = {
 
-    CHERRY: 3,
+    CHERRY:
+        3,
 
-    BELL: 4,
+    BELL:
+        4,
 
-    BAR: 5,
+    BAR:
+        5,
 
-    CROWN: 6,
+    CROWN:
+        6,
 
-    DIAMOND: 8,
+    DIAMOND:
+        8,
 
-    SEVEN: 10
+    SEVEN:
+        10
 
 };
 
@@ -2405,6 +4709,7 @@ let gaSlotLastWin =
     0;
 
 
+
 /* ==========================================================
    SLOT RANDOM SYMBOL
    ========================================================== */
@@ -2413,7 +4718,10 @@ function gaGetRandomSymbol() {
 
     const total =
         GA_SLOT_SYMBOLS.reduce(
-            (sum, symbol) =>
+            (
+                sum,
+                symbol
+            ) =>
                 sum +
                 symbol.weight,
             0
@@ -2426,7 +4734,8 @@ function gaGetRandomSymbol() {
 
 
     for (
-        const symbol of
+        const symbol
+        of
         GA_SLOT_SYMBOLS
     ) {
 
@@ -2435,7 +4744,8 @@ function gaGetRandomSymbol() {
 
 
         if (
-            random <= 0
+            random <=
+            0
         ) {
 
             return symbol;
@@ -2465,8 +4775,9 @@ function gaCreateRandomReel() {
 }
 
 
+
 /* ==========================================================
-   SLOT RENDERER
+   SLOT RENDER
    ========================================================== */
 
 function gaRenderSlotReel(
@@ -2481,7 +4792,9 @@ function gaRenderSlotReel(
 
 
     if (!reel) {
+
         return;
+
     }
 
 
@@ -2506,7 +4819,8 @@ function gaRenderSlotReel(
 
 
             if (
-                index === 1
+                index ===
+                1
             ) {
 
                 cell.classList.add(
@@ -2534,6 +4848,7 @@ function gaRenderSlotReel(
 }
 
 
+
 /* ==========================================================
    SLOT DISPLAY
    ========================================================== */
@@ -2542,7 +4857,6 @@ function gaUpdateSlotDisplays() {
 
     setText(
         "#gaSlotBetAmount",
-
         formatCredits(
             gaSlotBet
         )
@@ -2551,7 +4865,6 @@ function gaUpdateSlotDisplays() {
 
     setText(
         "#gaSlotWinnings",
-
         formatCredits(
             gaSlotLastWin
         )
@@ -2599,11 +4912,14 @@ function gaSetSlotControls(
 }
 
 
+
 /* ==========================================================
    SLOT BET
    ========================================================== */
 
-function gaChangeSlotBet(amount) {
+function gaChangeSlotBet(
+    amount
+) {
 
     if (
         gaSlotSpinning
@@ -2631,7 +4947,9 @@ function gaChangeSlotBet(amount) {
 
 
     gaSlotBet +=
-        Number(amount);
+        Number(
+            amount
+        );
 
 
     gaSlotBet =
@@ -2653,6 +4971,7 @@ function gaChangeSlotBet(amount) {
 }
 
 
+
 /* ==========================================================
    SLOT LEVER
    ========================================================== */
@@ -2666,7 +4985,9 @@ function gaAnimateSlotLever() {
 
 
     if (!lever) {
+
         return;
+
     }
 
 
@@ -2689,8 +5010,9 @@ function gaAnimateSlotLever() {
 }
 
 
+
 /* ==========================================================
-   SLOT ANIMATION
+   SLOT REEL ANIMATION
    ========================================================== */
 
 function gaStartReelAnimation(
@@ -2704,7 +5026,9 @@ function gaStartReelAnimation(
 
 
     if (!reel) {
+
         return null;
+
     }
 
 
@@ -2736,7 +5060,9 @@ function gaStopReelAnimation(
 
     if (timer) {
 
-        clearInterval(timer);
+        clearInterval(
+            timer
+        );
 
     }
 
@@ -2764,8 +5090,9 @@ function gaStopReelAnimation(
 }
 
 
+
 /* ==========================================================
-   SLOT WIN CHECK
+   SLOT PAYOUT
    ========================================================== */
 
 function gaEvaluateSlotWin(
@@ -2785,14 +5112,18 @@ function gaEvaluateSlotWin(
 
 
     if (
-        first.id === second.id &&
-        second.id === third.id
+        first.id ===
+        second.id
+        &&
+        second.id ===
+        third.id
     ) {
 
         const multiplier =
             GA_SLOT_PAYOUTS[
                 first.id
-            ] || 3;
+            ] ||
+            3;
 
 
         return {
@@ -2811,9 +5142,14 @@ function gaEvaluateSlotWin(
 
 
     if (
-        first.id === second.id ||
-        second.id === third.id ||
-        first.id === third.id
+        first.id ===
+        second.id
+        ||
+        second.id ===
+        third.id
+        ||
+        first.id ===
+        third.id
     ) {
 
         return {
@@ -2851,9 +5187,11 @@ function gaEvaluateSlotWin(
 function gaHighlightWinningReels() {
 
     for (
-        let i = 1;
+        let i =
+            1;
 
-        i <= 3;
+        i <=
+        3;
 
         i++
     ) {
@@ -2887,6 +5225,7 @@ function gaHighlightWinningReels() {
     }
 
 }
+
 
 
 /* ==========================================================
@@ -3142,15 +5481,17 @@ function gaSpinSlots() {
 }
 
 
-/*
-    OLD SLOT COMPATIBILITY
-*/
+
+/* ==========================================================
+   OLD SLOT COMPATIBILITY
+   ========================================================== */
 
 function spinSlots() {
 
     gaSpinSlots();
 
 }
+
 
 
 /* ==========================================================
@@ -3203,28 +5544,30 @@ const EUROPEAN_WHEEL = [
 
 
 const RED_NUMBERS =
-    new Set([
+    new Set(
+        [
 
-        1,
-        3,
-        5,
-        7,
-        9,
-        12,
-        14,
-        16,
-        18,
-        19,
-        21,
-        23,
-        25,
-        27,
-        30,
-        32,
-        34,
-        36
+            1,
+            3,
+            5,
+            7,
+            9,
+            12,
+            14,
+            16,
+            18,
+            19,
+            21,
+            23,
+            25,
+            27,
+            30,
+            32,
+            34,
+            36
 
-    ]);
+        ]
+    );
 
 
 const POCKET_COUNT =
@@ -3256,14 +5599,18 @@ let rouletteBallRotation =
     0;
 
 
+
 /* ==========================================================
    ROULETTE COLORS
    ========================================================== */
 
-function rouletteColor(number) {
+function rouletteColor(
+    number
+) {
 
     if (
-        number === 0
+        number ===
+        0
     ) {
 
         return "green";
@@ -3274,16 +5621,21 @@ function rouletteColor(number) {
     return RED_NUMBERS.has(
         number
     )
+
         ? "red"
+
         : "black";
 
 }
 
 
-function rouletteColorHex(number) {
+function rouletteColorHex(
+    number
+) {
 
     if (
-        number === 0
+        number ===
+        0
     ) {
 
         return "#087541";
@@ -3294,10 +5646,13 @@ function rouletteColorHex(number) {
     return RED_NUMBERS.has(
         number
     )
+
         ? "#a50b20"
+
         : "#111111";
 
 }
+
 
 
 /* ==========================================================
@@ -3349,7 +5704,8 @@ function buildRouletteWheel() {
 
             const end =
                 (
-                    index + 1
+                    index +
+                    1
                 )
                 *
                 POCKET_ANGLE;
@@ -3412,13 +5768,19 @@ function buildRouletteWheel() {
 
             const x =
                 50 +
-                Math.cos(radians) *
+                Math.cos(
+                    radians
+                )
+                *
                 radius;
 
 
             const y =
                 50 +
-                Math.sin(radians) *
+                Math.sin(
+                    radians
+                )
+                *
                 radius;
 
 
@@ -3444,8 +5806,9 @@ function buildRouletteWheel() {
 }
 
 
+
 /* ==========================================================
-   BUILD ROULETTE TABLE
+   ROULETTE TABLE
    ========================================================== */
 
 function buildRouletteTable() {
@@ -3457,7 +5820,9 @@ function buildRouletteTable() {
 
 
     if (!grid) {
+
         return;
+
     }
 
 
@@ -3466,9 +5831,11 @@ function buildRouletteTable() {
 
 
     for (
-        let column = 0;
+        let column =
+            0;
 
-        column < 12;
+        column <
+        12;
 
         column++
     ) {
@@ -3481,9 +5848,11 @@ function buildRouletteTable() {
 
         const numbers = [
 
-            first + 2,
+            first +
+            2,
 
-            first + 1,
+            first +
+            1,
 
             first
 
@@ -3536,8 +5905,9 @@ function buildRouletteTable() {
 }
 
 
+
 /* ==========================================================
-   ROULETTE BET SELECTION
+   ROULETTE SELECTION
    ========================================================== */
 
 function clearRouletteSelection() {
@@ -3582,7 +5952,9 @@ function selectNumberBet(
             "number",
 
         number:
-            Number(number),
+            Number(
+                number
+            ),
 
         payout:
             35
@@ -3630,48 +6002,93 @@ function selectRouletteBet(
     const bets = {
 
         low: {
-            label: "1 TO 18",
-            payout: 1
+
+            label:
+                "1 TO 18",
+
+            payout:
+                1
+
         },
 
         even: {
-            label: "EVEN",
-            payout: 1
+
+            label:
+                "EVEN",
+
+            payout:
+                1
+
         },
 
         red: {
-            label: "RED",
-            payout: 1
+
+            label:
+                "RED",
+
+            payout:
+                1
+
         },
 
         black: {
-            label: "BLACK",
-            payout: 1
+
+            label:
+                "BLACK",
+
+            payout:
+                1
+
         },
 
         odd: {
-            label: "ODD",
-            payout: 1
+
+            label:
+                "ODD",
+
+            payout:
+                1
+
         },
 
         high: {
-            label: "19 TO 36",
-            payout: 1
+
+            label:
+                "19 TO 36",
+
+            payout:
+                1
+
         },
 
         dozen1: {
-            label: "1ST 12",
-            payout: 2
+
+            label:
+                "1ST 12",
+
+            payout:
+                2
+
         },
 
         dozen2: {
-            label: "2ND 12",
-            payout: 2
+
+            label:
+                "2ND 12",
+
+            payout:
+                2
+
         },
 
         dozen3: {
-            label: "3RD 12",
-            payout: 2
+
+            label:
+                "3RD 12",
+
+            payout:
+                2
+
         }
 
     };
@@ -3716,17 +6133,21 @@ function selectRouletteBet(
 
     setText(
         "#selectedPayout",
+
         `${bets[type].payout}:1 PAYOUT`
     );
 
 }
 
 
+
 /* ==========================================================
-   ROULETTE BET AMOUNT
+   ROULETTE BET
    ========================================================== */
 
-function changeBet(amount) {
+function changeBet(
+    amount
+) {
 
     if (
         rouletteSpinning
@@ -3750,7 +6171,9 @@ function changeBet(amount) {
     else {
 
         rouletteBetAmount +=
-            Number(amount);
+            Number(
+                amount
+            );
 
 
         rouletteBetAmount =
@@ -3771,7 +6194,6 @@ function changeBet(amount) {
 
     setText(
         "#betAmount",
-
         formatCredits(
             rouletteBetAmount
         )
@@ -3780,11 +6202,14 @@ function changeBet(amount) {
 }
 
 
+
 /* ==========================================================
    ROULETTE WIN CHECK
    ========================================================== */
 
-function rouletteBetWins(number) {
+function rouletteBetWins(
+    number
+) {
 
     if (
         !rouletteBet
@@ -3809,7 +6234,8 @@ function rouletteBetWins(number) {
 
 
     if (
-        number === 0
+        number ===
+        0
     ) {
 
         return false;
@@ -3856,40 +6282,55 @@ function rouletteBetWins(number) {
         case "low":
 
             return (
-                number >= 1 &&
-                number <= 18
+                number >=
+                1
+                &&
+                number <=
+                18
             );
 
 
         case "high":
 
             return (
-                number >= 19 &&
-                number <= 36
+                number >=
+                19
+                &&
+                number <=
+                36
             );
 
 
         case "dozen1":
 
             return (
-                number >= 1 &&
-                number <= 12
+                number >=
+                1
+                &&
+                number <=
+                12
             );
 
 
         case "dozen2":
 
             return (
-                number >= 13 &&
-                number <= 24
+                number >=
+                13
+                &&
+                number <=
+                24
             );
 
 
         case "dozen3":
 
             return (
-                number >= 25 &&
-                number <= 36
+                number >=
+                25
+                &&
+                number <=
+                36
             );
 
     }
@@ -3900,7 +6341,9 @@ function rouletteBetWins(number) {
 }
 
 
-function normalizeAngle(angle) {
+function normalizeAngle(
+    angle
+) {
 
     return (
         (
@@ -3914,6 +6357,7 @@ function normalizeAngle(angle) {
     360;
 
 }
+
 
 
 /* ==========================================================
@@ -3946,7 +6390,8 @@ function spinRoulette() {
 
     if (
         rouletteBetAmount <
-        100 ||
+        100
+        ||
         profile.balance <
         rouletteBetAmount
     ) {
@@ -4113,6 +6558,7 @@ function spinRoulette() {
 }
 
 
+
 /* ==========================================================
    ROULETTE RESULT
    ========================================================== */
@@ -4141,7 +6587,8 @@ function finishRoulette(
 
 
     const color =
-        number === 0
+        number ===
+        0
 
             ? "GREEN"
 
@@ -4190,7 +6637,6 @@ function finishRoulette(
 
     setText(
         "#betAmount",
-
         formatCredits(
             rouletteBetAmount
         )
@@ -4199,9 +6645,10 @@ function finishRoulette(
 }
 
 
+
 /* ==========================================================
    ==========================================================
-   HIGH ROLL DICE CHALLENGE
+   HIGH ROLL DICE
    ==========================================================
    ========================================================== */
 
@@ -4233,6 +6680,7 @@ let gaDiceAnimationTimer =
     null;
 
 
+
 /* ==========================================================
    DICE DISPLAY
    ========================================================== */
@@ -4241,7 +6689,6 @@ function gaUpdateDiceDisplays() {
 
     setText(
         "#gaDiceBetAmount",
-
         formatCredits(
             gaDiceBet
         )
@@ -4250,13 +6697,13 @@ function gaUpdateDiceDisplays() {
 
     setText(
         "#gaDiceLastWin",
-
         formatCredits(
             gaDiceLastWin
         )
     );
 
 }
+
 
 
 /* ==========================================================
@@ -4267,7 +6714,7 @@ function gaSetDiceControls(
     enabled
 ) {
 
-    const controlIds = [
+    const ids = [
 
         "gaDiceMinus",
 
@@ -4280,7 +6727,7 @@ function gaSetDiceControls(
     ];
 
 
-    controlIds.forEach(
+    ids.forEach(
         (id) => {
 
             const element =
@@ -4316,11 +6763,14 @@ function gaSetDiceControls(
 }
 
 
+
 /* ==========================================================
-   DICE BET
+   DICE BETTING
    ========================================================== */
 
-function gaChangeDiceBet(amount) {
+function gaChangeDiceBet(
+    amount
+) {
 
     if (
         gaDiceRolling
@@ -4348,7 +6798,9 @@ function gaChangeDiceBet(amount) {
 
 
     gaDiceBet +=
-        Number(amount);
+        Number(
+            amount
+        );
 
 
     gaDiceBet =
@@ -4377,7 +6829,9 @@ function gaChangeDiceBet(amount) {
 }
 
 
-function gaAddDiceChip(amount) {
+function gaAddDiceChip(
+    amount
+) {
 
     if (
         gaDiceRolling
@@ -4405,7 +6859,9 @@ function gaAddDiceChip(amount) {
 
 
     gaDiceBet +=
-        Number(amount);
+        Number(
+            amount
+        );
 
 
     gaDiceBet =
@@ -4447,7 +6903,6 @@ function gaClearDiceBet() {
 
     setText(
         "#gaDiceMessage",
-
         "Bet cleared. Select a new wager."
     );
 
@@ -4481,6 +6936,7 @@ function gaMaxDiceBet() {
 }
 
 
+
 /* ==========================================================
    DICE VISUAL
    ========================================================== */
@@ -4497,7 +6953,9 @@ function gaSetDie(
 
 
     if (!die) {
+
         return;
+
     }
 
 
@@ -4508,20 +6966,24 @@ function gaSetDie(
 
 
     if (!face) {
+
         return;
+
     }
 
 
     face.textContent =
         GA_DICE_SYMBOLS[
-            value - 1
+            value -
+            1
         ];
 
 }
 
 
+
 /* ==========================================================
-   DICE ANIMATION START
+   DICE ANIMATION
    ========================================================== */
 
 function gaStartDiceAnimation() {
@@ -4570,33 +7032,27 @@ function gaStartDiceAnimation() {
         setInterval(
             () => {
 
-                const fakeHouse =
-                    Math.floor(
-                        Math.random() *
-                        6
-                    )
-                    +
-                    1;
-
-
-                const fakePlayer =
-                    Math.floor(
-                        Math.random() *
-                        6
-                    )
-                    +
-                    1;
-
-
                 gaSetDie(
                     "gaHouseDie",
-                    fakeHouse
+
+                    Math.floor(
+                        Math.random() *
+                        6
+                    )
+                    +
+                    1
                 );
 
 
                 gaSetDie(
                     "gaPlayerDie",
-                    fakePlayer
+
+                    Math.floor(
+                        Math.random() *
+                        6
+                    )
+                    +
+                    1
                 );
 
             },
@@ -4605,10 +7061,6 @@ function gaStartDiceAnimation() {
 
 }
 
-
-/* ==========================================================
-   DICE ANIMATION STOP
-   ========================================================== */
 
 function gaStopDiceAnimation(
     houseRoll,
@@ -4686,11 +7138,9 @@ function gaStopDiceAnimation(
 }
 
 
-/* ==========================================================
-   DICE WINNER EFFECT
-   ========================================================== */
-
-function gaHighlightDiceWinner(id) {
+function gaHighlightDiceWinner(
+    id
+) {
 
     const die =
         document.getElementById(
@@ -4699,7 +7149,9 @@ function gaHighlightDiceWinner(id) {
 
 
     if (!die) {
+
         return;
+
     }
 
 
@@ -4722,8 +7174,9 @@ function gaHighlightDiceWinner(id) {
 }
 
 
+
 /* ==========================================================
-   MAIN DICE ROLL
+   DICE ROLL
    ========================================================== */
 
 function gaRollDice() {
@@ -4785,18 +7238,9 @@ function gaRollDice() {
         gaDiceBet;
 
 
-    /*
-        TAKE THE WAGER
-    */
-
     profile.balance -=
         lockedBet;
 
-
-    /*
-        THIS NOW WORKS BECAUSE
-        updateAllDisplays() EXISTS.
-    */
 
     saveProfile();
 
@@ -4820,11 +7264,6 @@ function gaRollDice() {
     );
 
 
-    /*
-        FINAL RESULT GENERATED ONCE.
-        ANIMATION DOES NOT CHANGE RESULT.
-    */
-
     const houseRoll =
         Math.floor(
             Math.random() *
@@ -4843,19 +7282,11 @@ function gaRollDice() {
         1;
 
 
-    /*
-        START ACTUAL DICE ANIMATION
-    */
-
     gaStartDiceAnimation();
 
 
     setTimeout(
         () => {
-
-            /*
-                STOP ON REAL RESULTS
-            */
 
             gaStopDiceAnimation(
                 houseRoll,
@@ -4863,23 +7294,10 @@ function gaRollDice() {
             );
 
 
-            /*
-                PLAYER WIN
-            */
-
             if (
                 playerRoll >
                 houseRoll
             ) {
-
-                /*
-                    Original wager was removed.
-
-                    2x return =
-                    original stake
-                    +
-                    equal profit.
-                */
 
                 profile.balance +=
                     lockedBet *
@@ -4909,11 +7327,6 @@ function gaRollDice() {
 
             }
 
-
-            /*
-                HOUSE WIN
-            */
-
             else if (
                 houseRoll >
                 playerRoll
@@ -4942,11 +7355,6 @@ function gaRollDice() {
 
             }
 
-
-            /*
-                TIE / PUSH
-            */
-
             else {
 
                 profile.balance +=
@@ -4971,10 +7379,6 @@ function gaRollDice() {
 
             }
 
-
-            /*
-                KEEP BET VALID
-            */
 
             if (
                 profile.balance <
@@ -5018,9 +7422,10 @@ function gaRollDice() {
 }
 
 
-/*
-    OLD DICE COMPATIBILITY
-*/
+
+/* ==========================================================
+   OLD DICE SUPPORT
+   ========================================================== */
 
 function rollDice() {
 
@@ -5029,11 +7434,14 @@ function rollDice() {
 }
 
 
+
 /* ==========================================================
    LEADERBOARD
    ========================================================== */
 
-function sortLeaderboard(type) {
+function sortLeaderboard(
+    type
+) {
 
     const table =
         document.getElementById(
@@ -5042,7 +7450,9 @@ function sortLeaderboard(type) {
 
 
     if (!table) {
+
         return;
+
     }
 
 
@@ -5053,7 +7463,9 @@ function sortLeaderboard(type) {
 
 
     if (!body) {
+
         return;
+
     }
 
 
@@ -5066,15 +7478,20 @@ function sortLeaderboard(type) {
 
 
     rows.sort(
-        (a, b) => {
+        (
+            a,
+            b
+        ) => {
 
             return (
                 Number(
-                    b.dataset[type] || 0
+                    b.dataset[type] ||
+                    0
                 )
                 -
                 Number(
-                    a.dataset[type] || 0
+                    a.dataset[type] ||
+                    0
                 )
             );
 
@@ -5098,7 +7515,8 @@ function sortLeaderboard(type) {
 
                 firstCell.textContent =
                     String(
-                        index + 1
+                        index +
+                        1
                     )
                     .padStart(
                         2,
@@ -5118,9 +7536,36 @@ function sortLeaderboard(type) {
 }
 
 
+
 /* ==========================================================
-   EXPORT FUNCTIONS TO HTML
+   EXPORT FUNCTIONS
    ========================================================== */
+
+
+/* AUTH */
+
+window.gaShowLogin =
+    gaShowLogin;
+
+
+window.gaShowSignup =
+    gaShowSignup;
+
+
+window.gaLogin =
+    gaLogin;
+
+
+window.gaSignup =
+    gaSignup;
+
+
+window.gaLogout =
+    gaLogout;
+
+
+window.gaSaveDisplayName =
+    gaSaveDisplayName;
 
 
 /* GENERAL */
@@ -5179,7 +7624,7 @@ window.maxBlackjackBet =
     maxBlackjackBet;
 
 
-/* SLOTS */
+/* SLOT MACHINE */
 
 window.gaSpinSlots =
     gaSpinSlots;
@@ -5237,17 +7682,18 @@ window.rollDice =
     rollDice;
 
 
+
 /* ==========================================================
-   INITIALIZE SITE
+   INITIALIZATION
    ========================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
-    () => {
+    async () => {
 
 
         /* ==================================================
-           GENERAL
+           GENERAL LOCAL DISPLAY
            ================================================== */
 
         updateAllDisplays();
@@ -5339,7 +7785,6 @@ document.addEventListener(
 
         setText(
             "#betAmount",
-
             formatCredits(
                 rouletteBetAmount
             )
@@ -5378,6 +7823,91 @@ document.addEventListener(
         gaSetDiceControls(
             true
         );
+
+
+
+        /* ==================================================
+           SUPABASE ACCOUNT SYSTEM
+
+           This is intentionally initialized last
+           so a Supabase/network issue cannot prevent
+           casino games from loading.
+           ================================================== */
+
+        await gaInitializeSupabase();
+
+
+        /*
+            Re-check bet limits after a cloud
+            profile has been loaded.
+        */
+
+        if (
+            !blackjackActive &&
+            blackjackBet >
+            profile.balance
+        ) {
+
+            blackjackBet =
+                profile.balance;
+
+        }
+
+
+        if (
+            gaSlotBet >
+            profile.balance
+        ) {
+
+            gaSlotBet =
+                profile.balance;
+
+        }
+
+
+        if (
+            rouletteBetAmount >
+            profile.balance
+        ) {
+
+            rouletteBetAmount =
+                profile.balance;
+
+        }
+
+
+        if (
+            gaDiceBet >
+            profile.balance
+        ) {
+
+            gaDiceBet =
+                profile.balance;
+
+        }
+
+
+        updateBlackjackBetDisplay();
+
+
+        gaUpdateSlotDisplays();
+
+
+        gaUpdateDiceDisplays();
+
+
+        setText(
+            "#betAmount",
+            formatCredits(
+                rouletteBetAmount
+            )
+        );
+
+
+        updateAllDisplays();
+
+
+        gaUpdateAccountUI();
 
     }
 );
