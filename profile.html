@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -10,28 +11,32 @@
     >
 
     <title>
-        Profile | The Gilded Ace
+        The Gilded Ace | Profile
     </title>
 
     <link
         rel="stylesheet"
-        href="styles.css?v=7"
+        href="styles.css?v=30"
     >
+
 </head>
 
 
-<body class="page-profile">
+<body>
 
 
-<!-- =========================================================
+<!-- ======================================================
      HEADER
-     ========================================================= -->
+     ====================================================== -->
 
 <header class="site-header">
 
     <div class="nav-container">
 
-        <a href="index.html" class="brand">
+        <a
+            href="index.html"
+            class="brand"
+        >
 
             <div class="brand-mark">
                 A
@@ -39,13 +44,13 @@
 
             <div class="brand-text">
 
-                <span class="brand-name">
+                <div class="brand-name">
                     THE GILDED ACE
-                </span>
+                </div>
 
-                <span class="brand-subtitle">
-                    CASINO & SOCIAL CLUB
-                </span>
+                <div class="brand-subtitle">
+                    PRIVATE SOCIAL CLUB
+                </div>
 
             </div>
 
@@ -80,7 +85,7 @@
         <div class="nav-account">
 
             <span>
-                ACE CREDITS
+                BALANCE
             </span>
 
             <span
@@ -93,10 +98,6 @@
             <a
                 href="profile.html"
                 class="profile-button"
-                style="
-                    border-color:#d4a632;
-                    background:rgba(212,166,50,.08);
-                "
             >
                 PROFILE
             </a>
@@ -109,310 +110,115 @@
 
 
 
-<!-- =========================================================
+<!-- ======================================================
      HERO
-     ========================================================= -->
+     ====================================================== -->
 
-<section class="page-hero">
+<section class="page-hero ga-profile-hero">
 
     <span class="eyebrow">
-        MEMBER PROFILE
+        Member Account
     </span>
 
     <h1>
-        YOUR LEGACY.
+        Player Profile
     </h1>
 
     <p>
-        Track your Gilded Ace identity, balance,
-        performance, collection, achievements,
-        and membership progression.
+        Manage your Gilded Ace identity,
+        membership, statistics and account.
     </p>
 
 </section>
 
 
 
-<!-- =========================================================
-     MEMBER PROFILE
-     ========================================================= -->
+<!-- ======================================================
+     PROFILE PAGE
+     ====================================================== -->
 
-<section class="section">
-
-    <div class="container">
-
-        <div
-            class="card"
-            style="
-                text-align:center;
-                padding:45px 25px;
-                background:
-                    radial-gradient(
-                        circle at center top,
-                        rgba(104,6,25,.32),
-                        transparent 58%
-                    ),
-                    linear-gradient(
-                        #151515,
-                        #090909
-                    );
-            "
-        >
-
-            <div
-                style="
-                    width:90px;
-                    height:90px;
-                    margin:0 auto 20px;
-                    display:grid;
-                    place-items:center;
-                    border-radius:50%;
-                    border:2px solid #d4a632;
-                    background:
-                        linear-gradient(
-                            145deg,
-                            #f3d675,
-                            #d4a632,
-                            #80570e
-                        );
-                    color:#130d03;
-                    font-family:Cinzel,serif;
-                    font-size:42px;
-                    font-weight:900;
-                    box-shadow:
-                        0 0 30px rgba(212,166,50,.18);
-                "
-            >
-                A
-            </div>
+<main class="ga-profile-page">
 
 
-            <span class="eyebrow">
-                GILDED MEMBER
-            </span>
 
+    <!-- ==================================================
+         LOADING
+         ================================================== -->
 
-            <h2 id="profileUsername">
-                Gilded Player
-            </h2>
+    <div
+        class="ga-profile-loading"
+        id="gaProfileLoading"
+    >
 
+        <div class="ga-profile-loading-logo">
+            A
+        </div>
 
-            <p
-                id="profileStatus"
-                style="
-                    color:#f3d675;
-                    font-weight:800;
-                    letter-spacing:2px;
-                    font-size:11px;
-                "
-            >
-                STANDARD MEMBER
-            </p>
-
-
-            <div
-                class="stat"
-                data-balance
-                style="margin-top:18px;"
-            >
-                10,000 AC
-            </div>
-
+        <div>
+            CHECKING ACCOUNT...
         </div>
 
     </div>
 
-</section>
 
 
+    <!-- ==================================================
+         LOGIN / SIGNUP AREA
+         ================================================== -->
 
-<!-- =========================================================
-     ACCOUNT STATISTICS
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
+    <section
+        class="ga-auth-section"
+        id="gaAuthSection"
+        hidden
+    >
 
 
-        <div class="section-head">
+        <div class="ga-auth-shell">
 
-            <div>
+
+            <!-- LEFT BRAND SIDE -->
+
+            <div class="ga-auth-brand-panel">
+
+                <div class="ga-auth-emblem">
+                    A
+                </div>
 
                 <span class="eyebrow">
-                    MEMBER STATISTICS
+                    The Gilded Ace
                 </span>
 
                 <h2>
-                    Account Overview
+                    Member Access
                 </h2>
 
-            </div>
-
-        </div>
-
-
-
-        <div class="grid">
+                <p>
+                    Sign in to access your saved
+                    player profile, Ace Credits,
+                    statistics and collection.
+                </p>
 
 
-            <div class="card">
+                <div class="ga-auth-feature-list">
 
-                <span class="tag">
-                    CURRENT BALANCE
-                </span>
-
-                <div
-                    class="stat"
-                    data-balance
-                >
-                    10,000 AC
-                </div>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    TOTAL WINS
-                </span>
-
-                <div
-                    class="stat"
-                    id="profileWins"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    TOTAL LOSSES
-                </span>
-
-                <div
-                    class="stat"
-                    id="profileLosses"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    GAMES PLAYED
-                </span>
-
-                <div
-                    class="stat"
-                    id="profileGames"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    COLLECTION
-                </span>
-
-                <div
-                    class="stat"
-                    id="profileCollection"
-                >
-                    0 ITEMS
-                </div>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     MEMBERSHIP PROGRESSION
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    CLUB PROGRESSION
-                </span>
-
-                <h2>
-                    Membership Progression
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="card">
-
-            <div
-                style="
-                    display:flex;
-                    justify-content:space-between;
-                    gap:20px;
-                    flex-wrap:wrap;
-                "
-            >
-
-                <div>
-
-                    <span class="tag">
-                        CURRENT TIER
-                    </span>
-
-                    <div
-                        class="stat"
-                        id="currentTier"
-                    >
-                        STANDARD
+                    <div>
+                        <span>◆</span>
+                        Saved player profile
                     </div>
 
-                </div>
+                    <div>
+                        <span>◆</span>
+                        Persistent Ace Credit balance
+                    </div>
 
+                    <div>
+                        <span>◆</span>
+                        Casino statistics
+                    </div>
 
-                <div style="text-align:right;">
-
-                    <span class="tag">
-                        NEXT TIER
-                    </span>
-
-                    <div
-                        class="stat"
-                        id="nextTier"
-                    >
-                        GOLD MEMBER
+                    <div>
+                        <span>◆</span>
+                        Collection progress
                     </div>
 
                 </div>
@@ -421,266 +227,309 @@
 
 
 
-            <div
-                style="
-                    margin-top:30px;
-                    height:12px;
-                    overflow:hidden;
-                    border-radius:20px;
-                    border:1px solid rgba(212,166,50,.25);
-                    background:#050505;
-                "
-            >
+            <!-- AUTH FORMS -->
 
-                <div
-                    id="membershipProgress"
-                    style="
-                        width:10%;
-                        height:100%;
-                        background:
-                            linear-gradient(
-                                90deg,
-                                #8e6113,
-                                #d4a632,
-                                #f3d675
-                            );
-                    "
-                ></div>
-
-            </div>
+            <div class="ga-auth-form-panel">
 
 
+                <!-- TAB BUTTONS -->
 
-            <div
-                style="
-                    display:flex;
-                    justify-content:space-between;
-                    margin-top:10px;
-                    color:#7c776f;
-                    font-size:11px;
-                "
-            >
+                <div class="ga-auth-tabs">
 
-                <span>
-                    10,000 AC
-                </span>
+                    <button
+                        type="button"
+                        class="ga-auth-tab active"
+                        id="gaLoginTab"
+                        onclick="gaShowLogin()"
+                    >
+                        Login
+                    </button>
 
-                <span>
-                    100,000 AC
-                </span>
+
+                    <button
+                        type="button"
+                        class="ga-auth-tab"
+                        id="gaSignupTab"
+                        onclick="gaShowSignup()"
+                    >
+                        Sign Up
+                    </button>
+
+                </div>
+
+
+
+                <!-- ==============================
+                     LOGIN FORM
+                     ============================== -->
+
+                <form
+                    class="ga-auth-form"
+                    id="gaLoginForm"
+                    onsubmit="gaLogin(event)"
+                >
+
+                    <div class="ga-auth-form-title">
+
+                        <span class="eyebrow">
+                            Welcome Back
+                        </span>
+
+                        <h3>
+                            Sign In
+                        </h3>
+
+                    </div>
+
+
+                    <label
+                        class="ga-form-label"
+                        for="gaLoginEmail"
+                    >
+                        Email Address
+                    </label>
+
+
+                    <input
+                        type="email"
+                        id="gaLoginEmail"
+                        class="ga-form-input"
+                        placeholder="player@example.com"
+                        autocomplete="email"
+                        required
+                    >
+
+
+                    <label
+                        class="ga-form-label"
+                        for="gaLoginPassword"
+                    >
+                        Password
+                    </label>
+
+
+                    <input
+                        type="password"
+                        id="gaLoginPassword"
+                        class="ga-form-input"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        minlength="6"
+                        required
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="ga-auth-submit"
+                        id="gaLoginButton"
+                    >
+                        Sign In
+                    </button>
+
+
+                    <div
+                        class="ga-auth-message"
+                        id="gaLoginMessage"
+                    ></div>
+
+                </form>
+
+
+
+                <!-- ==============================
+                     SIGNUP FORM
+                     ============================== -->
+
+                <form
+                    class="ga-auth-form"
+                    id="gaSignupForm"
+                    onsubmit="gaSignup(event)"
+                    hidden
+                >
+
+                    <div class="ga-auth-form-title">
+
+                        <span class="eyebrow">
+                            New Membership
+                        </span>
+
+                        <h3>
+                            Create Account
+                        </h3>
+
+                    </div>
+
+
+                    <label
+                        class="ga-form-label"
+                        for="gaSignupUsername"
+                    >
+                        Display Name
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="gaSignupUsername"
+                        class="ga-form-input"
+                        placeholder="Choose a player name"
+                        autocomplete="nickname"
+                        minlength="3"
+                        maxlength="20"
+                        required
+                    >
+
+
+                    <label
+                        class="ga-form-label"
+                        for="gaSignupEmail"
+                    >
+                        Email Address
+                    </label>
+
+
+                    <input
+                        type="email"
+                        id="gaSignupEmail"
+                        class="ga-form-input"
+                        placeholder="player@example.com"
+                        autocomplete="email"
+                        required
+                    >
+
+
+                    <label
+                        class="ga-form-label"
+                        for="gaSignupPassword"
+                    >
+                        Password
+                    </label>
+
+
+                    <input
+                        type="password"
+                        id="gaSignupPassword"
+                        class="ga-form-input"
+                        placeholder="Minimum 6 characters"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+
+                    <label
+                        class="ga-form-label"
+                        for="gaSignupPasswordConfirm"
+                    >
+                        Confirm Password
+                    </label>
+
+
+                    <input
+                        type="password"
+                        id="gaSignupPasswordConfirm"
+                        class="ga-form-input"
+                        placeholder="Enter password again"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="ga-auth-submit"
+                        id="gaSignupButton"
+                    >
+                        Create Account
+                    </button>
+
+
+                    <div
+                        class="ga-auth-message"
+                        id="gaSignupMessage"
+                    ></div>
+
+                </form>
+
 
             </div>
 
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 
 
-<!-- =========================================================
-     GAME PERFORMANCE
-     ========================================================= -->
+    <!-- ==================================================
+         LOGGED-IN PROFILE
+         ================================================== -->
 
-<section class="section">
+    <section
+        class="ga-member-dashboard"
+        id="gaMemberDashboard"
+        hidden
+    >
 
-    <div class="container">
+
+        <!-- ==================================================
+             IDENTITY CARD
+             ================================================== -->
+
+        <div class="ga-profile-identity-card">
 
 
-        <div class="section-head">
+            <div class="ga-profile-avatar">
 
-            <div>
+                <div class="ga-profile-avatar-ring">
+
+                    <span id="gaProfileInitial">
+                        G
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="ga-profile-identity-main">
 
                 <span class="eyebrow">
-                    CASINO RECORD
+                    Player Identity
                 </span>
 
-                <h2>
-                    Game Performance
+
+                <h2 id="profileUsername">
+                    Gilded Player
                 </h2>
 
-            </div>
 
-        </div>
+                <div class="ga-profile-status-row">
+
+                    <span
+                        class="ga-profile-tier-badge"
+                        id="profileStatus"
+                    >
+                        STANDARD MEMBER
+                    </span>
 
 
+                    <span
+                        class="ga-profile-online"
+                    >
+                        <span></span>
 
-        <div class="grid">
+                        ACCOUNT ACTIVE
+                    </span>
 
-
-            <div class="card">
-
-                <span class="tag">
-                    BLACKJACK
-                </span>
-
-                <h3>
-                    Blackjack
-                </h3>
-
-                <div
-                    class="stat"
-                    id="blackjackWins"
-                >
-                    0 WINS
                 </div>
 
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    SLOTS
-                </span>
-
-                <h3>
-                    Gilded Slots
-                </h3>
 
                 <div
-                    class="stat"
-                    id="slotWins"
-                >
-                    0 WINS
-                </div>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    ROULETTE
-                </span>
-
-                <h3>
-                    Roulette
-                </h3>
-
-                <div
-                    class="stat"
-                    id="rouletteWins"
-                >
-                    0 WINS
-                </div>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    HIGH ROLL
-                </span>
-
-                <h3>
-                    High Roll
-                </h3>
-
-                <div
-                    class="stat"
-                    id="diceWins"
-                >
-                    0 WINS
-                </div>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     COLLECTION OVERVIEW
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    PRIVATE VAULT
-                </span>
-
-                <h2>
-                    Collection Overview
-                </h2>
-
-            </div>
-
-
-            <a
-                href="collection.html"
-                class="btn secondary"
-            >
-                OPEN COLLECTION
-            </a>
-
-        </div>
-
-
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <span class="tag">
-                    ITEMS OWNED
-                </span>
-
-                <div
-                    class="stat"
-                    id="profileItemsOwned"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    COLLECTION VALUE
-                </span>
-
-                <div
-                    class="stat"
-                    id="profileCollectionValue"
-                >
-                    0 AC
-                </div>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    HIGHEST PURCHASE
-                </span>
-
-                <div
-                    class="stat"
-                    id="profileHighestPurchase"
+                    class="ga-profile-email"
+                    id="gaProfileEmail"
                 >
                     —
                 </div>
@@ -688,263 +537,650 @@
             </div>
 
 
-        </div>
 
-    </div>
+            <div class="ga-profile-balance-box">
 
-</section>
-
-
-
-<!-- =========================================================
-     ACHIEVEMENTS
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    CLUB ACHIEVEMENTS
+                <span>
+                    AVAILABLE BALANCE
                 </span>
 
-                <h2>
-                    Achievements
-                </h2>
 
-            </div>
-
-        </div>
+                <strong data-balance>
+                    10,000 AC
+                </strong>
 
 
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <span class="tag">
-                    UNLOCKED
-                </span>
-
-                <h3>
-                    Welcome to the Club
-                </h3>
-
-                <p>
-                    Become a member of
-                    The Gilded Ace.
-                </p>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    LOCKED
-                </span>
-
-                <h3>
-                    First Victory
-                </h3>
-
-                <p>
-                    Win your first casino game.
-                </p>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    LOCKED
-                </span>
-
-                <h3>
-                    Golden Status
-                </h3>
-
-                <p>
-                    Reach Gold Member status.
-                </p>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    LOCKED
-                </span>
-
-                <h3>
-                    Millionaire
-                </h3>
-
-                <p>
-                    Reach a balance of
-                    1,000,000 Ace Credits.
-                </p>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     ACCOUNT SETTINGS
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    ACCOUNT
-                </span>
-
-                <h2>
-                    Member Settings
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="grid">
-
-
-            <!-- USERNAME -->
-
-            <div class="card">
-
-                <span class="tag">
-                    DISPLAY NAME
-                </span>
-
-                <h3>
-                    Change Username
-                </h3>
-
-                <p>
-                    Update the member name displayed
-                    on this browser.
-                </p>
-
-
-                <input
-                    type="text"
-                    id="newUsername"
-                    placeholder="New username"
-                    maxlength="20"
-                    style="
-                        width:100%;
-                        margin:20px 0 12px;
-                        padding:13px 14px;
-                        border:1px solid rgba(212,166,50,.25);
-                        border-radius:6px;
-                        outline:none;
-                        background:#070707;
-                        color:#f4efe4;
-                    "
+                <a
+                    href="casino.html"
+                    class="btn"
                 >
+                    Enter Casino
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ==================================================
+             MEMBERSHIP PROGRESS
+             ================================================== -->
+
+        <div class="ga-profile-membership-card">
+
+            <div class="ga-profile-card-header">
+
+                <div>
+
+                    <span class="eyebrow">
+                        Membership
+                    </span>
+
+                    <h3>
+                        Club Status
+                    </h3>
+
+                </div>
+
+
+                <div class="ga-membership-current">
+
+                    <span>
+                        CURRENT TIER
+                    </span>
+
+                    <strong id="currentTier">
+                        STANDARD
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="ga-membership-progress-labels">
+
+                <span id="currentTierLabel">
+                    STANDARD
+                </span>
+
+                <span id="nextTier">
+                    GOLD MEMBER
+                </span>
+
+            </div>
+
+
+
+            <div class="ga-membership-track">
+
+                <div
+                    class="ga-membership-progress"
+                    id="membershipProgress"
+                ></div>
+
+            </div>
+
+
+
+            <div class="ga-membership-progress-info">
+
+                <span>
+                    Balance determines membership level.
+                </span>
+
+                <span id="gaMembershipProgressText">
+                    Progress toward next tier
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             STAT CARDS
+             ================================================== -->
+
+        <div class="ga-profile-stat-grid">
+
+
+            <div class="ga-profile-stat-card">
+
+                <span>
+                    TOTAL GAMES
+                </span>
+
+                <strong id="profileGames">
+                    0
+                </strong>
+
+                <small>
+                    Lifetime games played
+                </small>
+
+            </div>
+
+
+
+            <div class="ga-profile-stat-card">
+
+                <span>
+                    WINS
+                </span>
+
+                <strong id="profileWins">
+                    0
+                </strong>
+
+                <small>
+                    Lifetime victories
+                </small>
+
+            </div>
+
+
+
+            <div class="ga-profile-stat-card">
+
+                <span>
+                    LOSSES
+                </span>
+
+                <strong id="profileLosses">
+                    0
+                </strong>
+
+                <small>
+                    Lifetime losses
+                </small>
+
+            </div>
+
+
+
+            <div class="ga-profile-stat-card">
+
+                <span>
+                    WIN RATE
+                </span>
+
+                <strong id="gaProfileWinRate">
+                    0%
+                </strong>
+
+                <small>
+                    Overall performance
+                </small>
+
+            </div>
+
+
+
+            <div class="ga-profile-stat-card">
+
+                <span>
+                    ITEMS OWNED
+                </span>
+
+                <strong id="profileItemsOwned">
+                    0
+                </strong>
+
+                <small>
+                    Collection inventory
+                </small>
+
+            </div>
+
+
+
+            <div class="ga-profile-stat-card">
+
+                <span>
+                    COLLECTION VALUE
+                </span>
+
+                <strong id="gaProfileCollectionValue">
+                    0 AC
+                </strong>
+
+                <small>
+                    Total purchase value
+                </small>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ==================================================
+             GAME STATISTICS
+             ================================================== -->
+
+        <div class="ga-profile-two-column">
+
+
+            <div class="ga-profile-panel">
+
+                <div class="ga-profile-card-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            Casino Record
+                        </span>
+
+                        <h3>
+                            Game Statistics
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="ga-game-stat-list">
+
+
+                    <div class="ga-game-stat-row">
+
+                        <div>
+
+                            <span class="ga-game-icon">
+                                ♠
+                            </span>
+
+                            <span>
+                                Blackjack
+                            </span>
+
+                        </div>
+
+                        <strong id="blackjackWins">
+                            0 WINS
+                        </strong>
+
+                    </div>
+
+
+
+                    <div class="ga-game-stat-row">
+
+                        <div>
+
+                            <span class="ga-game-icon">
+                                7
+                            </span>
+
+                            <span>
+                                Slots
+                            </span>
+
+                        </div>
+
+                        <strong id="slotWins">
+                            0 WINS
+                        </strong>
+
+                    </div>
+
+
+
+                    <div class="ga-game-stat-row">
+
+                        <div>
+
+                            <span class="ga-game-icon">
+                                ◆
+                            </span>
+
+                            <span>
+                                Roulette
+                            </span>
+
+                        </div>
+
+                        <strong id="rouletteWins">
+                            0 WINS
+                        </strong>
+
+                    </div>
+
+
+
+                    <div class="ga-game-stat-row">
+
+                        <div>
+
+                            <span class="ga-game-icon">
+                                ⚄
+                            </span>
+
+                            <span>
+                                High Roll
+                            </span>
+
+                        </div>
+
+                        <strong id="diceWins">
+                            0 WINS
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 COLLECTION SUMMARY
+                 ================================================== -->
+
+            <div class="ga-profile-panel">
+
+                <div class="ga-profile-card-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            Inventory
+                        </span>
+
+                        <h3>
+                            Collection
+                        </h3>
+
+                    </div>
+
+
+                    <a
+                        href="collection.html"
+                        class="ga-profile-small-link"
+                    >
+                        VIEW COLLECTION
+                    </a>
+
+                </div>
+
+
+
+                <div class="ga-collection-summary">
+
+
+                    <div>
+
+                        <span>
+                            Items Owned
+                        </span>
+
+                        <strong id="profileCollection">
+                            0 ITEMS
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Total Value
+                        </span>
+
+                        <strong id="gaCollectionValue">
+                            0 AC
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Highest Purchase
+                        </span>
+
+                        <strong id="gaHighestPurchase">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ==================================================
+             ACCOUNT SETTINGS
+             ================================================== -->
+
+        <div class="ga-profile-two-column">
+
+
+            <!-- EDIT PROFILE -->
+
+            <div class="ga-profile-panel">
+
+                <div class="ga-profile-card-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            Account Settings
+                        </span>
+
+                        <h3>
+                            Edit Profile
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ga-profile-form">
+
+
+                    <label
+                        class="ga-form-label"
+                        for="gaEditUsername"
+                    >
+                        Display Name
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="gaEditUsername"
+                        class="ga-form-input"
+                        placeholder="Enter display name"
+                        minlength="3"
+                        maxlength="20"
+                    >
+
+
+                    <p class="ga-profile-form-help">
+                        This is the name displayed throughout
+                        The Gilded Ace.
+                    </p>
+
+
+                    <button
+                        type="button"
+                        class="ga-profile-save-button"
+                        id="gaSaveProfileButton"
+                        onclick="gaSaveDisplayName()"
+                    >
+                        Save Changes
+                    </button>
+
+
+                    <div
+                        class="ga-auth-message"
+                        id="gaProfileSaveMessage"
+                    ></div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ACCOUNT INFORMATION -->
+
+            <div class="ga-profile-panel">
+
+                <div class="ga-profile-card-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            Security
+                        </span>
+
+                        <h3>
+                            Account
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ga-account-details">
+
+
+                    <div>
+
+                        <span>
+                            ACCOUNT EMAIL
+                        </span>
+
+                        <strong id="gaAccountEmail">
+                            —
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            PLAYER ID
+                        </span>
+
+                        <strong id="gaAccountId">
+                            —
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            ACCOUNT STATUS
+                        </span>
+
+                        <strong class="ga-account-active">
+                            ACTIVE
+                        </strong>
+
+                    </div>
+
+
+                </div>
 
 
                 <button
                     type="button"
-                    onclick="changeUsername()"
+                    class="ga-logout-button"
+                    id="gaLogoutButton"
+                    onclick="gaLogout()"
                 >
-                    UPDATE USERNAME
+                    Log Out
                 </button>
 
             </div>
 
 
+        </div>
 
-            <!-- RESET -->
 
-            <div class="card">
 
-                <span class="tag">
-                    LOCAL PROFILE
-                </span>
+        <!-- ==================================================
+             LOCAL SAVE NOTICE
+             ================================================== -->
 
-                <h3>
-                    Reset Progress
-                </h3>
+        <div class="ga-profile-sync-notice">
+
+            <div class="ga-profile-sync-icon">
+                ◆
+            </div>
+
+            <div>
+
+                <strong>
+                    Cloud Profile Connected
+                </strong>
 
                 <p>
-                    Reset your local Gilded Ace balance,
-                    statistics, and collection.
+                    Your Gilded Ace account is connected
+                    to Supabase. Profile information can
+                    be restored when you sign in again.
                 </p>
-
-
-                <button
-                    type="button"
-                    onclick="resetGildedProfile()"
-                    style="margin-top:20px;"
-                >
-                    RESET PROFILE
-                </button>
 
             </div>
 
-
         </div>
 
-    </div>
 
-</section>
-
+    </section>
 
 
-<!-- =========================================================
-     MEMBER SESSION
-     ========================================================= -->
+</main>
+
+
+
+<!-- ======================================================
+     PLAY MONEY NOTICE
+     ====================================================== -->
 
 <section class="section">
 
     <div class="container">
 
-        <div class="card">
+        <div class="notice">
 
-            <span class="eyebrow">
-                MEMBER SESSION
-            </span>
+            <strong>
+                Play-Money Entertainment Only
+            </strong>
 
-            <h2>
-                Local Browser Profile
-            </h2>
-
-            <p>
-                Your current profile, balance, statistics,
-                and collection are stored locally in this
-                browser until a full online account system
-                is connected.
-            </p>
+            Ace Credits are fictional virtual credits
+            used only within The Gilded Ace website.
+            They have no cash value and cannot be
+            redeemed for real money.
 
         </div>
 
@@ -954,34 +1190,9 @@
 
 
 
-<!-- =========================================================
-     DISCLAIMER
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container notice">
-
-        <h3>
-            PLAY-MONEY PROFILE
-        </h3>
-
-        <p>
-            All balances, casino statistics, collections,
-            achievements, and membership levels shown on
-            The Gilded Ace are fictional. Ace Credits have
-            no real-world monetary value.
-        </p>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
+<!-- ======================================================
      FOOTER
-     ========================================================= -->
+     ====================================================== -->
 
 <footer>
 
@@ -989,23 +1200,27 @@
         THE GILDED ACE
     </strong>
 
-    CASINO & SOCIAL CLUB
-
-    <br>
-
-    PLAY-MONEY ENTERTAINMENT ONLY
-    •
-    ACE CREDITS HAVE NO CASH VALUE
+    FICTIONAL PRIVATE SOCIAL CLUB
+    • PLAY-MONEY ENTERTAINMENT ONLY
 
 </footer>
 
 
 
-<!-- =========================================================
-     JAVASCRIPT
-     ========================================================= -->
+<!-- ======================================================
+     SUPABASE
+     ====================================================== -->
 
-<script src="script.js?v=7"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+
+<!-- ======================================================
+     SITE SCRIPT
+     ====================================================== -->
+
+<script src="script.js?v=30"></script>
 
 
 </body>
