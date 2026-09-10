@@ -5399,3 +5399,100 @@ footer strong{
     }
 
 }
+/* =========================================================
+   HOME PAGE CENTERING FIX
+   ========================================================= */
+
+/*
+   Standard centered page width.
+   This keeps the homepage aligned with the rest of the site.
+*/
+
+.hero,
+.home-hero,
+.home-section,
+.club-section,
+.featured-section {
+    width: min(1180px, calc(100% - 32px));
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+    box-sizing: border-box;
+    padding-top: 70px;
+    padding-bottom: 70px;
+}
+
+.hero-content,
+.hero-copy {
+    width: 100%;
+    max-width: 760px;
+}
+
+
+/* =========================================================
+   MAIN HOME SECTIONS
+   ========================================================= */
+
+.home-section,
+.club-section,
+.featured-section {
+    box-sizing: border-box;
+}
+
+
+/* Keep grids centered inside their section */
+
+.home-grid,
+.club-grid,
+.featured-grid,
+.card-grid {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* =========================================================
+   SAFETY FIX
+   Prevent accidental left positioning
+   ========================================================= */
+
+.hero,
+.hero-content,
+.hero-copy,
+.home-section,
+.club-section,
+.featured-section {
+    left: auto;
+    right: auto;
+    transform: none;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .hero,
+    .home-hero,
+    .home-section,
+    .club-section,
+    .featured-section {
+        width: calc(100% - 24px);
+    }
+
+    .hero {
+        padding-top: 45px;
+        padding-bottom: 45px;
+    }
+
+}
