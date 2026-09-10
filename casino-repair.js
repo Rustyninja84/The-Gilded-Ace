@@ -496,39 +496,45 @@ function animateRouletteToNumber(number){
     const pocketAngle = getPocketAngle(number);
 
     /*
-      Pocket 0 begins at 12 o'clock.
-      pocketAngle is therefore measured clockwise from 12 o'clock.
+      IMPORTANT:
+      rouletteBallTrack is INSIDE rouletteWheel.
 
-      The wheel turns clockwise several full rotations.
-      The ball turns counter-clockwise several full rotations.
-      At the end, the ball's world angle exactly matches the
-      selected pocket's world angle.
+      That means:
+      - The wheel's rotation moves BOTH the numbered pockets and ball track.
+      - The ball track's own transform is LOCAL to the wheel.
+
+      So the ball's final local angle must simply equal the selected
+      pocket's local angle. The previous version incorrectly added the
+      wheel's world rotation a second time, which caused the visible
+      landing spot to disagree with the reported winning number.
     */
+
     const wheelExtraTurns = 6 + rand(3);
     const ballExtraTurns = 9 + rand(4);
 
+    // Give the wheel a natural-looking final orientation.
     const newWheelRotation =
         wheelRotation +
         (wheelExtraTurns * 360) +
-        (120 + rand(160));
+        (110 + rand(150));
 
-    const targetWorldAngle =
-        normalizeAngle(newWheelRotation + pocketAngle);
+    /*
+      Ball travels counter-clockwise.
 
-    const currentBallAngle =
-        normalizeAngle(ballRotation);
+      Find the nearest equivalent of pocketAngle that is behind the
+      current local ball angle, then add several full CCW revolutions.
+    */
+    const currentLocalAngle = normalizeAngle(ballRotation);
+    let localDelta = pocketAngle - currentLocalAngle;
 
-    let counterClockwiseDelta =
-        targetWorldAngle - currentBallAngle;
-
-    while(counterClockwiseDelta >= 0){
-        counterClockwiseDelta -= 360;
+    while(localDelta >= 0){
+        localDelta -= 360;
     }
 
     const newBallRotation =
         ballRotation -
         (ballExtraTurns * 360) +
-        counterClockwiseDelta;
+        localDelta;
 
     wheel.style.transition =
         "transform 3.8s cubic-bezier(.10,.72,.12,1)";
