@@ -964,7 +964,10 @@
     }
 }
 
-/* Roulette */
+/* =========================================================
+   PROFESSIONAL ROULETTE WHEEL
+========================================================= */
+
 .ga-casino-page .ga-roulette-layout{
     display:grid;
     grid-template-columns:minmax(0,1fr) 280px;
@@ -975,72 +978,189 @@
 .ga-casino-page .ga-roulette-wheel-area{
     display:grid;
     place-items:center;
-    padding:24px;
+    padding:28px;
     border:1px solid rgba(214,179,90,.18);
-    background:#0d0d0d;
+    background:
+        radial-gradient(circle at 50% 30%,rgba(214,179,90,.08),transparent 45%),
+        #0d0d0d;
+}
+
+.ga-casino-page .roulette-wheel-shell{
+    position:relative;
+    width:min(540px,84vw);
+    aspect-ratio:1;
+    display:grid;
+    place-items:center;
+    padding:22px;
+    border-radius:50%;
+    background:
+        radial-gradient(circle at 35% 25%,#654522 0%,#3d2410 32%,#211205 66%,#110904 100%);
+    box-shadow:
+        0 28px 60px rgba(0,0,0,.62),
+        inset 0 0 0 3px #9f7629,
+        inset 0 0 0 10px #261406,
+        inset 0 0 35px rgba(0,0,0,.8);
 }
 
 .ga-casino-page .ga-roulette-wheel{
-    width:min(360px,80vw);
+    position:relative;
+    width:100%;
     aspect-ratio:1;
     border-radius:50%;
-    padding:30px;
-    border:12px solid #b28b2e;
-    background:conic-gradient(
-        #087541 0deg 10deg,
-        #a5091c 10deg 30deg,
-        #111 30deg 50deg,
-        #a5091c 50deg 70deg,
-        #111 70deg 90deg,
-        #a5091c 90deg 110deg,
-        #111 110deg 130deg,
-        #a5091c 130deg 150deg,
-        #111 150deg 170deg,
-        #a5091c 170deg 190deg,
-        #111 190deg 210deg,
-        #a5091c 210deg 230deg,
-        #111 230deg 250deg,
-        #a5091c 250deg 270deg,
-        #111 270deg 290deg,
-        #a5091c 290deg 310deg,
-        #111 310deg 330deg,
-        #a5091c 330deg 350deg,
-        #111 350deg 360deg
-    );
-    box-shadow:0 24px 50px rgba(0,0,0,.45), inset 0 0 0 8px #3d2d0b;
-    transition:transform 1.6s cubic-bezier(.18,.8,.2,1);
+    background:
+        radial-gradient(circle,#1a1308 0 27%,#8a6620 27.5% 29%,#17120b 29.5% 42%,#b88c32 42.5% 44%,#151515 44.5% 100%);
+    box-shadow:
+        inset 0 0 0 3px rgba(243,214,117,.55),
+        inset 0 0 35px rgba(0,0,0,.72);
+    transform:rotate(0deg);
+    will-change:transform;
 }
 
-.ga-casino-page .ga-roulette-wheel.spinning{
-    transform:rotate(1080deg);
+.ga-casino-page .roulette-pocket-ring{
+    position:absolute;
+    inset:3.5%;
+    border-radius:50%;
 }
 
-.ga-casino-page .ga-roulette-wheel-inner{
+.ga-casino-page .roulette-pocket{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:9.9%;
+    height:17.5%;
+    transform-origin:50% 0;
+    display:flex;
+    justify-content:center;
+    pointer-events:none;
+}
+
+.ga-casino-page .roulette-pocket-face{
     width:100%;
     height:100%;
-    border-radius:50%;
-    display:grid;
-    place-items:center;
-    background:radial-gradient(circle,#302608,#111 64%);
-    border:5px solid #d6b35a;
+    padding-top:9px;
+    clip-path:polygon(35% 0,65% 0,100% 100%,0 100%);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    border-top:1px solid rgba(255,255,255,.26);
+    color:#fff;
+    font-family:Georgia,serif;
+    font-size:clamp(9px,1.8vw,16px);
+    font-weight:800;
+    text-shadow:0 1px 2px #000;
+    box-shadow:inset 0 0 10px rgba(0,0,0,.35);
 }
 
-.ga-casino-page .ga-roulette-result{
-    width:92px;
-    height:92px;
+.ga-casino-page .roulette-pocket-face.red{
+    background:linear-gradient(180deg,#c31d30,#8a0b18 68%,#570611);
+}
+
+.ga-casino-page .roulette-pocket-face.black{
+    background:linear-gradient(180deg,#292929,#111 68%,#030303);
+}
+
+.ga-casino-page .roulette-pocket-face.green{
+    background:linear-gradient(180deg,#13845a,#096740 68%,#034429);
+}
+
+.ga-casino-page .roulette-ball-track{
+    position:absolute;
+    inset:5.5%;
+    border-radius:50%;
+    border:2px solid rgba(243,214,117,.45);
+    box-shadow:
+        inset 0 0 0 7px rgba(10,10,10,.55),
+        0 0 0 1px rgba(255,255,255,.08);
+    pointer-events:none;
+    transform:rotate(0deg);
+    will-change:transform;
+}
+
+.ga-casino-page .roulette-ball{
+    position:absolute;
+    left:50%;
+    top:-1.5%;
+    width:18px;
+    height:18px;
+    margin-left:-9px;
+    border-radius:50%;
+    background:
+        radial-gradient(circle at 33% 28%,#fff 0 22%,#e8e3d8 36%,#aaa 72%,#6e6e6e 100%);
+    box-shadow:
+        0 3px 7px rgba(0,0,0,.55),
+        0 0 7px rgba(255,255,255,.45);
+}
+
+.ga-casino-page .roulette-inner-bowl{
+    position:absolute;
+    inset:31%;
     border-radius:50%;
     display:grid;
     place-items:center;
-    background:#060606;
-    border:2px solid #f3d675;
+    background:
+        radial-gradient(circle at 40% 35%,#6f4b1e,#2a1808 63%,#0d0703 100%);
+    border:4px solid #b7892f;
+    box-shadow:
+        inset 0 0 22px rgba(0,0,0,.6),
+        0 0 0 3px #241306;
+}
+
+.ga-casino-page .roulette-spindle{
+    width:36%;
+    aspect-ratio:1;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:
+        radial-gradient(circle at 38% 30%,#f4d777,#b18429 48%,#604313 100%);
+    border:2px solid #f2d477;
+    box-shadow:
+        0 7px 14px rgba(0,0,0,.45),
+        inset 0 0 7px rgba(255,255,255,.32);
+}
+
+.ga-casino-page .roulette-spindle-cap{
+    width:62%;
+    aspect-ratio:1;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:#241506;
+    border:1px solid #f3d675;
     color:#f3d675;
     font-family:Georgia,serif;
-    font-size:46px;
+    font-size:clamp(16px,3vw,28px);
     font-weight:800;
 }
 
+.ga-casino-page .roulette-result-panel{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:16px;
+    padding:10px 16px;
+    border:1px solid rgba(214,179,90,.28);
+    border-radius:8px;
+    background:#090909;
+}
+
+.ga-casino-page .roulette-result-panel span{
+    color:#8e897f;
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:.15em;
+}
+
+.ga-casino-page .roulette-result-panel strong{
+    min-width:40px;
+    text-align:center;
+    color:#f3d675;
+    font-family:Georgia,serif;
+    font-size:26px;
+}
+
 .ga-casino-page .roulette-spin-status{
-    margin-top:14px;
+    margin-top:12px;
     color:#d6b35a;
     font-size:11px;
     font-weight:800;
@@ -1070,6 +1190,7 @@
     font-weight:800;
     border:1px solid rgba(255,255,255,.18);
 }
+
 .ga-casino-page .ga-history-chip.red{background:#a5091c}
 .ga-casino-page .ga-history-chip.black{background:#111}
 .ga-casino-page .ga-history-chip.green{background:#087541}
@@ -1094,6 +1215,7 @@
     border:1px solid rgba(214,179,90,.14);
     background:#121212;
 }
+
 .ga-casino-page .roulette-balance-card span,
 .ga-casino-page .roulette-current-bet span{
     display:block;
@@ -1101,6 +1223,7 @@
     font-size:10px;
     letter-spacing:.12em;
 }
+
 .ga-casino-page .roulette-balance-card strong,
 .ga-casino-page .roulette-current-bet strong{
     color:#f3d675;
@@ -1133,9 +1256,11 @@
     color:#fff;
     font-weight:900;
 }
+
 .ga-casino-page .ga-number.red{background:#9e1021}
 .ga-casino-page .ga-number.black{background:#171717}
 .ga-casino-page .ga-number.green{background:#087541}
+
 .ga-casino-page .ga-number.selected,
 .ga-casino-page .ga-roulette-choice.selected{
     outline:2px solid #f3d675;
@@ -1161,6 +1286,7 @@
     font-weight:800;
     font-size:11px;
 }
+
 .ga-casino-page .ga-roulette-choice.red-choice{background:#8d0b1a}
 .ga-casino-page .ga-roulette-choice.black-choice{background:#111}
 
@@ -1170,6 +1296,7 @@
     gap:6px;
     margin-top:14px;
 }
+
 .ga-casino-page .roulette-payout-strip span{
     padding:12px 8px;
     border:1px solid rgba(214,179,90,.14);
@@ -1178,9 +1305,50 @@
     text-align:center;
     font-size:10px;
 }
+
 .ga-casino-page .roulette-payout-strip strong{
     display:block;
     color:#f3d675;
+}
+
+@media(max-width:900px){
+    .ga-casino-page .ga-roulette-layout,
+    .ga-casino-page .ga-roulette-floor{
+        grid-template-columns:1fr;
+    }
+
+    .ga-casino-page .ga-outside-bets{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .ga-casino-page .roulette-payout-strip{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:620px){
+    .ga-casino-page .ga-roulette-wheel-area{
+        padding:16px 8px;
+    }
+
+    .ga-casino-page .roulette-wheel-shell{
+        width:min(440px,92vw);
+        padding:14px;
+    }
+
+    .ga-casino-page .roulette-ball{
+        width:14px;
+        height:14px;
+        margin-left:-7px;
+    }
+
+    .ga-casino-page .ga-number-board{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .ga-casino-page .ga-outside-bets{
+        grid-template-columns:repeat(2,1fr);
+    }
 }
 
 /* Dice */

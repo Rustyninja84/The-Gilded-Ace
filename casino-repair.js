@@ -315,130 +315,312 @@ $("slotSpin").addEventListener("click",async()=>{
 /* =========================================================
    ROULETTE
 ========================================================= */
-const RED_NUMBERS=new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
-let rouletteBet=100;
-let rouletteSelection=null;
-let rouletteSpinning=false;
-let rouletteHistory=[];
 
-function rouletteColor(n){return n===0?"green":RED_NUMBERS.has(n)?"red":"black";}
-function rouletteDrawBet(){ $("rouletteBetDisplay").textContent=`${fmt(rouletteBet)} AC`; }
+const ROULETTE_WHEEL = [
+    0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,
+    5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26
+];
+
+const RED_NUMBERS = new Set([
+    1,3,5,7,9,12,14,16,18,
+    19,21,23,25,27,30,32,34,36
+]);
+
+let rouletteBet = 100;
+let rouletteSelection = null;
+let rouletteSpinning = false;
+let rouletteHistory = [];
+let wheelRotation = 0;
+let ballRotation = 0;
+
+function rouletteColor(n){
+    return n === 0 ? "green" : RED_NUMBERS.has(n) ? "red" : "black";
+}
+
+function rouletteDrawBet(){
+    $("rouletteBetDisplay").textContent = `${fmt(rouletteBet)} AC`;
+}
+
+function buildPhysicalRouletteWheel(){
+    const ring = $("roulettePocketRing");
+    if(!ring) return;
+
+    ring.innerHTML = "";
+    const step = 360 / ROULETTE_WHEEL.length;
+
+    ROULETTE_WHEEL.forEach((number, index) => {
+        const pocket = document.createElement("div");
+        pocket.className = "roulette-pocket";
+        pocket.style.transform = `translate(-50%, -50%) rotate(${index * step}deg) translateY(-50%)`;
+
+        const face = document.createElement("div");
+        face.className = `roulette-pocket-face ${rouletteColor(number)}`;
+        face.textContent = number;
+
+        pocket.appendChild(face);
+        ring.appendChild(pocket);
+    });
+}
+
 function clearRouletteSelection(){
-    rouletteSelection=null;
-    document.querySelectorAll(".ga-number,.ga-roulette-choice").forEach(b=>b.classList.remove("selected"));
-    $("rouletteSelectedBet").textContent="NONE";
+    rouletteSelection = null;
+    document
+        .querySelectorAll(".ga-number,.ga-roulette-choice")
+        .forEach(b => b.classList.remove("selected"));
+
+    $("rouletteSelectedBet").textContent = "NONE";
 }
-function chooseRoulette(selection,label,button){
-    if(rouletteSpinning)return;
+
+function chooseRoulette(selection, label, button){
+    if(rouletteSpinning) return;
+
     clearRouletteSelection();
-    rouletteSelection=selection;
+    rouletteSelection = selection;
     button.classList.add("selected");
-    $("rouletteSelectedBet").textContent=label;
-    $("rouletteMessage").textContent=`${label} selected for ${fmt(rouletteBet)} AC.`;
-    $("rouletteMessage").className="roulette-luxury-message";
+    $("rouletteSelectedBet").textContent = label;
+    $("rouletteMessage").textContent = `${label} selected for ${fmt(rouletteBet)} AC.`;
+    $("rouletteMessage").className = "roulette-luxury-message";
 }
+
 function buildRouletteBoard(){
-    const board=$("rouletteNumberBoard");
-    const zero=document.createElement("button");
-    zero.type="button";zero.className="ga-number green zero";zero.textContent="0";
-    zero.addEventListener("click",()=>chooseRoulette({type:"number",value:0},"0",zero));
+    const board = $("rouletteNumberBoard");
+    board.innerHTML = "";
+
+    const zero = document.createElement("button");
+    zero.type = "button";
+    zero.className = "ga-number green zero";
+    zero.textContent = "0";
+    zero.addEventListener("click", () =>
+        chooseRoulette({type:"number",value:0},"0",zero)
+    );
     board.appendChild(zero);
-    for(let n=1;n<=36;n++){
-        const b=document.createElement("button");
-        b.type="button";b.className=`ga-number ${rouletteColor(n)}`;b.textContent=String(n);
-        b.addEventListener("click",()=>chooseRoulette({type:"number",value:n},String(n),b));
+
+    for(let n = 1; n <= 36; n++){
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = `ga-number ${rouletteColor(n)}`;
+        b.textContent = String(n);
+        b.addEventListener("click", () =>
+            chooseRoulette({type:"number",value:n},String(n),b)
+        );
         board.appendChild(b);
     }
 }
+
 function rouletteWins(sel,n){
-    if(!sel)return false;
-    if(sel.type==="number")return n===sel.value;
-    if(n===0)return false;
+    if(!sel) return false;
+    if(sel.type === "number") return n === sel.value;
+    if(n === 0) return false;
+
     switch(sel.type){
-        case"red":return RED_NUMBERS.has(n);
-        case"black":return !RED_NUMBERS.has(n);
-        case"odd":return n%2===1;
-        case"even":return n%2===0;
-        case"low":return n>=1&&n<=18;
-        case"high":return n>=19&&n<=36;
-        default:return false;
+        case "red": return RED_NUMBERS.has(n);
+        case "black": return !RED_NUMBERS.has(n);
+        case "odd": return n % 2 === 1;
+        case "even": return n % 2 === 0;
+        case "low": return n >= 1 && n <= 18;
+        case "high": return n >= 19 && n <= 36;
+        default: return false;
     }
 }
-function rouletteMultiplier(sel){return sel?.type==="number"?36:2;}
+
+function rouletteMultiplier(sel){
+    return sel?.type === "number" ? 36 : 2;
+}
+
 function renderHistory(){
-    const box=$("rouletteHistoryList");
-    if(!rouletteHistory.length){box.innerHTML='<span class="ga-history-empty">NO SPINS YET</span>';return;}
-    box.innerHTML=rouletteHistory.slice(0,12).map(n=>`<span class="ga-history-chip ${rouletteColor(n)}">${n}</span>`).join("");
+    const box = $("rouletteHistoryList");
+
+    if(!rouletteHistory.length){
+        box.innerHTML = '<span class="ga-history-empty">NO SPINS YET</span>';
+        return;
+    }
+
+    box.innerHTML = rouletteHistory
+        .slice(0,12)
+        .map(n => `<span class="ga-history-chip ${rouletteColor(n)}">${n}</span>`)
+        .join("");
 }
+
 function setRouletteControls(disabled){
-    rouletteSpinning=disabled;
-    document.querySelectorAll(".ga-number,.ga-roulette-choice,#rouletteBetMinus500,#rouletteBetDown,#rouletteBetUp,#rouletteClearBet,#rouletteSpin")
-        .forEach(el=>el.disabled=disabled);
+    rouletteSpinning = disabled;
+
+    document
+        .querySelectorAll(
+            ".ga-number,.ga-roulette-choice," +
+            "#rouletteBetMinus500,#rouletteBetDown,#rouletteBetUp," +
+            "#rouletteClearBet,#rouletteSpin"
+        )
+        .forEach(el => el.disabled = disabled);
 }
-$("rouletteBetMinus500").addEventListener("click",()=>{rouletteBet=Math.max(100,rouletteBet-500);rouletteDrawBet();});
-$("rouletteBetDown").addEventListener("click",()=>{rouletteBet=Math.max(100,rouletteBet-100);rouletteDrawBet();});
-$("rouletteBetUp").addEventListener("click",()=>{rouletteBet=Math.min(5000,rouletteBet+100);rouletteDrawBet();});
-$("rouletteClearBet").addEventListener("click",()=>{
-    if(rouletteSpinning)return;
+
+function getPocketAngle(number){
+    const index = ROULETTE_WHEEL.indexOf(number);
+    return index * (360 / ROULETTE_WHEEL.length);
+}
+
+function normalizeAngle(deg){
+    return ((deg % 360) + 360) % 360;
+}
+
+function animateRouletteToNumber(number){
+    const wheel = $("rouletteWheel");
+    const ballTrack = $("rouletteBallTrack");
+
+    const pocketAngle = getPocketAngle(number);
+
+    /*
+      The wheel spins clockwise.
+      The ball travels counter-clockwise.
+      Final math places the ball over the chosen pocket.
+    */
+    const wheelExtraTurns = 6 + rand(3);
+    const ballExtraTurns = 8 + rand(4);
+
+    const newWheelRotation =
+        wheelRotation +
+        (wheelExtraTurns * 360) +
+        (360 - pocketAngle);
+
+    const finalWheelAngle = normalizeAngle(newWheelRotation);
+
+    const targetBallAngle =
+        normalizeAngle(finalWheelAngle + pocketAngle);
+
+    const currentBallAngle = normalizeAngle(ballRotation);
+    let deltaToTarget = targetBallAngle - currentBallAngle;
+
+    if(deltaToTarget > 0){
+        deltaToTarget -= 360;
+    }
+
+    const newBallRotation =
+        ballRotation -
+        (ballExtraTurns * 360) +
+        deltaToTarget;
+
+    wheel.style.transition =
+        "transform 3.8s cubic-bezier(.10,.72,.12,1)";
+    ballTrack.style.transition =
+        "transform 4.35s cubic-bezier(.08,.74,.12,1)";
+
+    requestAnimationFrame(() => {
+        wheel.style.transform = `rotate(${newWheelRotation}deg)`;
+        ballTrack.style.transform = `rotate(${newBallRotation}deg)`;
+    });
+
+    wheelRotation = newWheelRotation;
+    ballRotation = newBallRotation;
+}
+
+$("rouletteBetMinus500").addEventListener("click", () => {
+    rouletteBet = Math.max(100, rouletteBet - 500);
+    rouletteDrawBet();
+});
+
+$("rouletteBetDown").addEventListener("click", () => {
+    rouletteBet = Math.max(100, rouletteBet - 100);
+    rouletteDrawBet();
+});
+
+$("rouletteBetUp").addEventListener("click", () => {
+    rouletteBet = Math.min(5000, rouletteBet + 100);
+    rouletteDrawBet();
+});
+
+$("rouletteClearBet").addEventListener("click", () => {
+    if(rouletteSpinning) return;
+
     clearRouletteSelection();
-    $("rouletteMessage").textContent="Bet cleared. Select a new number or outside bet.";
-    $("rouletteMessage").className="roulette-luxury-message";
+    $("rouletteMessage").textContent =
+        "Bet cleared. Select a new number or outside bet.";
+    $("rouletteMessage").className = "roulette-luxury-message";
 });
-document.querySelectorAll(".ga-roulette-choice").forEach(button=>{
-    button.addEventListener("click",()=>chooseRoulette({type:button.dataset.betType},button.textContent.trim(),button));
+
+document.querySelectorAll(".ga-roulette-choice").forEach(button => {
+    button.addEventListener("click", () =>
+        chooseRoulette(
+            {type:button.dataset.betType},
+            button.textContent.trim(),
+            button
+        )
+    );
 });
-$("rouletteSpin").addEventListener("click",async()=>{
-    if(!currentUser)return;
+
+$("rouletteSpin").addEventListener("click", async () => {
+    if(!currentUser) return;
+
     if(!rouletteSelection){
-        $("rouletteMessage").textContent="Select a roulette bet before spinning.";
-        $("rouletteMessage").className="roulette-luxury-message loss";
-        return;
-    }
-    if(balance<rouletteBet){
-        $("rouletteMessage").textContent="Not enough Ace Credits.";
-        $("rouletteMessage").className="roulette-luxury-message loss";
+        $("rouletteMessage").textContent =
+            "Select a roulette bet before spinning.";
+        $("rouletteMessage").className =
+            "roulette-luxury-message loss";
         return;
     }
 
-    const lockedSelection={...rouletteSelection};
-    const wager=rouletteBet;
-    await setBalance(balance-wager);
+    if(balance < rouletteBet){
+        $("rouletteMessage").textContent =
+            "Not enough Ace Credits.";
+        $("rouletteMessage").className =
+            "roulette-luxury-message loss";
+        return;
+    }
+
+    const lockedSelection = {...rouletteSelection};
+    const wager = rouletteBet;
+    const winningIndex = rand(ROULETTE_WHEEL.length);
+    const number = ROULETTE_WHEEL[winningIndex];
+
+    await setBalance(balance - wager);
+
     setRouletteControls(true);
-    $("rouletteStatus").textContent="WHEEL SPINNING";
-    $("rouletteMessage").textContent="Wheel spinning...";
-    $("rouletteWheel").classList.add("spinning");
 
-    let cycles=0;
-    const ticker=setInterval(()=>{
-        $("rouletteResult").textContent=String(rand(37));
-        cycles++;
-        if(cycles>14)clearInterval(ticker);
-    },90);
+    $("rouletteStatus").textContent = "WHEEL SPINNING";
+    $("rouletteResult").textContent = "—";
+    $("rouletteMessage").textContent =
+        "Ball in motion...";
+    $("rouletteMessage").className =
+        "roulette-luxury-message";
 
-    setTimeout(async()=>{
-        clearInterval(ticker);
-        const number=rand(37);
-        $("rouletteResult").textContent=String(number);
-        $("rouletteWheel").classList.remove("spinning");
+    animateRouletteToNumber(number);
+
+    setTimeout(async () => {
+        $("rouletteResult").textContent = String(number);
+
         rouletteHistory.unshift(number);
-        rouletteHistory=rouletteHistory.slice(0,12);
+        rouletteHistory = rouletteHistory.slice(0,12);
         renderHistory();
 
         if(rouletteWins(lockedSelection,number)){
-            const payout=wager*rouletteMultiplier(lockedSelection);
-            await setBalance(balance+payout);
-            const profit=payout-wager;
-            $("rouletteMessage").textContent=`${number} ${rouletteColor(number).toUpperCase()} — WIN! +${fmt(profit)} AC.`;
-            $("rouletteMessage").className="roulette-luxury-message win";
+            const payout =
+                wager * rouletteMultiplier(lockedSelection);
+
+            await setBalance(balance + payout);
+
+            const profit = payout - wager;
+
+            $("rouletteMessage").textContent =
+                `${number} ${rouletteColor(number).toUpperCase()} — WIN! +${fmt(profit)} AC.`;
+
+            $("rouletteMessage").className =
+                "roulette-luxury-message win";
+
             await adjustStats("roulette","win");
-        }else{
-            $("rouletteMessage").textContent=`${number} ${rouletteColor(number).toUpperCase()} — You lost ${fmt(wager)} AC.`;
-            $("rouletteMessage").className="roulette-luxury-message loss";
+        } else {
+            $("rouletteMessage").textContent =
+                `${number} ${rouletteColor(number).toUpperCase()} — You lost ${fmt(wager)} AC.`;
+
+            $("rouletteMessage").className =
+                "roulette-luxury-message loss";
+
             await adjustStats("roulette","loss");
         }
-        $("rouletteStatus").textContent="PLACE YOUR BET";
+
+        $("rouletteStatus").textContent =
+            "PLACE YOUR BET";
+
         setRouletteControls(false);
-    },1650);
+
+    }, 4450);
 });
 
 /* =========================================================
@@ -475,6 +657,7 @@ $("diceRoll").addEventListener("click",async()=>{
 /* =========================================================
    INIT
 ========================================================= */
+buildPhysicalRouletteWheel();
 buildRouletteBoard();
 rouletteDrawBet();
 renderBJ(false);

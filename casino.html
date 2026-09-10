@@ -6,7 +6,7 @@
     <meta name="description" content="The Gilded Ace Casino">
     <title>Casino | The Gilded Ace</title>
     <link rel="stylesheet" href="styles.css?v=100">
-    <link rel="stylesheet" href="casino-repair.css?v=120">
+    <link rel="stylesheet" href="casino-repair.css?v=130">
 </head>
 <body class="ga-casino-page">
 
@@ -211,11 +211,28 @@
 
             <div class="ga-roulette-layout">
                 <div class="ga-roulette-wheel-area">
-                    <div id="rouletteWheel" class="ga-roulette-wheel">
-                        <div class="ga-roulette-wheel-inner">
-                            <div id="rouletteResult" class="ga-roulette-result">0</div>
+
+                    <div class="roulette-wheel-shell">
+                        <div id="rouletteWheel" class="ga-roulette-wheel">
+                            <div id="roulettePocketRing" class="roulette-pocket-ring"></div>
+
+                            <div id="rouletteBallTrack" class="roulette-ball-track">
+                                <div id="rouletteBall" class="roulette-ball"></div>
+                            </div>
+
+                            <div class="roulette-inner-bowl">
+                                <div class="roulette-spindle">
+                                    <div class="roulette-spindle-cap">A</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="roulette-result-panel">
+                        <span>WINNING NUMBER</span>
+                        <strong id="rouletteResult">—</strong>
+                    </div>
+
                     <div id="rouletteStatus" class="roulette-spin-status">PLACE YOUR BET</div>
                 </div>
 
@@ -346,6 +363,6 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="casino-repair.js?v=120"></script>
+<script src="casino-repair.js?v=130"></script>
 </body>
 </html>
