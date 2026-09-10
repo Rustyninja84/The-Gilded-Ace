@@ -6,7 +6,7 @@
     <meta name="description" content="The Gilded Ace Casino">
     <title>Casino | The Gilded Ace</title>
     <link rel="stylesheet" href="styles.css?v=100">
-    <link rel="stylesheet" href="casino-repair.css?v=110">
+    <link rel="stylesheet" href="casino-repair.css?v=120">
 </head>
 <body class="ga-casino-page">
 
@@ -110,31 +110,93 @@
         <section id="slots" class="casino-game-panel">
             <div class="casino-game-heading">
                 <div>
-                    <span class="game-type">SLOT GAME</span>
+                    <span class="game-type">ARCADE SLOT</span>
                     <h2>Gilded Slots</h2>
-                    <p>Match symbols and chase the jackpot.</p>
+                    <p>Classic arcade energy with Gilded Ace style.</p>
                 </div>
             </div>
 
-            <div class="slot-machine">
-                <div id="slotReel1" class="slot-reel">7</div>
-                <div id="slotReel2" class="slot-reel">A</div>
-                <div id="slotReel3" class="slot-reel">♠</div>
-            </div>
+            <div class="arcade-slot-cabinet">
 
-            <div class="casino-control-panel">
-                <div class="casino-bet-control">
-                    <span>BET AMOUNT</span>
-                    <div class="casino-bet-selector">
-                        <button id="slotBetDown" type="button">−</button>
-                        <strong id="slotBet">100 AC</strong>
-                        <button id="slotBetUp" type="button">+</button>
+                <div class="slot-marquee">
+                    <div class="slot-bulb-row" aria-hidden="true">
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+
+                    <div class="slot-marquee-copy">
+                        <small>THE GILDED ACE PRESENTS</small>
+                        <strong>LUCKY 7s</strong>
+                        <span>ARCADE JACKPOT</span>
+                    </div>
+
+                    <div class="slot-bulb-row bottom" aria-hidden="true">
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
                     </div>
                 </div>
-                <button id="slotSpin" class="casino-primary-button" type="button">SPIN</button>
+
+                <div class="slot-jackpot-panel">
+                    <span>TOP JACKPOT</span>
+                    <strong>50,000 AC</strong>
+                    <small>HIT THREE 7s</small>
+                </div>
+
+                <div class="slot-screen-shell">
+                    <div class="slot-reel-window">
+                        <div id="slotReel1" class="slot-reel">7</div>
+                        <div id="slotReel2" class="slot-reel">A</div>
+                        <div id="slotReel3" class="slot-reel">♠</div>
+                        <div class="slot-payline" aria-hidden="true"></div>
+                    </div>
+
+                    <div class="slot-side-lights left" aria-hidden="true">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+
+                    <div class="slot-side-lights right" aria-hidden="true">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+
+                <div class="slot-paytable">
+                    <div><strong>7 7 7</strong><span>10×</span></div>
+                    <div><strong>A A A</strong><span>7×</span></div>
+                    <div><strong>3 MATCH</strong><span>5×</span></div>
+                    <div><strong>2 MATCH</strong><span>2×</span></div>
+                </div>
+
+                <div class="slot-arcade-console">
+                    <div class="casino-bet-control slot-bet-bank">
+                        <span>BET AMOUNT</span>
+                        <div class="casino-bet-selector">
+                            <button id="slotBetDown" type="button">−</button>
+                            <strong id="slotBet">100 AC</strong>
+                            <button id="slotBetUp" type="button">+</button>
+                        </div>
+                    </div>
+
+                    <div class="slot-credit-display">
+                        <span>CREDITS</span>
+                        <strong data-ga-balance>— AC</strong>
+                    </div>
+
+                    <button id="slotSpin" class="slot-arcade-spin-button" type="button">
+                        <span>SPIN</span>
+                        <small>PUSH TO PLAY</small>
+                    </button>
+                </div>
+
+                <div class="slot-speaker" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+
             </div>
 
-            <div id="slotMessage" class="game-message">Match three symbols for the largest prizes.</div>
+            <div id="slotMessage" class="game-message slot-arcade-message">
+                Match three symbols for the largest prizes.
+            </div>
         </section>
 
         <!-- ROULETTE -->
@@ -284,6 +346,6 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="casino-repair.js?v=110"></script>
+<script src="casino-repair.js?v=120"></script>
 </body>
 </html>
