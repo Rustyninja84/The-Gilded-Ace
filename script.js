@@ -1,6 +1,6 @@
 /* ==========================================================
    THE GILDED ACE
-   COMPLETE SCRIPT.JS
+   COMPLETE SCRIPT
    ========================================================== */
 
 
@@ -11,23 +11,35 @@
 const $ = (selector) =>
     document.querySelector(selector);
 
+
 const $$ = (selector) =>
     document.querySelectorAll(selector);
 
 
-function setText(selector, value) {
+function setText(
+    selector,
+    value
+) {
 
     const element =
-        document.querySelector(selector);
+        document.querySelector(
+            selector
+        );
+
 
     if (element) {
-        element.textContent = value;
+
+        element.textContent =
+            value;
+
     }
 
 }
 
 
-function formatCredits(amount) {
+function formatCredits(
+    amount
+) {
 
     return (
         Math.floor(
@@ -40,31 +52,42 @@ function formatCredits(amount) {
 }
 
 
+
 /* ==========================================================
    PROFILE
    ========================================================== */
 
 const DEFAULT_PROFILE = {
 
-    username: "Gilded Player",
+    username:
+        "Gilded Player",
 
-    balance: 10000,
+    balance:
+        10000,
 
-    wins: 0,
+    wins:
+        0,
 
-    losses: 0,
+    losses:
+        0,
 
-    gamesPlayed: 0,
+    gamesPlayed:
+        0,
 
-    blackjackWins: 0,
+    blackjackWins:
+        0,
 
-    slotWins: 0,
+    slotWins:
+        0,
 
-    rouletteWins: 0,
+    rouletteWins:
+        0,
 
-    diceWins: 0,
+    diceWins:
+        0,
 
-    collection: []
+    collection:
+        []
 
 };
 
@@ -83,6 +106,7 @@ function loadProfile() {
 
             const parsed =
                 JSON.parse(saved);
+
 
             return {
 
@@ -104,7 +128,7 @@ function loadProfile() {
         catch (error) {
 
             console.error(
-                "Profile load error:",
+                "Profile load error",
                 error
             );
 
@@ -113,43 +137,25 @@ function loadProfile() {
     }
 
 
-    const oldBalance =
-        Number(
-            localStorage.getItem(
-                "ga_balance"
-            )
-        );
-
-
-    const freshProfile = {
+    const fresh = {
 
         ...DEFAULT_PROFILE,
 
-        collection: []
+        collection:
+            []
 
     };
-
-
-    if (
-        Number.isFinite(oldBalance) &&
-        oldBalance > 0
-    ) {
-
-        freshProfile.balance =
-            oldBalance;
-
-    }
 
 
     localStorage.setItem(
         "gildedAceProfile",
         JSON.stringify(
-            freshProfile
+            fresh
         )
     );
 
 
-    return freshProfile;
+    return fresh;
 
 }
 
@@ -162,17 +168,13 @@ function saveProfile() {
 
     localStorage.setItem(
         "gildedAceProfile",
-        JSON.stringify(profile)
+        JSON.stringify(
+            profile
+        )
     );
 
 
-    updateBalanceDisplays();
-
-    updateProfilePage();
-
-    updateCollectionPage();
-
-    updateStoreButtons();
+    updateAllDisplays();
 
 }
 
@@ -197,56 +199,16 @@ function updateBalanceDisplays() {
 }
 
 
-/* ==========================================================
-   DAILY REWARD
-   ========================================================== */
+function updateAllDisplays() {
 
-function claimDaily() {
-
-    const today =
-        new Date()
-            .toDateString();
-
-
-    const lastClaim =
-        localStorage.getItem(
-            "gildedAceDailyReward"
-        );
-
-
-    if (lastClaim === today) {
-
-        alert(
-            "You already claimed today's reward."
-        );
-
-        return;
-
-    }
-
-
-    profile.balance +=
-        1000;
-
-
-    localStorage.setItem(
-        "gildedAceDailyReward",
-        today
-    );
-
-
-    saveProfile();
-
-
-    alert(
-        "Daily reward claimed: +1,000 AC"
-    );
+    updateBalanceDisplays();
 
 }
 
 
+
 /* ==========================================================
-   GAME STATS
+   STATS
    ========================================================== */
 
 function recordResult(
@@ -263,7 +225,8 @@ function recordResult(
 
     }
 
-    else if (won === false) {
+
+    if (won === false) {
 
         profile.losses++;
 
@@ -315,813 +278,35 @@ function recordResult(
 }
 
 
-/* ==========================================================
-   STORE
-   ========================================================== */
-
-const STORE_ITEMS = {
-
-    "Gold Profile Frame": {
-        category: "profile",
-        price: 10000
-    },
-
-    "Diamond Nameplate": {
-        category: "profile",
-        price: 25000
-    },
-
-    "High Roller Title": {
-        category: "profile",
-        price: 50000
-    },
-
-    "Gilded Watch": {
-        category: "collectible",
-        price: 75000
-    },
-
-    "Golden Ace Card": {
-        category: "collectible",
-        price: 100000
-    },
-
-    "Diamond Crown": {
-        category: "collectible",
-        price: 350000
-    },
-
-    "Grand Touring Coupe": {
-        category: "vehicle",
-        price: 150000
-    },
-
-    "Gilded Supercar": {
-        category: "vehicle",
-        price: 500000
-    },
-
-    "Executive Limousine": {
-        category: "vehicle",
-        price: 750000
-    },
-
-    "Private Yacht": {
-        category: "vehicle",
-        price: 2500000
-    },
-
-    "Private Jet": {
-        category: "vehicle",
-        price: 5000000
-    },
-
-    "Club Hotel Suite": {
-        category: "property",
-        price: 50000
-    },
-
-    "Luxury Penthouse": {
-        category: "property",
-        price: 1000000
-    },
-
-    "Private Estate": {
-        category: "property",
-        price: 3000000
-    },
-
-    "Gilded Card Back": {
-        category: "casino",
-        price: 15000
-    },
-
-    "Gold Blackjack Table": {
-        category: "casino",
-        price: 100000
-    },
-
-    "Midnight Roulette": {
-        category: "casino",
-        price: 150000
-    },
-
-    "High Roller Membership": {
-        category: "prestige",
-        price: 250000
-    },
-
-    "Diamond Club": {
-        category: "prestige",
-        price: 1000000
-    },
-
-    "Casino Ownership": {
-        category: "prestige",
-        price: 10000000
-    }
-
-};
-
-
-function buyItem(
-    name,
-    price
-) {
-
-    const owned =
-        profile.collection.some(
-            (item) =>
-                item.name === name
-        );
-
-
-    if (owned) {
-
-        alert(
-            "You already own this item."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        profile.balance <
-        Number(price)
-    ) {
-
-        alert(
-            "You do not have enough Ace Credits."
-        );
-
-        return;
-
-    }
-
-
-    const storeItem =
-        STORE_ITEMS[name] || {
-
-            category:
-                "collectible",
-
-            price:
-                Number(price)
-
-        };
-
-
-    profile.balance -=
-        Number(price);
-
-
-    profile.collection.push({
-
-        name,
-
-        price:
-            Number(price),
-
-        category:
-            storeItem.category,
-
-        purchased:
-            new Date()
-                .toISOString()
-
-    });
-
-
-    saveProfile();
-
-
-    alert(
-        `${name} added to your collection.`
-    );
-
-}
-
-
-function updateStoreButtons() {
-
-    document
-        .querySelectorAll(
-            "button[onclick*='buyItem']"
-        )
-        .forEach(
-            (button) => {
-
-                const onclick =
-                    button.getAttribute(
-                        "onclick"
-                    );
-
-
-                if (!onclick) {
-                    return;
-                }
-
-
-                const match =
-                    onclick.match(
-                        /buyItem\(\s*['"](.+?)['"]/
-                    );
-
-
-                if (!match) {
-                    return;
-                }
-
-
-                const itemName =
-                    match[1];
-
-
-                const owned =
-                    profile.collection.some(
-                        (item) =>
-                            item.name ===
-                            itemName
-                    );
-
-
-                if (owned) {
-
-                    button.textContent =
-                        "OWNED";
-
-                    button.disabled =
-                        true;
-
-                }
-
-            }
-        );
-
-}
-
 
 /* ==========================================================
-   COLLECTION
-   ========================================================== */
-
-let currentCollectionFilter =
-    "all";
-
-
-function filterCollection(
-    category,
-    button
-) {
-
-    currentCollectionFilter =
-        category;
-
-
-    document
-        .querySelectorAll(
-            ".collection-filter"
-        )
-        .forEach(
-            (element) => {
-
-                element.classList.remove(
-                    "selected"
-                );
-
-            }
-        );
-
-
-    if (button) {
-
-        button.classList.add(
-            "selected"
-        );
-
-    }
-
-
-    updateCollectionPage();
-
-}
-
-
-function updateCollectionPage() {
-
-    const grid =
-        document.getElementById(
-            "collectionGrid"
-        );
-
-
-    if (!grid) {
-        return;
-    }
-
-
-    const items =
-        currentCollectionFilter ===
-        "all"
-
-            ? profile.collection
-
-            : profile.collection.filter(
-                (item) =>
-                    item.category ===
-                    currentCollectionFilter
-            );
-
-
-    grid.innerHTML = "";
-
-
-    items.forEach(
-        (item) => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "card collection-item";
-
-
-            card.innerHTML = `
-
-                <span class="tag">
-                    ${item.category.toUpperCase()}
-                </span>
-
-                <h3>
-                    ${item.name}
-                </h3>
-
-                <p>
-                    Owned Gilded Ace virtual item.
-                </p>
-
-                <div class="price">
-                    ${formatCredits(item.price)}
-                </div>
-
-            `;
-
-
-            grid.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    const empty =
-        document.getElementById(
-            "emptyCollection"
-        );
-
-
-    if (empty) {
-
-        empty.style.display =
-            items.length
-                ? "none"
-                : "block";
-
-    }
-
-
-    setText(
-        "#collectionCount",
-        profile.collection.length
-    );
-
-
-    const collectionValue =
-        profile.collection.reduce(
-            (total, item) =>
-                total +
-                Number(
-                    item.price || 0
-                ),
-            0
-        );
-
-
-    setText(
-        "#collectionValue",
-        formatCredits(
-            collectionValue
-        )
-    );
-
-
-    let highest = null;
-
-
-    profile.collection.forEach(
-        (item) => {
-
-            if (
-                !highest ||
-                item.price >
-                highest.price
-            ) {
-
-                highest = item;
-
-            }
-
-        }
-    );
-
-
-    setText(
-        "#highestPurchase",
-        highest
-            ? highest.name
-            : "—"
-    );
-
-}
-
-
-/* ==========================================================
-   PROFILE / MEMBERSHIP
-   ========================================================== */
-
-function getMembershipTier(
-    balance
-) {
-
-    if (
-        balance >=
-        10000000
-    ) {
-
-        return {
-
-            current:
-                "CASINO OWNER",
-
-            next:
-                "MAXIMUM TIER",
-
-            progress:
-                100
-
-        };
-
-    }
-
-
-    if (
-        balance >=
-        5000000
-    ) {
-
-        return {
-
-            current:
-                "DIAMOND CLUB",
-
-            next:
-                "CASINO OWNER",
-
-            progress:
-                (
-                    (
-                        balance -
-                        5000000
-                    )
-                    /
-                    5000000
-                )
-                *
-                100
-
-        };
-
-    }
-
-
-    if (
-        balance >=
-        1000000
-    ) {
-
-        return {
-
-            current:
-                "HIGH ROLLER",
-
-            next:
-                "DIAMOND CLUB",
-
-            progress:
-                (
-                    (
-                        balance -
-                        1000000
-                    )
-                    /
-                    4000000
-                )
-                *
-                100
-
-        };
-
-    }
-
-
-    if (
-        balance >=
-        100000
-    ) {
-
-        return {
-
-            current:
-                "GOLD MEMBER",
-
-            next:
-                "HIGH ROLLER",
-
-            progress:
-                (
-                    (
-                        balance -
-                        100000
-                    )
-                    /
-                    900000
-                )
-                *
-                100
-
-        };
-
-    }
-
-
-    return {
-
-        current:
-            "STANDARD",
-
-        next:
-            "GOLD MEMBER",
-
-        progress:
-            Math.min(
-                100,
-                (
-                    balance /
-                    100000
-                )
-                *
-                100
-            )
-
-    };
-
-}
-
-
-function updateProfilePage() {
-
-    const tier =
-        getMembershipTier(
-            profile.balance
-        );
-
-
-    setText(
-        "#profileUsername",
-        profile.username
-    );
-
-
-    setText(
-        "#profileStatus",
-        tier.current ===
-        "STANDARD"
-
-            ? "STANDARD MEMBER"
-
-            : tier.current
-    );
-
-
-    setText(
-        "#currentTier",
-        tier.current
-    );
-
-
-    setText(
-        "#nextTier",
-        tier.next
-    );
-
-
-    const progress =
-        document.getElementById(
-            "membershipProgress"
-        );
-
-
-    if (progress) {
-
-        progress.style.width =
-            `${Math.max(
-                0,
-                Math.min(
-                    100,
-                    tier.progress
-                )
-            )}%`;
-
-    }
-
-
-    setText(
-        "#profileWins",
-        profile.wins
-    );
-
-
-    setText(
-        "#profileLosses",
-        profile.losses
-    );
-
-
-    setText(
-        "#profileGames",
-        profile.gamesPlayed
-    );
-
-
-    setText(
-        "#profileCollection",
-        `${profile.collection.length} ITEMS`
-    );
-
-
-    setText(
-        "#profileItemsOwned",
-        profile.collection.length
-    );
-
-
-    setText(
-        "#blackjackWins",
-        `${profile.blackjackWins} WINS`
-    );
-
-
-    setText(
-        "#slotWins",
-        `${profile.slotWins} WINS`
-    );
-
-
-    setText(
-        "#rouletteWins",
-        `${profile.rouletteWins} WINS`
-    );
-
-
-    setText(
-        "#diceWins",
-        `${profile.diceWins} WINS`
-    );
-
-}
-
-
-function changeUsername() {
-
-    const input =
-        document.getElementById(
-            "newUsername"
-        );
-
-
-    if (!input) {
-        return;
-    }
-
-
-    const username =
-        input.value.trim();
-
-
-    if (
-        username.length < 3
-    ) {
-
-        alert(
-            "Username must be at least 3 characters."
-        );
-
-        return;
-
-    }
-
-
-    profile.username =
-        username.substring(
-            0,
-            20
-        );
-
-
-    input.value = "";
-
-
-    saveProfile();
-
-
-    alert(
-        "Username updated."
-    );
-
-}
-
-
-function resetGildedProfile() {
-
-    if (
-        !confirm(
-            "Reset your entire Gilded Ace profile?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    profile = {
-
-        ...DEFAULT_PROFILE,
-
-        collection: []
-
-    };
-
-
-    localStorage.removeItem(
-        "gildedAceDailyReward"
-    );
-
-
-    saveProfile();
-
-
-    location.reload();
-
-}
-
-
-/* ==========================================================
-   ==========================================================
    BLACKJACK
-   ==========================================================
    ========================================================== */
 
-let blackjackDeck = [];
-
-let blackjackPlayer = [];
-
-let blackjackDealer = [];
-
-let blackjackActive = false;
+let blackjackDeck =
+    [];
 
 
-/*
-    START AT ZERO.
-
-    USERS BUILD THEIR BET
-    BY CLICKING CHIPS.
-*/
-
-let blackjackBet = 0;
-
-let blackjackLockedBet = 0;
+let blackjackPlayer =
+    [];
 
 
-/* ==========================================================
-   BUILD BLACKJACK DECK
-   ========================================================== */
+let blackjackDealer =
+    [];
+
+
+let blackjackActive =
+    false;
+
+
+let blackjackBet =
+    0;
+
+
+let blackjackLockedBet =
+    0;
+
+
 
 function buildBlackjackDeck() {
 
@@ -1150,7 +335,8 @@ function buildBlackjackDeck() {
     ];
 
 
-    const deck = [];
+    const deck =
+        [];
 
 
     suits.forEach(
@@ -1172,8 +358,11 @@ function buildBlackjackDeck() {
 
 
     for (
-        let i = deck.length - 1;
+        let i =
+            deck.length - 1;
+
         i > 0;
+
         i--
     ) {
 
@@ -1184,16 +373,15 @@ function buildBlackjackDeck() {
             );
 
 
-        const temp =
-            deck[i];
-
-
-        deck[i] =
-            deck[j];
-
-
-        deck[j] =
-            temp;
+        [
+            deck[i],
+            deck[j]
+        ]
+        =
+        [
+            deck[j],
+            deck[i]
+        ];
 
     }
 
@@ -1203,9 +391,6 @@ function buildBlackjackDeck() {
 }
 
 
-/* ==========================================================
-   BLACKJACK CARD VALUES
-   ========================================================== */
 
 function blackjackCardValue(
     card
@@ -1238,13 +423,17 @@ function blackjackCardValue(
 }
 
 
+
 function blackjackHandValue(
     hand
 ) {
 
-    let total = 0;
+    let total =
+        0;
 
-    let aces = 0;
+
+    let aces =
+        0;
 
 
     hand.forEach(
@@ -1273,7 +462,9 @@ function blackjackHandValue(
         aces > 0
     ) {
 
-        total -= 10;
+        total -=
+            10;
+
 
         aces--;
 
@@ -1283,6 +474,7 @@ function blackjackHandValue(
     return total;
 
 }
+
 
 
 function blackjackNatural(
@@ -1299,16 +491,13 @@ function blackjackNatural(
 }
 
 
-/* ==========================================================
-   CREATE BLACKJACK CARD
-   ========================================================== */
 
 function createBlackjackCard(
     card,
     hidden = false
 ) {
 
-    const cardElement =
+    const element =
         document.createElement(
             "div"
         );
@@ -1316,40 +505,36 @@ function createBlackjackCard(
 
     if (hidden) {
 
-        cardElement.className =
+        element.className =
             "playing-card card-back";
 
 
-        cardElement.innerHTML = `
+        element.innerHTML = `
 
             <div class="card-back-inner">
-
-                <span>
-                    A
-                </span>
-
+                A
             </div>
 
         `;
 
 
-        return cardElement;
+        return element;
 
     }
 
 
-    const isRed =
+    const red =
         card.suit === "♥" ||
         card.suit === "♦";
 
 
-    cardElement.className =
-        isRed
+    element.className =
+        red
             ? "playing-card red-card"
             : "playing-card black-card";
 
 
-    cardElement.innerHTML = `
+    element.innerHTML = `
 
         <div
             class="
@@ -1370,9 +555,7 @@ function createBlackjackCard(
 
 
         <div class="card-center-suit">
-
             ${card.suit}
-
         </div>
 
 
@@ -1396,17 +579,14 @@ function createBlackjackCard(
     `;
 
 
-    return cardElement;
+    return element;
 
 }
 
 
-/* ==========================================================
-   RENDER BLACKJACK
-   ========================================================== */
 
 function renderBlackjack(
-    hideDealerCard = false
+    hideDealer = false
 ) {
 
     const playerArea =
@@ -1434,19 +614,11 @@ function renderBlackjack(
             playerArea.innerHTML = `
 
                 <div class="playing-card card-back">
-
-                    <div class="card-back-inner">
-                        <span>A</span>
-                    </div>
-
+                    <div class="card-back-inner">A</div>
                 </div>
 
                 <div class="playing-card card-back">
-
-                    <div class="card-back-inner">
-                        <span>A</span>
-                    </div>
-
+                    <div class="card-back-inner">A</div>
                 </div>
 
             `;
@@ -1460,8 +632,7 @@ function renderBlackjack(
 
                     playerArea.appendChild(
                         createBlackjackCard(
-                            card,
-                            false
+                            card
                         )
                     );
 
@@ -1486,19 +657,11 @@ function renderBlackjack(
             dealerArea.innerHTML = `
 
                 <div class="playing-card card-back">
-
-                    <div class="card-back-inner">
-                        <span>A</span>
-                    </div>
-
+                    <div class="card-back-inner">A</div>
                 </div>
 
                 <div class="playing-card card-back">
-
-                    <div class="card-back-inner">
-                        <span>A</span>
-                    </div>
-
+                    <div class="card-back-inner">A</div>
                 </div>
 
             `;
@@ -1516,7 +679,7 @@ function renderBlackjack(
                     dealerArea.appendChild(
                         createBlackjackCard(
                             card,
-                            hideDealerCard &&
+                            hideDealer &&
                             index === 1
                         )
                     );
@@ -1529,27 +692,15 @@ function renderBlackjack(
     }
 
 
-    if (
-        blackjackPlayer.length
-    ) {
+    setText(
+        "#playerTotal",
 
-        setText(
-            "#playerTotal",
-            blackjackHandValue(
+        blackjackPlayer.length
+            ? blackjackHandValue(
                 blackjackPlayer
             )
-        );
-
-    }
-
-    else {
-
-        setText(
-            "#playerTotal",
-            "—"
-        );
-
-    }
+            : "—"
+    );
 
 
     if (
@@ -1564,11 +715,12 @@ function renderBlackjack(
     }
 
     else if (
-        hideDealerCard
+        hideDealer
     ) {
 
         setText(
             "#dealerTotal",
+
             blackjackCardValue(
                 blackjackDealer[0]
             )
@@ -1580,6 +732,7 @@ function renderBlackjack(
 
         setText(
             "#dealerTotal",
+
             blackjackHandValue(
                 blackjackDealer
             )
@@ -1590,117 +743,62 @@ function renderBlackjack(
 }
 
 
-/* ==========================================================
-   BLACKJACK BUTTON CONTROLS
-   ========================================================== */
 
 function setBlackjackControls(
-    gameActive
+    active
 ) {
 
-    const dealButton =
+    const deal =
         document.getElementById(
             "blackjackDealButton"
         );
 
 
-    const hitButton =
+    const hit =
         document.getElementById(
             "blackjackHitButton"
         );
 
 
-    const standButton =
+    const stand =
         document.getElementById(
             "blackjackStandButton"
         );
 
 
-    if (gameActive) {
+    if (deal) {
 
-        if (dealButton) {
-
-            dealButton.disabled =
-                true;
-
-        }
-
-
-        if (hitButton) {
-
-            hitButton.disabled =
-                false;
-
-            hitButton.removeAttribute(
-                "disabled"
-            );
-
-            hitButton.style.pointerEvents =
-                "auto";
-
-        }
-
-
-        if (standButton) {
-
-            standButton.disabled =
-                false;
-
-            standButton.removeAttribute(
-                "disabled"
-            );
-
-            standButton.style.pointerEvents =
-                "auto";
-
-        }
+        deal.disabled =
+            active;
 
     }
 
-    else {
 
-        if (dealButton) {
+    if (hit) {
 
-            dealButton.disabled =
-                false;
+        hit.disabled =
+            !active;
 
-            dealButton.removeAttribute(
-                "disabled"
-            );
-
-        }
+    }
 
 
-        if (hitButton) {
+    if (stand) {
 
-            hitButton.disabled =
-                true;
-
-        }
-
-
-        if (standButton) {
-
-            standButton.disabled =
-                true;
-
-        }
+        stand.disabled =
+            !active;
 
     }
 
 }
 
 
-/* ==========================================================
-   BLACKJACK CHIP CONTROLS
-   ========================================================== */
 
 function updateBlackjackBetDisplay() {
 
     if (
+        !blackjackActive &&
         blackjackBet >
-        profile.balance &&
-        !blackjackActive
+        profile.balance
     ) {
 
         blackjackBet =
@@ -1711,12 +809,14 @@ function updateBlackjackBetDisplay() {
 
     setText(
         "#blackjackBetAmount",
+
         formatCredits(
             blackjackBet
         )
     );
 
 }
+
 
 
 function addBlackjackChip(
@@ -1732,28 +832,13 @@ function addBlackjackChip(
     }
 
 
-    amount =
+    blackjackBet +=
         Number(amount);
-
-
-    if (
-        !Number.isFinite(amount) ||
-        amount <= 0
-    ) {
-
-        return;
-
-    }
-
-
-    const newBet =
-        blackjackBet +
-        amount;
 
 
     blackjackBet =
         Math.min(
-            newBet,
+            blackjackBet,
             profile.balance
         );
 
@@ -1763,12 +848,14 @@ function addBlackjackChip(
 
     setText(
         "#blackjackMessage",
+
         blackjackBet > 0
-            ? `Bet set to ${formatCredits(blackjackBet)}.`
-            : "Place your bet and press DEAL."
+            ? `Bet: ${formatCredits(blackjackBet)}`
+            : "Select chips to place your bet."
     );
 
 }
+
 
 
 function clearBlackjackBet() {
@@ -1791,47 +878,11 @@ function clearBlackjackBet() {
 
     setText(
         "#blackjackMessage",
-        "Bet cleared. Select your chips."
+        "Bet cleared."
     );
 
 }
 
-
-/*
-    KEPT FOR COMPATIBILITY
-    WITH ANY OLD BUTTONS
-*/
-
-function setBlackjackBet(
-    amount
-) {
-
-    if (
-        blackjackActive
-    ) {
-
-        return;
-
-    }
-
-
-    amount =
-        Number(amount);
-
-
-    blackjackBet =
-        Math.min(
-            Math.max(
-                0,
-                amount
-            ),
-            profile.balance
-        );
-
-
-    updateBlackjackBetDisplay();
-
-}
 
 
 function changeBlackjackBet(
@@ -1860,14 +911,15 @@ function changeBlackjackBet(
 
     blackjackBet =
         Math.min(
-            profile.balance,
-            blackjackBet
+            blackjackBet,
+            profile.balance
         );
 
 
     updateBlackjackBetDisplay();
 
 }
+
 
 
 function maxBlackjackBet() {
@@ -1887,18 +939,9 @@ function maxBlackjackBet() {
 
     updateBlackjackBetDisplay();
 
-
-    setText(
-        "#blackjackMessage",
-        `Maximum bet selected: ${formatCredits(blackjackBet)}.`
-    );
-
 }
 
 
-/* ==========================================================
-   START BLACKJACK
-   ========================================================== */
 
 function startBlackjack() {
 
@@ -1925,30 +968,15 @@ function startBlackjack() {
 
 
     if (
-        blackjackBet >
-        profile.balance
+        profile.balance <
+        blackjackBet
     ) {
 
         alert(
-            "You do not have enough Ace Credits for that bet."
+            "Not enough Ace Credits."
         );
 
         return;
-
-    }
-
-
-    const table =
-        document.querySelector(
-            ".blackjack-casino-table"
-        );
-
-
-    if (table) {
-
-        table.classList.remove(
-            "blackjack-win"
-        );
 
     }
 
@@ -1996,7 +1024,7 @@ function startBlackjack() {
 
     setText(
         "#blackjackMessage",
-        "Cards dealt. Choose HIT or STAND."
+        "Choose HIT or STAND."
     );
 
 
@@ -2020,13 +1048,13 @@ function startBlackjack() {
         setTimeout(
             () => {
 
-                resolveNaturalBlackjack(
+                resolveBlackjackNatural(
                     playerBJ,
                     dealerBJ
                 );
 
             },
-            900
+            700
         );
 
     }
@@ -2034,11 +1062,8 @@ function startBlackjack() {
 }
 
 
-/* ==========================================================
-   NATURAL BLACKJACK
-   ========================================================== */
 
-function resolveNaturalBlackjack(
+function resolveBlackjackNatural(
     playerBJ,
     dealerBJ
 ) {
@@ -2087,7 +1112,7 @@ function resolveNaturalBlackjack(
         );
 
 
-        prepareNextBlackjackBet();
+        prepareNextBlackjack();
 
         return;
 
@@ -2113,7 +1138,8 @@ function resolveNaturalBlackjack(
 
         setText(
             "#blackjackMessage",
-            `BLACKJACK! You win ${formatCredits(profit)}.`
+
+            `BLACKJACK! +${formatCredits(profit)}`
         );
 
 
@@ -2123,7 +1149,7 @@ function resolveNaturalBlackjack(
         );
 
 
-        prepareNextBlackjackBet();
+        prepareNextBlackjack();
 
         return;
 
@@ -2132,7 +1158,7 @@ function resolveNaturalBlackjack(
 
     setText(
         "#blackjackMessage",
-        "Dealer Blackjack — house wins."
+        "Dealer Blackjack."
     );
 
 
@@ -2142,14 +1168,11 @@ function resolveNaturalBlackjack(
     );
 
 
-    prepareNextBlackjackBet();
+    prepareNextBlackjack();
 
 }
 
 
-/* ==========================================================
-   BLACKJACK HIT
-   ========================================================== */
 
 function blackjackHit() {
 
@@ -2172,14 +1195,14 @@ function blackjackHit() {
     );
 
 
-    const playerTotal =
+    const total =
         blackjackHandValue(
             blackjackPlayer
         );
 
 
     if (
-        playerTotal > 21
+        total > 21
     ) {
 
         blackjackActive =
@@ -2198,7 +1221,8 @@ function blackjackHit() {
 
         setText(
             "#blackjackMessage",
-            `BUST — ${playerTotal}. House wins.`
+
+            `BUST — ${total}.`
         );
 
 
@@ -2208,7 +1232,7 @@ function blackjackHit() {
         );
 
 
-        prepareNextBlackjackBet();
+        prepareNextBlackjack();
 
         return;
 
@@ -2216,24 +1240,13 @@ function blackjackHit() {
 
 
     if (
-        playerTotal === 21
+        total === 21
     ) {
 
-        setText(
-            "#blackjackMessage",
-            "21! Dealer's turn."
-        );
-
-
         setTimeout(
-            () => {
-
-                blackjackStand();
-
-            },
-            450
+            blackjackStand,
+            350
         );
-
 
         return;
 
@@ -2242,20 +1255,13 @@ function blackjackHit() {
 
     setText(
         "#blackjackMessage",
-        `Your total is ${playerTotal}. HIT or STAND.`
-    );
 
-
-    setBlackjackControls(
-        true
+        `${total}. HIT or STAND.`
     );
 
 }
 
 
-/* ==========================================================
-   BLACKJACK STAND
-   ========================================================== */
 
 function blackjackStand() {
 
@@ -2267,12 +1273,6 @@ function blackjackStand() {
 
     }
 
-
-    /*
-        KEEP ACTIVE UNTIL DEALER
-        FINISHES. THIS ALSO FIXES
-        THE AUTOMATIC STAND AT 21.
-    */
 
     while (
         blackjackHandValue(
@@ -2301,23 +1301,26 @@ function blackjackStand() {
     );
 
 
-    const playerTotal =
+    const player =
         blackjackHandValue(
             blackjackPlayer
         );
 
 
-    const dealerTotal =
+    const dealer =
         blackjackHandValue(
             blackjackDealer
         );
 
 
     if (
-        dealerTotal > 21
+        dealer > 21 ||
+        player > dealer
     ) {
 
-        payBlackjackNormalWin();
+        profile.balance +=
+            blackjackLockedBet *
+            2;
 
 
         blackjackWinEffect();
@@ -2325,7 +1328,10 @@ function blackjackStand() {
 
         setText(
             "#blackjackMessage",
-            `Dealer busts with ${dealerTotal}. You win ${formatCredits(blackjackLockedBet)}.`
+
+            dealer > 21
+                ? `Dealer busts with ${dealer}. You win!`
+                : `${player} beats ${dealer}. You win!`
         );
 
 
@@ -2334,52 +1340,16 @@ function blackjackStand() {
             "blackjack"
         );
 
-
-        prepareNextBlackjackBet();
-
-        return;
-
     }
 
-
-    if (
-        playerTotal >
-        dealerTotal
-    ) {
-
-        payBlackjackNormalWin();
-
-
-        blackjackWinEffect();
-
-
-        setText(
-            "#blackjackMessage",
-            `${playerTotal} beats ${dealerTotal}. You win ${formatCredits(blackjackLockedBet)}.`
-        );
-
-
-        recordResult(
-            true,
-            "blackjack"
-        );
-
-
-        prepareNextBlackjackBet();
-
-        return;
-
-    }
-
-
-    if (
-        playerTotal <
-        dealerTotal
+    else if (
+        dealer > player
     ) {
 
         setText(
             "#blackjackMessage",
-            `${dealerTotal} beats ${playerTotal}. House wins.`
+
+            `${dealer} beats ${player}. House wins.`
         );
 
 
@@ -2388,51 +1358,62 @@ function blackjackStand() {
             "blackjack"
         );
 
+    }
 
-        prepareNextBlackjackBet();
+    else {
 
-        return;
+        profile.balance +=
+            blackjackLockedBet;
+
+
+        setText(
+            "#blackjackMessage",
+            "PUSH."
+        );
+
+
+        recordResult(
+            null,
+            "blackjack"
+        );
 
     }
 
 
-    profile.balance +=
-        blackjackLockedBet;
-
-
-    setText(
-        "#blackjackMessage",
-        `${playerTotal} to ${dealerTotal} — PUSH.`
-    );
-
-
-    recordResult(
-        null,
-        "blackjack"
-    );
-
-
-    prepareNextBlackjackBet();
+    prepareNextBlackjack();
 
 }
 
 
-/* ==========================================================
-   BLACKJACK NORMAL WIN
-   ========================================================== */
 
-function payBlackjackNormalWin() {
+function prepareNextBlackjack() {
 
-    profile.balance +=
-        blackjackLockedBet *
-        2;
+    blackjackActive =
+        false;
+
+
+    if (
+        blackjackBet >
+        profile.balance
+    ) {
+
+        blackjackBet =
+            profile.balance;
+
+    }
+
+
+    updateBlackjackBetDisplay();
+
+    setBlackjackControls(
+        false
+    );
+
+    saveProfile();
 
 }
 
 
-/* ==========================================================
-   BLACKJACK WIN EFFECT
-   ========================================================== */
 
 function blackjackWinEffect() {
 
@@ -2443,7 +1424,9 @@ function blackjackWinEffect() {
 
 
     if (!table) {
+
         return;
+
     }
 
 
@@ -2460,201 +1443,862 @@ function blackjackWinEffect() {
             );
 
         },
-        2200
+        1800
     );
 
 }
 
 
+
 /* ==========================================================
-   BLACKJACK NEXT HAND
+   ==========================================================
+   ARCADE SLOTS
+   COMPLETELY NAMESPACED gaSlot
+   ==========================================================
    ========================================================== */
 
-function prepareNextBlackjackBet() {
 
-    blackjackActive =
-        false;
+const GA_SLOT_SYMBOLS = [
+
+    {
+        id:"CHERRY",
+        text:"🍒",
+        weight:28
+    },
+
+    {
+        id:"BELL",
+        text:"🔔",
+        weight:22
+    },
+
+    {
+        id:"BAR",
+        text:"BAR",
+        weight:19
+    },
+
+    {
+        id:"CROWN",
+        text:"👑",
+        weight:14
+    },
+
+    {
+        id:"DIAMOND",
+        text:"💎",
+        weight:10
+    },
+
+    {
+        id:"SEVEN",
+        text:"7",
+        weight:7
+    }
+
+];
 
 
-    setBlackjackControls(
+const GA_SLOT_PAYOUTS = {
+
+    CHERRY:3,
+
+    BELL:4,
+
+    BAR:5,
+
+    CROWN:6,
+
+    DIAMOND:8,
+
+    SEVEN:10
+
+};
+
+
+let gaSlotBet =
+    100;
+
+
+let gaSlotSpinning =
+    false;
+
+
+let gaSlotLastWin =
+    0;
+
+
+let gaSlotSpinTimer =
+    null;
+
+
+
+function gaGetRandomSymbol() {
+
+    const totalWeight =
+        GA_SLOT_SYMBOLS.reduce(
+            (sum, symbol) =>
+                sum +
+                symbol.weight,
+            0
+        );
+
+
+    let random =
+        Math.random() *
+        totalWeight;
+
+
+    for (
+        const symbol of
+        GA_SLOT_SYMBOLS
+    ) {
+
+        random -=
+            symbol.weight;
+
+
+        if (
+            random <= 0
+        ) {
+
+            return symbol;
+
+        }
+
+    }
+
+
+    return GA_SLOT_SYMBOLS[0];
+
+}
+
+
+
+function gaCreateRandomReel() {
+
+    return [
+
+        gaGetRandomSymbol(),
+
+        gaGetRandomSymbol(),
+
+        gaGetRandomSymbol()
+
+    ];
+
+}
+
+
+
+function gaRenderSlotReel(
+    reelNumber,
+    symbols
+) {
+
+    const reel =
+        document.getElementById(
+            `gaSlotReel${reelNumber}`
+        );
+
+
+    if (!reel) {
+
+        return;
+
+    }
+
+
+    reel.innerHTML =
+        "";
+
+
+    symbols.forEach(
+        (
+            symbol,
+            index
+        ) => {
+
+            const cell =
+                document.createElement(
+                    "div"
+                );
+
+
+            cell.className =
+                "ga-slot-symbol";
+
+
+            if (
+                index === 1
+            ) {
+
+                cell.classList.add(
+                    "ga-slot-center-symbol"
+                );
+
+            }
+
+
+            cell.dataset.symbol =
+                symbol.text;
+
+
+            cell.textContent =
+                symbol.text;
+
+
+            reel.appendChild(
+                cell
+            );
+
+        }
+    );
+
+}
+
+
+
+function gaUpdateSlotDisplays() {
+
+    setText(
+        "#gaSlotBetAmount",
+        formatCredits(
+            gaSlotBet
+        )
+    );
+
+
+    setText(
+        "#gaSlotWinnings",
+        formatCredits(
+            gaSlotLastWin
+        )
+    );
+
+}
+
+
+
+function gaSetSlotControls(
+    enabled
+) {
+
+    const minus =
+        document.getElementById(
+            "gaSlotBetMinus"
+        );
+
+
+    const plus =
+        document.getElementById(
+            "gaSlotBetPlus"
+        );
+
+
+    const spin =
+        document.getElementById(
+            "gaSlotSpinButton"
+        );
+
+
+    const lever =
+        document.getElementById(
+            "gaSlotLever"
+        );
+
+
+    if (minus) {
+
+        minus.disabled =
+            !enabled;
+
+    }
+
+
+    if (plus) {
+
+        plus.disabled =
+            !enabled;
+
+    }
+
+
+    if (spin) {
+
+        spin.disabled =
+            !enabled;
+
+    }
+
+
+    if (lever) {
+
+        lever.disabled =
+            !enabled;
+
+    }
+
+}
+
+
+
+function gaChangeSlotBet(
+    amount
+) {
+
+    if (
+        gaSlotSpinning
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        profile.balance <
+        100
+    ) {
+
+        gaSlotBet =
+            0;
+
+
+        gaUpdateSlotDisplays();
+
+        return;
+
+    }
+
+
+    gaSlotBet +=
+        Number(amount);
+
+
+    gaSlotBet =
+        Math.max(
+            100,
+            gaSlotBet
+        );
+
+
+    gaSlotBet =
+        Math.min(
+            gaSlotBet,
+            profile.balance
+        );
+
+
+    gaUpdateSlotDisplays();
+
+}
+
+
+
+function gaAnimateSlotLever() {
+
+    const lever =
+        document.getElementById(
+            "gaSlotLever"
+        );
+
+
+    if (!lever) {
+
+        return;
+
+    }
+
+
+    lever.classList.add(
+        "ga-slot-lever-pulled"
+    );
+
+
+    setTimeout(
+        () => {
+
+            lever.classList.remove(
+                "ga-slot-lever-pulled"
+            );
+
+        },
+        500
+    );
+
+}
+
+
+
+function gaStartReelAnimation(
+    reelNumber
+) {
+
+    const reel =
+        document.getElementById(
+            `gaSlotReel${reelNumber}`
+        );
+
+
+    if (!reel) {
+
+        return null;
+
+    }
+
+
+    reel.classList.add(
+        "ga-slot-spinning"
+    );
+
+
+    return setInterval(
+        () => {
+
+            gaRenderSlotReel(
+                reelNumber,
+                gaCreateRandomReel()
+            );
+
+        },
+        70
+    );
+
+}
+
+
+
+function gaStopReelAnimation(
+    reelNumber,
+    timer,
+    finalSymbols
+) {
+
+    clearInterval(
+        timer
+    );
+
+
+    const reel =
+        document.getElementById(
+            `gaSlotReel${reelNumber}`
+        );
+
+
+    if (reel) {
+
+        reel.classList.remove(
+            "ga-slot-spinning"
+        );
+
+    }
+
+
+    gaRenderSlotReel(
+        reelNumber,
+        finalSymbols
+    );
+
+}
+
+
+
+function gaEvaluateSlotWin(
+    finalReels
+) {
+
+    const centerSymbols = [
+
+        finalReels[0][1],
+
+        finalReels[1][1],
+
+        finalReels[2][1]
+
+    ];
+
+
+    const [
+        first,
+        second,
+        third
+    ] =
+        centerSymbols;
+
+
+    if (
+        first.id === second.id &&
+        second.id === third.id
+    ) {
+
+        const multiplier =
+            GA_SLOT_PAYOUTS[
+                first.id
+            ]
+            ||
+            3;
+
+
+        return {
+
+            won:true,
+
+            multiplier,
+
+            message:
+                `${first.text} ${first.text} ${first.text} — ${multiplier}× WIN!`
+
+        };
+
+    }
+
+
+    if (
+        first.id === second.id ||
+        second.id === third.id ||
+        first.id === third.id
+    ) {
+
+        return {
+
+            won:true,
+
+            multiplier:1,
+
+            message:
+                "Two matching symbols — bet returned!"
+
+        };
+
+    }
+
+
+    return {
+
+        won:false,
+
+        multiplier:0,
+
+        message:
+            "No win. Try again."
+
+    };
+
+}
+
+
+
+function gaHighlightWinningReels() {
+
+    for (
+        let i = 1;
+
+        i <= 3;
+
+        i++
+    ) {
+
+        const reel =
+            document.getElementById(
+                `gaSlotReel${i}`
+            );
+
+
+        if (reel) {
+
+            reel.classList.add(
+                "ga-slot-winner"
+            );
+
+
+            setTimeout(
+                () => {
+
+                    reel.classList.remove(
+                        "ga-slot-winner"
+                    );
+
+                },
+                1800
+            );
+
+        }
+
+    }
+
+}
+
+
+
+function gaSpinSlots() {
+
+    if (
+        gaSlotSpinning
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        gaSlotBet < 100
+    ) {
+
+        alert(
+            "Minimum slot bet is 100 AC."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        profile.balance <
+        gaSlotBet
+    ) {
+
+        alert(
+            "You do not have enough Ace Credits."
+        );
+
+        return;
+
+    }
+
+
+    gaSlotSpinning =
+        true;
+
+
+    gaSlotLastWin =
+        0;
+
+
+    gaUpdateSlotDisplays();
+
+
+    gaSetSlotControls(
         false
     );
 
 
-    if (
-        blackjackBet >
-        profile.balance
-    ) {
-
-        blackjackBet =
-            profile.balance;
-
-    }
+    gaAnimateSlotLever();
 
 
-    if (
-        profile.balance <= 0
-    ) {
+    setText(
+        "#gaSlotMessage",
+        "Spinning..."
+    );
 
-        blackjackBet =
-            0;
 
-    }
+    /*
+        TAKE WAGER FIRST
+    */
+
+    profile.balance -=
+        gaSlotBet;
 
 
     saveProfile();
 
 
-    updateBlackjackBetDisplay();
+    /*
+        FINAL RESULTS ARE CREATED
+        BEFORE ANIMATION SO THE
+        REELS AND PAYOUT ALWAYS MATCH.
+    */
 
-}
+    const finalReels = [
 
+        gaCreateRandomReel(),
 
-/* ==========================================================
-   ==========================================================
-   SLOTS
-   ==========================================================
-   ========================================================== */
+        gaCreateRandomReel(),
 
-function spinSlots() {
-
-    const display =
-        document.getElementById(
-            "slotDisplay"
-        );
-
-
-    if (!display) {
-        return;
-    }
-
-
-    const symbols = [
-        "7",
-        "A",
-        "♠",
-        "♦",
-        "★"
-    ];
-
-
-    const result = [
-
-        symbols[
-            Math.floor(
-                Math.random() *
-                symbols.length
-            )
-        ],
-
-        symbols[
-            Math.floor(
-                Math.random() *
-                symbols.length
-            )
-        ],
-
-        symbols[
-            Math.floor(
-                Math.random() *
-                symbols.length
-            )
-        ]
+        gaCreateRandomReel()
 
     ];
 
 
-    display.textContent =
-        result.join(" ");
-
-
-    const jackpot =
-        result[0] === result[1] &&
-        result[1] === result[2];
-
-
-    if (jackpot) {
-
-        profile.balance +=
-            2500;
-
-
-        setText(
-            "#slotMessage",
-            "JACKPOT! +2,500 AC"
+    const timer1 =
+        gaStartReelAnimation(
+            1
         );
 
 
-        recordResult(
-            true,
-            "slots"
-        );
-
-    }
-
-    else {
-
-        setText(
-            "#slotMessage",
-            "No match. Spin again."
+    const timer2 =
+        gaStartReelAnimation(
+            2
         );
 
 
-        recordResult(
-            false,
-            "slots"
+    const timer3 =
+        gaStartReelAnimation(
+            3
         );
 
-    }
+
+    setTimeout(
+        () => {
+
+            gaStopReelAnimation(
+                1,
+                timer1,
+                finalReels[0]
+            );
+
+        },
+        950
+    );
+
+
+    setTimeout(
+        () => {
+
+            gaStopReelAnimation(
+                2,
+                timer2,
+                finalReels[1]
+            );
+
+        },
+        1350
+    );
+
+
+    setTimeout(
+        () => {
+
+            gaStopReelAnimation(
+                3,
+                timer3,
+                finalReels[2]
+            );
+
+        },
+        1750
+    );
+
+
+    gaSlotSpinTimer =
+        setTimeout(
+            () => {
+
+                const result =
+                    gaEvaluateSlotWin(
+                        finalReels
+                    );
+
+
+                if (
+                    result.won
+                ) {
+
+                    gaSlotLastWin =
+                        gaSlotBet *
+                        result.multiplier;
+
+
+                    profile.balance +=
+                        gaSlotLastWin;
+
+
+                    gaHighlightWinningReels();
+
+
+                    setText(
+                        "#gaSlotMessage",
+
+                        `${result.message} +${formatCredits(gaSlotLastWin)}`
+                    );
+
+
+                    recordResult(
+                        true,
+                        "slots"
+                    );
+
+                }
+
+                else {
+
+                    gaSlotLastWin =
+                        0;
+
+
+                    setText(
+                        "#gaSlotMessage",
+                        result.message
+                    );
+
+
+                    recordResult(
+                        false,
+                        "slots"
+                    );
+
+                }
+
+
+                if (
+                    profile.balance <
+                    100
+                ) {
+
+                    gaSlotBet =
+                        0;
+
+                }
+
+                else if (
+                    gaSlotBet >
+                    profile.balance
+                ) {
+
+                    gaSlotBet =
+                        profile.balance;
+
+                }
+
+
+                gaUpdateSlotDisplays();
+
+
+                gaSlotSpinning =
+                    false;
+
+
+                gaSetSlotControls(
+                    true
+                );
+
+
+                saveProfile();
+
+
+                gaSlotSpinTimer =
+                    null;
+
+            },
+            1900
+        );
 
 }
 
 
+
 /* ==========================================================
-   ==========================================================
-   EUROPEAN ROULETTE
-   ==========================================================
+   ROULETTE
    ========================================================== */
 
 const EUROPEAN_WHEEL = [
 
-    0,
-    32,
-    15,
-    19,
-    4,
-    21,
-    2,
-    25,
-    17,
-    34,
-    6,
-    27,
-    13,
-    36,
-    11,
-    30,
-    8,
-    23,
-    10,
-    5,
-    24,
-    16,
-    33,
-    1,
-    20,
-    14,
-    31,
-    9,
-    22,
-    18,
-    29,
-    7,
-    28,
-    12,
-    35,
-    3,
-    26
+    0,32,15,19,4,21,2,25,17,
+    34,6,27,13,36,11,30,8,23,
+    10,5,24,16,33,1,20,14,31,
+    9,22,18,29,7,28,12,35,3,26
 
 ];
 
@@ -2662,24 +2306,10 @@ const EUROPEAN_WHEEL = [
 const RED_NUMBERS =
     new Set([
 
-        1,
-        3,
-        5,
-        7,
-        9,
-        12,
-        14,
-        16,
-        18,
-        19,
-        21,
-        23,
-        25,
-        27,
-        30,
-        32,
-        34,
-        36
+        1,3,5,7,9,
+        12,14,16,18,
+        19,21,23,25,27,
+        30,32,34,36
 
     ]);
 
@@ -2713,9 +2343,6 @@ let rouletteBallRotation =
     0;
 
 
-/* ==========================================================
-   ROULETTE COLORS
-   ========================================================== */
 
 function rouletteColor(
     number
@@ -2737,6 +2364,7 @@ function rouletteColor(
         : "black";
 
 }
+
 
 
 function rouletteColorHex(
@@ -2761,9 +2389,6 @@ function rouletteColorHex(
 }
 
 
-/* ==========================================================
-   BUILD ROULETTE WHEEL
-   ========================================================== */
 
 function buildRouletteWheel() {
 
@@ -2898,7 +2523,7 @@ function buildRouletteWheel() {
 
 
             label.style.transform =
-                `translate(-50%, -50%) rotate(${angle}deg)`;
+                `translate(-50%,-50%) rotate(${angle}deg)`;
 
 
             layer.appendChild(
@@ -2911,9 +2536,6 @@ function buildRouletteWheel() {
 }
 
 
-/* ==========================================================
-   BUILD ROULETTE TABLE
-   ========================================================== */
 
 function buildRouletteTable() {
 
@@ -2924,7 +2546,9 @@ function buildRouletteTable() {
 
 
     if (!grid) {
+
         return;
+
     }
 
 
@@ -2934,7 +2558,9 @@ function buildRouletteTable() {
 
     for (
         let column = 0;
+
         column < 12;
+
         column++
     ) {
 
@@ -2945,9 +2571,13 @@ function buildRouletteTable() {
 
 
         const numbers = [
+
             first + 2,
+
             first + 1,
+
             first
+
         ];
 
 
@@ -2997,9 +2627,6 @@ function buildRouletteTable() {
 }
 
 
-/* ==========================================================
-   ROULETTE BET SELECTION
-   ========================================================== */
 
 function clearRouletteSelection() {
 
@@ -3018,6 +2645,7 @@ function clearRouletteSelection() {
         );
 
 }
+
 
 
 function selectNumberBet(
@@ -3068,10 +2696,11 @@ function selectNumberBet(
 
     setText(
         "#selectedPayout",
-        "STRAIGHT BET • 35:1"
+        "35:1 PAYOUT"
     );
 
 }
+
 
 
 function selectRouletteBet(
@@ -3090,49 +2719,49 @@ function selectRouletteBet(
 
     const bets = {
 
-        low: {
-            label: "1 TO 18",
-            payout: 1
+        low:{
+            label:"1 TO 18",
+            payout:1
         },
 
-        even: {
-            label: "EVEN",
-            payout: 1
+        even:{
+            label:"EVEN",
+            payout:1
         },
 
-        red: {
-            label: "RED",
-            payout: 1
+        red:{
+            label:"RED",
+            payout:1
         },
 
-        black: {
-            label: "BLACK",
-            payout: 1
+        black:{
+            label:"BLACK",
+            payout:1
         },
 
-        odd: {
-            label: "ODD",
-            payout: 1
+        odd:{
+            label:"ODD",
+            payout:1
         },
 
-        high: {
-            label: "19 TO 36",
-            payout: 1
+        high:{
+            label:"19 TO 36",
+            payout:1
         },
 
-        dozen1: {
-            label: "1ST 12",
-            payout: 2
+        dozen1:{
+            label:"1ST 12",
+            payout:2
         },
 
-        dozen2: {
-            label: "2ND 12",
-            payout: 2
+        dozen2:{
+            label:"2ND 12",
+            payout:2
         },
 
-        dozen3: {
-            label: "3RD 12",
-            payout: 2
+        dozen3:{
+            label:"3RD 12",
+            payout:2
         }
 
     };
@@ -3183,9 +2812,6 @@ function selectRouletteBet(
 }
 
 
-/* ==========================================================
-   ROULETTE WAGER
-   ========================================================== */
 
 function changeBet(
     amount
@@ -3225,8 +2851,8 @@ function changeBet(
 
         rouletteBetAmount =
             Math.min(
-                profile.balance,
-                rouletteBetAmount
+                rouletteBetAmount,
+                profile.balance
             );
 
     }
@@ -3242,9 +2868,6 @@ function changeBet(
 }
 
 
-/* ==========================================================
-   ROULETTE WIN CHECK
-   ========================================================== */
 
 function rouletteBetWins(
     number
@@ -3281,119 +2904,80 @@ function rouletteBetWins(
     }
 
 
-    if (
-        rouletteBet.type ===
-        "red"
+    switch(
+        rouletteBet.type
     ) {
 
-        return RED_NUMBERS.has(
-            number
-        );
+        case "red":
 
-    }
-
-
-    if (
-        rouletteBet.type ===
-        "black"
-    ) {
-
-        return !RED_NUMBERS.has(
-            number
-        );
-
-    }
+            return RED_NUMBERS.has(
+                number
+            );
 
 
-    if (
-        rouletteBet.type ===
-        "even"
-    ) {
+        case "black":
 
-        return (
-            number %
-            2 ===
-            0
-        );
-
-    }
+            return !RED_NUMBERS.has(
+                number
+            );
 
 
-    if (
-        rouletteBet.type ===
-        "odd"
-    ) {
+        case "even":
 
-        return (
-            number %
-            2 !==
-            0
-        );
-
-    }
+            return (
+                number %
+                2 ===
+                0
+            );
 
 
-    if (
-        rouletteBet.type ===
-        "low"
-    ) {
+        case "odd":
 
-        return (
-            number >= 1 &&
-            number <= 18
-        );
-
-    }
+            return (
+                number %
+                2 !==
+                0
+            );
 
 
-    if (
-        rouletteBet.type ===
-        "high"
-    ) {
+        case "low":
 
-        return (
-            number >= 19 &&
-            number <= 36
-        );
-
-    }
+            return (
+                number >= 1 &&
+                number <= 18
+            );
 
 
-    if (
-        rouletteBet.type ===
-        "dozen1"
-    ) {
+        case "high":
 
-        return (
-            number >= 1 &&
-            number <= 12
-        );
-
-    }
+            return (
+                number >= 19 &&
+                number <= 36
+            );
 
 
-    if (
-        rouletteBet.type ===
-        "dozen2"
-    ) {
+        case "dozen1":
 
-        return (
-            number >= 13 &&
-            number <= 24
-        );
-
-    }
+            return (
+                number >= 1 &&
+                number <= 12
+            );
 
 
-    if (
-        rouletteBet.type ===
-        "dozen3"
-    ) {
+        case "dozen2":
 
-        return (
-            number >= 25 &&
-            number <= 36
-        );
+            return (
+                number >= 13 &&
+                number <= 24
+            );
+
+
+        case "dozen3":
+
+            return (
+                number >= 25 &&
+                number <= 36
+            );
 
     }
 
@@ -3401,6 +2985,7 @@ function rouletteBetWins(
     return false;
 
 }
+
 
 
 function normalizeAngle(
@@ -3421,9 +3006,6 @@ function normalizeAngle(
 }
 
 
-/* ==========================================================
-   SPIN ROULETTE
-   ========================================================== */
 
 function spinRoulette() {
 
@@ -3457,7 +3039,7 @@ function spinRoulette() {
     ) {
 
         alert(
-            "You do not have enough Ace Credits."
+            "Not enough Ace Credits."
         );
 
         return;
@@ -3471,7 +3053,7 @@ function spinRoulette() {
         );
 
 
-    const ballTrack =
+    const ball =
         document.getElementById(
             "ballTrack"
         );
@@ -3485,7 +3067,7 @@ function spinRoulette() {
 
     if (
         !wheel ||
-        !ballTrack
+        !ball
     ) {
 
         return;
@@ -3512,42 +3094,32 @@ function spinRoulette() {
         );
 
 
-    const winningNumber =
+    const number =
         EUROPEAN_WHEEL[
             winningIndex
         ];
 
 
-    const targetAngle =
+    const target =
         winningIndex *
         POCKET_ANGLE;
 
 
-    const current =
-        normalizeAngle(
-            rouletteWheelRotation
-        );
-
-
-    const desired =
-        normalizeAngle(
-            -targetAngle
-        );
-
-
     const difference =
         normalizeAngle(
-            desired -
-            current
+            (
+                -target
+            )
+            -
+            normalizeAngle(
+                rouletteWheelRotation
+            )
         );
 
 
     rouletteWheelRotation +=
-        (
-            7 *
-            360
-        )
-        +
+        7 *
+        360 +
         difference;
 
 
@@ -3562,26 +3134,26 @@ function spinRoulette() {
     );
 
 
-    ballTrack.classList.remove(
+    ball.classList.remove(
         "ball-drop"
     );
 
 
-    void ballTrack.offsetWidth;
+    void ball.offsetWidth;
 
 
     wheel.style.transform =
         `rotate(${rouletteWheelRotation}deg)`;
 
 
-    ballTrack.style.transform =
+    ball.style.transform =
         `rotate(${rouletteBallRotation}deg)`;
 
 
     setTimeout(
         () => {
 
-            ballTrack.classList.add(
+            ball.classList.add(
                 "ball-drop"
             );
 
@@ -3594,7 +3166,7 @@ function spinRoulette() {
         () => {
 
             finishRoulette(
-                winningNumber
+                number
             );
 
 
@@ -3616,9 +3188,6 @@ function spinRoulette() {
 }
 
 
-/* ==========================================================
-   FINISH ROULETTE
-   ========================================================== */
 
 function finishRoulette(
     number
@@ -3701,8 +3270,9 @@ function finishRoulette(
 }
 
 
+
 /* ==========================================================
-   HIGH ROLL DICE
+   DICE
    ========================================================== */
 
 function rollDice() {
@@ -3752,8 +3322,7 @@ function rollDice() {
 
 
     if (
-        player >
-        house
+        player > house
     ) {
 
         profile.balance +=
@@ -3774,8 +3343,7 @@ function rollDice() {
     }
 
     else if (
-        player <
-        house
+        player < house
     ) {
 
         setText(
@@ -3809,122 +3377,28 @@ function rollDice() {
 }
 
 
+
 /* ==========================================================
-   LEADERBOARD
+   OLD SLOT COMPATIBILITY
    ========================================================== */
 
-function sortLeaderboard(
-    type
-) {
+/*
+    If an older page still calls spinSlots(),
+    it will use the new machine instead of
+    throwing an error.
+*/
 
-    const table =
-        document.getElementById(
-            "leaderboardTable"
-        );
+function spinSlots() {
 
-
-    if (!table) {
-        return;
-    }
-
-
-    const body =
-        table.querySelector(
-            "tbody"
-        );
-
-
-    if (!body) {
-        return;
-    }
-
-
-    const rows =
-        Array.from(
-            body.querySelectorAll(
-                "tr"
-            )
-        );
-
-
-    rows.sort(
-        (a, b) => {
-
-            return (
-                Number(
-                    b.dataset[type] || 0
-                )
-                -
-                Number(
-                    a.dataset[type] || 0
-                )
-            );
-
-        }
-    );
-
-
-    rows.forEach(
-        (
-            row,
-            index
-        ) => {
-
-            const cell =
-                row.querySelector(
-                    "td"
-                );
-
-
-            if (cell) {
-
-                cell.textContent =
-                    String(
-                        index + 1
-                    )
-                    .padStart(
-                        2,
-                        "0"
-                    );
-
-            }
-
-
-            body.appendChild(
-                row
-            );
-
-        }
-    );
+    gaSpinSlots();
 
 }
 
 
+
 /* ==========================================================
-   EXPOSE FUNCTIONS TO HTML
+   WINDOW FUNCTIONS
    ========================================================== */
-
-window.claimDaily =
-    claimDaily;
-
-
-window.buyItem =
-    buyItem;
-
-
-window.filterCollection =
-    filterCollection;
-
-
-window.changeUsername =
-    changeUsername;
-
-
-window.resetGildedProfile =
-    resetGildedProfile;
-
-
-/* BLACKJACK */
 
 window.startBlackjack =
     startBlackjack;
@@ -3946,10 +3420,6 @@ window.clearBlackjackBet =
     clearBlackjackBet;
 
 
-window.setBlackjackBet =
-    setBlackjackBet;
-
-
 window.changeBlackjackBet =
     changeBlackjackBet;
 
@@ -3958,7 +3428,17 @@ window.maxBlackjackBet =
     maxBlackjackBet;
 
 
-/* SLOTS */
+/* NEW SLOT FUNCTIONS */
+
+window.gaSpinSlots =
+    gaSpinSlots;
+
+
+window.gaChangeSlotBet =
+    gaChangeSlotBet;
+
+
+/* OLD SLOT FUNCTION */
 
 window.spinSlots =
     spinSlots;
@@ -3988,30 +3468,19 @@ window.rollDice =
     rollDice;
 
 
-window.sortLeaderboard =
-    sortLeaderboard;
-
 
 /* ==========================================================
-   INITIALIZE
+   INITIALIZATION
    ========================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
-        updateBalanceDisplays();
-
-        updateProfilePage();
-
-        updateCollectionPage();
-
-        updateStoreButtons();
+        updateAllDisplays();
 
 
-        /*
-            BLACKJACK
-        */
+        /* BLACKJACK */
 
         renderBlackjack(
             false
@@ -4026,9 +3495,33 @@ document.addEventListener(
         updateBlackjackBetDisplay();
 
 
-        /*
-            ROULETTE
-        */
+        /* SLOT MACHINE */
+
+        if (
+            profile.balance <
+            100
+        ) {
+
+            gaSlotBet =
+                0;
+
+        }
+
+        else if (
+            gaSlotBet >
+            profile.balance
+        ) {
+
+            gaSlotBet =
+                profile.balance;
+
+        }
+
+
+        gaUpdateSlotDisplays();
+
+
+        /* ROULETTE */
 
         buildRouletteWheel();
 
