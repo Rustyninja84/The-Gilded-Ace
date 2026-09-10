@@ -1366,3 +1366,97 @@ body.horse-racing-page{
     display:none !important;
     content:none !important;
 }
+
+
+/* =========================================================
+   CUSTOM GENERATED RACEHORSE v70
+========================================================= */
+
+.horse-sprite-wrap{
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    overflow:visible !important;
+}
+
+.horse-sprite-image{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    object-position:center !important;
+
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+
+    mix-blend-mode:normal !important;
+    filter:drop-shadow(0 7px 4px rgba(0,0,0,.42)) !important;
+
+    pointer-events:none;
+    user-select:none;
+    -webkit-user-drag:none;
+}
+
+.sprite-number{
+    display:none !important;
+}
+
+.race-horse::before{
+    display:none !important;
+    content:none !important;
+}
+
+/* Bigger, more readable horse on the track */
+.realistic-race-track .race-horse,
+.race-horse{
+    width:190px !important;
+    height:108px !important;
+}
+
+/* Keep the natural proportions of the generated horse */
+.realistic-race-track .horse-sprite-wrap,
+.realistic-race-track .horse-sprite-image,
+.horse-sprite-wrap,
+.horse-sprite-image{
+    width:190px !important;
+    height:108px !important;
+}
+
+/* Smooth gallop motion without warping the image */
+.race-horse.running .horse-sprite-wrap{
+    animation:customHorseGallop .34s ease-in-out infinite alternate;
+}
+
+@keyframes customHorseGallop{
+    from{
+        transform:translateY(-1px) rotate(-.3deg);
+    }
+    to{
+        transform:translateY(2px) rotate(.3deg);
+    }
+}
+
+@media (max-width:1000px){
+    .realistic-race-track .race-horse,
+    .race-horse,
+    .realistic-race-track .horse-sprite-wrap,
+    .realistic-race-track .horse-sprite-image,
+    .horse-sprite-wrap,
+    .horse-sprite-image{
+        width:155px !important;
+        height:90px !important;
+    }
+}
+
+@media (max-width:720px){
+    .realistic-race-track .race-horse,
+    .race-horse,
+    .realistic-race-track .horse-sprite-wrap,
+    .realistic-race-track .horse-sprite-image,
+    .horse-sprite-wrap,
+    .horse-sprite-image{
+        width:118px !important;
+        height:70px !important;
+    }
+}
