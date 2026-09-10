@@ -16,7 +16,7 @@
 
     <link
         rel="stylesheet"
-        href="styles.css?v=9"
+        href="styles.css?v=11"
     >
 
 </head>
@@ -228,10 +228,13 @@
     </div>
 
 
+
     <div class="blackjack-casino-table">
 
 
-        <!-- DEALER -->
+        <!-- ===================================================
+             DEALER HAND
+             =================================================== -->
 
         <div class="blackjack-dealer-area">
 
@@ -256,9 +259,21 @@
                 id="dealerCards"
             >
 
-                <div class="playing-card card-back"></div>
+                <div class="playing-card card-back">
 
-                <div class="playing-card card-back"></div>
+                    <div class="card-back-inner">
+                        <span>A</span>
+                    </div>
+
+                </div>
+
+                <div class="playing-card card-back">
+
+                    <div class="card-back-inner">
+                        <span>A</span>
+                    </div>
+
+                </div>
 
             </div>
 
@@ -266,7 +281,9 @@
 
 
 
-        <!-- TABLE LOGO / RULES -->
+        <!-- ===================================================
+             TABLE BRANDING
+             =================================================== -->
 
         <div class="blackjack-table-branding">
 
@@ -294,7 +311,9 @@
 
 
 
-        <!-- PLAYER -->
+        <!-- ===================================================
+             PLAYER HAND
+             =================================================== -->
 
         <div class="blackjack-player-area">
 
@@ -319,9 +338,21 @@
                 id="playerCards"
             >
 
-                <div class="playing-card card-back"></div>
+                <div class="playing-card card-back">
 
-                <div class="playing-card card-back"></div>
+                    <div class="card-back-inner">
+                        <span>A</span>
+                    </div>
+
+                </div>
+
+                <div class="playing-card card-back">
+
+                    <div class="card-back-inner">
+                        <span>A</span>
+                    </div>
+
+                </div>
 
             </div>
 
@@ -329,7 +360,9 @@
 
 
 
-        <!-- BET PANEL -->
+        <!-- ===================================================
+             BETTING PANEL
+             =================================================== -->
 
         <div class="blackjack-bet-panel">
 
@@ -337,11 +370,12 @@
                 Bet Amount
             </span>
 
+
             <div
                 class="blackjack-current-bet"
                 id="blackjackBetAmount"
             >
-                500 AC
+                0 AC
             </div>
 
 
@@ -354,12 +388,14 @@
                     −
                 </button>
 
+
                 <button
                     type="button"
                     onclick="changeBlackjackBet(100)"
                 >
                     +
                 </button>
+
 
                 <button
                     type="button"
@@ -378,6 +414,7 @@
                 Current Balance
             </span>
 
+
             <div
                 class="blackjack-balance"
                 data-balance
@@ -389,7 +426,9 @@
 
 
 
-        <!-- GAME STATUS -->
+        <!-- ===================================================
+             GAME CONTROLS
+             =================================================== -->
 
         <div class="blackjack-control-panel">
 
@@ -397,11 +436,12 @@
                 Game Status
             </span>
 
+
             <div
                 class="blackjack-status"
                 id="blackjackMessage"
             >
-                Place your bet and press DEAL.
+                Select chips to place your bet.
             </div>
 
 
@@ -443,67 +483,93 @@
 
 
 
-        <!-- CHIP RACK -->
+        <!-- ===================================================
+             CHIP RACK
+             =================================================== -->
 
         <div class="blackjack-chip-rack">
-
 
             <button
                 type="button"
                 class="casino-chip chip-100"
-                onclick="setBlackjackBet(100)"
+                onclick="addBlackjackChip(100)"
+                title="Add 100 AC"
             >
+
                 <span>
                     100
                 </span>
+
             </button>
 
 
             <button
                 type="button"
                 class="casino-chip chip-500"
-                onclick="setBlackjackBet(500)"
+                onclick="addBlackjackChip(500)"
+                title="Add 500 AC"
             >
+
                 <span>
                     500
                 </span>
+
             </button>
 
 
             <button
                 type="button"
                 class="casino-chip chip-1000"
-                onclick="setBlackjackBet(1000)"
+                onclick="addBlackjackChip(1000)"
+                title="Add 1,000 AC"
             >
+
                 <span>
                     1K
                 </span>
+
             </button>
 
 
             <button
                 type="button"
                 class="casino-chip chip-5000"
-                onclick="setBlackjackBet(5000)"
+                onclick="addBlackjackChip(5000)"
+                title="Add 5,000 AC"
             >
+
                 <span>
                     5K
                 </span>
+
             </button>
 
 
             <button
                 type="button"
                 class="casino-chip chip-25000"
-                onclick="setBlackjackBet(25000)"
+                onclick="addBlackjackChip(25000)"
+                title="Add 25,000 AC"
             >
+
                 <span>
                     25K
                 </span>
+
             </button>
 
 
+            <button
+                type="button"
+                class="blackjack-clear-chip"
+                onclick="clearBlackjackBet()"
+                title="Clear Bet"
+            >
+                CLEAR
+            </button>
+
         </div>
+
 
     </div>
 
@@ -611,7 +677,9 @@
                         id="roulettePocketLayer"
                     ></div>
 
+
                     <div class="roulette-inner-ring"></div>
+
 
                     <div class="roulette-center">
 
@@ -639,7 +707,7 @@
 
 
 
-        <!-- CONTROLS -->
+        <!-- ROULETTE CONTROLS -->
 
         <div class="roulette-controls">
 
@@ -664,6 +732,7 @@
                     Bet Amount
                 </span>
 
+
                 <div
                     class="stat"
                     id="betAmount"
@@ -681,12 +750,14 @@
                         −100
                     </button>
 
+
                     <button
                         type="button"
                         onclick="changeBet(100)"
                     >
                         +100
                     </button>
+
 
                     <button
                         type="button"
@@ -707,12 +778,14 @@
                     Selected Bet
                 </span>
 
+
                 <div
                     class="roulette-selected-bet"
                     id="selectedBet"
                 >
                     NONE
                 </div>
+
 
                 <div
                     class="roulette-payout"
@@ -734,14 +807,15 @@
                 Spin Roulette
             </button>
 
-
         </div>
 
     </div>
 
 
 
-    <!-- BETTING TABLE -->
+    <!-- ===================================================
+         ROULETTE TABLE
+         =================================================== -->
 
     <div class="roulette-table-wrapper">
 
@@ -776,11 +850,14 @@
                 id="rouletteNumberGrid"
             ></div>
 
-
         </div>
 
 
+
+        <!-- DOZENS -->
+
         <div class="roulette-dozens">
+
 
             <button
                 type="button"
@@ -789,12 +866,14 @@
                 1ST 12
             </button>
 
+
             <button
                 type="button"
                 onclick="selectRouletteBet('dozen2', this)"
             >
                 2ND 12
             </button>
+
 
             <button
                 type="button"
@@ -806,7 +885,11 @@
         </div>
 
 
+
+        <!-- OUTSIDE BETS -->
+
         <div class="roulette-outside-bets">
+
 
             <button
                 type="button"
@@ -815,12 +898,14 @@
                 1 TO 18
             </button>
 
+
             <button
                 type="button"
                 onclick="selectRouletteBet('even', this)"
             >
                 EVEN
             </button>
+
 
             <button
                 type="button"
@@ -830,6 +915,7 @@
                 RED
             </button>
 
+
             <button
                 type="button"
                 class="roulette-black-bet"
@@ -838,12 +924,14 @@
                 BLACK
             </button>
 
+
             <button
                 type="button"
                 onclick="selectRouletteBet('odd', this)"
             >
                 ODD
             </button>
+
 
             <button
                 type="button"
@@ -853,6 +941,7 @@
             </button>
 
         </div>
+
 
 
         <div class="notice roulette-payout-notice">
@@ -908,6 +997,7 @@
 
     <div class="simple-game">
 
+
         <div
             style="
                 display:flex;
@@ -916,6 +1006,7 @@
                 margin-bottom:25px;
             "
         >
+
 
             <div>
 
@@ -950,6 +1041,7 @@
 
             </div>
 
+
         </div>
 
 
@@ -974,6 +1066,10 @@
 
 
 
+<!-- =======================================================
+     PLAY MONEY NOTICE
+     ======================================================= -->
+
 <section class="section">
 
     <div class="container">
@@ -997,6 +1093,10 @@
 
 
 
+<!-- =======================================================
+     FOOTER
+     ======================================================= -->
+
 <footer>
 
     <strong>
@@ -1010,7 +1110,11 @@
 
 
 
-<script src="script.js?v=9"></script>
+<!-- =======================================================
+     SCRIPT
+     ======================================================= -->
+
+<script src="script.js?v=12"></script>
 
 
 </body>
