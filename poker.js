@@ -110,7 +110,7 @@ function bindPokerButtons() {
     $("foldButton")?.addEventListener("click", () => pokerAction("fold"));
     $("checkButton")?.addEventListener("click", () => pokerAction("check"));
     $("callButton")?.addEventListener("click", () => pokerAction("call"));
-    $("allInButton")?.addEventListener("click", () => pokerAction("allin"));
+    $("allInButton")?.addEventListener("click", pokerAllIn);
     $("raiseButton")?.addEventListener("click", () => {
         const amount = Number($("raiseAmount")?.value || 0);
         pokerAction("raise", amount);
@@ -373,6 +373,19 @@ function queuePokerRefresh() {
 function renderPokerTable() {
     if (!pokerRoom) return;
 
+    const mySeatForBalance = pokerSeats.find(s => s.user_id === pokerUser.id);
+    const walletBalance = Number(pokerProfile?.balance || 0);
+    const tableStack = Number(mySeatForBalance?.stack || 0);
+    const tableWealth = walletBalance + tableStack;
+
+    if ($("pokerHeaderBalance")) {
+        $("pokerHeaderBalance").textContent = `${fmt(tableWealth)} AC`;
+    }
+
+    if ($("pokerPlayerBalance")) {
+        $("pokerPlayerBalance").textContent = `${fmt(tableWealth)} AC`;
+    }
+
     $("pokerRoomName").textContent = pokerRoom.name || "Gilded Table";
     $("pokerStreet").textContent = String(pokerRoom.street || "waiting").toUpperCase();
     $("pokerPot").textContent = `${fmt(pokerRoom.pot)} AC`;
@@ -584,6 +597,48 @@ async function pokerAction(action, amount = null) {
         renderPokerActionControls();
     }
 }
+
+
+async function pokerAllIn() {
+    if (actionBusy || !pokerRoom?.id) return;
+
+    const mySeat = pokerSeats.find(s => s.user_id === pokerUser.id);
+
+    if (!mySeat || Number(mySeat.stack || 0) <= 0) {
+        setMessage("You do not have chips available to move all-in.", "error");
+        return;
+    }
+
+    const confirmed = window.confirm(
+        `Move ALL IN for ${fmt(mySeat.stack)} AC?`
+    );
+
+    if (!confirmed) return;
+
+    actionBusy = true;
+    renderPokerActionControls();
+
+    try {
+        const { error } = await gaPokerSupabase.rpc(
+            "poker_player_all_in",
+            { p_room: pokerRoom.id }
+        );
+
+        if (error) throw error;
+
+        await refreshPokerTable(pokerRoom.id);
+    } catch (error) {
+        console.error("ALL IN failed:", error);
+        setMessage(
+            error.message || "ALL IN failed.",
+            "error"
+        );
+    } finally {
+        actionBusy = false;
+        renderPokerActionControls();
+    }
+}
+
 
 async function startPokerHand() {
     if (actionBusy || !pokerRoom?.id) return;
