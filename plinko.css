@@ -1,0 +1,551 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+    --plinko-bg:#050505;
+    --plinko-panel:#0d0d0d;
+    --plinko-panel2:#131313;
+    --plinko-gold:#d4a632;
+    --plinko-gold2:#f2cc69;
+    --plinko-burg:#720916;
+    --plinko-text:#f1eee7;
+    --plinko-muted:#968f84;
+    --plinko-line:rgba(212,166,50,.34);
+}
+
+*{box-sizing:border-box}
+
+body.ga-plinko-page{
+    margin:0;
+    background:
+        radial-gradient(circle at 50% -8%,rgba(111,8,23,.14),transparent 32%),
+        #050505;
+    color:var(--plinko-text);
+    font-family:Inter,Arial,sans-serif;
+}
+
+.plinko-page{
+    width:min(1500px,calc(100% - 42px));
+    margin:0 auto;
+    padding:18px 0 64px;
+}
+
+.plinko-game-tabs{
+    display:grid;
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:8px;
+    margin-bottom:20px;
+}
+
+.plinko-game-tabs button{
+    min-height:52px;
+    padding:0 10px;
+    border:1px solid rgba(212,166,50,.34);
+    border-radius:4px;
+    background:linear-gradient(#121212,#0b0b0b);
+    color:#e8e4db;
+    font-family:Inter,Arial,sans-serif;
+    font-size:.68rem;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.plinko-game-tabs button:hover{
+    border-color:var(--plinko-gold);
+}
+
+.plinko-game-tabs button.active{
+    background:linear-gradient(135deg,#650813,#900a1e);
+    color:var(--plinko-gold2);
+    border-color:var(--plinko-gold);
+}
+
+.plinko-hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    gap:24px;
+    padding:6px 12px 18px;
+}
+
+.plinko-kicker{
+    color:#b79651;
+    font-size:.68rem;
+    font-weight:700;
+    letter-spacing:.14em;
+}
+
+.plinko-hero h1,
+.plinko-controls-card h2,
+.plinko-history-card h2{
+    margin:5px 0;
+    color:#e0b95f;
+    font-family:Cinzel,Georgia,serif;
+    font-weight:600;
+}
+
+.plinko-hero h1{
+    font-size:2.65rem;
+}
+
+.plinko-hero p{
+    margin:0;
+    color:#ddd7ce;
+}
+
+.plinko-balance-card{
+    min-width:225px;
+    padding:13px 16px;
+    border:1px solid var(--plinko-line);
+    background:#0b0b0b;
+    text-align:right;
+}
+
+.plinko-balance-card span{
+    display:block;
+    color:#8e867a;
+    font-size:.62rem;
+    letter-spacing:.1em;
+}
+
+.plinko-balance-card strong{
+    display:block;
+    margin-top:5px;
+    color:var(--plinko-gold2);
+    font-size:1.1rem;
+}
+
+.plinko-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 330px;
+    gap:16px;
+}
+
+.plinko-board-card,
+.plinko-controls-card,
+.plinko-history-card{
+    border:1px solid var(--plinko-line);
+    border-radius:6px;
+    background:
+        radial-gradient(circle at 50% 0,rgba(110,8,23,.09),transparent 32%),
+        linear-gradient(145deg,#111,#080808);
+    box-shadow:0 18px 45px rgba(0,0,0,.28);
+}
+
+.plinko-board-card{
+    overflow:hidden;
+}
+
+.plinko-board-topbar{
+    min-height:66px;
+    padding:13px 17px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    border-bottom:1px solid rgba(212,166,50,.2);
+}
+
+.plinko-board-topbar span,
+.plinko-last-result span{
+    display:block;
+    color:#8d8477;
+    font-size:.62rem;
+    letter-spacing:.11em;
+}
+
+.plinko-board-topbar strong{
+    display:block;
+    margin-top:4px;
+    color:#d5ae57;
+    font-size:.75rem;
+}
+
+.plinko-last-result{
+    text-align:right;
+}
+
+#plinkoLastResult{
+    font-size:1rem;
+    color:#f2ca62;
+}
+
+.plinko-canvas-wrap{
+    position:relative;
+    padding:16px 18px 0;
+    background:
+        radial-gradient(circle at 50% 20%,rgba(212,166,50,.075),transparent 34%),
+        linear-gradient(#0c0c0c,#080808);
+}
+
+#plinkoCanvas{
+    display:block;
+    width:100%;
+    height:auto;
+    max-height:690px;
+    border:1px solid rgba(212,166,50,.22);
+    background:
+        radial-gradient(circle at 50% 0,rgba(116,8,22,.2),transparent 42%),
+        linear-gradient(180deg,#12110e,#090909);
+}
+
+.plinko-multiplier-strip{
+    display:grid;
+    grid-template-columns:repeat(11,1fr);
+    gap:4px;
+    padding:8px 18px 17px;
+    background:#080808;
+}
+
+.plinko-multiplier{
+    min-height:42px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(212,166,50,.28);
+    background:#111;
+    color:#c8c1b6;
+    font-size:.72rem;
+    font-weight:800;
+}
+
+.plinko-multiplier.edge{
+    background:linear-gradient(135deg,#650713,#9a0b20);
+    color:#f1c65e;
+    border-color:#d4a632;
+}
+
+.plinko-multiplier.hot{
+    background:#21170c;
+    color:#e3b85e;
+}
+
+.plinko-multiplier.hit{
+    animation:plinkoSlotHit .8s ease;
+}
+
+@keyframes plinkoSlotHit{
+    0%,100%{transform:scale(1)}
+    35%{transform:scale(1.08);box-shadow:0 0 24px rgba(242,204,105,.55)}
+}
+
+.plinko-controls-card{
+    padding:20px;
+}
+
+.plinko-controls-card h2{
+    font-size:1.5rem;
+}
+
+.plinko-label{
+    display:block;
+    margin:17px 0 7px;
+    color:#b59650;
+    font-size:.63rem;
+    font-weight:700;
+    letter-spacing:.12em;
+}
+
+.plinko-bet-control{
+    display:grid;
+    grid-template-columns:62px 1fr 62px;
+    gap:7px;
+}
+
+.plinko-bet-control button{
+    min-height:45px;
+    border:1px solid #a77f37;
+    border-radius:3px;
+    background:linear-gradient(#dab562,#aa8138);
+    color:#090909;
+    font-size:1.45rem;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.plinko-bet-control strong{
+    min-height:45px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(255,255,255,.18);
+    background:#0d0d0d;
+}
+
+.plinko-quick-bets{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:7px;
+    margin-top:8px;
+}
+
+.plinko-quick-bets button{
+    min-height:37px;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:3px;
+    background:#121212;
+    color:#e9e5dd;
+    font-family:Inter,Arial,sans-serif;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.plinko-quick-bets button:hover{
+    border-color:#c99c43;
+}
+
+.plinko-risk-card{
+    margin-top:16px;
+    padding:13px;
+    border:1px solid rgba(212,166,50,.2);
+    background:#0a0a0a;
+}
+
+.plinko-risk-card span{
+    display:block;
+    color:#8e8477;
+    font-size:.61rem;
+    letter-spacing:.1em;
+}
+
+.plinko-risk-card strong{
+    display:block;
+    margin-top:4px;
+    color:#dfb85e;
+}
+
+.plinko-risk-card p{
+    margin:7px 0 0;
+    color:#918a80;
+    font-size:.73rem;
+    line-height:1.5;
+}
+
+.plinko-drop-button{
+    width:100%;
+    min-height:52px;
+    margin-top:16px;
+    border:1px solid var(--plinko-gold);
+    border-radius:4px;
+    background:linear-gradient(135deg,#680815,#970a21);
+    color:#f1c861;
+    font-family:Inter,Arial,sans-serif;
+    font-size:.82rem;
+    font-weight:900;
+    letter-spacing:.05em;
+    cursor:pointer;
+}
+
+.plinko-drop-button:hover:not(:disabled){
+    filter:brightness(1.12);
+}
+
+.plinko-drop-button:disabled,
+.plinko-bet-control button:disabled,
+.plinko-quick-bets button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.plinko-message{
+    min-height:44px;
+    margin-top:10px;
+    padding:10px 11px;
+    border:1px solid rgba(255,255,255,.08);
+    background:#0b0b0b;
+    color:#9b9388;
+    font-size:.72rem;
+    line-height:1.45;
+}
+
+.plinko-message.win{color:#88d8a1}
+.plinko-message.loss{color:#e29191}
+.plinko-message.error{color:#e29191}
+
+.plinko-payout-summary{
+    margin-top:15px;
+    display:grid;
+    gap:1px;
+    background:rgba(255,255,255,.07);
+}
+
+.plinko-payout-summary div{
+    min-height:39px;
+    padding:0 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#0b0b0b;
+}
+
+.plinko-payout-summary span{
+    color:#8e867a;
+    font-size:.62rem;
+}
+
+.plinko-payout-summary strong{
+    color:#d8af57;
+    font-size:.78rem;
+}
+
+.plinko-history-card{
+    margin-top:16px;
+    padding:17px 19px;
+}
+
+.plinko-history-heading{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.plinko-history-heading h2{
+    font-size:1.05rem;
+}
+
+#plinkoClearHistory{
+    min-width:74px;
+    min-height:34px;
+    border:1px solid rgba(212,166,50,.32);
+    background:#111;
+    color:#b7aa96;
+    font-family:Inter,Arial,sans-serif;
+    font-size:.65rem;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.plinko-history-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-top:10px;
+}
+
+.plinko-history-chip{
+    min-width:78px;
+    padding:8px 10px;
+    border:1px solid rgba(255,255,255,.1);
+    background:#0c0c0c;
+    text-align:center;
+}
+
+.plinko-history-chip strong{
+    display:block;
+    color:#dab35c;
+    font-size:.8rem;
+}
+
+.plinko-history-chip span{
+    display:block;
+    margin-top:2px;
+    color:#867f75;
+    font-size:.6rem;
+}
+
+.plinko-empty-history{
+    color:#827c72;
+    font-size:.76rem;
+}
+
+.plinko-disclaimer{
+    margin-top:16px;
+    padding:15px 18px;
+    border:1px solid rgba(212,166,50,.14);
+    text-align:center;
+    color:#7f796f;
+    font-size:.68rem;
+}
+
+.plinko-disclaimer strong{
+    color:#a58f64;
+    letter-spacing:.08em;
+}
+
+.plinko-disclaimer p{
+    margin:5px 0 0;
+}
+
+.plinko-modal{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:none;
+    place-items:center;
+    padding:20px;
+    background:rgba(0,0,0,.85);
+}
+
+.plinko-modal.open{
+    display:grid;
+}
+
+.plinko-modal-card{
+    width:min(440px,100%);
+    padding:28px;
+    border:1px solid var(--plinko-gold);
+    background:
+        radial-gradient(circle at top,rgba(111,8,23,.25),transparent 42%),
+        #0b0b0b;
+    text-align:center;
+}
+
+.plinko-modal-multiplier{
+    margin:12px 0 4px;
+    color:#f1c861;
+    font-family:Cinzel,Georgia,serif;
+    font-size:3.3rem;
+    font-weight:700;
+}
+
+.plinko-modal-card h2{
+    margin:0;
+    color:#e0b85d;
+    font-family:Cinzel,Georgia,serif;
+}
+
+.plinko-modal-card p{
+    color:#b9b1a5;
+    line-height:1.5;
+}
+
+@media(max-width:1050px){
+    .plinko-game-tabs{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .plinko-layout{
+        grid-template-columns:1fr;
+    }
+
+    .plinko-controls-card{
+        display:grid;
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:650px){
+    .plinko-page{
+        width:min(100% - 18px,1500px);
+    }
+
+    .plinko-game-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .plinko-hero{
+        align-items:start;
+        flex-direction:column;
+    }
+
+    .plinko-balance-card{
+        width:100%;
+        text-align:left;
+    }
+
+    .plinko-hero h1{
+        font-size:2rem;
+    }
+
+    .plinko-multiplier{
+        min-height:34px;
+        font-size:.58rem;
+    }
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Play Plinko at The Gilded Ace using fictional Ace Credits.">
+    <title>Plinko | The Gilded Ace</title>
+
+    <link rel="stylesheet" href="styles.css?v=100">
+    <link rel="stylesheet" href="plinko.css?v=1">
+</head>
+
+<body class="ga-plinko-page">
+
+<header class="site-header">
+    <div class="nav-container">
+        <a href="index.html" class="brand">
+            <div class="brand-mark">A</div>
+            <div class="brand-text">
+                <span class="brand-name">THE GILDED ACE</span>
+                <span class="brand-subtitle">CASINO &amp; SOCIAL CLUB</span>
+            </div>
+        </a>
+
+        <nav class="main-nav">
+            <a href="index.html">HOME</a>
+            <a href="casino.html" class="active">CASINO</a>
+            <a href="poker.html">POKER</a>
+            <a href="store.html">STORE</a>
+            <a href="collection.html">COLLECTION</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
+        </nav>
+
+        <div class="nav-account">
+            <div class="nav-balance">
+                <span class="balance-label">ACE CREDITS</span>
+                <span id="plinkoHeaderBalance" class="balance-value">— AC</span>
+            </div>
+            <a href="profile.html" class="profile-button">PROFILE</a>
+        </div>
+    </div>
+</header>
+
+<main class="plinko-page">
+
+    <nav class="plinko-game-tabs" aria-label="Casino games">
+        <button type="button" onclick="location.href='casino.html#blackjack'">BLACKJACK</button>
+        <button type="button" onclick="location.href='casino.html#slots'">SLOTS</button>
+        <button type="button" onclick="location.href='casino.html#roulette'">ROULETTE</button>
+        <button type="button" onclick="location.href='casino.html#dice'">HIGH ROLL</button>
+        <button type="button" onclick="location.href='horse-racing.html'">HORSE RACING</button>
+        <button type="button" class="active" onclick="location.href='plinko.html'">PLINKO</button>
+    </nav>
+
+    <section class="plinko-hero">
+        <div>
+            <span class="plinko-kicker">THE GILDED ACE ARCADE</span>
+            <h1>PLINKO</h1>
+            <p>Drop the ball. Hit the pegs. Chase the multiplier.</p>
+        </div>
+
+        <div class="plinko-balance-card">
+            <span>AVAILABLE BALANCE</span>
+            <strong id="plinkoBalance">— AC</strong>
+        </div>
+    </section>
+
+    <section class="plinko-layout">
+
+        <section class="plinko-board-card">
+            <div class="plinko-board-topbar">
+                <div>
+                    <span>LIVE BOARD</span>
+                    <strong>10 ROWS · 11 PAYOUT SLOTS</strong>
+                </div>
+
+                <div class="plinko-last-result">
+                    <span>LAST DROP</span>
+                    <strong id="plinkoLastResult">—</strong>
+                </div>
+            </div>
+
+            <div class="plinko-canvas-wrap">
+                <canvas id="plinkoCanvas" width="900" height="690"></canvas>
+            </div>
+
+            <div id="plinkoMultiplierStrip" class="plinko-multiplier-strip"></div>
+        </section>
+
+        <aside class="plinko-controls-card">
+
+            <span class="plinko-kicker">WAGER</span>
+            <h2>DROP A BALL</h2>
+
+            <label class="plinko-label">BET AMOUNT</label>
+
+            <div class="plinko-bet-control">
+                <button id="plinkoBetDown" type="button">−</button>
+                <strong id="plinkoBetDisplay">100 AC</strong>
+                <button id="plinkoBetUp" type="button">+</button>
+            </div>
+
+            <div class="plinko-quick-bets">
+                <button type="button" data-plinko-bet="100">100</button>
+                <button type="button" data-plinko-bet="500">500</button>
+                <button type="button" data-plinko-bet="1000">1,000</button>
+                <button type="button" data-plinko-bet="5000">5,000</button>
+            </div>
+
+            <div class="plinko-risk-card">
+                <span>BOARD PROFILE</span>
+                <strong>CLASSIC</strong>
+                <p>Most drops land near the center. Edge slots carry the largest multipliers.</p>
+            </div>
+
+            <button id="plinkoDropButton" class="plinko-drop-button" type="button">
+                DROP BALL
+            </button>
+
+            <div id="plinkoMessage" class="plinko-message">
+                Choose your wager and drop a ball.
+            </div>
+
+            <div class="plinko-payout-summary">
+                <div><span>TOP MULTIPLIER</span><strong>10×</strong></div>
+                <div><span>ROWS</span><strong>10</strong></div>
+                <div><span>MIN BET</span><strong>100 AC</strong></div>
+            </div>
+
+        </aside>
+
+    </section>
+
+    <section class="plinko-history-card">
+        <div class="plinko-history-heading">
+            <div>
+                <span class="plinko-kicker">RECENT DROPS</span>
+                <h2>RESULT HISTORY</h2>
+            </div>
+            <button id="plinkoClearHistory" type="button">CLEAR</button>
+        </div>
+
+        <div id="plinkoHistory" class="plinko-history-list">
+            <span class="plinko-empty-history">No drops yet.</span>
+        </div>
+    </section>
+
+    <section class="plinko-disclaimer">
+        <strong>PLAY-MONEY ENTERTAINMENT ONLY</strong>
+        <p>
+            Ace Credits are fictional virtual currency with no real-world cash value.
+            They cannot be purchased, withdrawn, redeemed, or exchanged for money, goods, services, or prizes.
+        </p>
+    </section>
+
+</main>
+
+<div id="plinkoResultModal" class="plinko-modal" aria-hidden="true">
+    <div class="plinko-modal-card">
+        <span class="plinko-kicker">PLINKO RESULT</span>
+        <div id="plinkoModalMultiplier" class="plinko-modal-multiplier">1×</div>
+        <h2 id="plinkoModalTitle">RESULT</h2>
+        <p id="plinkoModalText"></p>
+        <button id="plinkoModalClose" class="plinko-drop-button" type="button">CONTINUE</button>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-container">
+        <div>
+            <div class="footer-brand">THE GILDED ACE</div>
+            <p>PLAY. WIN. BUILD YOUR LEGACY.</p>
+        </div>
+
+        <div class="footer-links">
+            <a href="index.html">HOME</a>
+            <a href="casino.html">CASINO</a>
+            <a href="poker.html">POKER</a>
+            <a href="store.html">STORE</a>
+            <a href="collection.html">COLLECTION</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="plinko.js?v=1"></script>
+</body>
+</html>
