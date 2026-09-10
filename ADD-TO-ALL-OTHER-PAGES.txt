@@ -1,0 +1,12 @@
+<!-- THE GILDED ACE COMPLIANCE LAYER v2 -->
+<!-- Add this before </head>: -->
+<link rel="stylesheet" href="compliance.css?v=2">
+
+<!-- Add this immediately before </body>: -->
+<script src="compliance.js?v=2"></script>
+
+IMPORTANT:
+- Do not remove any existing CSS or JavaScript.
+- Do not place compliance.js before your normal page scripts.
+- The compliance system appends its own isolated legal bar after existing content.
+- It does not edit your existing header, footer, games, balance, profile or Supabase logic.

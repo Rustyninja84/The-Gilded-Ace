@@ -1,0 +1,76 @@
+THE GILDED ACE — COMPLIANCE PACK v2 AUDIT
+
+AUDIT GOAL
+Make the compliance layer additive and minimize the chance that it interferes
+with any existing Gilded Ace page.
+
+HARDENING CHANGES FROM v1
+1. Removed direct manipulation of document.documentElement.style.overflow.
+   v2 uses one temporary class (ga-age-locked) and removes only that class.
+   This avoids erasing any pre-existing inline overflow setting.
+2. Added safe try/catch around sessionStorage.
+3. Combined the disclosure and legal links into one isolated #gaComplianceFooter.
+4. #gaComplianceFooter is appended AFTER the site's existing content.
+   It is never inserted into an existing footer, grid, game panel, table or form.
+5. Compliance CSS is scoped only to:
+      #gaAgeGate
+      #gaComplianceFooter
+      body.ga-legal-page
+   It does not redefine the site's generic button, a, h1, p, footer, nav,
+   canvas, table, input or form selectors.
+6. Existing game, account and Supabase JavaScript is not queried, replaced,
+   renamed or called by compliance.js.
+7. The age gate uses unique IDs/classes and does not reuse known game IDs.
+8. Terms, Privacy and Play-Money Policy pages intentionally skip the age gate,
+   so users can always read those documents.
+9. Added browser back/forward-cache cleanup so a stale age-lock class cannot
+   leave a normal page unable to scroll.
+10. Added one outer try/catch so an error inside the compliance layer is contained
+    instead of intentionally stopping normal page initialization.
+
+VALIDATION PERFORMED
+- Node JavaScript syntax check passed: compliance.js
+- Node JavaScript syntax check passed: plinko.js
+- HTML structural parsing passed:
+      casino.html
+      plinko.html
+      terms.html
+      privacy.html
+      play-money-policy.html
+- Verified every bundled HTML file has exactly one compliance.css reference.
+- Verified every bundled HTML file has exactly one compliance.js reference.
+- Verified casino.html still contains its existing Casino structure.
+- Verified plinko.html still contains its existing Plinko structure.
+- Verified the compliance CSS/JS filenames and cache versions agree.
+
+IMPORTANT LIMIT
+No code package can guarantee compatibility with an HTML page that was not
+actually provided in its current version. For pages not bundled here, v2 is
+therefore installed using ONLY two additive include lines instead of replacing
+the page. This is intentionally the safest integration method.
+
+INSTALL
+Upload:
+  compliance.css
+  compliance.js
+  terms.html
+  privacy.html
+  play-money-policy.html
+
+Replace:
+  casino.html
+  plinko.html
+  plinko.css
+  plinko.js
+
+For every other current Gilded Ace HTML page, do NOT replace the page.
+Add only the two lines in:
+  ADD-TO-ALL-OTHER-PAGES.txt
+
+After upload:
+1. Commit the files.
+2. Hard refresh with Ctrl+F5.
+3. Open each page once.
+4. Confirm the 18+ gate appears on normal pages.
+5. Confirm Terms / Privacy / Play-Money Policy open without an age gate.
+6. Confirm normal page controls still work.

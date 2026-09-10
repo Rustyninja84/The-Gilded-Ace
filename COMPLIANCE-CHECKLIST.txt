@@ -1,0 +1,61 @@
+THE GILDED ACE — COMPLIANCE INSTALL / OPERATING CHECKLIST
+Updated: September 10, 2026
+
+THIS PACK ADDS
+- 18+ product-policy entry gate (session based; does not collect date of birth)
+- Site-wide Play-Money / No Cash Value disclosure
+- Terms of Use
+- Privacy Policy
+- Play-Money Policy
+- Footer legal links
+- Existing latest casino.html and plinko.html already patched
+
+UPLOAD THESE NEW FILES
+- compliance.css
+- compliance.js
+- terms.html
+- privacy.html
+- play-money-policy.html
+
+REPLACE THESE INCLUDED FILES
+- casino.html
+- plinko.html
+- plinko.css
+- plinko.js
+
+FOR EVERY OTHER HTML PAGE
+Add before </head>:
+<link rel="stylesheet" href="compliance.css?v=2">
+
+Add immediately before </body>:
+<script src="compliance.js?v=2"></script>
+
+Do this on:
+index.html
+profile.html
+poker.html
+store.html
+collection.html
+leaderboard.html
+horse-racing.html
+and every future public HTML page.
+
+KEEP THESE PRODUCT RULES
+1. Ace Credits are free fictional credits only.
+2. Never sell wagering credits.
+3. Never accept deposits for gameplay.
+4. Never permit cash-out or redemption.
+5. Never offer cash, crypto, gift cards, prizes, goods or services for winnings.
+6. Never permit player-to-player credit sales/transfers.
+7. Never add a second redeemable sweepstakes currency without new legal review.
+8. Store items must remain virtual-only.
+9. Do not let users use multiplayer poker to arrange/settle real-money wagers through the service.
+10. Keep RLS enabled on Supabase user tables.
+11. Never expose Supabase secret/service-role keys in browser code.
+12. Publish a real contact method for privacy/account deletion requests before public promotion.
+13. Update Privacy Policy before adding analytics, ads, payments, tracking or new data providers.
+14. Get jurisdiction-specific legal review before monetization, prizes, redemption, transfers, or paid entry.
+
+IMPORTANT
+This package is a compliance-oriented product template. It is not a license,
+legal opinion, or guarantee of legality in every state/country.

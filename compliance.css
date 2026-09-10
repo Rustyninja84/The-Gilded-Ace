@@ -1,0 +1,335 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+
+/*
+  THE GILDED ACE — COMPLIANCE CSS v2
+  Every selector is scoped to a unique GA compliance ID/class.
+  Nothing here changes the site's normal header, nav, game panels,
+  buttons, footer, forms, canvas, tables, or existing page layout.
+*/
+
+html.ga-age-locked{
+  overflow:hidden !important;
+}
+
+#gaAgeGate,
+#gaAgeGate *,
+#gaComplianceFooter,
+#gaComplianceFooter *,
+body.ga-legal-page .ga-legal-shell,
+body.ga-legal-page .ga-legal-shell *{
+  box-sizing:border-box;
+}
+
+#gaAgeGate{
+  --ga-gold:#d4a632;
+  --ga-gold2:#f2d277;
+  --ga-line:rgba(212,166,50,.28);
+
+  position:fixed;
+  inset:0;
+  z-index:2147483647;
+  display:grid;
+  place-items:center;
+  padding:22px;
+  overflow:auto;
+  background:rgba(0,0,0,.965);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  font-family:Inter,Arial,sans-serif;
+}
+
+#gaAgeGate .ga-age-card{
+  width:min(590px,100%);
+  margin:auto;
+  padding:32px;
+  border:1px solid var(--ga-gold);
+  border-radius:6px;
+  background:
+    radial-gradient(circle at top,rgba(105,9,20,.28),transparent 40%),
+    linear-gradient(145deg,#111,#070707);
+  color:#e9e5dd;
+  box-shadow:0 35px 90px rgba(0,0,0,.65);
+  text-align:center;
+}
+
+#gaAgeGate .ga-age-mark{
+  width:62px;
+  height:62px;
+  margin:0 auto 14px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--ga-gold);
+  border-radius:50%;
+  color:var(--ga-gold2);
+  font-family:Cinzel,Georgia,serif;
+  font-size:1.5rem;
+  font-weight:800;
+}
+
+#gaAgeGate .ga-age-kicker{
+  color:#b89a58;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+
+#gaAgeGate .ga-age-card h1{
+  margin:7px 0 10px;
+  padding:0;
+  color:var(--ga-gold2);
+  background:none;
+  border:0;
+  font-family:Cinzel,Georgia,serif;
+  font-size:1.9rem;
+  font-weight:700;
+  line-height:1.2;
+  letter-spacing:0;
+  text-transform:none;
+}
+
+#gaAgeGate .ga-age-card p{
+  max-width:none;
+  margin:8px auto;
+  padding:0;
+  color:#bcb5aa;
+  background:none;
+  border:0;
+  font-family:Inter,Arial,sans-serif;
+  font-size:.83rem;
+  font-weight:400;
+  line-height:1.65;
+  letter-spacing:0;
+  text-transform:none;
+}
+
+#gaAgeGate .ga-age-notice{
+  margin:18px 0;
+  padding:12px 14px;
+  border:1px solid var(--ga-line);
+  background:#080808;
+  color:#a9a195;
+  font-size:.72rem;
+  line-height:1.55;
+}
+
+#gaAgeGate .ga-age-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:17px;
+}
+
+#gaAgeGate .ga-age-actions button,
+#gaAgeGate .ga-age-actions a{
+  width:100%;
+  min-width:0;
+  min-height:48px;
+  margin:0;
+  padding:10px 12px;
+  display:grid;
+  place-items:center;
+  position:static;
+  transform:none;
+  border-radius:3px;
+  box-shadow:none;
+  font-family:Inter,Arial,sans-serif;
+  font-size:.72rem;
+  font-weight:800;
+  line-height:1.3;
+  letter-spacing:.05em;
+  text-align:center;
+  text-decoration:none;
+  text-transform:none;
+  cursor:pointer;
+}
+
+#gaAgeGate #gaAgeEnter{
+  border:1px solid var(--ga-gold);
+  background:linear-gradient(135deg,#690914,#940b20);
+  color:var(--ga-gold2);
+}
+
+#gaAgeGate #gaAgeExit{
+  border:1px solid rgba(255,255,255,.18);
+  background:#111;
+  color:#bbb3a7;
+}
+
+#gaAgeGate .ga-age-links{
+  margin-top:15px;
+  color:#777;
+  font-size:.67rem;
+  line-height:1.5;
+}
+
+#gaAgeGate .ga-age-links a{
+  display:inline;
+  padding:0;
+  color:#b79b5d;
+  background:none;
+  border:0;
+  text-decoration:none;
+}
+
+#gaAgeGate .ga-age-links a:hover{
+  text-decoration:underline;
+}
+
+/* Appended after the site's normal content/footer.
+   It does not modify or insert itself inside existing layout components. */
+#gaComplianceFooter{
+  --ga-line:rgba(212,166,50,.20);
+
+  display:block;
+  width:100%;
+  margin:0;
+  padding:0;
+  position:relative;
+  z-index:1;
+  background:#050505;
+  border-top:1px solid var(--ga-line);
+  color:#918a7e;
+  font-family:Inter,Arial,sans-serif;
+}
+
+#gaComplianceFooter .ga-compliance-notice{
+  width:min(1450px,100%);
+  margin:0 auto;
+  padding:14px 22px 10px;
+  text-align:center;
+  color:#918a7e;
+  font-size:.66rem;
+  font-weight:600;
+  line-height:1.55;
+}
+
+#gaComplianceFooter .ga-compliance-notice strong{
+  color:#bba263;
+}
+
+#gaComplianceFooter .ga-compliance-links{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px 18px;
+  width:min(1450px,100%);
+  margin:0 auto;
+  padding:10px 18px 15px;
+  font-size:.63rem;
+  font-weight:700;
+  line-height:1.4;
+  letter-spacing:.05em;
+  text-align:center;
+}
+
+#gaComplianceFooter a{
+  color:#b49a5f;
+  text-decoration:none;
+}
+
+#gaComplianceFooter a:hover{
+  color:#f2d277;
+  text-decoration:underline;
+}
+
+/* Legal pages only. */
+body.ga-legal-page{
+  margin:0;
+  background:#050505;
+  color:#e9e5dd;
+  font-family:Inter,Arial,sans-serif;
+}
+
+body.ga-legal-page .ga-legal-shell{
+  width:min(1000px,calc(100% - 34px));
+  margin:38px auto 70px;
+}
+
+body.ga-legal-page .ga-legal-back{
+  display:inline-block;
+  margin-bottom:20px;
+  color:#c5a65d;
+  text-decoration:none;
+  font-size:.72rem;
+  font-weight:800;
+}
+
+body.ga-legal-page .ga-legal-document{
+  padding:clamp(22px,5vw,52px);
+  border:1px solid rgba(212,166,50,.28);
+  background:linear-gradient(145deg,#111,#080808);
+}
+
+body.ga-legal-page .ga-legal-document .eyebrow{
+  color:#a98d4f;
+  font-size:.66rem;
+  font-weight:800;
+  letter-spacing:.15em;
+}
+
+body.ga-legal-page .ga-legal-document h1{
+  margin:7px 0 4px;
+  color:#f2d277;
+  font-family:Cinzel,Georgia,serif;
+  font-size:clamp(1.8rem,4vw,2.8rem);
+  font-weight:700;
+}
+
+body.ga-legal-page .ga-legal-document .updated{
+  color:#777;
+  font-size:.7rem;
+}
+
+body.ga-legal-page .ga-legal-document h2{
+  margin:30px 0 8px;
+  color:#d8b55f;
+  font-family:Cinzel,Georgia,serif;
+  font-size:1.05rem;
+  font-weight:600;
+}
+
+body.ga-legal-page .ga-legal-document p,
+body.ga-legal-page .ga-legal-document li{
+  color:#aaa297;
+  font-size:.82rem;
+  line-height:1.72;
+}
+
+body.ga-legal-page .ga-legal-document strong{
+  color:#d1c8ba;
+}
+
+body.ga-legal-page .ga-legal-document a{
+  color:#c9a85b;
+}
+
+body.ga-legal-page .ga-legal-callout{
+  margin:20px 0;
+  padding:15px 17px;
+  border-left:3px solid #d4a632;
+  background:#090909;
+}
+
+body.ga-legal-page .ga-legal-document ul{
+  padding-left:20px;
+}
+
+body.ga-legal-page .ga-legal-warning{
+  color:#bfa96f !important;
+  font-size:.74rem !important;
+}
+
+@media(max-width:600px){
+  #gaAgeGate{
+    padding:12px;
+  }
+
+  #gaAgeGate .ga-age-card{
+    padding:24px 18px;
+  }
+
+  #gaAgeGate .ga-age-actions{
+    grid-template-columns:1fr;
+  }
+}
