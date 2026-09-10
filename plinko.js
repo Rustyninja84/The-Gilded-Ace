@@ -51,7 +51,7 @@ const PHYSICS = {
     pegRestitution: 0.57,
     wallRestitution: 0.62,
     tangentialFriction: 0.985,
-    collisionJitter: 38,   // px/s random deflection after peg impact
+    collisionJitter: 22,   // px/s random deflection after peg impact
     maxSpeed: 980,
     fixedStep: 1/120,
     maxFrameDt: 0.033
@@ -151,15 +151,40 @@ function simulatePhysicsStep(ball,dt){
     ball.x += ball.vx*dt;
     ball.y += ball.vy*dt;
 
-    const leftWall = 46 + board.ballRadius;
-    const rightWall = W-46-board.ballRadius;
+    /*
+     * TRIANGLE SIDE WALLS
+     *
+     * The playable Plinko area widens as the ball falls.
+     * These boundaries follow the outside edge of the peg triangle,
+     * so the ball can never bounce outside the triangle.
+     */
+    const triangleTopY = board.top - 34;
+    const triangleBottomY = board.top + (ROWS - 1) * board.rowGap + board.rowGap * .72;
+
+    const topHalfWidth = board.pegGap * .58;
+    const bottomHalfWidth = (ROWS * board.pegGap) / 2 + board.pegGap * .56;
+
+    const wallProgress = Math.max(
+        0,
+        Math.min(
+            1,
+            (ball.y - triangleTopY) / (triangleBottomY - triangleTopY)
+        )
+    );
+
+    const halfWidth =
+        topHalfWidth +
+        (bottomHalfWidth - topHalfWidth) * wallProgress;
+
+    const leftWall = board.centerX - halfWidth + board.ballRadius;
+    const rightWall = board.centerX + halfWidth - board.ballRadius;
 
     if(ball.x < leftWall){
         ball.x = leftWall;
-        ball.vx = Math.abs(ball.vx)*PHYSICS.wallRestitution;
+        ball.vx = Math.abs(ball.vx) * PHYSICS.wallRestitution + 12;
     }else if(ball.x > rightWall){
         ball.x = rightWall;
-        ball.vx = -Math.abs(ball.vx)*PHYSICS.wallRestitution;
+        ball.vx = -Math.abs(ball.vx) * PHYSICS.wallRestitution - 12;
     }
 
     // Resolve peg impacts more than once per step to reduce tunneling/sticking.
@@ -212,6 +237,11 @@ function animatePhysicalBall(){
             const elapsed = now-started;
 
             if(ball.y >= landingY || elapsed > 8500){
+                // Clamp final X to the payout-slot span before choosing a slot.
+                const minSlotX = slotX(0);
+                const maxSlotX = slotX(SLOT_COUNT - 1);
+                ball.x = Math.max(minSlotX, Math.min(maxSlotX, ball.x));
+
                 const slot = nearestSlotIndex(ball.x);
 
                 // Snap visually to the center of the payout slot.
@@ -469,6 +499,29 @@ function drawBoard(ball=null,trail=[]){
     ctx.textAlign = "center";
     ctx.font = "700 18px Cinzel, Georgia, serif";
     ctx.fillText("THE GILDED ACE PLINKO",W/2,48);
+
+    // triangular side rails that match the physics boundaries
+    const triangleTopY = board.top - 34;
+    const triangleBottomY = board.top + (ROWS - 1) * board.rowGap + board.rowGap * .72;
+    const topHalfWidth = board.pegGap * .58;
+    const bottomHalfWidth = (ROWS * board.pegGap) / 2 + board.pegGap * .56;
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(212,166,50,.50)";
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+    ctx.moveTo(board.centerX - topHalfWidth, triangleTopY);
+    ctx.lineTo(board.centerX - bottomHalfWidth, triangleBottomY);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(board.centerX + topHalfWidth, triangleTopY);
+    ctx.lineTo(board.centerX + bottomHalfWidth, triangleBottomY);
+    ctx.stroke();
+
+    ctx.restore();
 
     // peg glow + peg
     for(let row=0;row<ROWS;row++){
