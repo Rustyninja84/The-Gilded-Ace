@@ -675,172 +675,84 @@ body.horse-racing-page{
 
 
 /* =========================================================
-   DETAILED HORSE UPGRADE v5
+   RECOGNIZABLE HORSE UPGRADE v6
+   Horse silhouette: Font Awesome Free "horse" (CC BY 4.0)
 ========================================================= */
 
 .race-horse{
     --jockey-color:#a80f1e;
-    --horse-coat:#3a2417;
-    --horse-mane:#1d120d;
-    width:142px !important;
-    height:76px !important;
-    transform-origin:50% 65%;
+    --horse-coat:#402719;
+    width:118px !important;
+    height:72px !important;
+    transform-origin:50% 70%;
 }
 
 .horse-svg{
-    width:142px !important;
-    height:76px !important;
+    width:118px !important;
+    height:72px !important;
     overflow:visible;
-    filter:drop-shadow(0 4px 3px rgba(0,0,0,.48));
+    filter:drop-shadow(0 4px 3px rgba(0,0,0,.55));
 }
 
-.ground-shadow ellipse{
-    fill:rgba(0,0,0,.28);
+.horse-art{
+    transform:translate(0,0) scale(.92);
     transform-origin:center;
 }
 
-.dust-cloud circle{
-    fill:rgba(204,175,137,.30);
-    opacity:0;
-}
-
-.horse-tail,
-.horse-body,
-.horse-neck,
-.horse-head,
-.ear{
+.horse-shape{
     fill:var(--horse-coat);
-}
-
-.horse-tail{
-    stroke:var(--horse-mane);
-    stroke-width:2;
-}
-
-.horse-eye{fill:#f3e8d7}
-
-.bridle,
-.reins{
-    fill:none;
-    stroke:#d7c4a2;
-    stroke-width:1.6;
-    stroke-linecap:round;
 }
 
 .saddle-pad{
     fill:var(--jockey-color);
-    stroke:#efe5d0;
-    stroke-width:1;
+    stroke:#f1e8d3;
+    stroke-width:4;
 }
 
 .saddle{
-    fill:#18110d;
-    stroke:#5d4637;
-    stroke-width:1;
+    fill:#17120e;
+    stroke:#71533b;
+    stroke-width:4;
 }
 
-.leg{
-    fill:none;
-    stroke:var(--horse-coat);
-    stroke-width:8;
-    stroke-linecap:round;
-    transform-box:fill-box;
-    transform-origin:top center;
+.jockey-face{
+    fill:#d1a887;
 }
 
-.hoof{fill:#161616}
-.jockey-face{fill:#cfa98a}
-.jockey-helmet,.jockey-body{fill:var(--jockey-color)}
+.jockey-helmet,
+.jockey-shirt{
+    fill:var(--jockey-color);
+}
 
 .jockey-arm,
 .jockey-leg{
-    fill:none;
-    stroke:#151515;
-    stroke-width:6;
-    stroke-linecap:round;
-    transform-box:fill-box;
-    transform-origin:top center;
+    fill:var(--jockey-color);
+    stroke:#111;
+    stroke-width:4;
 }
 
-.jockey{transform-origin:132px 45px}
+.reins{
+    fill:none;
+    stroke:#d7c39c;
+    stroke-width:7;
+    stroke-linecap:round;
+}
 
 .race-horse.running .horse-svg{
-    animation:horseBodyBob .31s ease-in-out infinite alternate !important;
+    animation:realHorseGallop .36s ease-in-out infinite alternate !important;
 }
 
-.race-horse.running .front-leg-a{
-    animation:frontLegA .42s linear infinite;
+.race-horse.running .jockey-art{
+    animation:realJockeyBob .36s ease-in-out infinite alternate;
+    transform-origin:320px 160px;
 }
-.race-horse.running .front-leg-b{
-    animation:frontLegB .42s linear infinite;
-}
-.race-horse.running .rear-leg-a{
-    animation:rearLegA .42s linear infinite;
-}
-.race-horse.running .rear-leg-b{
-    animation:rearLegB .42s linear infinite;
-}
-.race-horse.running .jockey{
-    animation:jockeyBob .31s ease-in-out infinite alternate;
-}
-.race-horse.running .arm-left{
-    animation:armLeft .42s linear infinite;
-}
-.race-horse.running .arm-right{
-    animation:armRight .42s linear infinite;
-}
-.race-horse.running .dust-cloud circle{
-    animation:dustPuff .7s ease-out infinite;
-}
-.race-horse.running .dust-cloud circle:nth-child(2){animation-delay:.18s}
-.race-horse.running .dust-cloud circle:nth-child(3){animation-delay:.36s}
 
-@keyframes horseBodyBob{
-    from{transform:translateY(-1px) rotate(-.8deg)}
-    to{transform:translateY(2px) rotate(.8deg)}
+@keyframes realHorseGallop{
+    from{transform:translateY(-1px) rotate(-1deg) scaleX(1)}
+    to{transform:translateY(2px) rotate(1deg) scaleX(1.015)}
 }
-@keyframes jockeyBob{
-    from{transform:translateY(-1px) rotate(-2deg)}
-    to{transform:translateY(1px) rotate(1deg)}
-}
-@keyframes frontLegA{
-    0%{transform:rotate(26deg)}
-    25%{transform:rotate(-14deg)}
-    50%{transform:rotate(-34deg)}
-    75%{transform:rotate(6deg)}
-    100%{transform:rotate(26deg)}
-}
-@keyframes frontLegB{
-    0%{transform:rotate(-28deg)}
-    25%{transform:rotate(4deg)}
-    50%{transform:rotate(30deg)}
-    75%{transform:rotate(-12deg)}
-    100%{transform:rotate(-28deg)}
-}
-@keyframes rearLegA{
-    0%{transform:rotate(-24deg)}
-    25%{transform:rotate(10deg)}
-    50%{transform:rotate(34deg)}
-    75%{transform:rotate(-8deg)}
-    100%{transform:rotate(-24deg)}
-}
-@keyframes rearLegB{
-    0%{transform:rotate(30deg)}
-    25%{transform:rotate(-8deg)}
-    50%{transform:rotate(-30deg)}
-    75%{transform:rotate(10deg)}
-    100%{transform:rotate(30deg)}
-}
-@keyframes armLeft{
-    0%,100%{transform:rotate(-6deg)}
-    50%{transform:rotate(10deg)}
-}
-@keyframes armRight{
-    0%,100%{transform:rotate(8deg)}
-    50%{transform:rotate(-8deg)}
-}
-@keyframes dustPuff{
-    0%{opacity:0;transform:translate(0,0) scale(.55)}
-    25%{opacity:.48}
-    100%{opacity:0;transform:translate(-22px,-5px) scale(1.5)}
+
+@keyframes realJockeyBob{
+    from{transform:translateY(-3px) rotate(-2deg)}
+    to{transform:translateY(3px) rotate(1deg)}
 }

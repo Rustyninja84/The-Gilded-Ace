@@ -209,22 +209,22 @@ function buildTrack(){
         const jockeyColor = h.color === "#e6e6e6" ? "#111111" : h.color;
 
         const horseCoats = {
-            1:["#3d2215","#1c100b"],
-            2:["#6b4a2f","#2b1d13"],
-            3:["#1f1c1a","#0b0a09"],
-            4:["#7b4f2a","#2a170d"],
-            5:["#49301e","#1c120c"],
-            6:["#2f241d","#120e0b"]
+            1:"#4a2b18",
+            2:"#765136",
+            3:"#1f1b19",
+            4:"#8a5a2d",
+            5:"#51301d",
+            6:"#33251c"
         };
 
-        const [coat,mane] = horseCoats[h.id] || ["#3a2417","#1d120d"];
+        const coat = horseCoats[h.id] || "#402719";
 
         lane.innerHTML = `
             <span class="lane-number">${h.id}</span>
             <div
                 class="race-horse"
                 id="raceHorse${h.id}"
-                style="--jockey-color:${jockeyColor};--horse-coat:${coat};--horse-mane:${mane};"
+                style="--jockey-color:${jockeyColor};--horse-coat:${coat};"
             >
                 ${svgMarkup()}
             </div>
