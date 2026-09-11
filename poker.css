@@ -704,3 +704,17 @@ button:disabled{opacity:.38;cursor:not-allowed}
         inset 0 1px 0 rgba(255,255,255,.035),
         0 7px 18px rgba(0,0,0,.16);
 }
+
+
+/* =========================================================
+   COMMUNITY CARD DISPLAY v4.2
+========================================================= */
+
+#communityCards{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    min-height:92px;
+    flex-wrap:nowrap;
+}

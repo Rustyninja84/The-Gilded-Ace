@@ -612,14 +612,26 @@ function renderPokerTable() {
 }
 
 function renderCommunityCards() {
-    const cards = Array.isArray(pokerRoom.community_cards) ? pokerRoom.community_cards : [];
+    const cards = Array.isArray(pokerRoom.community_cards)
+        ? pokerRoom.community_cards.filter(Boolean)
+        : [];
+
     const target = $("communityCards");
     if (!target) return;
 
-    const display = [...cards];
-    while (display.length < 5) display.push(null);
+    /*
+      Professional Hold'em board:
+      - Pre-flop: no community cards
+      - Flop: 3 visible cards
+      - Turn: 4 visible cards
+      - River: 5 visible cards
 
-    target.innerHTML = display.map(card => card ? pokerCardHTML(card) : `<div class="poker-card back">A</div>`).join("");
+      Unrevealed board cards are NOT shown face-down.
+    */
+    target.innerHTML = cards
+        .slice(0, 5)
+        .map(card => pokerCardHTML(card))
+        .join("");
 }
 
 function renderSeats() {
@@ -678,6 +690,11 @@ function renderMyCards() {
 }
 
 function pokerCardHTML(card) {
+    const displayRank =
+        card && card.rank === "T"
+            ? "10"
+            : card?.rank;
+
     const text = String(card || "");
     const rank = text.slice(0, -1) || "?";
     const suitCode = text.slice(-1).toUpperCase();
