@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 31 — EQUIPPABLE COLLECTION
+   VERSION 33 — GLOBAL CLUB STATUS SYNC
 
    Includes:
    - Supabase Login
@@ -346,6 +346,8 @@ function updateAllDisplays() {
     gaApplyEquippedCosmetics();
 
     gaRenderEquippedStyleSummary();
+
+    updateHomeClubStatus();
 
 }
 
@@ -2636,13 +2638,6 @@ async function gaSetEquippedItem(
 
     updateAllDisplays();
 
-
-    alert(
-        nextItem
-            ? `${itemName} equipped.`
-            : `${itemName} unequipped.`
-    );
-
 }
 
 
@@ -2662,30 +2657,49 @@ function gaRenderEquippedStyleSummary() {
 
 
     const slots = [
-        [
-            "PROFILE FRAME",
-            "profile_frame"
-        ],
-        [
-            "NAMEPLATE",
-            "nameplate"
-        ],
-        [
-            "TITLE",
-            "title"
-        ],
-        [
-            "CARD BACK",
-            "card_back"
-        ],
-        [
-            "BLACKJACK TABLE",
-            "blackjack_table"
-        ],
-        [
-            "ROULETTE THEME",
-            "roulette_theme"
-        ]
+
+        {
+            label: "PROFILE FRAME",
+            slot: "profile_frame",
+            item: "Gold Profile Frame",
+            store: "store.html"
+        },
+
+        {
+            label: "NAMEPLATE",
+            slot: "nameplate",
+            item: "Diamond Nameplate",
+            store: "store.html"
+        },
+
+        {
+            label: "TITLE",
+            slot: "title",
+            item: "High Roller Title",
+            store: "store.html"
+        },
+
+        {
+            label: "CARD BACK",
+            slot: "card_back",
+            item: "Gilded Card Back",
+            store: "store.html"
+        },
+
+        {
+            label: "BLACKJACK TABLE",
+            slot: "blackjack_table",
+            item: "Gold Blackjack Table",
+            store: "store.html"
+        },
+
+        {
+            label: "ROULETTE THEME",
+            slot: "roulette_theme",
+            item: "Midnight Roulette",
+            store: "store.html"
+        }
+
     ];
 
 
@@ -2698,16 +2712,22 @@ function gaRenderEquippedStyleSummary() {
 
 
     slots.forEach(
-        (
-            [
-                label,
-                slot
-            ]
-        ) => {
+        (entry) => {
+
+            const owned =
+                gaPlayerOwnsCollectionItem(
+                    entry.item
+                );
+
+
+            const active =
+                equipped[entry.slot] ===
+                entry.item;
+
 
             const box =
                 document.createElement(
-                    "div"
+                    "article"
                 );
 
 
@@ -2715,14 +2735,68 @@ function gaRenderEquippedStyleSummary() {
                 "ga-equipped-style-item";
 
 
-            const small =
+            if (active) {
+
+                box.classList.add(
+                    "is-active"
+                );
+
+            }
+
+
+            const top =
+                document.createElement(
+                    "div"
+                );
+
+
+            top.className =
+                "ga-equipment-card-top";
+
+
+            const label =
                 document.createElement(
                     "span"
                 );
 
 
-            small.textContent =
-                label;
+            label.textContent =
+                entry.label;
+
+
+            const state =
+                document.createElement(
+                    "span"
+                );
+
+
+            state.className =
+                "ga-equipment-state";
+
+
+            state.textContent =
+                active
+                    ? "EQUIPPED"
+                    : (
+                        owned
+                            ? "OWNED"
+                            : "LOCKED"
+                    );
+
+
+            if (active) {
+
+                state.classList.add(
+                    "equipped"
+                );
+
+            }
+
+
+            top.append(
+                label,
+                state
+            );
 
 
             const strong =
@@ -2731,16 +2805,17 @@ function gaRenderEquippedStyleSummary() {
                 );
 
 
-            const value =
-                equipped[slot];
-
-
             strong.textContent =
-                value ||
-                "NONE EQUIPPED";
+                active
+                    ? entry.item
+                    : (
+                        owned
+                            ? entry.item
+                            : "NONE EQUIPPED"
+                    );
 
 
-            if (!value) {
+            if (!active) {
 
                 strong.classList.add(
                     "ga-equipped-empty"
@@ -2749,9 +2824,144 @@ function gaRenderEquippedStyleSummary() {
             }
 
 
+            const description =
+                document.createElement(
+                    "p"
+                );
+
+
+            const config =
+                GA_EQUIPPABLE_ITEMS[
+                    entry.item
+                ];
+
+
+            description.textContent =
+                config?.description ||
+                "";
+
+
+            const actions =
+                document.createElement(
+                    "div"
+                );
+
+
+            actions.className =
+                "ga-equipment-card-actions";
+
+
+            const primary =
+                document.createElement(
+                    "button"
+                );
+
+
+            primary.type =
+                "button";
+
+
+            primary.className =
+                "ga-equip-button";
+
+
+            if (active) {
+
+                primary.textContent =
+                    "UNEQUIP";
+
+
+                primary.classList.add(
+                    "unequip"
+                );
+
+
+                primary.addEventListener(
+                    "click",
+                    async () => {
+
+                        primary.disabled =
+                            true;
+
+
+                        await gaSetEquippedItem(
+                            entry.item
+                        );
+
+
+                        gaSetEquipmentManagerMessage(
+                            `${entry.item} unequipped.`,
+                            "success"
+                        );
+
+                    }
+                );
+
+            }
+
+            else if (owned) {
+
+                primary.textContent =
+                    "EQUIP";
+
+
+                primary.addEventListener(
+                    "click",
+                    async () => {
+
+                        primary.disabled =
+                            true;
+
+
+                        await gaSetEquippedItem(
+                            entry.item
+                        );
+
+
+                        gaSetEquipmentManagerMessage(
+                            `${entry.item} equipped.`,
+                            "success"
+                        );
+
+                    }
+                );
+
+            }
+
+            else {
+
+                primary.textContent =
+                    "GET IN STORE";
+
+
+                primary.classList.add(
+                    "store-link"
+                );
+
+
+                primary.addEventListener(
+                    "click",
+                    () => {
+
+                        window.location.href =
+                            entry.store;
+
+                    }
+                );
+
+            }
+
+
+            actions.appendChild(
+                primary
+            );
+
+
             box.append(
-                small,
-                strong
+                top,
+                strong,
+                description,
+                actions
             );
 
 
@@ -2761,6 +2971,67 @@ function gaRenderEquippedStyleSummary() {
 
         }
     );
+
+}
+
+
+function gaSetEquipmentManagerMessage(
+    text,
+    type = ""
+) {
+
+    const element =
+        document.getElementById(
+            "gaEquipmentManagerMessage"
+        );
+
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    element.textContent =
+        text || "";
+
+
+    element.className =
+        "ga-equipment-manager-message";
+
+
+    if (type) {
+
+        element.classList.add(
+            type
+        );
+
+    }
+
+
+    if (text) {
+
+        window.clearTimeout(
+            gaSetEquipmentManagerMessage.timer
+        );
+
+
+        gaSetEquipmentManagerMessage.timer =
+            window.setTimeout(
+                () => {
+
+                    element.textContent =
+                        "";
+
+                    element.className =
+                        "ga-equipment-manager-message";
+
+                },
+                3000
+            );
+
+    }
 
 }
 
@@ -3458,6 +3729,115 @@ function updateCollectionPage() {
 
 }
 
+
+
+/* ==========================================================
+   GLOBAL / HOME CLUB STATUS
+   ========================================================== */
+
+function updateHomeClubStatus() {
+
+    /*
+        Use the exact same membership-tier function as the Profile page.
+        This prevents Home and Profile from ever calculating two different
+        statuses from the same balance.
+    */
+
+    const tier =
+        getMembershipTier(
+            profile.balance
+        );
+
+
+    const status =
+        tier.current === "STANDARD"
+            ? "STANDARD"
+            : tier.current;
+
+
+    /*
+        Preferred future-proof hook. Any page can use:
+            data-club-status
+    */
+
+    document
+        .querySelectorAll(
+            "[data-club-status]"
+        )
+        .forEach(
+            (element) => {
+
+                element.textContent =
+                    status;
+
+            }
+        );
+
+
+    /*
+        Compatibility with the existing Home page versions.
+        Find a label whose visible text is exactly CLUB STATUS, then update
+        the nearby status-value element instead of depending on one specific
+        old CSS layout.
+    */
+
+    document
+        .querySelectorAll(
+            ".tag, .card-label, .section-kicker, .eyebrow, span, small"
+        )
+        .forEach(
+            (label) => {
+
+                if (
+                    String(
+                        label.textContent || ""
+                    )
+                        .trim()
+                        .toUpperCase()
+                    !==
+                    "CLUB STATUS"
+                ) {
+
+                    return;
+
+                }
+
+
+                const card =
+                    label.closest(
+                        ".card, .dashboard-card, .member-card, .status-card, .profile-card"
+                    )
+                    ||
+                    label.parentElement;
+
+
+                if (!card) {
+
+                    return;
+
+                }
+
+
+                const value =
+                    card.querySelector(
+                        "[data-club-status], .stat, .large-value, .status-value, .member-status, strong"
+                    );
+
+
+                if (
+                    value &&
+                    value !== label
+                ) {
+
+                    value.textContent =
+                        status;
+
+                }
+
+            }
+        );
+
+}
 
 
 /* ==========================================================
