@@ -633,3 +633,62 @@ button:disabled{opacity:.38;cursor:not-allowed}
     .poker-waiting-seat{grid-template-columns:36px 1fr}
     .poker-waiting-seat-state{grid-column:2}
 }
+
+
+/* =========================================================
+   HOST BOT CONTROLS v4
+========================================================= */
+
+.poker-bot-button,
+.poker-play-bots-button{
+    width:100%;
+    min-height:48px;
+    margin-top:10px;
+    border-radius:3px;
+    cursor:pointer;
+    font-family:Cinzel,serif;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:1.1px;
+    text-transform:uppercase;
+    transition:
+        filter .18s ease,
+        transform .18s ease,
+        border-color .18s ease;
+}
+
+.poker-bot-button{
+    border:1px solid rgba(214,179,90,.62);
+    background:
+        linear-gradient(180deg,rgba(214,179,90,.11),rgba(214,179,90,.035)),
+        #0c0b09;
+    color:#d6b35a;
+}
+
+.poker-play-bots-button{
+    border:1px solid #d6b35a;
+    background:
+        linear-gradient(180deg,#e0bd67,#9d792e);
+    color:#0c0903;
+    box-shadow:
+        0 8px 24px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+.poker-bot-button:hover:not(:disabled),
+.poker-play-bots-button:hover:not(:disabled){
+    filter:brightness(1.08);
+    transform:translateY(-1px);
+}
+
+.poker-bot-button:disabled,
+.poker-play-bots-button:disabled{
+    opacity:.42;
+    cursor:not-allowed;
+    transform:none;
+}
+
+#waitingStartButton{
+    margin-top:10px;
+}
+

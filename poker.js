@@ -126,6 +126,7 @@ function bindPokerButtons() {
     $("startHandButton")?.addEventListener("click", startPokerHand);
     $("waitingStartButton")?.addEventListener("click", startPokerHand);
     $("waitingFillBotsButton")?.addEventListener("click", fillPokerBots);
+    $("waitingPlayBotsButton")?.addEventListener("click", playPokerWithBots);
     $("waitingLeaveButton")?.addEventListener("click", leavePokerRoom);
     $("copyInviteButton")?.addEventListener("click", copyPokerInvite);
     $("foldButton")?.addEventListener("click", () => pokerAction("fold"));
@@ -519,13 +520,22 @@ function renderPokerWaitingRoom() {
     }
     if ($("waitingHostHelp")) {
         $("waitingHostHelp").textContent = host
-            ? "Invite players, optionally fill open seats with bots, then start when at least two seats are ready."
+            ? "Invite real players, fill open seats with bots, or start immediately with a full bot table."
             : `${hostName} will start the first hand when the table is ready.`;
     }
 
     if ($("waitingFillBotsButton")) {
         $("waitingFillBotsButton").classList.toggle("hidden", !host);
         $("waitingFillBotsButton").disabled = !host || occupied >= maxSeats || actionBusy;
+    }
+
+    if ($("waitingPlayBotsButton")) {
+        $("waitingPlayBotsButton").classList.toggle("hidden", !host);
+        $("waitingPlayBotsButton").disabled = !host || actionBusy;
+        $("waitingPlayBotsButton").textContent =
+            occupied >= maxSeats
+                ? "START WITH CURRENT TABLE"
+                : "PLAY NOW WITH BOTS";
     }
 
     if ($("waitingStartButton")) {
@@ -536,7 +546,7 @@ function renderPokerWaitingRoom() {
     const message = $("waitingRoomMessage");
     if (message && !message.classList.contains("error") && !message.classList.contains("success")) {
         message.textContent = host
-            ? (playable >= 2 ? "Table ready. Start whenever you are ready." : "Waiting for at least one more player.")
+            ? (playable >= 2 ? "Table ready. Start the hand, or fill any remaining seats with bots." : "Invite another player or click PLAY NOW WITH BOTS to start immediately.")
             : "Waiting for the host to start the first hand...";
     }
 }
@@ -855,13 +865,72 @@ async function fillPokerBots() {
         const { error } = await gaPokerSupabase.rpc("poker_lobby_fill_bots", {
             p_room: pokerRoom.id
         });
+
         if (error) throw error;
+
         await refreshPokerTable(pokerRoom.id);
+
+        const message = $("waitingRoomMessage");
+        if (message) {
+            message.textContent = "Open seats filled with bots. The table is ready to start.";
+            message.className = "poker-message success";
+        }
     } catch (error) {
         console.error(error);
         setMessage(error.message || "Could not add bots.", "error");
     } finally {
         actionBusy = false;
+        renderPokerWaitingRoom();
+    }
+}
+
+async function playPokerWithBots() {
+    if (actionBusy || !pokerRoom?.id || !isPokerHost()) return;
+
+    actionBusy = true;
+
+    const message = $("waitingRoomMessage");
+
+    try {
+        if (message) {
+            message.textContent = "Preparing bot players...";
+            message.className = "poker-message";
+        }
+
+        // Fill every currently open seat with a bot.
+        const fillResult = await gaPokerSupabase.rpc("poker_lobby_fill_bots", {
+            p_room: pokerRoom.id
+        });
+
+        if (fillResult.error) throw fillResult.error;
+
+        await refreshPokerTable(pokerRoom.id);
+
+        if (message) {
+            message.textContent = "Bots seated. Starting the first hand...";
+            message.className = "poker-message success";
+        }
+
+        // Host starts the first hand immediately.
+        const startResult = await gaPokerSupabase.rpc("poker_request_start_hand", {
+            p_room: pokerRoom.id
+        });
+
+        if (startResult.error) throw startResult.error;
+
+        await refreshPokerTable(pokerRoom.id);
+    } catch (error) {
+        console.error(error);
+
+        if (message) {
+            message.textContent = error.message || "Could not start a bot table.";
+            message.className = "poker-message error";
+        } else {
+            setMessage(error.message || "Could not start a bot table.", "error");
+        }
+    } finally {
+        actionBusy = false;
+        renderPokerWaitingRoom();
     }
 }
 
