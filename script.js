@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 34 — LIVE HOME TOP PLAYERS
+   VERSION 35 — LIVE HOME TOP PLAYERS FIXED
 
    Includes:
    - Supabase Login
@@ -3935,23 +3935,104 @@ async function gaLoadHomeTopPlayers() {
     }
 
 
-    if (!gaSupabaseClient) {
+    /*
+        Always show a visible state while loading. This avoids the
+        blank table problem if the old hard-coded rows were removed.
+    */
 
-        return;
-
-    }
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="4" style="text-align:center;padding:28px;color:#8f897e;">
+                LOADING LIVE CLUB RANKINGS...
+            </td>
+        </tr>
+    `;
 
 
     try {
 
-        const {
-            data,
-            error
-        } =
+        if (!gaSupabaseClient) {
+
+            await gaInitializeSupabase();
+
+        }
+
+
+        if (!gaSupabaseClient) {
+
+            throw new Error(
+                "Supabase is not available."
+            );
+
+        }
+
+
+        let data = null;
+        let error = null;
+
+
+        /*
+            PRIMARY METHOD:
+            Use the safe public leaderboard RPC. The SQL included with
+            this package creates/replaces this function.
+        */
+
+        const rpcResult =
             await gaSupabaseClient
                 .rpc(
                     "get_public_leaderboard"
                 );
+
+
+        data =
+            rpcResult.data;
+
+
+        error =
+            rpcResult.error;
+
+
+        /*
+            FALLBACK:
+            If the RPC has not been installed yet, try the same safe
+            profile fields used by the full leaderboard page.
+        */
+
+        if (error) {
+
+            console.warn(
+                "Public leaderboard RPC unavailable; trying direct profile query:",
+                error.message
+            );
+
+
+            const directResult =
+                await gaSupabaseClient
+                    .from(
+                        "profiles"
+                    )
+                    .select(
+                        "id,username,balance,wins,losses,games_played"
+                    )
+                    .order(
+                        "balance",
+                        {
+                            ascending: false
+                        }
+                    )
+                    .limit(
+                        100
+                    );
+
+
+            data =
+                directResult.data;
+
+
+            error =
+                directResult.error;
+
+        }
 
 
         if (error) {
@@ -3970,21 +4051,33 @@ async function gaLoadHomeTopPlayers() {
                 .map(
                     player => ({
 
+                        id:
+                            player?.id ||
+                            null,
+
                         username:
                             String(
                                 player?.username ||
+                                player?.display_name ||
+                                player?.name ||
                                 "Gilded Player"
                             ),
 
                         balance:
-                            Number(
-                                player?.balance
-                            ) || 0,
+                            Math.max(
+                                0,
+                                Number(
+                                    player?.balance
+                                ) || 0
+                            ),
 
                         wins:
-                            Number(
-                                player?.wins
-                            ) || 0
+                            Math.max(
+                                0,
+                                Number(
+                                    player?.wins
+                                ) || 0
+                            )
 
                     })
                 )
@@ -4008,8 +4101,8 @@ async function gaLoadHomeTopPlayers() {
 
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="4">
-                        No ranked players yet.
+                    <td colspan="4" style="text-align:center;padding:28px;color:#8f897e;">
+                        NO PLAYER PROFILES FOUND
                     </td>
                 </tr>
             `;
@@ -4040,6 +4133,7 @@ async function gaLoadHomeTopPlayers() {
                         "td"
                     );
 
+
                 rankCell.textContent =
                     String(
                         index + 1
@@ -4054,6 +4148,7 @@ async function gaLoadHomeTopPlayers() {
                         "td"
                     );
 
+
                 playerCell.textContent =
                     player.username;
 
@@ -4062,6 +4157,7 @@ async function gaLoadHomeTopPlayers() {
                     document.createElement(
                         "td"
                     );
+
 
                 statusCell.textContent =
                     gaMembershipLabelForBalance(
@@ -4073,6 +4169,7 @@ async function gaLoadHomeTopPlayers() {
                     document.createElement(
                         "td"
                     );
+
 
                 balanceCell.textContent =
                     `${formatNumber(
@@ -4104,10 +4201,14 @@ async function gaLoadHomeTopPlayers() {
             error
         );
 
-        /*
-            Keep the existing HTML rows as a visual fallback if the
-            leaderboard RPC is temporarily unavailable.
-        */
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align:center;padding:28px;color:#c77878;">
+                    LIVE RANKINGS COULD NOT LOAD
+                </td>
+            </tr>
+        `;
 
     }
 
