@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 38 — FULL HOME RECOVERY
+   VERSION 39 — PUBLIC LEADERBOARD AUTH FIX
 
    Includes:
    - Supabase Login
@@ -3951,8 +3951,14 @@ async function gaLoadHomeTopPlayers() {
                 {
                     method: "POST",
                     headers: {
+                        /*
+                            Supabase publishable keys (sb_publishable_...)
+                            belong in the apikey header.
+
+                            They are NOT JWT access tokens, so do not send
+                            them as Authorization: Bearer.
+                        */
                         "apikey": GA_SUPABASE_KEY,
-                        "Authorization": `Bearer ${GA_SUPABASE_KEY}`,
                         "Content-Type": "application/json",
                         "Accept": "application/json"
                     },
@@ -3967,7 +3973,7 @@ async function gaLoadHomeTopPlayers() {
                 await response.text();
 
             throw new Error(
-                `Leaderboard request failed (${response.status}): ${details}`
+                `Leaderboard request failed (${response.status} ${response.statusText}): ${details}`
             );
         }
 
