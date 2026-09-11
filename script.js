@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 41 — EXPANDED STORE
+   VERSION 42 — EXPANDED EQUIPMENT
 
    Includes:
    - Supabase Login
@@ -2304,11 +2304,22 @@ function claimDaily() {
 
 const GA_EQUIPPABLE_ITEMS = {
 
+    /* =========================
+       PROFILE
+       ========================= */
+
     "Gold Profile Frame": {
         slot: "profile_frame",
         label: "PROFILE FRAME",
         className: "ga-equip-gold-profile-frame",
         description: "Adds a polished gold frame and glow to your member profile."
+    },
+
+    "Platinum Profile Frame": {
+        slot: "profile_frame",
+        label: "PROFILE FRAME",
+        className: "ga-equip-platinum-profile-frame",
+        description: "Replaces the gold profile frame with a clean platinum finish."
     },
 
     "Diamond Nameplate": {
@@ -2318,12 +2329,31 @@ const GA_EQUIPPABLE_ITEMS = {
         description: "Gives your member name a diamond-inspired premium plate."
     },
 
+    "Royal Name Glow": {
+        slot: "nameplate",
+        label: "NAMEPLATE",
+        className: "ga-equip-royal-name-glow",
+        description: "Adds a royal gold glow around your displayed member name."
+    },
+
     "High Roller Title": {
         slot: "title",
         label: "TITLE",
         className: "ga-equip-high-roller-title",
         description: "Displays the HIGH ROLLER title beneath your member name."
     },
+
+    "Black Gold Profile Theme": {
+        slot: "profile_theme",
+        label: "PROFILE THEME",
+        className: "ga-equip-black-gold-profile-theme",
+        description: "Applies a deeper black-and-gold visual treatment to the profile page."
+    },
+
+
+    /* =========================
+       CARDS / CHIPS
+       ========================= */
 
     "Gilded Card Back": {
         slot: "card_back",
@@ -2332,21 +2362,122 @@ const GA_EQUIPPABLE_ITEMS = {
         description: "Uses the black-and-gold Gilded Ace back on hidden Blackjack and Poker cards."
     },
 
+    "High Roller Chip Set": {
+        slot: "chip_set",
+        label: "CHIP SET",
+        className: "ga-equip-high-roller-chip-set",
+        description: "Applies a premium black-and-gold appearance to supported casino chips and wager controls."
+    },
+
+
+    /* =========================
+       BLACKJACK
+       ========================= */
+
     "Gold Blackjack Table": {
         slot: "blackjack_table",
         label: "BLACKJACK TABLE",
         className: "ga-equip-gold-blackjack-table",
-        description: "Applies a premium gold finish to your Blackjack table."
+        description: "Applies a premium gold-felt finish to your Blackjack table."
     },
+
+    "Crimson Blackjack Table": {
+        slot: "blackjack_table",
+        label: "BLACKJACK TABLE",
+        className: "ga-equip-crimson-blackjack-table",
+        description: "Changes the Blackjack felt to a deep crimson-and-black casino finish."
+    },
+
+
+    /* =========================
+       ROULETTE
+       ========================= */
 
     "Midnight Roulette": {
         slot: "roulette_theme",
         label: "ROULETTE THEME",
         className: "ga-equip-midnight-roulette",
         description: "Applies the exclusive midnight-blue Roulette appearance."
+    },
+
+    "Sapphire Roulette": {
+        slot: "roulette_theme",
+        label: "ROULETTE THEME",
+        className: "ga-equip-sapphire-roulette",
+        description: "Changes Roulette to a deep sapphire-and-gold appearance."
+    },
+
+
+    /* =========================
+       POKER
+       ========================= */
+
+    "Ivory Poker Table": {
+        slot: "poker_table",
+        label: "POKER TABLE",
+        className: "ga-equip-ivory-poker-table",
+        description: "Changes the Poker felt to an ivory-accented high-roller table."
+    },
+
+    "Royal Poker Felt": {
+        slot: "poker_table",
+        label: "POKER TABLE",
+        className: "ga-equip-royal-poker-felt",
+        description: "Changes the Poker table to a royal blue-and-gold felt."
+    },
+
+
+    /* =========================
+       SLOTS
+       ========================= */
+
+    "Diamond Slot Cabinet": {
+        slot: "slots_theme",
+        label: "SLOT CABINET",
+        className: "ga-equip-diamond-slot-cabinet",
+        description: "Changes the Gilded Slots cabinet to a diamond-and-platinum appearance."
+    },
+
+
+    /* =========================
+       HIGH ROLL / DICE
+       ========================= */
+
+    "Golden Dice Set": {
+        slot: "dice_theme",
+        label: "DICE SET",
+        className: "ga-equip-golden-dice-set",
+        description: "Changes the High Roll dice area to a premium gold presentation."
     }
 
 };
+
+
+const GA_EQUIPMENT_SLOTS = [
+    { slot: "profile_frame", label: "PROFILE FRAME" },
+    { slot: "nameplate", label: "NAMEPLATE" },
+    { slot: "title", label: "TITLE" },
+    { slot: "profile_theme", label: "PROFILE THEME" },
+    { slot: "card_back", label: "CARD BACK" },
+    { slot: "chip_set", label: "CHIP SET" },
+    { slot: "blackjack_table", label: "BLACKJACK TABLE" },
+    { slot: "roulette_theme", label: "ROULETTE THEME" },
+    { slot: "poker_table", label: "POKER TABLE" },
+    { slot: "slots_theme", label: "SLOT CABINET" },
+    { slot: "dice_theme", label: "DICE SET" }
+];
+
+
+/*
+    Cache-bust equipment.css across pages without forcing you to replace
+    Casino/Poker/Profile/Collection HTML just to change ?v=.
+*/
+document
+    .querySelectorAll('link[href*="equipment.css"]')
+    .forEach(link => {
+        link.href = "equipment.css?v=42";
+    });
+
 
 
 function gaNormalizeEquipped() {
@@ -2650,79 +2781,45 @@ function gaRenderEquippedStyleSummary() {
 
 
     if (!container) {
-
         return;
-
     }
 
 
-    const slots = [
-
-        {
-            label: "PROFILE FRAME",
-            slot: "profile_frame",
-            item: "Gold Profile Frame",
-            store: "store.html"
-        },
-
-        {
-            label: "NAMEPLATE",
-            slot: "nameplate",
-            item: "Diamond Nameplate",
-            store: "store.html"
-        },
-
-        {
-            label: "TITLE",
-            slot: "title",
-            item: "High Roller Title",
-            store: "store.html"
-        },
-
-        {
-            label: "CARD BACK",
-            slot: "card_back",
-            item: "Gilded Card Back",
-            store: "store.html"
-        },
-
-        {
-            label: "BLACKJACK TABLE",
-            slot: "blackjack_table",
-            item: "Gold Blackjack Table",
-            store: "store.html"
-        },
-
-        {
-            label: "ROULETTE THEME",
-            slot: "roulette_theme",
-            item: "Midnight Roulette",
-            store: "store.html"
-        }
-
-    ];
-
-
-    container.innerHTML =
-        "";
+    container.innerHTML = "";
 
 
     const equipped =
         gaNormalizeEquipped();
 
 
-    slots.forEach(
-        (entry) => {
+    GA_EQUIPMENT_SLOTS.forEach(
+        slotMeta => {
 
-            const owned =
-                gaPlayerOwnsCollectionItem(
-                    entry.item
+            const options =
+                Object
+                    .entries(
+                        GA_EQUIPPABLE_ITEMS
+                    )
+                    .filter(
+                        ([, config]) =>
+                            config.slot ===
+                            slotMeta.slot
+                    );
+
+
+            const ownedOptions =
+                options.filter(
+                    ([itemName]) =>
+                        gaPlayerOwnsCollectionItem(
+                            itemName
+                        )
                 );
 
 
-            const active =
-                equipped[entry.slot] ===
-                entry.item;
+            const activeItem =
+                equipped[
+                    slotMeta.slot
+                ] || null;
 
 
             const box =
@@ -2735,12 +2832,10 @@ function gaRenderEquippedStyleSummary() {
                 "ga-equipped-style-item";
 
 
-            if (active) {
-
+            if (activeItem) {
                 box.classList.add(
                     "is-active"
                 );
-
             }
 
 
@@ -2761,7 +2856,7 @@ function gaRenderEquippedStyleSummary() {
 
 
             label.textContent =
-                entry.label;
+                slotMeta.label;
 
 
             const state =
@@ -2775,21 +2870,19 @@ function gaRenderEquippedStyleSummary() {
 
 
             state.textContent =
-                active
+                activeItem
                     ? "EQUIPPED"
                     : (
-                        owned
+                        ownedOptions.length
                             ? "OWNED"
                             : "LOCKED"
                     );
 
 
-            if (active) {
-
+            if (activeItem) {
                 state.classList.add(
                     "equipped"
                 );
-
             }
 
 
@@ -2806,21 +2899,18 @@ function gaRenderEquippedStyleSummary() {
 
 
             strong.textContent =
-                active
-                    ? entry.item
-                    : (
-                        owned
-                            ? entry.item
-                            : "NONE EQUIPPED"
-                    );
+                activeItem ||
+                (
+                    ownedOptions.length
+                        ? "CHOOSE AN OWNED ITEM"
+                        : "NONE EQUIPPED"
+                );
 
 
-            if (!active) {
-
+            if (!activeItem) {
                 strong.classList.add(
                     "ga-equipped-empty"
                 );
-
             }
 
 
@@ -2830,15 +2920,19 @@ function gaRenderEquippedStyleSummary() {
                 );
 
 
-            const config =
-                GA_EQUIPPABLE_ITEMS[
-                    entry.item
-                ];
-
-
             description.textContent =
-                config?.description ||
-                "";
+                activeItem
+                    ? (
+                        GA_EQUIPPABLE_ITEMS[
+                            activeItem
+                        ]?.description ||
+                        ""
+                    )
+                    : (
+                        ownedOptions.length
+                            ? "Choose one of your owned cosmetics for this equipment slot."
+                            : "Purchase a compatible cosmetic from the Store to unlock this slot."
+                    );
 
 
             const actions =
@@ -2848,113 +2942,112 @@ function gaRenderEquippedStyleSummary() {
 
 
             actions.className =
-                "ga-equipment-card-actions";
+                "ga-equipment-card-actions ga-equipment-option-list";
 
 
-            const primary =
-                document.createElement(
-                    "button"
-                );
+            if (ownedOptions.length) {
+
+                ownedOptions.forEach(
+                    ([itemName]) => {
+
+                        const button =
+                            document.createElement(
+                                "button"
+                            );
 
 
-            primary.type =
-                "button";
+                        button.type =
+                            "button";
 
 
-            primary.className =
-                "ga-equip-button";
+                        button.className =
+                            "ga-equip-button";
 
 
-            if (active) {
-
-                primary.textContent =
-                    "UNEQUIP";
-
-
-                primary.classList.add(
-                    "unequip"
-                );
+                        const isActive =
+                            activeItem ===
+                            itemName;
 
 
-                primary.addEventListener(
-                    "click",
-                    async () => {
-
-                        primary.disabled =
-                            true;
+                        button.textContent =
+                            isActive
+                                ? `UNEQUIP ${itemName}`
+                                : `EQUIP ${itemName}`;
 
 
-                        await gaSetEquippedItem(
-                            entry.item
+                        if (isActive) {
+                            button.classList.add(
+                                "unequip"
+                            );
+                        }
+
+
+                        button.addEventListener(
+                            "click",
+                            async () => {
+
+                                button.disabled =
+                                    true;
+
+
+                                await gaSetEquippedItem(
+                                    itemName
+                                );
+
+
+                                gaSetEquipmentManagerMessage(
+                                    isActive
+                                        ? `${itemName} unequipped.`
+                                        : `${itemName} equipped.`,
+                                    "success"
+                                );
+
+                            }
                         );
 
 
-                        gaSetEquipmentManagerMessage(
-                            `${entry.item} unequipped.`,
-                            "success"
-                        );
-
-                    }
-                );
-
-            }
-
-            else if (owned) {
-
-                primary.textContent =
-                    "EQUIP";
-
-
-                primary.addEventListener(
-                    "click",
-                    async () => {
-
-                        primary.disabled =
-                            true;
-
-
-                        await gaSetEquippedItem(
-                            entry.item
-                        );
-
-
-                        gaSetEquipmentManagerMessage(
-                            `${entry.item} equipped.`,
-                            "success"
+                        actions.appendChild(
+                            button
                         );
 
                     }
                 );
 
             }
-
             else {
 
-                primary.textContent =
+                const storeButton =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                storeButton.type =
+                    "button";
+
+
+                storeButton.className =
+                    "ga-equip-button store-link";
+
+
+                storeButton.textContent =
                     "GET IN STORE";
 
 
-                primary.classList.add(
-                    "store-link"
-                );
-
-
-                primary.addEventListener(
+                storeButton.addEventListener(
                     "click",
                     () => {
-
                         window.location.href =
-                            entry.store;
-
+                            "store.html";
                     }
                 );
 
+
+                actions.appendChild(
+                    storeButton
+                );
+
             }
-
-
-            actions.appendChild(
-                primary
-            );
 
 
             box.append(

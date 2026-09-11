@@ -227,3 +227,386 @@ body.ga-equip-midnight-roulette .roulette-luxury-spin-button{
     .ga-equip-row{align-items:flex-start;flex-direction:column}
     .ga-equip-button{width:100%}
 }
+
+
+/* ==========================================================
+   PROFILE EQUIPMENT MANAGER v2
+   ========================================================== */
+
+.ga-equipment-manager{
+    width:100%;
+}
+
+.ga-equipped-style-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    align-items:stretch;
+}
+
+.ga-equipped-style-item{
+    display:flex;
+    min-height:178px;
+    flex-direction:column;
+    padding:18px;
+    border:1px solid rgba(212,166,50,.18);
+    border-radius:8px;
+    background:
+        linear-gradient(180deg,rgba(255,255,255,.015),transparent),
+        #090909;
+    transition:
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.ga-equipped-style-item:hover{
+    transform:translateY(-2px);
+    border-color:rgba(212,166,50,.34);
+}
+
+.ga-equipped-style-item.is-active{
+    border-color:rgba(212,166,50,.62);
+    background:
+        radial-gradient(circle at top right,rgba(212,166,50,.08),transparent 38%),
+        #0b0a08;
+    box-shadow:
+        inset 0 0 0 1px rgba(243,214,117,.04),
+        0 10px 30px rgba(0,0,0,.18);
+}
+
+.ga-equipment-card-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.ga-equipment-card-top>span:first-child{
+    margin:0;
+    color:#7f786d;
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+}
+
+.ga-equipment-state{
+    display:inline-flex;
+    align-items:center;
+    min-height:22px;
+    padding:0 7px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:999px;
+    color:#736f68;
+    background:#080808;
+    font-size:7px !important;
+    font-weight:900;
+    letter-spacing:1px !important;
+    white-space:nowrap;
+}
+
+.ga-equipment-state.equipped{
+    border-color:rgba(117,211,155,.35);
+    color:#78d79d;
+    background:rgba(117,211,155,.06);
+}
+
+.ga-equipped-style-item>strong{
+    min-height:32px;
+    color:#eee5d5;
+    font-family:"Cinzel",Georgia,serif;
+    font-size:11px;
+    line-height:1.45;
+}
+
+.ga-equipped-style-item>p{
+    flex:1;
+    margin:8px 0 16px;
+    color:#777168;
+    font-size:10px;
+    line-height:1.55;
+}
+
+.ga-equipment-card-actions{
+    margin-top:auto;
+}
+
+.ga-equipment-card-actions .ga-equip-button{
+    width:100%;
+    min-height:38px;
+}
+
+.ga-equipment-card-actions .ga-equip-button.store-link{
+    border-color:rgba(212,166,50,.34);
+    background:#10100e;
+    color:#d6b35b;
+}
+
+.ga-equipment-manager-message{
+    min-height:20px;
+    margin-top:14px;
+    color:#827c73;
+    font-size:11px;
+    text-align:center;
+}
+
+.ga-equipment-manager-message.success{
+    color:#75d39b;
+}
+
+.ga-equipment-manager-message.error{
+    color:#e76a72;
+}
+
+@media(max-width:900px){
+    .ga-equipped-style-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:620px){
+    .ga-equipped-style-grid{
+        grid-template-columns:1fr;
+    }
+
+    .ga-equipped-style-item{
+        min-height:0;
+    }
+}
+
+
+/* ==========================================================
+   EXPANDED EQUIPMENT v42
+   ========================================================== */
+
+:root{
+    --ga-equip-platinum:#d9e0e6;
+    --ga-equip-platinum2:#ffffff;
+    --ga-equip-crimson:#6d0717;
+    --ga-equip-crimson2:#b50d2a;
+    --ga-equip-ivory:#e8dfc7;
+    --ga-equip-ivory2:#b99b5c;
+    --ga-equip-royal:#142b63;
+    --ga-equip-royal2:#2d5fbb;
+    --ga-equip-sapphire:#082f66;
+    --ga-equip-sapphire2:#0d68bd;
+}
+
+/* ---------------- PROFILE OPTIONS ---------------- */
+
+body.ga-equip-platinum-profile-frame .ga-profile-card{
+    border:2px solid var(--ga-equip-platinum) !important;
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.14),
+        0 0 28px rgba(217,224,230,.18),
+        inset 0 0 24px rgba(255,255,255,.035) !important;
+}
+
+body.ga-equip-royal-name-glow #profileUsername{
+    color:#f3d675 !important;
+    text-shadow:
+        0 0 8px rgba(243,214,117,.6),
+        0 0 20px rgba(212,166,50,.34) !important;
+}
+
+body.ga-equip-black-gold-profile-theme.page-profile{
+    background:
+        radial-gradient(circle at 50% 0%,rgba(212,166,50,.07),transparent 35%),
+        #030303 !important;
+}
+
+body.ga-equip-black-gold-profile-theme .ga-profile-card,
+body.ga-equip-black-gold-profile-theme .card{
+    background:
+        linear-gradient(145deg,#090806,#050505) !important;
+    border-color:rgba(212,166,50,.38) !important;
+}
+
+
+/* ---------------- BLACKJACK TABLES ---------------- */
+
+body.ga-equip-crimson-blackjack-table .blackjack-table{
+    background:
+        radial-gradient(circle at 50% 42%,rgba(255,255,255,.035),transparent 29%),
+        repeating-radial-gradient(
+            circle at 50% 50%,
+            rgba(255,255,255,.011) 0 1px,
+            transparent 1px 4px
+        ),
+        linear-gradient(
+            180deg,
+            #751126 0%,
+            #5a0a19 50%,
+            #37060f 100%
+        ) !important;
+
+    border-color:#d4a632 !important;
+
+    box-shadow:
+        inset 0 0 0 8px #170809,
+        inset 0 0 0 10px rgba(212,166,50,.58),
+        inset 0 -55px 90px rgba(0,0,0,.23),
+        0 24px 55px rgba(0,0,0,.4) !important;
+}
+
+body.ga-equip-crimson-blackjack-table .blackjack-divider span,
+body.ga-equip-crimson-blackjack-table .blackjack-live-label{
+    background:#3a0711 !important;
+}
+
+
+/* ---------------- POKER TABLES ---------------- */
+
+body.ga-equip-ivory-poker-table .poker-table{
+    background:
+        radial-gradient(circle at 50% 45%,rgba(255,255,255,.32),transparent 46%),
+        linear-gradient(
+            180deg,
+            #e9e1cc 0%,
+            #d7c9a7 52%,
+            #bfae87 100%
+        ) !important;
+
+    border-color:#c9a94d !important;
+    box-shadow:
+        inset 0 0 0 8px #221a0e,
+        inset 0 0 0 10px rgba(212,166,50,.64),
+        0 22px 50px rgba(0,0,0,.42) !important;
+}
+
+body.ga-equip-ivory-poker-table .poker-table,
+body.ga-equip-ivory-poker-table .poker-table .community-label,
+body.ga-equip-ivory-poker-table .poker-table .poker-table-logo{
+    color:#18130c !important;
+}
+
+body.ga-equip-royal-poker-felt .poker-table{
+    background:
+        radial-gradient(circle at 50% 45%,rgba(255,255,255,.04),transparent 46%),
+        linear-gradient(
+            180deg,
+            #183f86 0%,
+            #112f69 52%,
+            #091d45 100%
+        ) !important;
+
+    border-color:#d4a632 !important;
+    box-shadow:
+        inset 0 0 0 8px #080f1d,
+        inset 0 0 0 10px rgba(212,166,50,.55),
+        0 22px 50px rgba(0,0,0,.42) !important;
+}
+
+
+/* ---------------- ROULETTE THEMES ---------------- */
+
+body.ga-equip-sapphire-roulette #roulette{
+    background:
+        radial-gradient(circle at 50% 0%,rgba(13,104,189,.16),transparent 38%),
+        #040812 !important;
+}
+
+body.ga-equip-sapphire-roulette .roulette-wheel-shell,
+body.ga-equip-sapphire-roulette .ga-roulette-wheel{
+    box-shadow:
+        0 0 0 2px rgba(212,166,50,.44),
+        0 0 35px rgba(13,104,189,.24) !important;
+}
+
+body.ga-equip-sapphire-roulette .ga-roulette-board-wrap,
+body.ga-equip-sapphire-roulette .ga-roulette-sidebar,
+body.ga-equip-sapphire-roulette .ga-roulette-history{
+    background:
+        linear-gradient(
+            180deg,
+            rgba(8,47,102,.48),
+            rgba(4,10,23,.96)
+        ) !important;
+
+    border-color:rgba(80,151,221,.38) !important;
+}
+
+
+/* ---------------- SLOT CABINET ---------------- */
+
+body.ga-equip-diamond-slot-cabinet .arcade-slot-cabinet{
+    border-color:#dce7ef !important;
+    background:
+        linear-gradient(
+            145deg,
+            #eef3f6 0%,
+            #9eaeb9 22%,
+            #252c32 48%,
+            #cfdce5 77%,
+            #717f88 100%
+        ) !important;
+
+    box-shadow:
+        0 0 0 2px rgba(255,255,255,.18),
+        0 0 34px rgba(191,223,244,.22),
+        0 22px 48px rgba(0,0,0,.42) !important;
+}
+
+body.ga-equip-diamond-slot-cabinet .slot-marquee,
+body.ga-equip-diamond-slot-cabinet .slot-jackpot-panel,
+body.ga-equip-diamond-slot-cabinet .slot-arcade-console{
+    border-color:rgba(230,242,250,.55) !important;
+}
+
+
+/* ---------------- DICE / HIGH ROLL ---------------- */
+
+body.ga-equip-golden-dice-set .dice-table{
+    border-color:#e1b94f !important;
+    background:
+        radial-gradient(circle at 50% 30%,rgba(212,166,50,.12),transparent 42%),
+        linear-gradient(180deg,#17130a,#080806) !important;
+
+    box-shadow:
+        inset 0 0 0 1px rgba(243,214,117,.12),
+        0 0 30px rgba(212,166,50,.12) !important;
+}
+
+body.ga-equip-golden-dice-set .dice-player{
+    border-color:rgba(212,166,50,.5) !important;
+}
+
+
+/* ---------------- CHIP SET ---------------- */
+
+body.ga-equip-high-roller-chip-set .casino-chip,
+body.ga-equip-high-roller-chip-set .chip,
+body.ga-equip-high-roller-chip-set .poker-chip,
+body.ga-equip-high-roller-chip-set .chip-button{
+    border-color:#f3d675 !important;
+    background:
+        radial-gradient(circle at 35% 25%,#5a4717,#171109 56%,#050505) !important;
+    color:#f3d675 !important;
+}
+
+
+/* ---------------- PROFILE EQUIPMENT MANAGER ---------------- */
+
+.ga-equipment-option-list{
+    display:grid;
+    gap:7px;
+}
+
+.ga-equipment-option-list .ga-equip-button{
+    min-height:36px;
+    white-space:normal;
+    line-height:1.3;
+    padding:8px 10px;
+}
+
+@media(max-width:900px){
+    .ga-equipped-style-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:620px){
+    .ga-equipped-style-grid{
+        grid-template-columns:1fr;
+    }
+}
