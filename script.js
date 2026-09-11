@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 30
+   VERSION 31 — EQUIPPABLE COLLECTION
 
    Includes:
    - Supabase Login
@@ -152,7 +152,10 @@ const DEFAULT_PROFILE = {
         0,
 
     collection:
-        []
+        [],
+
+    equipped:
+        {}
 
 };
 
@@ -191,7 +194,14 @@ function loadLocalProfile() {
                         parsed.collection
                     )
                         ? parsed.collection
-                        : []
+                        : [],
+
+                equipped:
+                    parsed.equipped &&
+                    typeof parsed.equipped === "object" &&
+                    !Array.isArray(parsed.equipped)
+                        ? parsed.equipped
+                        : {}
 
             };
 
@@ -222,7 +232,10 @@ function loadLocalProfile() {
         ...DEFAULT_PROFILE,
 
         collection:
-            []
+            [],
+
+        equipped:
+            {}
 
     };
 
@@ -329,6 +342,10 @@ function updateAllDisplays() {
     updateCollectionPage();
 
     updateStoreButtons();
+
+    gaApplyEquippedCosmetics();
+
+    gaRenderEquippedStyleSummary();
 
 }
 
@@ -673,7 +690,14 @@ function gaCloudToLocalProfile(
                 row.collection
             )
                 ? row.collection
-                : []
+                : [],
+
+        equipped:
+            row.equipped &&
+            typeof row.equipped === "object" &&
+            !Array.isArray(row.equipped)
+                ? row.equipped
+                : {}
 
     };
 
@@ -778,7 +802,14 @@ function gaLocalToCloudProfile() {
                 profile.collection
             )
                 ? profile.collection
-                : []
+                : [],
+
+        equipped:
+            profile.equipped &&
+            typeof profile.equipped === "object" &&
+            !Array.isArray(profile.equipped)
+                ? profile.equipped
+                : {}
 
     };
 
@@ -876,7 +907,10 @@ async function gaLoadCloudProfile(
                     0,
 
                 collection:
-                    []
+                    [],
+
+                equipped:
+                    {}
 
             };
 
@@ -1031,7 +1065,10 @@ function gaQueueCloudProfileSave() {
                                         snapshot.dice_wins,
 
                                     collection:
-                                        snapshot.collection
+                                        snapshot.collection,
+
+                                    equipped:
+                                        snapshot.equipped
 
                                 }
                             )
@@ -2258,6 +2295,480 @@ function claimDaily() {
 
 
 
+
+/* ==========================================================
+   EQUIPPABLE COLLECTION
+   ========================================================== */
+
+const GA_EQUIPPABLE_ITEMS = {
+
+    "Gold Profile Frame": {
+        slot: "profile_frame",
+        label: "PROFILE FRAME",
+        className: "ga-equip-gold-profile-frame",
+        description: "Adds a polished gold frame and glow to your member profile."
+    },
+
+    "Diamond Nameplate": {
+        slot: "nameplate",
+        label: "NAMEPLATE",
+        className: "ga-equip-diamond-nameplate",
+        description: "Gives your member name a diamond-inspired premium plate."
+    },
+
+    "High Roller Title": {
+        slot: "title",
+        label: "TITLE",
+        className: "ga-equip-high-roller-title",
+        description: "Displays the HIGH ROLLER title beneath your member name."
+    },
+
+    "Gilded Card Back": {
+        slot: "card_back",
+        label: "CARD BACK",
+        className: "ga-equip-gilded-card-back",
+        description: "Uses the black-and-gold Gilded Ace back on hidden Blackjack and Poker cards."
+    },
+
+    "Gold Blackjack Table": {
+        slot: "blackjack_table",
+        label: "BLACKJACK TABLE",
+        className: "ga-equip-gold-blackjack-table",
+        description: "Applies a premium gold finish to your Blackjack table."
+    },
+
+    "Midnight Roulette": {
+        slot: "roulette_theme",
+        label: "ROULETTE THEME",
+        className: "ga-equip-midnight-roulette",
+        description: "Applies the exclusive midnight-blue Roulette appearance."
+    }
+
+};
+
+
+function gaNormalizeEquipped() {
+
+    if (
+        !profile.equipped ||
+        typeof profile.equipped !== "object" ||
+        Array.isArray(profile.equipped)
+    ) {
+
+        profile.equipped =
+            {};
+
+    }
+
+
+    return profile.equipped;
+
+}
+
+
+function gaPlayerOwnsCollectionItem(
+    itemName
+) {
+
+    return (
+        Array.isArray(
+            profile.collection
+        )
+        &&
+        profile.collection.some(
+            (item) =>
+                item &&
+                item.name ===
+                itemName
+        )
+    );
+
+}
+
+
+function gaEquippedItemInSlot(
+    slot
+) {
+
+    return (
+        gaNormalizeEquipped()[slot] ||
+        null
+    );
+
+}
+
+
+function gaIsItemEquipped(
+    itemName
+) {
+
+    const config =
+        GA_EQUIPPABLE_ITEMS[itemName];
+
+
+    if (!config) {
+
+        return false;
+
+    }
+
+
+    return (
+        gaEquippedItemInSlot(
+            config.slot
+        )
+        ===
+        itemName
+    );
+
+}
+
+
+function gaApplyEquippedCosmetics() {
+
+    const body =
+        document.body;
+
+
+    if (!body) {
+
+        return;
+
+    }
+
+
+    Object
+        .values(
+            GA_EQUIPPABLE_ITEMS
+        )
+        .forEach(
+            (config) => {
+
+                if (
+                    config.className
+                ) {
+
+                    body.classList.remove(
+                        config.className
+                    );
+
+                }
+
+            }
+        );
+
+
+    const equipped =
+        gaNormalizeEquipped();
+
+
+    Object
+        .entries(
+            equipped
+        )
+        .forEach(
+            (
+                [
+                    slot,
+                    itemName
+                ]
+            ) => {
+
+                const config =
+                    GA_EQUIPPABLE_ITEMS[itemName];
+
+
+                if (
+                    config &&
+                    config.slot ===
+                    slot &&
+                    config.className
+                ) {
+
+                    body.classList.add(
+                        config.className
+                    );
+
+                }
+
+            }
+        );
+
+}
+
+
+async function gaSetEquippedItem(
+    itemName
+) {
+
+    const config =
+        GA_EQUIPPABLE_ITEMS[itemName];
+
+
+    if (!config) {
+
+        return;
+
+    }
+
+
+    if (
+        !gaPlayerOwnsCollectionItem(
+            itemName
+        )
+    ) {
+
+        alert(
+            "You must own this item before equipping it."
+        );
+
+        return;
+
+    }
+
+
+    const equipped =
+        gaNormalizeEquipped();
+
+
+    const currentlyEquipped =
+        equipped[config.slot] ===
+        itemName;
+
+
+    const nextItem =
+        currentlyEquipped
+            ? null
+            : itemName;
+
+
+    /*
+        If logged in, use the secure RPC.
+        It checks auth.uid(), ownership, and the allowed slot/item pairing.
+    */
+
+    if (
+        gaCurrentUser &&
+        gaSupabaseClient
+    ) {
+
+        const {
+            data,
+            error
+        } =
+            await gaSupabaseClient
+                .rpc(
+                    "ga_set_equipped_item",
+                    {
+                        p_slot:
+                            config.slot,
+
+                        p_item:
+                            nextItem
+                    }
+                );
+
+
+        if (error) {
+
+            console.error(
+                "Could not update equipped item:",
+                error
+            );
+
+
+            alert(
+                error.message ||
+                "Could not update equipped item."
+            );
+
+            return;
+
+        }
+
+
+        profile.equipped =
+            (
+                data &&
+                typeof data === "object" &&
+                !Array.isArray(data)
+            )
+                ? data
+                : {
+                    ...equipped,
+                    [config.slot]:
+                        nextItem
+                };
+
+    }
+
+    else {
+
+        if (nextItem) {
+
+            equipped[config.slot] =
+                nextItem;
+
+        }
+
+        else {
+
+            delete equipped[
+                config.slot
+            ];
+
+        }
+
+
+        profile.equipped =
+            equipped;
+
+    }
+
+
+    localStorage.setItem(
+        "gildedAceProfile",
+        JSON.stringify(
+            profile
+        )
+    );
+
+
+    updateAllDisplays();
+
+
+    alert(
+        nextItem
+            ? `${itemName} equipped.`
+            : `${itemName} unequipped.`
+    );
+
+}
+
+
+function gaRenderEquippedStyleSummary() {
+
+    const container =
+        document.getElementById(
+            "gaEquippedStyleGrid"
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    const slots = [
+        [
+            "PROFILE FRAME",
+            "profile_frame"
+        ],
+        [
+            "NAMEPLATE",
+            "nameplate"
+        ],
+        [
+            "TITLE",
+            "title"
+        ],
+        [
+            "CARD BACK",
+            "card_back"
+        ],
+        [
+            "BLACKJACK TABLE",
+            "blackjack_table"
+        ],
+        [
+            "ROULETTE THEME",
+            "roulette_theme"
+        ]
+    ];
+
+
+    container.innerHTML =
+        "";
+
+
+    const equipped =
+        gaNormalizeEquipped();
+
+
+    slots.forEach(
+        (
+            [
+                label,
+                slot
+            ]
+        ) => {
+
+            const box =
+                document.createElement(
+                    "div"
+                );
+
+
+            box.className =
+                "ga-equipped-style-item";
+
+
+            const small =
+                document.createElement(
+                    "span"
+                );
+
+
+            small.textContent =
+                label;
+
+
+            const strong =
+                document.createElement(
+                    "strong"
+                );
+
+
+            const value =
+                equipped[slot];
+
+
+            strong.textContent =
+                value ||
+                "NONE EQUIPPED";
+
+
+            if (!value) {
+
+                strong.classList.add(
+                    "ga-equipped-empty"
+                );
+
+            }
+
+
+            box.append(
+                small,
+                strong
+            );
+
+
+            container.appendChild(
+                box
+            );
+
+        }
+    );
+
+}
+
+
+window.gaSetEquippedItem =
+    gaSetEquippedItem;
+
+
 /* ==========================================================
    STORE ITEMS
    ========================================================== */
@@ -2515,7 +3026,9 @@ function updateStoreButtons() {
                 if (owned) {
 
                     button.textContent =
-                        "OWNED";
+                        GA_EQUIPPABLE_ITEMS[name]
+                            ? "OWNED • EQUIP IN COLLECTION"
+                            : "OWNED";
 
 
                     button.disabled =
@@ -2794,12 +3307,130 @@ function updateCollectionPage() {
                 );
 
 
-            card.append(
-                tag,
-                heading,
-                description,
-                price
-            );
+            const equipConfig =
+                GA_EQUIPPABLE_ITEMS[
+                    item.name
+                ];
+
+
+            if (equipConfig) {
+
+                description.textContent =
+                    equipConfig.description;
+
+
+                const equipRow =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                equipRow.className =
+                    "ga-equip-row";
+
+
+                const badge =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                badge.className =
+                    "ga-equip-badge";
+
+
+                const equippedNow =
+                    gaIsItemEquipped(
+                        item.name
+                    );
+
+
+                badge.textContent =
+                    equippedNow
+                        ? "EQUIPPED"
+                        : equipConfig.label;
+
+
+                if (equippedNow) {
+
+                    badge.classList.add(
+                        "is-equipped"
+                    );
+
+                }
+
+
+                const equipButton =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                equipButton.type =
+                    "button";
+
+
+                equipButton.className =
+                    "ga-equip-button";
+
+
+                equipButton.textContent =
+                    equippedNow
+                        ? "UNEQUIP"
+                        : "EQUIP";
+
+
+                if (equippedNow) {
+
+                    equipButton.classList.add(
+                        "unequip"
+                    );
+
+                }
+
+
+                equipButton.addEventListener(
+                    "click",
+                    async () => {
+
+                        equipButton.disabled =
+                            true;
+
+
+                        await gaSetEquippedItem(
+                            item.name
+                        );
+
+                    }
+                );
+
+
+                equipRow.append(
+                    badge,
+                    equipButton
+                );
+
+
+                card.append(
+                    tag,
+                    heading,
+                    description,
+                    price,
+                    equipRow
+                );
+
+            }
+
+            else {
+
+                card.append(
+                    tag,
+                    heading,
+                    description,
+                    price
+                );
+
+            }
 
 
             grid.appendChild(
@@ -3022,6 +3653,16 @@ function updateProfilePage() {
             ? "STANDARD MEMBER"
 
             : tier.current
+    );
+
+
+    setText(
+        "#gaEquippedTitle",
+        gaIsItemEquipped(
+            "High Roller Title"
+        )
+            ? "HIGH ROLLER"
+            : ""
     );
 
 

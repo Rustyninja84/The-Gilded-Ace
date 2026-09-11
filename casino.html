@@ -7,49 +7,7 @@
     <title>Casino | The Gilded Ace</title>
     <link rel="stylesheet" href="styles.css?v=100">
     <link rel="stylesheet" href="casino-repair.css?v=132">
-
-    <style>
-        /* Gilded Ace casino navigation fix: six games in one row on desktop */
-        .casino-tabs{
-            display:grid !important;
-            grid-template-columns:repeat(6,minmax(0,1fr)) !important;
-            gap:8px !important;
-            width:100% !important;
-            align-items:stretch !important;
-        }
-
-        .casino-tabs .casino-tab{
-            width:100% !important;
-            min-width:0 !important;
-            min-height:50px !important;
-            margin:0 !important;
-            padding:0 10px !important;
-            display:flex !important;
-            align-items:center !important;
-            justify-content:center !important;
-            text-align:center !important;
-            white-space:nowrap !important;
-            font:inherit;
-            font-size:10px !important;
-            font-weight:700 !important;
-            letter-spacing:1.5px !important;
-            box-sizing:border-box !important;
-        }
-
-        @media (max-width:1050px){
-            .casino-tabs{
-                grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-            }
-        }
-
-        @media (max-width:650px){
-            .casino-tabs{
-                grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-            }
-        }
-    </style>
-
-    <link rel="stylesheet" href="compliance.css?v=2">
+    <link rel="stylesheet" href="equipment.css?v=1">
 </head>
 <body class="ga-casino-page">
 
@@ -106,12 +64,6 @@
                 role="tab"
                 style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;"
             >HORSE RACING</a>
-
-            <button
-                class="casino-tab"
-                type="button"
-                onclick="event.stopImmediatePropagation(); window.location.href='plinko.html';"
-            >PLINKO</button>
         </div>
 
         <!-- BLACKJACK -->
@@ -419,6 +371,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="casino-repair.js?v=132"></script>
-    <script src="compliance.js?v=2"></script>
+<script src="equipment-runtime.js?v=1"></script>
 </body>
 </html>

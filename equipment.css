@@ -1,0 +1,229 @@
+
+/* ==========================================================
+   THE GILDED ACE — EQUIPPABLE COLLECTION v1
+   Shared cosmetic runtime styles
+   ========================================================== */
+
+:root{
+    --ga-equip-gold:#d4a632;
+    --ga-equip-gold2:#f3d675;
+    --ga-equip-diamond:#ccecff;
+    --ga-equip-midnight:#060914;
+    --ga-equip-midnight2:#10172b;
+}
+
+/* Collection controls */
+.ga-equip-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid rgba(212,166,50,.14);
+}
+
+.ga-equip-badge{
+    display:inline-flex;
+    align-items:center;
+    min-height:28px;
+    padding:0 10px;
+    border:1px solid rgba(212,166,50,.25);
+    border-radius:4px;
+    color:#9a9388;
+    background:#0a0a0a;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:1.1px;
+    text-transform:uppercase;
+}
+
+.ga-equip-badge.is-equipped{
+    border-color:rgba(117,211,155,.45);
+    color:#75d39b;
+    background:rgba(117,211,155,.07);
+}
+
+.ga-equip-button{
+    min-height:38px;
+    padding:0 16px;
+    border:1px solid #d4a632;
+    border-radius:4px;
+    background:linear-gradient(180deg,#d9ad38,#9c6e10);
+    color:#090704;
+    cursor:pointer;
+    font-family:"Cinzel",Georgia,serif;
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1.4px;
+    text-transform:uppercase;
+}
+
+.ga-equip-button:hover{filter:brightness(1.08)}
+.ga-equip-button.unequip{
+    background:#111;
+    color:#f3d675;
+}
+.ga-equip-button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+/* Profile equipment summary */
+.ga-equipped-style-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:18px;
+}
+.ga-equipped-style-item{
+    min-width:0;
+    padding:15px;
+    border:1px solid rgba(212,166,50,.16);
+    border-radius:7px;
+    background:#090909;
+}
+.ga-equipped-style-item span{
+    display:block;
+    margin-bottom:6px;
+    color:#777168;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:1.4px;
+    text-transform:uppercase;
+}
+.ga-equipped-style-item strong{
+    color:#eee5d5;
+    font-family:"Cinzel",Georgia,serif;
+    font-size:11px;
+}
+.ga-equipped-empty{color:#6f6960 !important}
+
+/* Gold Profile Frame */
+body.ga-equip-gold-profile-frame .ga-profile-card{
+    border:2px solid var(--ga-equip-gold2) !important;
+    box-shadow:
+        0 0 0 1px rgba(212,166,50,.18),
+        0 0 34px rgba(212,166,50,.18),
+        0 28px 80px rgba(0,0,0,.48) !important;
+}
+body.ga-equip-gold-profile-frame .ga-profile-card::after{
+    content:"";
+    pointer-events:none;
+    position:absolute;
+    inset:8px;
+    border:1px solid rgba(243,214,117,.28);
+    border-radius:8px;
+}
+
+/* Diamond Nameplate */
+body.ga-equip-diamond-nameplate #profileUsername{
+    display:inline-block;
+    padding:8px 14px;
+    border:1px solid rgba(204,236,255,.7);
+    border-radius:5px;
+    background:
+        linear-gradient(135deg,rgba(204,236,255,.14),rgba(255,255,255,.03)),
+        #0b1015;
+    color:#eaf8ff !important;
+    text-shadow:0 0 18px rgba(151,220,255,.45);
+    box-shadow:
+        inset 0 0 18px rgba(161,225,255,.08),
+        0 0 22px rgba(151,220,255,.08);
+}
+
+/* High Roller Title */
+#gaEquippedTitle{
+    display:none;
+    margin-top:9px;
+    color:var(--ga-equip-gold2);
+    font-family:"Cinzel",Georgia,serif;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+}
+body.ga-equip-high-roller-title #gaEquippedTitle{display:block}
+
+/* Gilded Card Back — Blackjack + Poker */
+body.ga-equip-gilded-card-back .playing-card.card-back,
+body.ga-equip-gilded-card-back .playing-card.back,
+body.ga-equip-gilded-card-back .poker-card.back{
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at center,rgba(243,214,117,.18),transparent 38%),
+        repeating-linear-gradient(
+            45deg,
+            rgba(243,214,117,.12) 0 2px,
+            transparent 2px 9px
+        ),
+        linear-gradient(145deg,#120c04,#030303 58%,#1f1405) !important;
+    color:#f3d675 !important;
+    border:2px solid #d4a632 !important;
+    box-shadow:
+        inset 0 0 0 3px #080808,
+        inset 0 0 0 4px rgba(243,214,117,.45),
+        0 8px 20px rgba(0,0,0,.42) !important;
+}
+body.ga-equip-gilded-card-back .playing-card.card-back::after,
+body.ga-equip-gilded-card-back .playing-card.back::after,
+body.ga-equip-gilded-card-back .poker-card.back::after{
+    content:"A";
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    color:#f3d675;
+    font-family:"Cinzel",Georgia,serif;
+    font-size:22px;
+    font-weight:900;
+    text-shadow:0 0 14px rgba(243,214,117,.4);
+}
+
+/* Gold Blackjack Table */
+body.ga-equip-gold-blackjack-table .blackjack-table{
+    border:2px solid #d4a632 !important;
+    background:
+        radial-gradient(circle at 50% 38%,rgba(212,166,50,.13),transparent 40%),
+        linear-gradient(145deg,#201707,#0b0905 52%,#241705) !important;
+    box-shadow:
+        inset 0 0 45px rgba(212,166,50,.08),
+        0 0 0 1px rgba(243,214,117,.12),
+        0 25px 70px rgba(0,0,0,.45) !important;
+}
+body.ga-equip-gold-blackjack-table .blackjack-divider{
+    color:#f3d675 !important;
+    border-color:rgba(243,214,117,.42) !important;
+}
+
+/* Midnight Roulette */
+body.ga-equip-midnight-roulette #roulette{
+    background:
+        radial-gradient(circle at 30% 10%,rgba(61,83,160,.13),transparent 35%),
+        linear-gradient(180deg,#070a13,#030407) !important;
+}
+body.ga-equip-midnight-roulette .ga-roulette-wheel,
+body.ga-equip-midnight-roulette .roulette-wheel-shell{
+    border-color:#6575b8 !important;
+    box-shadow:
+        0 0 0 1px rgba(125,145,220,.18),
+        0 0 34px rgba(63,83,168,.18) !important;
+}
+body.ga-equip-midnight-roulette .ga-roulette-board-wrap,
+body.ga-equip-midnight-roulette .ga-roulette-sidebar,
+body.ga-equip-midnight-roulette .ga-roulette-history{
+    background:linear-gradient(180deg,#0b1020,#05070d) !important;
+    border-color:rgba(112,132,208,.34) !important;
+}
+body.ga-equip-midnight-roulette .roulette-luxury-spin-button{
+    background:linear-gradient(180deg,#7f8fd0,#3b477e) !important;
+    border-color:#9ca9e2 !important;
+    color:#060812 !important;
+}
+
+@media(max-width:700px){
+    .ga-equipped-style-grid{grid-template-columns:1fr}
+    .ga-equip-row{align-items:flex-start;flex-direction:column}
+    .ga-equip-button{width:100%}
+}
