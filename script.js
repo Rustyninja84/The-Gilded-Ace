@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 37 — HOME RANKINGS RECOVERY
+   VERSION 38 — FULL HOME RECOVERY
 
    Includes:
    - Supabase Login

@@ -1,0 +1,639 @@
+/* ==========================================================
+   THE GILDED ACE — HOME RECOVERY v38
+   Scoped to body.ga-home-v38 so other pages are unaffected.
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
+
+body.ga-home-v38{
+    margin:0;
+    min-height:100vh;
+    overflow-x:hidden;
+    background:
+        radial-gradient(circle at 50% -15%, rgba(90,9,24,.14), transparent 36%),
+        #050505;
+    color:#c9c4b9;
+    font-family:"Inter",Arial,sans-serif;
+}
+
+body.ga-home-v38 *,
+body.ga-home-v38 *::before,
+body.ga-home-v38 *::after{
+    box-sizing:border-box;
+}
+
+body.ga-home-v38 a{
+    color:inherit;
+}
+
+body.ga-home-v38 .ga-home-shell{
+    width:min(1180px, calc(100% - 40px));
+    margin:0 auto;
+}
+
+body.ga-home-v38 .site-header{
+    position:relative;
+    z-index:20;
+    width:100%;
+    min-height:74px;
+    border-bottom:1px solid rgba(212,166,50,.18);
+    background:rgba(4,4,4,.96);
+}
+
+body.ga-home-v38 .nav-container{
+    width:min(1180px, calc(100% - 40px));
+    min-height:74px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:28px;
+}
+
+body.ga-home-v38 .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-decoration:none;
+    min-width:max-content;
+}
+
+body.ga-home-v38 .brand-mark{
+    width:42px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    border:1px solid #d4a632;
+    background:linear-gradient(145deg,#e0b337,#8a5c06);
+    color:#090704;
+    font-family:"Cinzel",serif;
+    font-size:24px;
+    font-weight:900;
+}
+
+body.ga-home-v38 .brand-text{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+
+body.ga-home-v38 .brand-name{
+    color:#f0d277;
+    font-family:"Cinzel",serif;
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:1.3px;
+}
+
+body.ga-home-v38 .brand-subtitle{
+    color:#776f63;
+    font-size:7px;
+    font-weight:800;
+    letter-spacing:2.1px;
+}
+
+body.ga-home-v38 .main-nav{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:28px;
+}
+
+body.ga-home-v38 .main-nav a{
+    position:relative;
+    padding:28px 0 24px;
+    text-decoration:none;
+    color:#8e877c;
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1.2px;
+}
+
+body.ga-home-v38 .main-nav a:hover,
+body.ga-home-v38 .main-nav a.active{
+    color:#f0ca62;
+}
+
+body.ga-home-v38 .main-nav a.active::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:18px;
+    height:1px;
+    background:#d4a632;
+}
+
+body.ga-home-v38 .nav-account{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:15px;
+    min-width:max-content;
+}
+
+body.ga-home-v38 .nav-balance{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    white-space:nowrap;
+}
+
+body.ga-home-v38 .balance-label{
+    color:#8a8379;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:1.2px;
+}
+
+body.ga-home-v38 .balance-value{
+    color:#ece6db;
+    font-size:14px;
+    font-weight:700;
+}
+
+body.ga-home-v38 .profile-button{
+    min-height:38px;
+    padding:0 14px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(212,166,50,.38);
+    border-radius:4px;
+    color:#d7b85e;
+    text-decoration:none;
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+body.ga-home-v38 .ga-home-hero{
+    min-height:520px;
+    display:flex;
+    align-items:center;
+    border-bottom:1px solid rgba(212,166,50,.08);
+    background:
+        radial-gradient(circle at 74% 40%, rgba(86,8,23,.23), transparent 38%),
+        linear-gradient(115deg,#080808 0%,#090706 48%,#080404 100%);
+}
+
+body.ga-home-v38 .ga-hero-inner{
+    padding:86px 0 80px;
+}
+
+body.ga-home-v38 .eyebrow{
+    display:inline-block;
+    margin-bottom:12px;
+    color:#d4a632;
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:3px;
+}
+
+body.ga-home-v38 .ga-home-hero h1{
+    margin:0;
+    color:#f1eadf;
+    font-family:"Cinzel",serif;
+    font-size:clamp(46px,6vw,82px);
+    font-weight:800;
+    letter-spacing:-1px;
+    line-height:.98;
+}
+
+body.ga-home-v38 .ga-home-hero h1 span{
+    color:#e1b23e;
+}
+
+body.ga-home-v38 .ga-hero-copy{
+    max-width:700px;
+    margin:24px 0 0;
+    color:#a39b90;
+    font-size:15px;
+    line-height:1.75;
+}
+
+body.ga-home-v38 .ga-hero-actions{
+    display:flex;
+    gap:12px;
+    margin-top:30px;
+    flex-wrap:wrap;
+}
+
+body.ga-home-v38 .ga-home-btn{
+    min-height:44px;
+    padding:0 22px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:4px;
+    text-decoration:none;
+    cursor:pointer;
+    font-family:"Cinzel",serif;
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1.1px;
+}
+
+body.ga-home-v38 .ga-home-btn-primary{
+    border:1px solid #e1b23e;
+    background:linear-gradient(180deg,#e2b438,#a16d0d);
+    color:#0b0803;
+}
+
+body.ga-home-v38 .ga-home-btn-secondary{
+    border:1px solid rgba(212,166,50,.36);
+    background:#0b0b0a;
+    color:#e0c069;
+}
+
+body.ga-home-v38 .ga-playmoney-mini{
+    margin:18px 0 0;
+    color:#5f5a53;
+    font-size:8px;
+    letter-spacing:1.5px;
+}
+
+body.ga-home-v38 .ga-home-section{
+    padding:72px 0;
+}
+
+body.ga-home-v38 .ga-section-head{
+    margin-bottom:28px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:24px;
+}
+
+body.ga-home-v38 .ga-section-head h2{
+    margin:0;
+    color:#eee6d9;
+    font-family:"Cinzel",serif;
+    font-size:30px;
+    line-height:1.15;
+}
+
+body.ga-home-v38 .ga-text-link{
+    color:#d2b15c;
+    text-decoration:none;
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1.2px;
+}
+
+body.ga-home-v38 .ga-dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:16px;
+}
+
+body.ga-home-v38 .ga-home-card,
+body.ga-home-v38 .ga-game-card{
+    border:1px solid rgba(212,166,50,.22);
+    border-radius:8px;
+    background:
+        linear-gradient(180deg,rgba(255,255,255,.015),transparent),
+        #0c0c0c;
+    box-shadow:0 18px 45px rgba(0,0,0,.16);
+}
+
+body.ga-home-v38 .ga-home-card{
+    min-height:235px;
+    padding:28px;
+}
+
+body.ga-home-v38 .ga-card-label{
+    display:block;
+    margin-bottom:14px;
+    color:#928979;
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:1.5px;
+}
+
+body.ga-home-v38 .ga-card-stat{
+    display:block;
+    margin-bottom:12px;
+    color:#f0e8dc;
+    font-family:"Cinzel",serif;
+    font-size:28px;
+    line-height:1.1;
+}
+
+body.ga-home-v38 .ga-gold{
+    color:#efc74e;
+}
+
+body.ga-home-v38 .ga-home-card p,
+body.ga-home-v38 .ga-game-card p{
+    color:#8c857b;
+    font-size:13px;
+    line-height:1.75;
+}
+
+body.ga-home-v38 .ga-reward-btn{
+    margin-top:14px;
+    border:1px solid #d8a82e;
+}
+
+body.ga-home-v38 .ga-games-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:16px;
+}
+
+body.ga-home-v38 .ga-game-card{
+    min-height:215px;
+    padding:25px;
+    text-decoration:none;
+    transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+
+body.ga-home-v38 .ga-game-card:hover{
+    transform:translateY(-3px);
+    border-color:rgba(212,166,50,.48);
+    box-shadow:0 18px 45px rgba(0,0,0,.28);
+}
+
+body.ga-home-v38 .ga-game-card h3{
+    margin:0;
+    color:#eee5d5;
+    font-family:"Cinzel",serif;
+    font-size:21px;
+}
+
+body.ga-home-v38 .ga-card-link{
+    display:inline-block;
+    margin-top:8px;
+    color:#d1ae53;
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+body.ga-home-v38 .ga-table-wrap{
+    overflow-x:auto;
+    border:1px solid rgba(212,166,50,.22);
+    border-radius:8px;
+    background:#090909;
+}
+
+body.ga-home-v38 .ga-home-table{
+    width:100%;
+    min-width:680px;
+    border-collapse:collapse;
+    table-layout:fixed;
+}
+
+body.ga-home-v38 .ga-home-table th{
+    padding:17px 20px;
+    border-bottom:1px solid rgba(212,166,50,.20);
+    color:#938a79;
+    text-align:left;
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:1.4px;
+}
+
+body.ga-home-v38 .ga-home-table td{
+    padding:19px 20px;
+    border-bottom:1px solid rgba(255,255,255,.045);
+    color:#c9c2b7;
+    font-size:12px;
+}
+
+body.ga-home-v38 .ga-home-table tr:last-child td{
+    border-bottom:0;
+}
+
+body.ga-home-v38 .ga-home-table td:first-child{
+    color:#efc74e;
+    font-family:"Cinzel",serif;
+    font-size:17px;
+}
+
+body.ga-home-v38 .ga-table-state{
+    text-align:center !important;
+    color:#8f897e !important;
+    padding:30px !important;
+}
+
+body.ga-home-v38 .ga-two-card-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:16px;
+}
+
+body.ga-home-v38 .ga-promo-card{
+    min-height:260px;
+}
+
+body.ga-home-v38 .ga-promo-card h3{
+    margin:2px 0 10px;
+    color:#eee5d5;
+    font-family:"Cinzel",serif;
+    font-size:22px;
+}
+
+body.ga-home-v38 .ga-promo-card .ga-home-btn{
+    margin-top:14px;
+}
+
+body.ga-home-v38 .ga-notice{
+    padding:24px 28px;
+    border:1px solid rgba(212,166,50,.14);
+    border-radius:8px;
+    background:#090909;
+    text-align:center;
+}
+
+body.ga-home-v38 .ga-notice strong{
+    color:#d9b456;
+    font-family:"Cinzel",serif;
+    font-size:13px;
+}
+
+body.ga-home-v38 .ga-notice p{
+    max-width:900px;
+    margin:10px auto 0;
+    color:#777168;
+    font-size:11px;
+    line-height:1.7;
+}
+
+body.ga-home-v38 .ga-last-section{
+    padding-top:20px;
+}
+
+body.ga-home-v38 .ga-home-footer{
+    border-top:1px solid rgba(212,166,50,.16);
+    background:#040404;
+}
+
+body.ga-home-v38 .ga-footer-inner{
+    min-height:110px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:25px;
+}
+
+body.ga-home-v38 .ga-footer-inner>div:first-child{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+body.ga-home-v38 .ga-footer-inner strong{
+    color:#dfbd62;
+    font-family:"Cinzel",serif;
+}
+
+body.ga-home-v38 .ga-footer-inner span{
+    color:#69635b;
+    font-size:8px;
+    letter-spacing:1.5px;
+}
+
+body.ga-home-v38 .ga-footer-links{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    gap:18px;
+}
+
+body.ga-home-v38 .ga-footer-links a{
+    color:#7e786f;
+    text-decoration:none;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+body.ga-home-v38 .ga-footer-disclaimer{
+    padding:14px 20px 20px;
+    color:#57524c;
+    text-align:center;
+    font-size:8px;
+    letter-spacing:1.4px;
+}
+
+@media(max-width:1050px){
+    body.ga-home-v38 .nav-container{
+        grid-template-columns:auto auto;
+    }
+
+    body.ga-home-v38 .main-nav{
+        grid-column:1/-1;
+        grid-row:2;
+        padding-bottom:12px;
+        flex-wrap:wrap;
+    }
+
+    body.ga-home-v38 .site-header,
+    body.ga-home-v38 .nav-container{
+        min-height:auto;
+    }
+
+    body.ga-home-v38 .brand,
+    body.ga-home-v38 .nav-account{
+        padding-top:12px;
+    }
+
+    body.ga-home-v38 .ga-dashboard-grid,
+    body.ga-home-v38 .ga-games-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:700px){
+    body.ga-home-v38 .ga-home-shell,
+    body.ga-home-v38 .nav-container{
+        width:min(100% - 24px,1180px);
+    }
+
+    body.ga-home-v38 .nav-container{
+        display:flex;
+        flex-direction:column;
+        align-items:stretch;
+        gap:10px;
+        padding:12px 0;
+    }
+
+    body.ga-home-v38 .brand{
+        justify-content:center;
+        padding:0;
+    }
+
+    body.ga-home-v38 .main-nav{
+        order:3;
+        gap:16px;
+        padding:0;
+    }
+
+    body.ga-home-v38 .main-nav a{
+        padding:9px 0;
+    }
+
+    body.ga-home-v38 .main-nav a.active::after{
+        bottom:3px;
+    }
+
+    body.ga-home-v38 .nav-account{
+        justify-content:center;
+        padding:0;
+    }
+
+    body.ga-home-v38 .ga-home-hero{
+        min-height:460px;
+    }
+
+    body.ga-home-v38 .ga-hero-inner{
+        padding:60px 0;
+    }
+
+    body.ga-home-v38 .ga-section-head{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    body.ga-home-v38 .ga-dashboard-grid,
+    body.ga-home-v38 .ga-games-grid,
+    body.ga-home-v38 .ga-two-card-grid{
+        grid-template-columns:1fr;
+    }
+
+    body.ga-home-v38 .ga-home-section{
+        padding:52px 0;
+    }
+
+    body.ga-home-v38 .ga-footer-inner{
+        padding:25px 0;
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    body.ga-home-v38 .ga-footer-links{
+        justify-content:flex-start;
+    }
+}
+
+@media(max-width:430px){
+    body.ga-home-v38 .brand-text{
+        display:none;
+    }
+
+    body.ga-home-v38 .nav-balance{
+        flex-direction:column;
+        gap:2px;
+    }
+
+    body.ga-home-v38 .ga-home-hero h1{
+        font-size:42px;
+    }
+
+    body.ga-home-v38 .ga-home-card,
+    body.ga-home-v38 .ga-game-card{
+        padding:22px;
+    }
+}
