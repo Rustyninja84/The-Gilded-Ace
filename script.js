@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 35 — LIVE HOME TOP PLAYERS FIXED
+   VERSION 37 — HOME RANKINGS RECOVERY
 
    Includes:
    - Supabase Login
@@ -3914,31 +3914,16 @@ async function gaLoadHomeTopPlayers() {
     const table =
         gaFindHomeTopPlayersTable();
 
-
     if (!table) {
-
         return;
-
     }
-
 
     const tbody =
-        table.querySelector(
-            "tbody"
-        );
-
+        table.querySelector("tbody");
 
     if (!tbody) {
-
         return;
-
     }
-
-
-    /*
-        Always show a visible state while loading. This avoids the
-        blank table problem if the old hard-coded rows were removed.
-    */
 
     tbody.innerHTML = `
         <tr>
@@ -3948,156 +3933,78 @@ async function gaLoadHomeTopPlayers() {
         </tr>
     `;
 
-
     try {
 
-        if (!gaSupabaseClient) {
+        /*
+            IMPORTANT:
+            The Home leaderboard intentionally uses the Supabase REST endpoint
+            directly instead of depending on the authentication client.
 
-            await gaInitializeSupabase();
+            This keeps leaderboard loading independent from login/profile
+            initialization and prevents a Supabase client/CDN timing problem
+            from breaking the Home rankings.
+        */
 
-        }
+        const response =
+            await fetch(
+                `${GA_SUPABASE_URL}/rest/v1/rpc/get_public_leaderboard`,
+                {
+                    method: "POST",
+                    headers: {
+                        "apikey": GA_SUPABASE_KEY,
+                        "Authorization": `Bearer ${GA_SUPABASE_KEY}`,
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: "{}",
+                    cache: "no-store"
+                }
+            );
 
+        if (!response.ok) {
 
-        if (!gaSupabaseClient) {
+            const details =
+                await response.text();
 
             throw new Error(
-                "Supabase is not available."
+                `Leaderboard request failed (${response.status}): ${details}`
             );
-
         }
 
-
-        let data = null;
-        let error = null;
-
-
-        /*
-            PRIMARY METHOD:
-            Use the safe public leaderboard RPC. The SQL included with
-            this package creates/replaces this function.
-        */
-
-        const rpcResult =
-            await gaSupabaseClient
-                .rpc(
-                    "get_public_leaderboard"
-                );
-
-
-        data =
-            rpcResult.data;
-
-
-        error =
-            rpcResult.error;
-
-
-        /*
-            FALLBACK:
-            If the RPC has not been installed yet, try the same safe
-            profile fields used by the full leaderboard page.
-        */
-
-        if (error) {
-
-            console.warn(
-                "Public leaderboard RPC unavailable; trying direct profile query:",
-                error.message
-            );
-
-
-            const directResult =
-                await gaSupabaseClient
-                    .from(
-                        "profiles"
-                    )
-                    .select(
-                        "id,username,balance,wins,losses,games_played"
-                    )
-                    .order(
-                        "balance",
-                        {
-                            ascending: false
-                        }
-                    )
-                    .limit(
-                        100
-                    );
-
-
-            data =
-                directResult.data;
-
-
-            error =
-                directResult.error;
-
-        }
-
-
-        if (error) {
-
-            throw error;
-
-        }
-
+        const data =
+            await response.json();
 
         const players =
-            (
-                Array.isArray(data)
-                    ? data
-                    : []
-            )
+            (Array.isArray(data) ? data : [])
                 .map(
                     player => ({
-
-                        id:
-                            player?.id ||
-                            null,
-
+                        id: player?.id || null,
                         username:
                             String(
                                 player?.username ||
-                                player?.display_name ||
-                                player?.name ||
                                 "Gilded Player"
-                            ),
-
+                            ).trim() || "Gilded Player",
                         balance:
                             Math.max(
                                 0,
-                                Number(
-                                    player?.balance
-                                ) || 0
+                                Number(player?.balance) || 0
                             ),
-
                         wins:
                             Math.max(
                                 0,
-                                Number(
-                                    player?.wins
-                                ) || 0
+                                Number(player?.wins) || 0
                             )
-
                     })
                 )
                 .sort(
                     (a, b) =>
                         b.balance - a.balance ||
                         b.wins - a.wins ||
-                        a.username.localeCompare(
-                            b.username
-                        )
+                        a.username.localeCompare(b.username)
                 )
-                .slice(
-                    0,
-                    3
-                );
+                .slice(0, 3);
 
-
-        if (
-            players.length === 0
-        ) {
+        if (players.length === 0) {
 
             tbody.innerHTML = `
                 <tr>
@@ -4108,74 +4015,41 @@ async function gaLoadHomeTopPlayers() {
             `;
 
             return;
-
         }
 
-
-        tbody.innerHTML =
-            "";
-
+        tbody.innerHTML = "";
 
         players.forEach(
-            (
-                player,
-                index
-            ) => {
+            (player, index) => {
 
                 const row =
-                    document.createElement(
-                        "tr"
-                    );
-
+                    document.createElement("tr");
 
                 const rankCell =
-                    document.createElement(
-                        "td"
-                    );
-
-
-                rankCell.textContent =
-                    String(
-                        index + 1
-                    ).padStart(
-                        2,
-                        "0"
-                    );
-
+                    document.createElement("td");
 
                 const playerCell =
-                    document.createElement(
-                        "td"
-                    );
+                    document.createElement("td");
 
+                const statusCell =
+                    document.createElement("td");
+
+                const balanceCell =
+                    document.createElement("td");
+
+                rankCell.textContent =
+                    String(index + 1).padStart(2, "0");
 
                 playerCell.textContent =
                     player.username;
-
-
-                const statusCell =
-                    document.createElement(
-                        "td"
-                    );
-
 
                 statusCell.textContent =
                     gaMembershipLabelForBalance(
                         player.balance
                     );
 
-
-                const balanceCell =
-                    document.createElement(
-                        "td"
-                    );
-
-
                 balanceCell.textContent =
-                    `${formatNumber(
-                        player.balance
-                    )} AC`;
-
+                    `${formatNumber(player.balance)} AC`;
 
                 row.append(
                     rankCell,
@@ -4184,11 +4058,7 @@ async function gaLoadHomeTopPlayers() {
                     balanceCell
                 );
 
-
-                tbody.appendChild(
-                    row
-                );
-
+                tbody.appendChild(row);
             }
         );
 
@@ -4197,10 +4067,9 @@ async function gaLoadHomeTopPlayers() {
     catch (error) {
 
         console.error(
-            "Could not load Home Top Players:",
+            "Home leaderboard failed:",
             error
         );
-
 
         tbody.innerHTML = `
             <tr>
@@ -4209,9 +4078,7 @@ async function gaLoadHomeTopPlayers() {
                 </td>
             </tr>
         `;
-
     }
-
 }
 
 
@@ -9230,11 +9097,25 @@ document.addEventListener(
            casino games from loading.
            ================================================== */
 
-        await gaInitializeSupabase();
+        try {
+
+            await gaInitializeSupabase();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Account initialization failed:",
+                error
+            );
+
+        }
 
 
         /* ==================================================
            HOME TOP PLAYERS — LIVE SUPABASE DATA
+
+           Runs independently from account authentication.
            ================================================== */
 
         await gaLoadHomeTopPlayers();
