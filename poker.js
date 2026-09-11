@@ -690,14 +690,34 @@ function renderMyCards() {
 }
 
 function pokerCardHTML(card) {
-    const displayRank =
-        card && card.rank === "T"
-            ? "10"
-            : card?.rank;
+    /*
+      Poker cards are stored internally as strings such as:
+      "AS", "KH", "TD", "10C".
 
-    const text = String(card || "");
-    const rank = text.slice(0, -1) || "?";
-    const suitCode = text.slice(-1).toUpperCase();
+      The evaluator correctly uses "T" for Ten, but the table should
+      always DISPLAY that rank as "10".
+    */
+
+    let rawRank = "";
+    let suitCode = "";
+
+    if (
+        card &&
+        typeof card === "object" &&
+        !Array.isArray(card)
+    ) {
+        rawRank = String(card.rank || "").trim().toUpperCase();
+        suitCode = String(card.suit || "").trim().slice(-1).toUpperCase();
+    } else {
+        const text = String(card || "").trim().toUpperCase();
+        rawRank = text.slice(0, -1) || "?";
+        suitCode = text.slice(-1).toUpperCase();
+    }
+
+    const displayRank =
+        rawRank === "T"
+            ? "10"
+            : rawRank;
 
     const suits = {
         H: ["♥", true],
@@ -706,11 +726,13 @@ function pokerCardHTML(card) {
         S: ["♠", false]
     };
 
-    const [suit, red] = suits[suitCode] || [suitCode, false];
+    const [suit, red] =
+        suits[suitCode] ||
+        [suitCode, false];
 
     return `
         <div class="poker-card ${red ? "red" : ""}">
-            <span>${esc(rank)}</span>
+            <span>${esc(displayRank)}</span>
             <span>${esc(suit)}</span>
         </div>
     `;
