@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 39 — PUBLIC LEADERBOARD AUTH FIX
+   VERSION 40 — ISOLATED HOME LEADERBOARD
 
    Includes:
    - Supabase Login
@@ -3909,7 +3909,7 @@ function gaMembershipLabelForBalance(
 }
 
 
-async function gaLoadHomeTopPlayers() {
+async function gaLoadHomeTopPlayersLegacyDisabled() {
 
     const table =
         gaFindHomeTopPlayersTable();
@@ -9124,7 +9124,7 @@ document.addEventListener(
            Runs independently from account authentication.
            ================================================== */
 
-        await gaLoadHomeTopPlayers();
+        /* Home leaderboard handled by home-leaderboard.js v40 */
 
 
         /*
