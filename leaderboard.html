@@ -1,923 +1,853 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Gilded Ace club leaderboard">
+    <title>Leaderboard | The Gilded Ace</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <link rel="stylesheet" href="styles.css?v=100">
+    <link rel="stylesheet" href="compliance.css?v=2">
 
-    <title>
-        Leaderboard | The Gilded Ace
-    </title>
+    <style>
+        :root{
+            --lb-bg:#050505;
+            --lb-panel:#0d0d0d;
+            --lb-panel2:#111111;
+            --lb-gold:#d4a632;
+            --lb-gold2:#f2d277;
+            --lb-text:#ece7dc;
+            --lb-muted:#8f897e;
+            --lb-line:rgba(212,166,50,.20);
+            --lb-burg:#690914;
+        }
 
-    <link
-        rel="stylesheet"
-        href="styles.css?v=7"
-    >
+        *{box-sizing:border-box}
+
+        body.ga-leaderboard-page{
+            margin:0;
+            min-height:100vh;
+            background:
+                radial-gradient(circle at 50% 0,rgba(105,9,20,.09),transparent 26rem),
+                var(--lb-bg);
+            color:var(--lb-text);
+        }
+
+        .lb-shell{
+            width:min(1320px,calc(100% - 40px));
+            margin:0 auto;
+        }
+
+        .lb-hero{
+            padding:72px 0 38px;
+            border-bottom:1px solid rgba(255,255,255,.04);
+        }
+
+        .lb-kicker{
+            margin:0 0 7px;
+            color:var(--lb-gold);
+            font-size:.68rem;
+            font-weight:800;
+            letter-spacing:.22em;
+        }
+
+        .lb-hero h1{
+            margin:0;
+            font-family:Georgia,"Times New Roman",serif;
+            font-size:clamp(2.25rem,6vw,4.9rem);
+            font-weight:400;
+            line-height:.98;
+            color:#fff8ea;
+        }
+
+        .lb-hero-copy{
+            max-width:760px;
+            margin:18px 0 0;
+            color:var(--lb-muted);
+            font-size:.9rem;
+            line-height:1.75;
+        }
+
+        .lb-page{
+            padding:38px 0 70px;
+        }
+
+        .lb-toolbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-end;
+            gap:24px;
+            margin-bottom:22px;
+        }
+
+        .lb-heading small{
+            display:block;
+            margin-bottom:7px;
+            color:var(--lb-gold);
+            font-size:.66rem;
+            font-weight:800;
+            letter-spacing:.2em;
+        }
+
+        .lb-heading h2{
+            margin:0;
+            font-family:Georgia,"Times New Roman",serif;
+            font-size:2rem;
+            font-weight:400;
+        }
+
+        .lb-filters{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+        }
+
+        .lb-filter{
+            min-height:44px;
+            padding:0 22px;
+            border:1px solid rgba(212,166,50,.38);
+            border-radius:4px;
+            background:#16120a;
+            color:#caaa58;
+            font-size:.68rem;
+            font-weight:800;
+            letter-spacing:.12em;
+            cursor:pointer;
+            transition:.18s ease;
+        }
+
+        .lb-filter:hover{
+            border-color:var(--lb-gold);
+            color:var(--lb-gold2);
+            transform:translateY(-1px);
+        }
+
+        .lb-filter.active{
+            background:linear-gradient(180deg,#e0b42f,#b98605);
+            border-color:#e4b832;
+            color:#0a0803;
+            box-shadow:0 0 24px rgba(212,166,50,.13);
+        }
+
+        .lb-summary{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:12px;
+            margin:0 0 18px;
+        }
+
+        .lb-summary-card{
+            min-height:94px;
+            padding:20px 22px;
+            border:1px solid var(--lb-line);
+            background:linear-gradient(145deg,#111,#090909);
+        }
+
+        .lb-summary-card span{
+            display:block;
+            color:#777269;
+            font-size:.62rem;
+            font-weight:800;
+            letter-spacing:.13em;
+        }
+
+        .lb-summary-card strong{
+            display:block;
+            margin-top:7px;
+            color:var(--lb-gold2);
+            font-family:Georgia,"Times New Roman",serif;
+            font-size:1.35rem;
+            font-weight:400;
+        }
+
+        .lb-table-card{
+            overflow:hidden;
+            border:1px solid var(--lb-line);
+            background:var(--lb-panel);
+            box-shadow:0 24px 70px rgba(0,0,0,.22);
+        }
+
+        .lb-table-scroll{
+            overflow-x:auto;
+        }
+
+        .lb-table{
+            width:100%;
+            min-width:920px;
+            border-collapse:collapse;
+            table-layout:fixed;
+        }
+
+        .lb-table col.rank{width:92px}
+        .lb-table col.player{width:28%}
+        .lb-table col.status{width:18%}
+        .lb-table col.balance{width:19%}
+        .lb-table col.wins{width:120px}
+        .lb-table col.games{width:135px}
+        .lb-table col.rate{width:120px}
+
+        .lb-table thead{
+            background:#121212;
+        }
+
+        .lb-table th{
+            padding:17px 18px;
+            color:#837d72;
+            border-bottom:1px solid var(--lb-line);
+            font-size:.64rem;
+            font-weight:800;
+            letter-spacing:.13em;
+            text-align:left;
+            white-space:nowrap;
+        }
+
+        .lb-table th:nth-child(n+4),
+        .lb-table td:nth-child(n+4){
+            text-align:right;
+        }
+
+        .lb-table td{
+            height:74px;
+            padding:14px 18px;
+            border-bottom:1px solid rgba(255,255,255,.055);
+            color:#d8d2c7;
+            font-size:.84rem;
+            vertical-align:middle;
+        }
+
+        .lb-table tbody tr:last-child td{
+            border-bottom:0;
+        }
+
+        .lb-table tbody tr{
+            transition:.15s ease;
+        }
+
+        .lb-table tbody tr:hover{
+            background:rgba(212,166,50,.035);
+        }
+
+        .lb-table tbody tr.is-me{
+            background:linear-gradient(90deg,rgba(105,9,20,.25),rgba(212,166,50,.04));
+            box-shadow:inset 3px 0 0 var(--lb-gold);
+        }
+
+        .lb-rank{
+            display:inline-grid;
+            place-items:center;
+            width:42px;
+            height:42px;
+            border:1px solid rgba(255,255,255,.09);
+            border-radius:50%;
+            color:#aaa39a;
+            font-family:Georgia,"Times New Roman",serif;
+            font-size:1rem;
+        }
+
+        .lb-rank.top-1{
+            border-color:#d7ac30;
+            color:#f7d56b;
+            background:rgba(212,166,50,.10);
+            box-shadow:0 0 20px rgba(212,166,50,.10);
+        }
+
+        .lb-rank.top-2{
+            border-color:#a9afb5;
+            color:#d8dde1;
+            background:rgba(190,196,201,.07);
+        }
+
+        .lb-rank.top-3{
+            border-color:#a76f40;
+            color:#d89a63;
+            background:rgba(167,111,64,.08);
+        }
+
+        .lb-player{
+            display:flex;
+            align-items:center;
+            gap:13px;
+            min-width:0;
+        }
+
+        .lb-avatar{
+            flex:0 0 auto;
+            width:38px;
+            height:38px;
+            display:grid;
+            place-items:center;
+            border:1px solid rgba(212,166,50,.34);
+            border-radius:50%;
+            background:#14100b;
+            color:var(--lb-gold2);
+            font-family:Georgia,"Times New Roman",serif;
+            font-size:.95rem;
+        }
+
+        .lb-player-copy{
+            min-width:0;
+        }
+
+        .lb-player-name{
+            display:block;
+            overflow:hidden;
+            color:#f0ebe2;
+            font-weight:800;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .lb-you{
+            display:inline-block;
+            margin-top:4px;
+            color:#a98d52;
+            font-size:.58rem;
+            font-weight:800;
+            letter-spacing:.12em;
+        }
+
+        .lb-status{
+            display:inline-flex;
+            align-items:center;
+            min-height:28px;
+            padding:0 10px;
+            border:1px solid rgba(212,166,50,.18);
+            border-radius:999px;
+            background:rgba(212,166,50,.045);
+            color:#b8a476;
+            font-size:.61rem;
+            font-weight:800;
+            letter-spacing:.09em;
+            white-space:nowrap;
+        }
+
+        .lb-money{
+            color:var(--lb-gold2) !important;
+            font-weight:800;
+            white-space:nowrap;
+        }
+
+        .lb-muted-cell{
+            color:#aaa39a !important;
+        }
+
+        .lb-state{
+            padding:54px 24px;
+            text-align:center;
+            color:#8c867c;
+        }
+
+        .lb-state strong{
+            display:block;
+            margin-bottom:8px;
+            color:#d4b05b;
+            font-size:.8rem;
+            letter-spacing:.1em;
+        }
+
+        .lb-refresh{
+            margin-top:18px;
+            min-height:40px;
+            padding:0 18px;
+            border:1px solid rgba(212,166,50,.35);
+            background:#111;
+            color:#d2b160;
+            font-weight:800;
+            cursor:pointer;
+        }
+
+        .lb-note{
+            margin-top:18px;
+            padding:18px 20px;
+            border:1px solid rgba(255,255,255,.06);
+            background:#090909;
+            color:#777169;
+            font-size:.72rem;
+            line-height:1.65;
+            text-align:center;
+        }
+
+        @media(max-width:900px){
+            .lb-toolbar{
+                align-items:flex-start;
+                flex-direction:column;
+            }
+
+            .lb-summary{
+                grid-template-columns:1fr;
+            }
+        }
+
+        @media(max-width:600px){
+            .lb-shell{
+                width:min(100% - 22px,1320px);
+            }
+
+            .lb-hero{
+                padding-top:48px;
+            }
+
+            .lb-filters{
+                display:grid;
+                grid-template-columns:1fr;
+                width:100%;
+            }
+
+            .lb-filter{
+                width:100%;
+            }
+        }
+    </style>
 </head>
 
-
-<body class="page-leaderboard">
-
-
-<!-- =========================================================
-     HEADER
-     ========================================================= -->
+<body class="ga-leaderboard-page">
 
 <header class="site-header">
-
     <div class="nav-container">
-
-        <a
-            href="index.html"
-            class="brand"
-        >
-
-            <div class="brand-mark">
-                A
-            </div>
-
+        <a href="index.html" class="brand">
+            <div class="brand-mark">A</div>
             <div class="brand-text">
-
-                <span class="brand-name">
-                    THE GILDED ACE
-                </span>
-
-                <span class="brand-subtitle">
-                    CASINO & SOCIAL CLUB
-                </span>
-
+                <span class="brand-name">THE GILDED ACE</span>
+                <span class="brand-subtitle">CASINO &amp; SOCIAL CLUB</span>
             </div>
-
         </a>
 
-
         <nav class="main-nav">
-
-            <a href="index.html">
-                HOME
-            </a>
-
-            <a href="casino.html">
-                CASINO
-            </a>
-
-            <a href="store.html">
-                STORE
-            </a>
-
-            <a href="collection.html">
-                COLLECTION
-            </a>
-
-            <a
-                href="leaderboard.html"
-                class="active"
-            >
-                LEADERBOARD
-            </a>
-
+            <a href="index.html">HOME</a>
+            <a href="casino.html">CASINO</a>
+            <a href="poker.html">POKER</a>
+            <a href="store.html">STORE</a>
+            <a href="collection.html">COLLECTION</a>
+            <a href="leaderboard.html" class="active">LEADERBOARD</a>
         </nav>
 
-
         <div class="nav-account">
-
-            <span>
-                ACE CREDITS
-            </span>
-
-            <span
-                class="balance-value"
-                data-balance
-            >
-                10,000 AC
-            </span>
-
-            <a
-                href="profile.html"
-                class="profile-button"
-            >
-                PROFILE
-            </a>
-
+            <div class="nav-balance">
+                <span class="balance-label">ACE CREDITS</span>
+                <span class="balance-value" id="navBalance">— AC</span>
+            </div>
+            <a href="profile.html" class="profile-button">PROFILE</a>
         </div>
-
     </div>
-
 </header>
 
-
-
-<!-- =========================================================
-     HERO
-     ========================================================= -->
-
-<section class="page-hero">
-
-    <span class="eyebrow">
-        THE GILDED RANKINGS
-    </span>
-
-    <h1>
-        LEADERBOARD.
-    </h1>
-
-    <p>
-        See who currently sits at the top of
-        The Gilded Ace rankings.
-    </p>
-
-</section>
-
-
-
-<!-- =========================================================
-     TOP THREE
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    THE PODIUM
-                </span>
-
-                <h2>
-                    Top Players
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="podium">
-
-
-            <!-- SECOND PLACE -->
-
-            <div class="card">
-
-                <span class="tag">
-                    #2
-                </span>
-
-                <h2>
-                    GoldenAce
-                </h2>
-
-                <p>
-                    DIAMOND CLUB
-                </p>
-
-                <div
-                    class="stat"
-                    style="margin-top:12px;"
-                >
-                    3,850,000 AC
-                </div>
-
-                <p style="margin-top:10px;">
-                    1,842 WINS
-                </p>
-
-            </div>
-
-
-
-            <!-- FIRST PLACE -->
-
-            <div class="card first">
-
-                <span class="tag">
-                    #1 • CLUB LEADER
-                </span>
-
-                <h2>
-                    HighRoller
-                </h2>
-
-                <p>
-                    CASINO OWNER
-                </p>
-
-                <div
-                    class="stat"
-                    style="margin-top:12px;"
-                >
-                    5,250,000 AC
-                </div>
-
-                <p style="margin-top:10px;">
-                    2,315 WINS
-                </p>
-
-            </div>
-
-
-
-            <!-- THIRD PLACE -->
-
-            <div class="card">
-
-                <span class="tag">
-                    #3
-                </span>
-
-                <h2>
-                    LuckySeven
-                </h2>
-
-                <p>
-                    HIGH ROLLER
-                </p>
-
-                <div
-                    class="stat"
-                    style="margin-top:12px;"
-                >
-                    2,975,000 AC
-                </div>
-
-                <p style="margin-top:10px;">
-                    1,409 WINS
-                </p>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     SORT BUTTONS
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    CLUB STANDINGS
-                </span>
-
-                <h2>
-                    Full Rankings
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div
-            style="
-                display:flex;
-                gap:10px;
-                flex-wrap:wrap;
-                margin-bottom:25px;
-            "
-        >
-
-            <button
-                type="button"
-                onclick="sortLeaderboard('balance')"
-            >
-                HIGHEST BALANCE
-            </button>
-
-            <button
-                type="button"
-                onclick="sortLeaderboard('wins')"
-            >
-                MOST WINS
-            </button>
-
-            <button
-                type="button"
-                onclick="sortLeaderboard('prestige')"
-            >
-                PRESTIGE
-            </button>
-
-        </div>
-
-
-
-        <!-- =================================================
-             LEADERBOARD TABLE
-             ================================================= -->
-
-        <div style="overflow-x:auto;">
-
-            <table id="leaderboardTable">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            RANK
-                        </th>
-
-                        <th>
-                            PLAYER
-                        </th>
-
-                        <th>
-                            STATUS
-                        </th>
-
-                        <th>
-                            BALANCE
-                        </th>
-
-                        <th>
-                            WINS
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-
-                    <tr
-                        data-balance="5250000"
-                        data-wins="2315"
-                        data-prestige="10"
-                    >
-
-                        <td>
-                            01
-                        </td>
-
-                        <td>
-                            HighRoller
-                        </td>
-
-                        <td>
-                            CASINO OWNER
-                        </td>
-
-                        <td>
-                            5,250,000 AC
-                        </td>
-
-                        <td>
-                            2,315
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr
-                        data-balance="3850000"
-                        data-wins="1842"
-                        data-prestige="9"
-                    >
-
-                        <td>
-                            02
-                        </td>
-
-                        <td>
-                            GoldenAce
-                        </td>
-
-                        <td>
-                            DIAMOND CLUB
-                        </td>
-
-                        <td>
-                            3,850,000 AC
-                        </td>
-
-                        <td>
-                            1,842
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr
-                        data-balance="2975000"
-                        data-wins="1409"
-                        data-prestige="8"
-                    >
-
-                        <td>
-                            03
-                        </td>
-
-                        <td>
-                            LuckySeven
-                        </td>
-
-                        <td>
-                            HIGH ROLLER
-                        </td>
-
-                        <td>
-                            2,975,000 AC
-                        </td>
-
-                        <td>
-                            1,409
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr
-                        data-balance="2150000"
-                        data-wins="1260"
-                        data-prestige="7"
-                    >
-
-                        <td>
-                            04
-                        </td>
-
-                        <td>
-                            DiamondJack
-                        </td>
-
-                        <td>
-                            DIAMOND MEMBER
-                        </td>
-
-                        <td>
-                            2,150,000 AC
-                        </td>
-
-                        <td>
-                            1,260
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr
-                        data-balance="1850000"
-                        data-wins="1145"
-                        data-prestige="7"
-                    >
-
-                        <td>
-                            05
-                        </td>
-
-                        <td>
-                            VelvetKing
-                        </td>
-
-                        <td>
-                            DIAMOND MEMBER
-                        </td>
-
-                        <td>
-                            1,850,000 AC
-                        </td>
-
-                        <td>
-                            1,145
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr
-                        data-balance="1495000"
-                        data-wins="980"
-                        data-prestige="6"
-                    >
-
-                        <td>
-                            06
-                        </td>
-
-                        <td>
-                            BlackChip
-                        </td>
-
-                        <td>
-                            GOLD MEMBER
-                        </td>
-
-                        <td>
-                            1,495,000 AC
-                        </td>
-
-                        <td>
-                            980
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr
-                        data-balance="1200000"
-                        data-wins="870"
-                        data-prestige="6"
-                    >
-
-                        <td>
-                            07
-                        </td>
-
-                        <td>
-                            AceOfSpades
-                        </td>
-
-                        <td>
-                            GOLD MEMBER
-                        </td>
-
-                        <td>
-                            1,200,000 AC
-                        </td>
-
-                        <td>
-                            870
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr
-                        data-balance="975000"
-                        data-wins="751"
-                        data-prestige="5"
-                    >
-
-                        <td>
-                            08
-                        </td>
-
-                        <td>
-                            MidnightAce
-                        </td>
-
-                        <td>
-                            SILVER MEMBER
-                        </td>
-
-                        <td>
-                            975,000 AC
-                        </td>
-
-                        <td>
-                            751
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr
-                        data-balance="825000"
-                        data-wins="680"
-                        data-prestige="5"
-                    >
-
-                        <td>
-                            09
-                        </td>
-
-                        <td>
-                            RoyalFlush
-                        </td>
-
-                        <td>
-                            SILVER MEMBER
-                        </td>
-
-                        <td>
-                            825,000 AC
-                        </td>
-
-                        <td>
-                            680
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr
-                        data-balance="675000"
-                        data-wins="544"
-                        data-prestige="4"
-                    >
-
-                        <td>
-                            10
-                        </td>
-
-                        <td>
-                            ClubKing
-                        </td>
-
-                        <td>
-                            BRONZE MEMBER
-                        </td>
-
-                        <td>
-                            675,000 AC
-                        </td>
-
-                        <td>
-                            544
-                        </td>
-
-                    </tr>
-
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     YOUR POSITION
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div
-            class="card"
-            style="
-                background:
-                    radial-gradient(
-                        circle at center top,
-                        rgba(103,6,25,.25),
-                        transparent 60%
-                    ),
-                    linear-gradient(
-                        #141414,
-                        #090909
-                    );
-            "
-        >
-
-            <span class="eyebrow">
-                YOUR POSITION
-            </span>
-
-            <h2>
-                Gilded Player
-            </h2>
-
-
-            <div
-                class="grid"
-                style="margin-top:25px;"
-            >
-
-
-                <div>
-
-                    <span class="tag">
-                        BALANCE
-                    </span>
-
-                    <div
-                        class="stat"
-                        data-balance
-                    >
-                        10,000 AC
-                    </div>
-
-                </div>
-
-
-
-                <div>
-
-                    <span class="tag">
-                        CURRENT RANK
-                    </span>
-
-                    <div class="stat">
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <div>
-
-                    <span class="tag">
-                        STATUS
-                    </span>
-
-                    <div class="stat">
-                        STANDARD
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-            <p style="margin-top:25px;">
-                Continue playing, collecting, and progressing
-                through The Gilded Ace to climb the club rankings.
-            </p>
-
-
-            <div style="margin-top:25px;">
-
-                <a
-                    href="casino.html"
-                    class="btn"
-                >
-                    ENTER CASINO
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     RANKING INFORMATION
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <span class="tag">
-                    BALANCE
-                </span>
-
-                <h3>
-                    Highest Balance
-                </h3>
-
-                <p>
-                    Ranks members based on their current
-                    fictional Ace Credit balance.
-                </p>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    PERFORMANCE
-                </span>
-
-                <h3>
-                    Most Wins
-                </h3>
-
-                <p>
-                    Compares the total number of
-                    recorded casino victories.
-                </p>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    STATUS
-                </span>
-
-                <h3>
-                    Prestige
-                </h3>
-
-                <p>
-                    Highlights members who have reached
-                    the highest fictional club tiers.
-                </p>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     DISCLAIMER
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container notice">
-
-        <h3>
-            PLAY-MONEY RANKINGS
-        </h3>
-
-        <p>
-            Leaderboard balances, winnings, titles, and
-            rankings shown on The Gilded Ace use fictional
-            play-money values only. Ace Credits have no
-            real-world monetary value.
+<section class="lb-hero">
+    <div class="lb-shell">
+        <p class="lb-kicker">THE GILDED ACE • CLUB STANDINGS</p>
+        <h1>FULL RANKINGS</h1>
+        <p class="lb-hero-copy">
+            See who leads the club in Ace Credits, wins, and prestige.
+            Rankings are generated from player profiles stored in The Gilded Ace.
         </p>
-
     </div>
-
 </section>
 
+<main class="lb-page">
+    <div class="lb-shell">
 
+        <div class="lb-toolbar">
+            <div class="lb-heading">
+                <small>LIVE CLUB LEADERBOARD</small>
+                <h2>Club Standings</h2>
+            </div>
 
-<!-- =========================================================
-     FOOTER
-     ========================================================= -->
+            <div class="lb-filters" role="group" aria-label="Leaderboard sorting">
+                <button class="lb-filter active" type="button" data-sort="balance">
+                    HIGHEST BALANCE
+                </button>
+                <button class="lb-filter" type="button" data-sort="wins">
+                    MOST WINS
+                </button>
+                <button class="lb-filter" type="button" data-sort="prestige">
+                    PRESTIGE
+                </button>
+            </div>
+        </div>
 
-<footer>
+        <section class="lb-summary" aria-label="Leaderboard summary">
+            <div class="lb-summary-card">
+                <span>PLAYERS RANKED</span>
+                <strong id="summaryPlayers">—</strong>
+            </div>
+            <div class="lb-summary-card">
+                <span>TOP BALANCE</span>
+                <strong id="summaryBalance">—</strong>
+            </div>
+            <div class="lb-summary-card">
+                <span>MOST WINS</span>
+                <strong id="summaryWins">—</strong>
+            </div>
+        </section>
 
-    <strong>
-        THE GILDED ACE
-    </strong>
+        <section class="lb-table-card" aria-label="Full leaderboard">
+            <div class="lb-table-scroll">
+                <table class="lb-table">
+                    <colgroup>
+                        <col class="rank">
+                        <col class="player">
+                        <col class="status">
+                        <col class="balance">
+                        <col class="wins">
+                        <col class="games">
+                        <col class="rate">
+                    </colgroup>
 
-    CASINO & SOCIAL CLUB
+                    <thead>
+                        <tr>
+                            <th>RANK</th>
+                            <th>PLAYER</th>
+                            <th>STATUS</th>
+                            <th>BALANCE</th>
+                            <th>WINS</th>
+                            <th>GAMES PLAYED</th>
+                            <th>WIN RATE</th>
+                        </tr>
+                    </thead>
 
-    <br>
+                    <tbody id="leaderboardBody">
+                        <tr>
+                            <td colspan="7">
+                                <div class="lb-state">
+                                    <strong>LOADING CLUB STANDINGS</strong>
+                                    Retrieving player rankings…
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-    PLAY-MONEY ENTERTAINMENT ONLY
-    •
-    ACE CREDITS HAVE NO CASH VALUE
+        <div class="lb-note">
+            PLAY-MONEY ENTERTAINMENT ONLY • Ace Credits are fictional virtual credits with no cash value.
+            Leaderboard standings do not represent real money, prizes, or anything of real-world value.
+        </div>
+    </div>
+</main>
 
+<footer class="site-footer">
+    <div class="footer-container">
+        <div>
+            <div class="footer-brand">THE GILDED ACE</div>
+            <p>PLAY. WIN. BUILD YOUR LEGACY.</p>
+        </div>
+
+        <div class="footer-links">
+            <a href="index.html">HOME</a>
+            <a href="casino.html">CASINO</a>
+            <a href="poker.html">POKER</a>
+            <a href="store.html">STORE</a>
+            <a href="collection.html">COLLECTION</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
+        </div>
+    </div>
+
+    <div class="footer-disclaimer">
+        THE GILDED ACE IS A PLAY-MONEY CASINO-STYLE SOCIAL EXPERIENCE.
+        ACE CREDITS HAVE NO REAL-WORLD MONETARY VALUE.
+    </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script>
+(() => {
+    "use strict";
 
-<!-- =========================================================
-     JAVASCRIPT
-     ========================================================= -->
+    const SUPABASE_URL = "https://wrmiylynviujwdoecvcn.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_x-OPQXsHErbHt8I9eAN1Tw_vRhqUsWX";
 
-<script src="script.js?v=7"></script>
+    const body = document.getElementById("leaderboardBody");
+    const filters = [...document.querySelectorAll(".lb-filter")];
+    const navBalance = document.getElementById("navBalance");
+    const summaryPlayers = document.getElementById("summaryPlayers");
+    const summaryBalance = document.getElementById("summaryBalance");
+    const summaryWins = document.getElementById("summaryWins");
 
+    let client = null;
+    let players = [];
+    let currentUserId = null;
+    let currentSort = "balance";
 
+    const money = value =>
+        `${Math.max(0, Number(value) || 0).toLocaleString("en-US")} AC`;
+
+    const num = value => Math.max(0, Number(value) || 0);
+
+    function escapeHtml(value){
+        return String(value ?? "")
+            .replaceAll("&","&amp;")
+            .replaceAll("<","&lt;")
+            .replaceAll(">","&gt;")
+            .replaceAll('"',"&quot;")
+            .replaceAll("'","&#039;");
+    }
+
+    function collectionNames(collection){
+        if(!Array.isArray(collection)) return [];
+
+        return collection.map(item => {
+            if(typeof item === "string") return item;
+            if(item && typeof item === "object"){
+                return item.name || item.title || item.id || "";
+            }
+            return "";
+        }).filter(Boolean);
+    }
+
+    function statusFor(profile){
+        const names = collectionNames(profile.collection).map(v => v.toLowerCase());
+
+        if(names.some(v => v.includes("casino ownership"))) return "CASINO OWNER";
+        if(names.some(v => v.includes("diamond club"))) return "DIAMOND CLUB";
+        if(names.some(v => v.includes("high roller"))) return "HIGH ROLLER";
+
+        const balance = num(profile.balance);
+        const wins = num(profile.wins);
+
+        if(balance >= 5000000 || wins >= 500) return "DIAMOND";
+        if(balance >= 1000000 || wins >= 200) return "PLATINUM";
+        if(balance >= 250000 || wins >= 75) return "GOLD";
+        if(balance >= 100000 || wins >= 25) return "SILVER";
+        return "STANDARD";
+    }
+
+    function prestigeScore(profile){
+        const status = statusFor(profile);
+        const weight = {
+            "CASINO OWNER": 7000000000,
+            "DIAMOND CLUB": 6000000000,
+            "HIGH ROLLER": 5000000000,
+            "DIAMOND": 4000000000,
+            "PLATINUM": 3000000000,
+            "GOLD": 2000000000,
+            "SILVER": 1000000000,
+            "STANDARD": 0
+        }[status] || 0;
+
+        return weight + num(profile.balance) + num(profile.wins) * 1000;
+    }
+
+    function normalizeProfile(profile){
+        return {
+            ...profile,
+            username:
+                profile.username ||
+                profile.display_name ||
+                profile.name ||
+                "Gilded Player",
+            balance:num(profile.balance),
+            wins:num(profile.wins),
+            losses:num(profile.losses),
+            games_played:num(profile.games_played)
+        };
+    }
+
+    function sortedPlayers(){
+        const copy = [...players];
+
+        if(currentSort === "wins"){
+            copy.sort((a,b) =>
+                b.wins - a.wins ||
+                b.balance - a.balance ||
+                a.username.localeCompare(b.username)
+            );
+        }else if(currentSort === "prestige"){
+            copy.sort((a,b) =>
+                prestigeScore(b) - prestigeScore(a) ||
+                b.balance - a.balance ||
+                b.wins - a.wins
+            );
+        }else{
+            copy.sort((a,b) =>
+                b.balance - a.balance ||
+                b.wins - a.wins ||
+                a.username.localeCompare(b.username)
+            );
+        }
+
+        return copy;
+    }
+
+    function renderSummary(){
+        summaryPlayers.textContent = players.length.toLocaleString("en-US");
+
+        const topBalance = players.reduce(
+            (max,p) => Math.max(max,p.balance),
+            0
+        );
+
+        const topWins = players.reduce(
+            (max,p) => Math.max(max,p.wins),
+            0
+        );
+
+        summaryBalance.textContent = money(topBalance);
+        summaryWins.textContent = topWins.toLocaleString("en-US");
+    }
+
+    function render(){
+        const ranked = sortedPlayers();
+
+        if(!ranked.length){
+            body.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="lb-state">
+                            <strong>NO PLAYERS FOUND</strong>
+                            No public player profiles are currently available.
+                            <br>
+                            <button class="lb-refresh" type="button" id="retryLeaderboard">
+                                TRY AGAIN
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            document.getElementById("retryLeaderboard")
+                ?.addEventListener("click",loadLeaderboard);
+
+            return;
+        }
+
+        body.innerHTML = ranked.map((p,index) => {
+            const rank = index + 1;
+            const games = p.games_played;
+            const rate = games > 0 ? Math.min(100,(p.wins / games) * 100) : 0;
+            const rankClass = rank <= 3 ? ` top-${rank}` : "";
+            const mine = p.id && p.id === currentUserId;
+            const initial = (p.username.trim()[0] || "A").toUpperCase();
+
+            return `
+                <tr class="${mine ? "is-me" : ""}">
+                    <td>
+                        <span class="lb-rank${rankClass}">
+                            ${String(rank).padStart(2,"0")}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="lb-player">
+                            <span class="lb-avatar" aria-hidden="true">${escapeHtml(initial)}</span>
+                            <span class="lb-player-copy">
+                                <span class="lb-player-name">${escapeHtml(p.username)}</span>
+                                ${mine ? '<span class="lb-you">YOU</span>' : ''}
+                            </span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="lb-status">${escapeHtml(statusFor(p))}</span>
+                    </td>
+
+                    <td class="lb-money">${money(p.balance)}</td>
+                    <td class="lb-muted-cell">${p.wins.toLocaleString("en-US")}</td>
+                    <td class="lb-muted-cell">${games.toLocaleString("en-US")}</td>
+                    <td class="lb-muted-cell">${rate.toFixed(1)}%</td>
+                </tr>
+            `;
+        }).join("");
+    }
+
+    async function loadNavBalance(){
+        if(!currentUserId) return;
+
+        const {data,error} = await client
+            .from("profiles")
+            .select("balance")
+            .eq("id",currentUserId)
+            .maybeSingle();
+
+        if(!error && data){
+            navBalance.textContent = money(data.balance);
+        }
+    }
+
+    async function loadLeaderboard(){
+        body.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    <div class="lb-state">
+                        <strong>LOADING CLUB STANDINGS</strong>
+                        Retrieving player rankings…
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        try{
+            if(!window.supabase){
+                throw new Error("Supabase library did not load.");
+            }
+
+            if(!client){
+                client = window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_KEY
+                );
+            }
+
+            const {data:{session}} = await client.auth.getSession();
+            currentUserId = session?.user?.id || null;
+
+            /*
+              Only leaderboard-safe fields are requested.
+              Email/auth information is intentionally excluded.
+            */
+            const {data,error} = await client
+                .from("profiles")
+                .select("id,username,balance,wins,losses,games_played,collection")
+                .limit(500);
+
+            if(error){
+                throw error;
+            }
+
+            players = (data || []).map(normalizeProfile);
+
+            renderSummary();
+            render();
+            await loadNavBalance();
+        }catch(error){
+            console.error("Leaderboard load error:",error);
+
+            body.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="lb-state">
+                            <strong>LEADERBOARD COULD NOT LOAD</strong>
+                            ${escapeHtml(error?.message || "Unknown error.")}
+                            <br>
+                            <button class="lb-refresh" type="button" id="retryLeaderboard">
+                                TRY AGAIN
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            document.getElementById("retryLeaderboard")
+                ?.addEventListener("click",loadLeaderboard);
+        }
+    }
+
+    filters.forEach(button => {
+        button.addEventListener("click",() => {
+            currentSort = button.dataset.sort || "balance";
+
+            filters.forEach(item =>
+                item.classList.toggle("active",item === button)
+            );
+
+            render();
+        });
+    });
+
+    loadLeaderboard();
+})();
+</script>
+
+<script src="compliance.js?v=2"></script>
 </body>
-
 </html>
