@@ -437,7 +437,7 @@
         <h1>FULL RANKINGS</h1>
         <p class="lb-hero-copy">
             See who leads the club in Ace Credits, wins, and prestige.
-            Rankings are generated from player profiles stored in The Gilded Ace.
+            Rankings are generated from all player profiles stored in The Gilded Ace.
         </p>
     </div>
 </section>
@@ -583,32 +583,17 @@
             .replaceAll("'","&#039;");
     }
 
-    function collectionNames(collection){
-        if(!Array.isArray(collection)) return [];
-
-        return collection.map(item => {
-            if(typeof item === "string") return item;
-            if(item && typeof item === "object"){
-                return item.name || item.title || item.id || "";
-            }
-            return "";
-        }).filter(Boolean);
-    }
-
     function statusFor(profile){
-        const names = collectionNames(profile.collection).map(v => v.toLowerCase());
-
-        if(names.some(v => v.includes("casino ownership"))) return "CASINO OWNER";
-        if(names.some(v => v.includes("diamond club"))) return "DIAMOND CLUB";
-        if(names.some(v => v.includes("high roller"))) return "HIGH ROLLER";
-
         const balance = num(profile.balance);
         const wins = num(profile.wins);
 
-        if(balance >= 5000000 || wins >= 500) return "DIAMOND";
-        if(balance >= 1000000 || wins >= 200) return "PLATINUM";
-        if(balance >= 250000 || wins >= 75) return "GOLD";
-        if(balance >= 100000 || wins >= 25) return "SILVER";
+        if(balance >= 10000000 || wins >= 1000) return "CASINO OWNER";
+        if(balance >= 5000000 || wins >= 500) return "DIAMOND CLUB";
+        if(balance >= 1000000 || wins >= 200) return "HIGH ROLLER";
+        if(balance >= 500000 || wins >= 100) return "DIAMOND";
+        if(balance >= 250000 || wins >= 50) return "PLATINUM";
+        if(balance >= 100000 || wins >= 25) return "GOLD";
+        if(balance >= 50000 || wins >= 10) return "SILVER";
         return "STANDARD";
     }
 
@@ -792,13 +777,15 @@
             currentUserId = session?.user?.id || null;
 
             /*
-              Only leaderboard-safe fields are requested.
-              Email/auth information is intentionally excluded.
+              IMPORTANT:
+              The leaderboard is loaded through a Supabase RPC that returns
+              leaderboard-safe fields from ALL player profiles.
+
+              This avoids depending on the normal profiles RLS policy, which
+              may only allow each user to read their own profile.
             */
             const {data,error} = await client
-                .from("profiles")
-                .select("id,username,balance,wins,losses,games_played,collection")
-                .limit(500);
+                .rpc("get_public_leaderboard");
 
             if(error){
                 throw error;
