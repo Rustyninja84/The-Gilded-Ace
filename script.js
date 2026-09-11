@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 33 — GLOBAL CLUB STATUS SYNC
+   VERSION 34 — LIVE HOME TOP PLAYERS
 
    Includes:
    - Supabase Login
@@ -3836,6 +3836,280 @@ function updateHomeClubStatus() {
 
             }
         );
+
+}
+
+
+/* ==========================================================
+   HOME PAGE — LIVE TOP PLAYERS
+   ========================================================== */
+
+function gaFindHomeTopPlayersTable() {
+
+    const headings =
+        Array.from(
+            document.querySelectorAll(
+                "h1, h2, h3"
+            )
+        );
+
+
+    const heading =
+        headings.find(
+            element =>
+                String(
+                    element.textContent || ""
+                )
+                    .trim()
+                    .toUpperCase()
+                ===
+                "TOP PLAYERS"
+        );
+
+
+    if (!heading) {
+
+        return null;
+
+    }
+
+
+    const section =
+        heading.closest(
+            "section"
+        )
+        ||
+        heading.parentElement;
+
+
+    return section?.querySelector(
+        "table"
+    ) || null;
+
+}
+
+
+function gaMembershipLabelForBalance(
+    balance
+) {
+
+    const tier =
+        getMembershipTier(
+            Number(balance) || 0
+        );
+
+
+    return (
+        tier.current ===
+        "STANDARD"
+            ? "STANDARD"
+            : tier.current
+    );
+
+}
+
+
+async function gaLoadHomeTopPlayers() {
+
+    const table =
+        gaFindHomeTopPlayersTable();
+
+
+    if (!table) {
+
+        return;
+
+    }
+
+
+    const tbody =
+        table.querySelector(
+            "tbody"
+        );
+
+
+    if (!tbody) {
+
+        return;
+
+    }
+
+
+    if (!gaSupabaseClient) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await gaSupabaseClient
+                .rpc(
+                    "get_public_leaderboard"
+                );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        const players =
+            (
+                Array.isArray(data)
+                    ? data
+                    : []
+            )
+                .map(
+                    player => ({
+
+                        username:
+                            String(
+                                player?.username ||
+                                "Gilded Player"
+                            ),
+
+                        balance:
+                            Number(
+                                player?.balance
+                            ) || 0,
+
+                        wins:
+                            Number(
+                                player?.wins
+                            ) || 0
+
+                    })
+                )
+                .sort(
+                    (a, b) =>
+                        b.balance - a.balance ||
+                        b.wins - a.wins ||
+                        a.username.localeCompare(
+                            b.username
+                        )
+                )
+                .slice(
+                    0,
+                    3
+                );
+
+
+        if (
+            players.length === 0
+        ) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        No ranked players yet.
+                    </td>
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        tbody.innerHTML =
+            "";
+
+
+        players.forEach(
+            (
+                player,
+                index
+            ) => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                const rankCell =
+                    document.createElement(
+                        "td"
+                    );
+
+                rankCell.textContent =
+                    String(
+                        index + 1
+                    ).padStart(
+                        2,
+                        "0"
+                    );
+
+
+                const playerCell =
+                    document.createElement(
+                        "td"
+                    );
+
+                playerCell.textContent =
+                    player.username;
+
+
+                const statusCell =
+                    document.createElement(
+                        "td"
+                    );
+
+                statusCell.textContent =
+                    gaMembershipLabelForBalance(
+                        player.balance
+                    );
+
+
+                const balanceCell =
+                    document.createElement(
+                        "td"
+                    );
+
+                balanceCell.textContent =
+                    `${formatNumber(
+                        player.balance
+                    )} AC`;
+
+
+                row.append(
+                    rankCell,
+                    playerCell,
+                    statusCell,
+                    balanceCell
+                );
+
+
+                tbody.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Could not load Home Top Players:",
+            error
+        );
+
+        /*
+            Keep the existing HTML rows as a visual fallback if the
+            leaderboard RPC is temporarily unavailable.
+        */
+
+    }
 
 }
 
@@ -8856,6 +9130,13 @@ document.addEventListener(
            ================================================== */
 
         await gaInitializeSupabase();
+
+
+        /* ==================================================
+           HOME TOP PLAYERS — LIVE SUPABASE DATA
+           ================================================== */
+
+        await gaLoadHomeTopPlayers();
 
 
         /*
