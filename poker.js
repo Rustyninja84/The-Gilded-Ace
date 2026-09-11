@@ -292,6 +292,13 @@ async function createPokerRoom() {
         setLobbyMessage(error.message || "Could not create table.", "error");
     } finally {
         actionBusy = false;
+
+        // enterPokerRoom() refreshes the waiting lobby while createPokerRoom()
+        // is still marked busy. Re-render once busy clears so host controls
+        // immediately become clickable.
+        if (pokerRoom?.id && isPregameLobby()) {
+            renderPokerWaitingRoom();
+        }
     }
 }
 
@@ -313,7 +320,14 @@ async function joinPokerRoom(roomId, enter = true) {
         console.error(error);
         setLobbyMessage(error.message || "Could not join table.", "error");
     } finally {
-        if (enter) actionBusy = false;
+        if (enter) {
+            actionBusy = false;
+
+            // Same protection for normal lobby joins/returns.
+            if (pokerRoom?.id && isPregameLobby()) {
+                renderPokerWaitingRoom();
+            }
+        }
     }
 }
 
