@@ -276,6 +276,36 @@
     }
 </style>
 
+
+<style id="ga-casino-six-tab-fix">
+    .casino-tabs{
+        display:grid !important;
+        grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+        gap:8px !important;
+        width:100% !important;
+    }
+
+    .casino-tabs .casino-tab{
+        width:100% !important;
+        min-width:0 !important;
+        min-height:48px;
+        margin:0 !important;
+        white-space:nowrap;
+    }
+
+    @media(max-width:1100px){
+        .casino-tabs{
+            grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+        }
+    }
+
+    @media(max-width:650px){
+        .casino-tabs{
+            grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        }
+    }
+</style>
+
 </head>
 <body class="ga-casino-page">
 
@@ -322,19 +352,39 @@
         <div id="casinoSystemMessage" class="casino-system-message" hidden></div>
 
         <div class="casino-tabs" role="tablist" aria-label="Casino games">
-            <button class="casino-tab active" data-game="blackjack" type="button">BLACKJACK</button>
-            <button class="casino-tab" data-game="slots" type="button">SLOTS</button>
-            <button class="casino-tab" data-game="roulette" type="button">ROULETTE</button>
-            <button class="casino-tab" data-game="dice" type="button">HIGH ROLL</button>
-            <a
-                class="casino-tab"
-                href="horse-racing.html"
-                role="tab"
-                style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;"
-            >HORSE RACING</a>
-        </div>
+                <button class="casino-tab active" data-game="blackjack" type="button">
+                    BLACKJACK
+                </button>
 
-        <!-- BLACKJACK -->
+                <button class="casino-tab" data-game="slots" type="button">
+                    SLOTS
+                </button>
+
+                <button class="casino-tab" data-game="roulette" type="button">
+                    ROULETTE
+                </button>
+
+                <button class="casino-tab" data-game="dice" type="button">
+                    HIGH ROLL
+                </button>
+
+                <button
+                    class="casino-tab"
+                    type="button"
+                    onclick="event.stopImmediatePropagation(); window.location.href='horse-racing.html';"
+                >
+                    HORSE RACING
+                </button>
+
+                <button
+                    class="casino-tab"
+                    type="button"
+                    onclick="event.stopImmediatePropagation(); window.location.href='plinko.html';"
+                >
+                    PLINKO
+                </button>
+            </div>
+<!-- BLACKJACK -->
         <section id="blackjack" class="casino-game-panel active">
             <div class="casino-game-heading">
                 <div>
