@@ -162,7 +162,7 @@ function simulatePhysicsStep(ball,dt){
     const triangleBottomY = board.top + (ROWS - 1) * board.rowGap + board.rowGap * .72;
 
     const topHalfWidth = board.pegGap * .58;
-    const bottomHalfWidth = (ROWS * board.pegGap) / 2 + board.pegGap * .95;
+    const bottomHalfWidth = (ROWS * board.pegGap) / 2 + board.pegGap * .72;
 
     const wallProgress = Math.max(
         0,
@@ -211,15 +211,15 @@ function animatePhysicalBall(){
          * it only receives a modest initial sideways velocity.
          * This makes the 10x edge slots realistically attainable.
          */
-        const edgeChase = Math.random() < 0.04;
+        const edgeChase = Math.random() < 0.008;
         const edgeDirection = Math.random() < 0.5 ? -1 : 1;
 
         const ball = {
             x:board.centerX + (Math.random()-.5)*4,
             y:56,
             vx:edgeChase
-                ? edgeDirection * (105 + Math.random()*25)
-                : (Math.random()-.5)*34,
+                ? edgeDirection * (65 + Math.random()*12)
+                : (Math.random()-.5)*22,
             vy:0
         };
 
@@ -240,9 +240,9 @@ function animatePhysicalBall(){
 
                 // Gentle late-board drift only on rare edge-chase drops.
                 // Peg collisions can still cancel or reverse it.
-                if(edgeChase && ball.y > board.top + board.rowGap*5){
-                    ball.vx += edgeDirection * 7.5 * PHYSICS.fixedStep;
-                }
+                if(edgeChase && ball.y > board.top + board.rowGap*6){
+        ball.vx += edgeDirection * 2.0 * PHYSICS.fixedStep;
+    }
 
                 accumulator -= PHYSICS.fixedStep;
             }
