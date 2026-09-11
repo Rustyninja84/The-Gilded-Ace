@@ -25,6 +25,7 @@ let pokerNextHandTimer = null;
 let actionBusy = false;
 let leavingTable = false;
 let lastWinnerNotificationKey = null;
+let pokerRefreshGeneration = 0;
 
 document.addEventListener("DOMContentLoaded", initializePoker);
 
@@ -45,6 +46,22 @@ function esc(value) {
         .replaceAll("'", "&#039;");
 }
 
+function pokerSessionGet(key) {
+    try {
+        return sessionStorage.getItem(key);
+    } catch {
+        return null;
+    }
+}
+
+function pokerSessionSet(key, value) {
+    try {
+        sessionStorage.setItem(key, value);
+    } catch {
+        // Storage may be blocked; winner notification still works in-memory.
+    }
+}
+
 function setMessage(text, type = "") {
     const el = $("pokerStatusMessage") || $("lobbyMessage");
     if (!el) return;
@@ -60,7 +77,7 @@ function setLobbyMessage(text, type = "") {
 }
 
 function showOnly(id) {
-    ["pokerLoading", "pokerLoginRequired", "pokerLobby", "pokerTableView"]
+    ["pokerLoading", "pokerLoginRequired", "pokerLobby", "pokerWaitingRoom", "pokerTableView"]
         .forEach(name => {
             const el = $(name);
             if (el) el.classList.toggle("hidden", name !== id);
@@ -107,6 +124,10 @@ function bindPokerButtons() {
     $("fillBotsButton")?.addEventListener("click", fillPokerBots);
     $("leaveTableButton")?.addEventListener("click", leavePokerRoom);
     $("startHandButton")?.addEventListener("click", startPokerHand);
+    $("waitingStartButton")?.addEventListener("click", startPokerHand);
+    $("waitingFillBotsButton")?.addEventListener("click", fillPokerBots);
+    $("waitingLeaveButton")?.addEventListener("click", leavePokerRoom);
+    $("copyInviteButton")?.addEventListener("click", copyPokerInvite);
     $("foldButton")?.addEventListener("click", () => pokerAction("fold"));
     $("checkButton")?.addEventListener("click", () => pokerAction("check"));
     $("callButton")?.addEventListener("click", () => pokerAction("call"));
@@ -114,6 +135,26 @@ function bindPokerButtons() {
     $("raiseButton")?.addEventListener("click", () => {
         const amount = Number($("raiseAmount")?.value || 0);
         pokerAction("raise", amount);
+    });
+
+    // Safe delegated room actions. Avoid inline onclick strings so a table
+    // name can never become executable JavaScript.
+    $("pokerRoomList")?.addEventListener("click", event => {
+        const button = event.target.closest("[data-poker-room-action]");
+        if (!button) return;
+
+        const roomId = button.dataset.roomId;
+        const action = button.dataset.pokerRoomAction;
+
+        if (!roomId) return;
+
+        if (action === "enter") {
+            enterPokerRoom(roomId);
+        } else if (action === "join") {
+            joinPokerRoom(roomId);
+        } else if (action === "delete") {
+            deletePokerRoom(roomId, button.dataset.roomName || "this table");
+        }
     });
 }
 
@@ -176,27 +217,39 @@ async function loadPokerRooms() {
         const occupied = seatRows.filter(s => s.room_id === room.id).length;
         const mine = seatRows.some(s => s.room_id === room.id && s.user_id === pokerUser.id);
 
+        const roomName = room.name || "Gilded Table";
+
         return `
             <div class="poker-room">
                 <div>
-                    <div class="poker-room-name">${esc(room.name || "Gilded Table")}</div>
+                    <div class="poker-room-name">${esc(roomName)}</div>
                     <div class="poker-room-meta">
                         ${occupied}/${room.max_seats} seats •
                         Buy-in ${fmt(room.buy_in)} AC •
-                        Blinds ${fmt(room.small_blind)}/${fmt(room.big_blind)}
-                        ${seatRows.some(s => s.room_id === room.id && s.is_bot)
-                            ? " • Bots auto-yield seats to players"
-                            : ""}
+                        Blinds ${fmt(room.small_blind)}/${fmt(room.big_blind)} •
+                        <strong class="${Number(room.hand_no || 0) === 0 ? "poker-room-open" : "poker-room-live"}">
+                            ${Number(room.hand_no || 0) === 0 ? "LOBBY OPEN" : "IN GAME"}
+                        </strong>
                     </div>
                 </div>
                 <div class="poker-room-actions">
-                    <button class="poker-primary-button" type="button"
-                        onclick="${mine ? `enterPokerRoom('${room.id}')` : `joinPokerRoom('${room.id}')`}">
-                        ${mine ? "RETURN" : "JOIN"}
+                    <button
+                        class="poker-primary-button"
+                        type="button"
+                        data-poker-room-action="${mine ? "enter" : "join"}"
+                        data-room-id="${esc(room.id)}"
+                        ${!mine && Number(room.hand_no || 0) > 0 ? "disabled" : ""}
+                    >
+                        ${mine ? "RETURN" : (Number(room.hand_no || 0) > 0 ? "IN GAME" : "JOIN LOBBY")}
                     </button>
                     ${room.created_by === pokerUser.id ? `
-                        <button class="poker-danger-button poker-delete-table-button" type="button"
-                            onclick="deletePokerRoom('${room.id}', '${esc(room.name || "Gilded Table")}')">
+                        <button
+                            class="poker-danger-button poker-delete-table-button"
+                            type="button"
+                            data-poker-room-action="delete"
+                            data-room-id="${esc(room.id)}"
+                            data-room-name="${esc(roomName)}"
+                        >
                             DELETE
                         </button>
                     ` : ""}
@@ -232,11 +285,6 @@ async function createPokerRoom() {
 
         const id = Array.isArray(roomId) ? roomId[0] : roomId;
         await joinPokerRoom(id, false);
-
-        if ($("createRoomFillBots")?.checked) {
-            await gaPokerSupabase.rpc("poker_fill_bots", { p_room: id });
-        }
-
         await enterPokerRoom(id);
     } catch (error) {
         console.error(error);
@@ -253,41 +301,11 @@ async function joinPokerRoom(roomId, enter = true) {
         if (enter) actionBusy = true;
         setLobbyMessage("Joining table...");
 
-        let joined = false;
-        let attempts = 0;
+        const { error } = await gaPokerSupabase.rpc("poker_lobby_join_room", {
+            p_room: roomId
+        });
 
-        while (!joined && attempts < 120) {
-            attempts += 1;
-
-            const { data, error } = await gaPokerSupabase.rpc(
-                "poker_join_room_smart",
-                { p_room: roomId }
-            );
-
-            if (!error) {
-                joined = true;
-                break;
-            }
-
-            const message = String(error.message || "");
-
-            if (message.includes("BOT_REPLACE_WAIT")) {
-                setLobbyMessage(
-                    "Table is full of bots. Waiting for the current hand to finish, then a bot will be replaced automatically..."
-                );
-
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                continue;
-            }
-
-            throw error;
-        }
-
-        if (!joined) {
-            throw new Error(
-                "The current hand did not finish in time. Try joining again."
-            );
-        }
+        if (error) throw error;
 
         if (enter) await enterPokerRoom(roomId);
     } catch (error) {
@@ -315,7 +333,6 @@ async function enterPokerRoom(roomId) {
     pokerRoom = room;
 
     history.replaceState({}, "", `poker.html?room=${encodeURIComponent(roomId)}`);
-    showOnly("pokerTableView");
 
     await subscribePokerRoom(roomId);
     await refreshPokerTable(roomId);
@@ -324,13 +341,20 @@ async function enterPokerRoom(roomId) {
 async function refreshPokerTable(roomId = pokerRoom?.id) {
     if (!roomId || leavingTable) return;
 
-    const [roomResult, seatsResult, cardsResult, myCardsResult, showdownCardsResult] = await Promise.all([
+    const generation = ++pokerRefreshGeneration;
+
+    const [roomResult, seatsResult, cardsResult, myCardsResult] = await Promise.all([
         gaPokerSupabase.from("poker_rooms").select("*").eq("id", roomId).maybeSingle(),
         gaPokerSupabase.from("poker_seats").select("*").eq("room_id", roomId).order("seat_no"),
         gaPokerSupabase.from("poker_hole_cards").select("*").eq("room_id", roomId),
-        gaPokerSupabase.rpc("poker_get_my_hole_cards", { p_room: roomId }),
-        gaPokerSupabase.rpc("poker_get_showdown_cards", { p_room: roomId })
+        gaPokerSupabase.rpc("poker_get_my_hole_cards", { p_room: roomId })
     ]);
+
+    // If another refresh finished after this one started, do not let an
+    // older network response overwrite newer table state.
+    if (generation !== pokerRefreshGeneration || leavingTable) {
+        return;
+    }
 
     if (roomResult.error) {
         console.error(roomResult.error);
@@ -342,15 +366,24 @@ async function refreshPokerTable(roomId = pokerRoom?.id) {
         return;
     }
 
+    if (seatsResult.error) {
+        console.error("Could not load poker seats:", seatsResult.error);
+        setMessage(seatsResult.error.message || "Could not load table seats.", "error");
+        return;
+    }
+
+    if (cardsResult.error) {
+        // Unrevealed cards may be hidden by RLS. A real error is logged, but
+        // private cards are still loaded through poker_get_my_hole_cards().
+        console.debug("Public hole-card query:", cardsResult.error.message);
+    }
+
     pokerRoom = roomResult.data;
     pokerSeats = seatsResult.data || [];
     pokerHoleCards = cardsResult.data || [];
 
     if (!myCardsResult.error && Array.isArray(myCardsResult.data) && myCardsResult.data.length) {
         const mine = myCardsResult.data[0];
-        const existingMine = pokerHoleCards.find(row =>
-            Number(row.seat_no) === Number(mine.seat_no)
-        );
 
         pokerHoleCards = pokerHoleCards.filter(row =>
             Number(row.seat_no) !== Number(mine.seat_no)
@@ -361,31 +394,10 @@ async function refreshPokerTable(roomId = pokerRoom?.id) {
             seat_no: mine.seat_no,
             user_id: pokerUser.id,
             cards: mine.cards,
-            revealed: Boolean(existingMine?.revealed || pokerRoom?.hand_complete)
+            revealed: false
         });
     } else if (myCardsResult.error) {
         console.error("Could not load your private hole cards:", myCardsResult.error);
-    }
-
-    if (!showdownCardsResult.error &&
-        Array.isArray(showdownCardsResult.data) &&
-        showdownCardsResult.data.length) {
-
-        for (const shown of showdownCardsResult.data) {
-            pokerHoleCards = pokerHoleCards.filter(row =>
-                Number(row.seat_no) !== Number(shown.seat_no)
-            );
-
-            pokerHoleCards.push({
-                room_id: roomId,
-                seat_no: shown.seat_no,
-                user_id: shown.user_id || null,
-                cards: shown.cards,
-                revealed: true
-            });
-        }
-    } else if (showdownCardsResult.error) {
-        console.error("Could not load showdown cards:", showdownCardsResult.error);
     }
 
     const mySeat = pokerSeats.find(s => s.user_id === pokerUser.id);
@@ -393,6 +405,8 @@ async function refreshPokerTable(roomId = pokerRoom?.id) {
         setMessage("You are no longer seated at this table.", "error");
     }
 
+    syncPokerRoomView();
+    renderPokerWaitingRoom();
     renderPokerTable();
     maybeShowWinnerNotification();
     handlePokerAutomation();
@@ -426,6 +440,120 @@ function queuePokerRefresh() {
     pokerRefreshTimer = setTimeout(() => {
         if (pokerRoom?.id && !leavingTable) refreshPokerTable(pokerRoom.id);
     }, 120);
+}
+
+
+function isPregameLobby() {
+    return Boolean(
+        pokerRoom &&
+        Number(pokerRoom.hand_no || 0) === 0 &&
+        String(pokerRoom.street || "waiting").toLowerCase() === "waiting"
+    );
+}
+
+function isPokerHost() {
+    return Boolean(pokerRoom && pokerUser && pokerRoom.created_by === pokerUser.id);
+}
+
+function syncPokerRoomView() {
+    if (!pokerRoom) return;
+    showOnly(isPregameLobby() ? "pokerWaitingRoom" : "pokerTableView");
+}
+
+function renderPokerWaitingRoom() {
+    if (!pokerRoom || !isPregameLobby()) return;
+
+    const hostSeat = pokerSeats.find(seat => seat.user_id === pokerRoom.created_by);
+    const hostName = hostSeat?.display_name || "Table Host";
+    const occupied = pokerSeats.length;
+    const maxSeats = Number(pokerRoom.max_seats || 6);
+    const playable = pokerSeats.filter(seat => Number(seat.stack || 0) > 0).length;
+    const host = isPokerHost();
+
+    if ($("waitingRoomName")) $("waitingRoomName").textContent = pokerRoom.name || "Gilded Table";
+    if ($("waitingHostName")) $("waitingHostName").textContent = hostName;
+    if ($("waitingPlayerCount")) $("waitingPlayerCount").textContent = `${occupied} / ${maxSeats}`;
+    if ($("waitingBuyIn")) $("waitingBuyIn").textContent = `${fmt(pokerRoom.buy_in)} AC`;
+    if ($("waitingBlinds")) $("waitingBlinds").textContent = `${fmt(pokerRoom.small_blind)} / ${fmt(pokerRoom.big_blind)}`;
+
+    const badge = $("waitingReadyBadge");
+    if (badge) {
+        badge.textContent = playable >= 2 ? "READY" : "WAITING";
+        badge.classList.toggle("ready", playable >= 2);
+    }
+
+    const list = $("waitingSeatList");
+    if (list) {
+        const rows = [];
+        for (let seatNo = 1; seatNo <= maxSeats; seatNo++) {
+            const seat = pokerSeats.find(row => Number(row.seat_no) === seatNo);
+            if (!seat) {
+                rows.push(`
+                    <div class="poker-waiting-seat open">
+                        <span class="poker-waiting-seat-number">${seatNo}</span>
+                        <div><strong>OPEN SEAT</strong><small>Waiting for player</small></div>
+                        <span class="poker-waiting-seat-state">OPEN</span>
+                    </div>
+                `);
+                continue;
+            }
+
+            const mine = seat.user_id === pokerUser.id;
+            const seatHost = seat.user_id === pokerRoom.created_by;
+            rows.push(`
+                <div class="poker-waiting-seat ${mine ? "mine" : ""}">
+                    <span class="poker-waiting-seat-number">${seatNo}</span>
+                    <div>
+                        <strong>${esc(seat.display_name || (seat.is_bot ? "House Bot" : "Player"))}</strong>
+                        <small>${seatHost ? "HOST" : (mine ? "YOU" : (seat.is_bot ? `BOT • ${esc(seat.bot_style || "balanced")}` : "PLAYER"))}</small>
+                    </div>
+                    <span class="poker-waiting-seat-state seated">${fmt(seat.stack)} AC</span>
+                </div>
+            `);
+        }
+        list.innerHTML = rows.join("");
+    }
+
+    if ($("waitingHostTitle")) {
+        $("waitingHostTitle").textContent = host ? "YOUR TABLE" : "WAITING FOR HOST";
+    }
+    if ($("waitingHostHelp")) {
+        $("waitingHostHelp").textContent = host
+            ? "Invite players, optionally fill open seats with bots, then start when at least two seats are ready."
+            : `${hostName} will start the first hand when the table is ready.`;
+    }
+
+    if ($("waitingFillBotsButton")) {
+        $("waitingFillBotsButton").classList.toggle("hidden", !host);
+        $("waitingFillBotsButton").disabled = !host || occupied >= maxSeats || actionBusy;
+    }
+
+    if ($("waitingStartButton")) {
+        $("waitingStartButton").classList.toggle("hidden", !host);
+        $("waitingStartButton").disabled = !host || playable < 2 || actionBusy;
+    }
+
+    const message = $("waitingRoomMessage");
+    if (message && !message.classList.contains("error") && !message.classList.contains("success")) {
+        message.textContent = host
+            ? (playable >= 2 ? "Table ready. Start whenever you are ready." : "Waiting for at least one more player.")
+            : "Waiting for the host to start the first hand...";
+    }
+}
+
+async function copyPokerInvite() {
+    if (!pokerRoom?.id) return;
+    const url = `${location.origin}${location.pathname}?room=${encodeURIComponent(pokerRoom.id)}`;
+    try {
+        await navigator.clipboard.writeText(url);
+        const el = $("waitingRoomMessage");
+        if (el) {
+            el.textContent = "Invite link copied. Send it to another signed-in player.";
+            el.className = "poker-message success";
+        }
+    } catch {
+        window.prompt("Copy this poker lobby link:", url);
+    }
 }
 
 function renderPokerTable() {
@@ -490,22 +618,8 @@ function renderSeats() {
             (mine ? " me" : "") +
             (seat.folded ? " folded" : "");
 
-        const shownCardRow = pokerHoleCards.find(c =>
-            Number(c.seat_no) === i && c.revealed === true
-        );
-        const shownCards = Array.isArray(shownCardRow?.cards) ? shownCardRow.cards : [];
-        const showShowdownCards =
-            Boolean(pokerRoom.hand_complete) &&
-            !seat.folded &&
-            shownCards.length >= 2;
-
         el.innerHTML = `
             ${Number(pokerRoom.dealer_seat) === i ? `<div class="dealer-chip">D</div>` : ""}
-            ${showShowdownCards ? `
-                <div class="seat-showdown-cards" aria-label="${esc(seat.display_name)} showdown cards">
-                    ${shownCards.slice(0, 2).map(pokerMiniCardHTML).join("")}
-                </div>
-            ` : ""}
             <div class="seat-name">${esc(seat.display_name || (seat.is_bot ? "House Bot" : "Player"))}</div>
             <div class="seat-stack">${fmt(seat.stack)} AC</div>
             <div class="seat-bet">Bet: ${fmt(seat.bet_round)} AC</div>
@@ -513,31 +627,6 @@ function renderSeats() {
         `;
     }
 }
-
-
-function pokerMiniCardHTML(card) {
-    const text = String(card || "");
-    const rawRank = text.slice(0, -1) || "?";
-    const rank = rawRank === "T" ? "10" : rawRank;
-    const suitCode = text.slice(-1).toUpperCase();
-
-    const suits = {
-        H: ["♥", true],
-        D: ["♦", true],
-        C: ["♣", false],
-        S: ["♠", false]
-    };
-
-    const [suit, red] = suits[suitCode] || [suitCode, false];
-
-    return `
-        <span class="poker-mini-card ${red ? "red" : ""}">
-            <strong>${esc(rank)}</strong>
-            <span>${esc(suit)}</span>
-        </span>
-    `;
-}
-
 
 function renderMyCards() {
     const target = $("myHoleCards");
@@ -566,8 +655,7 @@ function renderMyCards() {
 
 function pokerCardHTML(card) {
     const text = String(card || "");
-    const rawRank = text.slice(0, -1) || "?";
-    const rank = rawRank === "T" ? "10" : rawRank;
+    const rank = text.slice(0, -1) || "?";
     const suitCode = text.slice(-1).toUpperCase();
 
     const suits = {
@@ -638,10 +726,13 @@ function renderPokerActionControls() {
     }
 
     const enoughPlayers = pokerSeats.filter(s => Number(s.stack || 0) > 0).length >= 2;
-    $("startHandButton").disabled =
-        !enoughPlayers ||
-        (!pokerRoom.hand_complete && String(pokerRoom.street || "").toLowerCase() !== "waiting") ||
-        actionBusy;
+    if ($("startHandButton")) {
+        $("startHandButton").disabled =
+            !enoughPlayers ||
+            isPregameLobby() ||
+            (!pokerRoom.hand_complete && String(pokerRoom.street || "").toLowerCase() !== "waiting") ||
+            actionBusy;
+    }
 }
 
 function renderPokerStatus() {
@@ -743,7 +834,7 @@ async function startPokerHand() {
     actionBusy = true;
 
     try {
-        const { error } = await gaPokerSupabase.rpc("poker_start_hand", {
+        const { error } = await gaPokerSupabase.rpc("poker_request_start_hand", {
             p_room: pokerRoom.id
         });
         if (error) throw error;
@@ -761,7 +852,7 @@ async function fillPokerBots() {
     actionBusy = true;
 
     try {
-        const { error } = await gaPokerSupabase.rpc("poker_fill_bots", {
+        const { error } = await gaPokerSupabase.rpc("poker_lobby_fill_bots", {
             p_room: pokerRoom.id
         });
         if (error) throw error;
@@ -779,6 +870,7 @@ function handlePokerAutomation() {
     clearTimeout(pokerNextHandTimer);
 
     if (!pokerRoom || leavingTable) return;
+    if (isPregameLobby()) return;
 
     if (pokerRoom.hand_complete) {
         const playable = pokerSeats.filter(s => Number(s.stack || 0) > 0).length;
@@ -786,7 +878,7 @@ function handlePokerAutomation() {
             pokerNextHandTimer = setTimeout(async () => {
                 if (!pokerRoom?.id || leavingTable) return;
                 try {
-                    await gaPokerSupabase.rpc("poker_start_hand", { p_room: pokerRoom.id });
+                    await gaPokerSupabase.rpc("poker_request_start_hand", { p_room: pokerRoom.id });
                     await refreshPokerTable(pokerRoom.id);
                 } catch (error) {
                     console.debug("Automatic next hand did not start:", error.message);
@@ -826,7 +918,9 @@ async function leavePokerRoom() {
     if (!pokerRoom?.id || leavingTable) return;
 
     const confirmed = window.confirm(
-        "Leave this poker table? Your remaining table stack will be returned to your Ace Credits."
+        isPregameLobby()
+            ? "Leave this poker lobby? Your full remaining table stack will be returned to your Ace Credits."
+            : "Leave this poker table? Your remaining table stack will be returned to your Ace Credits."
     );
 
     if (!confirmed) return;
@@ -887,13 +981,13 @@ function maybeShowWinnerNotification() {
 
     const storageKey = `gildedAcePokerWinner:${key}`;
 
-    if (sessionStorage.getItem(storageKey) === "shown") {
+    if (pokerSessionGet(storageKey) === "shown") {
         lastWinnerNotificationKey = key;
         return;
     }
 
     lastWinnerNotificationKey = key;
-    sessionStorage.setItem(storageKey, "shown");
+    pokerSessionSet(storageKey, "shown");
     showPokerWinnerNotification(pokerRoom.winner_text);
 }
 
@@ -939,7 +1033,7 @@ async function deletePokerRoom(roomId, roomName = "this table") {
     if (actionBusy) return;
 
     const confirmed = window.confirm(
-        `Delete ${roomName}? This permanently removes the table. Any remaining human table stacks will be returned first.`
+        `Delete ${roomName}? This permanently removes the table. Human players will be refunded safely before deletion.`
     );
 
     if (!confirmed) return;

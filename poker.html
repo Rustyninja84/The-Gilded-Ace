@@ -6,7 +6,8 @@
     <title>Poker | The Gilded Ace</title>
     <meta name="description" content="Multiplayer Texas Hold'em at The Gilded Ace. Play-money only.">
     <link rel="stylesheet" href="styles.css?v=50">
-    <link rel="stylesheet" href="poker.css?v=101">
+    <link rel="stylesheet" href="poker.css?v=82">
+    <link rel="stylesheet" href="compliance.css?v=2">
 </head>
 <body class="poker-page">
 
@@ -118,14 +119,63 @@
                         </select>
                     </label>
 
-                    <label class="poker-check">
-                        <input id="createRoomFillBots" type="checkbox" checked>
-                        <span>Fill empty seats with bots after I join</span>
-                    </label>
-
                     <button id="createRoomButton" class="poker-primary-button" type="button">CREATE TABLE</button>
                     <div id="lobbyMessage" class="poker-message"></div>
                 </div>
+            </div>
+        </section>
+
+
+        <section id="pokerWaitingRoom" class="hidden">
+            <div class="poker-waiting-head">
+                <div>
+                    <span class="section-kicker">PRIVATE TABLE LOBBY</span>
+                    <h2 id="waitingRoomName">Gilded Table</h2>
+                    <p>Players can join this lobby before the first hand begins. The host controls when play starts.</p>
+                </div>
+                <div class="poker-toolbar-actions">
+                    <button id="copyInviteButton" class="poker-secondary-button" type="button">COPY INVITE</button>
+                    <button id="waitingLeaveButton" class="poker-danger-button" type="button">LEAVE LOBBY</button>
+                </div>
+            </div>
+
+            <div class="poker-waiting-status">
+                <div><span>HOST</span><strong id="waitingHostName">—</strong></div>
+                <div><span>PLAYERS</span><strong id="waitingPlayerCount">0 / 6</strong></div>
+                <div><span>BUY-IN</span><strong id="waitingBuyIn">—</strong></div>
+                <div><span>BLINDS</span><strong id="waitingBlinds">—</strong></div>
+            </div>
+
+            <div class="poker-waiting-layout">
+                <div class="poker-panel">
+                    <div class="poker-waiting-panel-head">
+                        <div>
+                            <span class="section-kicker">SEATED PLAYERS</span>
+                            <h3>TABLE ROSTER</h3>
+                        </div>
+                        <span id="waitingReadyBadge" class="poker-lobby-badge">WAITING</span>
+                    </div>
+                    <div id="waitingSeatList" class="poker-waiting-seats"></div>
+                </div>
+
+                <aside class="poker-panel poker-host-panel">
+                    <span class="section-kicker">HOST CONTROLS</span>
+                    <h3 id="waitingHostTitle">WAITING FOR HOST</h3>
+                    <p id="waitingHostHelp" class="poker-host-help">
+                        The first hand will begin when the table host starts the game.
+                    </p>
+
+                    <button id="waitingFillBotsButton" class="poker-secondary-button" type="button">
+                        FILL OPEN SEATS WITH BOTS
+                    </button>
+                    <button id="waitingStartButton" class="poker-primary-button" type="button">
+                        START FIRST HAND
+                    </button>
+
+                    <div id="waitingRoomMessage" class="poker-message">
+                        Waiting for players to join...
+                    </div>
+                </aside>
             </div>
         </section>
 
@@ -205,6 +255,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="poker.js?v=101"></script>
+<script src="poker.js?v=82"></script>
+<script src="compliance.js?v=2"></script>
 </body>
 </html>
