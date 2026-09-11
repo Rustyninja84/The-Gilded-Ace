@@ -1,7 +1,7 @@
 /* ==========================================================
    THE GILDED ACE
    COMPLETE SCRIPT.JS
-   VERSION 40 — ISOLATED HOME LEADERBOARD
+   VERSION 41 — EXPANDED STORE
 
    Includes:
    - Supabase Login
@@ -3061,6 +3061,31 @@ const STORE_ITEMS = {
         price: 50000
     },
 
+    "Platinum Profile Frame": {
+        category: "profile",
+        price: 75000
+    },
+
+    "Royal Name Glow": {
+        category: "profile",
+        price: 125000
+    },
+
+    "Diamond Avatar Ring": {
+        category: "profile",
+        price: 175000
+    },
+
+    "Founder Banner": {
+        category: "profile",
+        price: 300000
+    },
+
+    "Black Gold Profile Theme": {
+        category: "profile",
+        price: 450000
+    },
+
     "Gilded Watch": {
         category: "collectible",
         price: 75000
@@ -3074,6 +3099,31 @@ const STORE_ITEMS = {
     "Diamond Crown": {
         category: "collectible",
         price: 350000
+    },
+
+    "Ace Signet Ring": {
+        category: "collectible",
+        price: 50000
+    },
+
+    "Gilded Cigar Case": {
+        category: "collectible",
+        price: 85000
+    },
+
+    "Crystal Decanter": {
+        category: "collectible",
+        price: 120000
+    },
+
+    "Black Diamond Chip": {
+        category: "collectible",
+        price: 225000
+    },
+
+    "Championship Bracelet": {
+        category: "collectible",
+        price: 400000
     },
 
     "Grand Touring Coupe": {
@@ -3101,6 +3151,31 @@ const STORE_ITEMS = {
         price: 5000000
     },
 
+    "Midnight Roadster": {
+        category: "vehicle",
+        price: 275000
+    },
+
+    "Armored Executive Sedan": {
+        category: "vehicle",
+        price: 900000
+    },
+
+    "Vintage Grand Coupe": {
+        category: "vehicle",
+        price: 1200000
+    },
+
+    "Gilded Hypercar": {
+        category: "vehicle",
+        price: 2000000
+    },
+
+    "Gilded Helicopter": {
+        category: "vehicle",
+        price: 4000000
+    },
+
     "Club Hotel Suite": {
         category: "property",
         price: 50000
@@ -3114,6 +3189,31 @@ const STORE_ITEMS = {
     "Private Estate": {
         category: "property",
         price: 3000000
+    },
+
+    "Skyline Loft": {
+        category: "property",
+        price: 650000
+    },
+
+    "Lakeside Villa": {
+        category: "property",
+        price: 1500000
+    },
+
+    "Mountain Lodge": {
+        category: "property",
+        price: 2200000
+    },
+
+    "Beachfront Mansion": {
+        category: "property",
+        price: 4000000
+    },
+
+    "Private Island": {
+        category: "property",
+        price: 8000000
     },
 
     "Gilded Card Back": {
@@ -3131,6 +3231,91 @@ const STORE_ITEMS = {
         price: 150000
     },
 
+    "Golden Dice Set": {
+        category: "casino",
+        price: 80000
+    },
+
+    "High Roller Chip Set": {
+        category: "casino",
+        price: 125000
+    },
+
+    "Ivory Poker Table": {
+        category: "casino",
+        price: 175000
+    },
+
+    "Diamond Slot Cabinet": {
+        category: "casino",
+        price: 200000
+    },
+
+    "Royal Poker Felt": {
+        category: "casino",
+        price: 250000
+    },
+
+    "Crimson Blackjack Table": {
+        category: "casino",
+        price: 250000
+    },
+
+    "Sapphire Roulette": {
+        category: "casino",
+        price: 300000
+    },
+
+    "VIP Booth": {
+        category: "collectible",
+        price: 200000
+    },
+
+    "Private Bar": {
+        category: "collectible",
+        price: 350000
+    },
+
+    "Cigar Lounge": {
+        category: "collectible",
+        price: 500000
+    },
+
+    "Executive Office": {
+        category: "collectible",
+        price: 750000
+    },
+
+    "Trophy Room": {
+        category: "collectible",
+        price: 900000
+    },
+
+    "Lucky Seven Trophy": {
+        category: "collectible",
+        price: 60000
+    },
+
+    "Blackjack Master Trophy": {
+        category: "collectible",
+        price: 100000
+    },
+
+    "Roulette King Trophy": {
+        category: "collectible",
+        price: 150000
+    },
+
+    "Poker Champion Trophy": {
+        category: "collectible",
+        price: 250000
+    },
+
+    "Millionaire Plaque": {
+        category: "collectible",
+        price: 500000
+    },
+
     "High Roller Membership": {
         category: "prestige",
         price: 250000
@@ -3144,6 +3329,21 @@ const STORE_ITEMS = {
     "Casino Ownership": {
         category: "prestige",
         price: 10000000
+    },
+
+    "Platinum Club": {
+        category: "prestige",
+        price: 2000000
+    },
+
+    "Legacy Member": {
+        category: "prestige",
+        price: 5000000
+    },
+
+    "Gilded Council Seat": {
+        category: "prestige",
+        price: 7500000
     }
 
 };
@@ -3312,6 +3512,9 @@ function updateStoreButtons() {
 
 }
 
+
+
+window.updateStoreButtons = updateStoreButtons;
 
 
 /* ==========================================================

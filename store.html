@@ -1,1160 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Gilded Ace Store">
+    <title>Store | The Gilded Ace</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Store | The Gilded Ace
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="styles.css?v=7"
-    >
-    <link rel="stylesheet" href="equipment.css?v=1">
+    <link rel="stylesheet" href="styles.css?v=100">
+    <link rel="stylesheet" href="store-expanded.css?v=41">
+    <link rel="stylesheet" href="equipment.css?v=2">
+    <link rel="stylesheet" href="compliance.css?v=2">
 </head>
 
-
-<body class="page-store">
-
-
-<!-- =========================================================
-     HEADER
-     ========================================================= -->
+<body class="page-store ga-expanded-store">
 
 <header class="site-header">
-
     <div class="nav-container">
-
-        <a
-            href="index.html"
-            class="brand"
-        >
-
-            <div class="brand-mark">
-                A
-            </div>
-
+        <a href="index.html" class="brand">
+            <div class="brand-mark">A</div>
             <div class="brand-text">
-
-                <span class="brand-name">
-                    THE GILDED ACE
-                </span>
-
-                <span class="brand-subtitle">
-                    CASINO & SOCIAL CLUB
-                </span>
-
+                <span class="brand-name">THE GILDED ACE</span>
+                <span class="brand-subtitle">CASINO &amp; SOCIAL CLUB</span>
             </div>
-
         </a>
 
-
         <nav class="main-nav">
-
-            <a href="index.html">
-                HOME
-            </a>
-
-            <a href="casino.html">
-                CASINO
-            </a>
-
-            <a
-                href="store.html"
-                class="active"
-            >
-                STORE
-            </a>
-
-            <a href="collection.html">
-                COLLECTION
-            </a>
-
-            <a href="leaderboard.html">
-                LEADERBOARD
-            </a>
-
+            <a href="index.html">HOME</a>
+            <a href="casino.html">CASINO</a>
+            <a href="poker.html">POKER</a>
+            <a href="store.html" class="active">STORE</a>
+            <a href="collection.html">COLLECTION</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
         </nav>
 
-
         <div class="nav-account">
-
-            <span>
-                ACE CREDITS
-            </span>
-
-            <span
-                class="balance-value"
-                data-balance
-            >
-                10,000 AC
-            </span>
-
-            <a
-                href="profile.html"
-                class="profile-button"
-            >
-                PROFILE
-            </a>
-
+            <div class="nav-balance">
+                <span class="balance-label">ACE CREDITS</span>
+                <span class="balance-value" data-balance>— AC</span>
+            </div>
+            <a href="profile.html" class="profile-button">PROFILE</a>
         </div>
-
     </div>
-
 </header>
 
-
-
-<!-- =========================================================
-     STORE HERO
-     ========================================================= -->
-
-<section class="page-hero">
-
-    <span class="eyebrow">
-        THE GILDED STORE
-    </span>
-
-    <h1>
-        SPEND YOUR FORTUNE.
-    </h1>
-
-    <p>
-        Turn your fictional Ace Credits into cosmetics,
-        collectibles, vehicles, property, casino upgrades,
-        and exclusive prestige items.
-    </p>
-
-</section>
-
-
-
-<!-- =========================================================
-     BALANCE
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-        <div class="card">
-
-            <span class="tag">
-                AVAILABLE BALANCE
-            </span>
-
-            <div
-                class="stat"
-                data-balance
-            >
-                10,000 AC
-            </div>
-
-            <p>
-                Your current Ace Credit balance is shared
-                across The Gilded Ace.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     PROFILE COSMETICS
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    MEMBER STYLE
-                </span>
-
-                <h2>
-                    Profile Cosmetics
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <span class="tag">
-                    PROFILE
-                </span>
-
-                <h3>
-                    Gold Profile Frame
-                </h3>
-
-                <p>
-                    Surround your member profile with
-                    a polished gold club frame.
-                </p>
-
-                <div class="price">
-                    10,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Gold Profile Frame',
-                        10000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    PROFILE
-                </span>
-
-                <h3>
-                    Diamond Nameplate
-                </h3>
-
-                <p>
-                    Add a premium diamond-inspired
-                    nameplate to your profile.
-                </p>
-
-                <div class="price">
-                    25,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Diamond Nameplate',
-                        25000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    PROFILE
-                </span>
-
-                <h3>
-                    High Roller Title
-                </h3>
-
-                <p>
-                    Display the High Roller title
-                    beside your member name.
-                </p>
-
-                <div class="price">
-                    50,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'High Roller Title',
-                        50000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     COLLECTIBLES
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    THE VAULT
-                </span>
-
-                <h2>
-                    Luxury Collectibles
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <span class="tag">
-                    COLLECTIBLE
-                </span>
-
-                <h3>
-                    Gilded Watch
-                </h3>
-
-                <p>
-                    A luxury club watch reserved
-                    for serious collectors.
-                </p>
-
-                <div class="price">
-                    75,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Gilded Watch',
-                        75000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    COLLECTIBLE
-                </span>
-
-                <h3>
-                    Golden Ace Card
-                </h3>
-
-                <p>
-                    A signature golden Ace card
-                    for your private collection.
-                </p>
-
-                <div class="price">
-                    100,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Golden Ace Card',
-                        100000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    RARE COLLECTIBLE
-                </span>
-
-                <h3>
-                    Diamond Crown
-                </h3>
-
-                <p>
-                    One of the most prestigious
-                    collectible pieces in the club.
-                </p>
-
-                <div class="price">
-                    350,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Diamond Crown',
-                        350000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     VEHICLES
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    MOTOR COLLECTION
-                </span>
-
-                <h2>
-                    Vehicles
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <span class="tag">
-                    VEHICLE
-                </span>
-
-                <h3>
-                    Grand Touring Coupe
-                </h3>
-
-                <p>
-                    A refined luxury touring car
-                    for your Gilded collection.
-                </p>
-
-                <div class="price">
-                    150,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Grand Touring Coupe',
-                        150000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    VEHICLE
-                </span>
-
-                <h3>
-                    Gilded Supercar
-                </h3>
-
-                <p>
-                    High-performance prestige
-                    wrapped in signature club luxury.
-                </p>
-
-                <div class="price">
-                    500,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Gilded Supercar',
-                        500000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    VEHICLE
-                </span>
-
-                <h3>
-                    Executive Limousine
-                </h3>
-
-                <p>
-                    Arrive like a true member
-                    of the Gilded elite.
-                </p>
-
-                <div class="price">
-                    750,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Executive Limousine',
-                        750000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    LUXURY VEHICLE
-                </span>
-
-                <h3>
-                    Private Yacht
-                </h3>
-
-                <p>
-                    A floating symbol of
-                    club success and prestige.
-                </p>
-
-                <div class="price">
-                    2,500,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Private Yacht',
-                        2500000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    ELITE VEHICLE
-                </span>
-
-                <h3>
-                    Private Jet
-                </h3>
-
-                <p>
-                    One of the highest-tier
-                    lifestyle collectibles available.
-                </p>
-
-                <div class="price">
-                    5,000,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Private Jet',
-                        5000000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     PROPERTY
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    REAL ESTATE
-                </span>
-
-                <h2>
-                    Property
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <span class="tag">
-                    PROPERTY
-                </span>
-
-                <h3>
-                    Club Hotel Suite
-                </h3>
-
-                <p>
-                    Your own private suite
-                    inside The Gilded Ace.
-                </p>
-
-                <div class="price">
-                    50,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Club Hotel Suite',
-                        50000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    LUXURY PROPERTY
-                </span>
-
-                <h3>
-                    Luxury Penthouse
-                </h3>
-
-                <p>
-                    A premium penthouse overlooking
-                    the fictional Gilded nightlife.
-                </p>
-
-                <div class="price">
-                    1,000,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Luxury Penthouse',
-                        1000000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    ELITE PROPERTY
-                </span>
-
-                <h3>
-                    Private Estate
-                </h3>
-
-                <p>
-                    A sprawling prestige estate
-                    for the club's wealthiest members.
-                </p>
-
-                <div class="price">
-                    3,000,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Private Estate',
-                        3000000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     CASINO COSMETICS
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    CASINO STYLE
-                </span>
-
-                <h2>
-                    Casino Cosmetics
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <span class="tag">
-                    CARD COSMETIC
-                </span>
-
-                <h3>
-                    Gilded Card Back
-                </h3>
-
-                <p>
-                    Upgrade your cards with
-                    a premium black-and-gold design.
-                </p>
-
-                <div class="price">
-                    15,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Gilded Card Back',
-                        15000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    TABLE COSMETIC
-                </span>
-
-                <h3>
-                    Gold Blackjack Table
-                </h3>
-
-                <p>
-                    Give your Blackjack experience
-                    a high-roller gold finish.
-                </p>
-
-                <div class="price">
-                    100,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Gold Blackjack Table',
-                        100000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    ROULETTE COSMETIC
-                </span>
-
-                <h3>
-                    Midnight Roulette
-                </h3>
-
-                <p>
-                    Unlock an exclusive midnight-themed
-                    roulette appearance.
-                </p>
-
-                <div class="price">
-                    150,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Midnight Roulette',
-                        150000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     PRESTIGE
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-
-        <div class="section-head">
-
-            <div>
-
-                <span class="eyebrow">
-                    ELITE ACCESS
-                </span>
-
-                <h2>
-                    Prestige
-                </h2>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="grid">
-
-
-            <div class="card">
-
-                <span class="tag">
-                    PRESTIGE
-                </span>
-
-                <h3>
-                    High Roller Membership
-                </h3>
-
-                <p>
-                    A major step into the upper
-                    levels of The Gilded Ace.
-                </p>
-
-                <div class="price">
-                    250,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'High Roller Membership',
-                        250000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    PRESTIGE
-                </span>
-
-                <h3>
-                    Diamond Club
-                </h3>
-
-                <p>
-                    Enter one of the highest
-                    fictional membership tiers.
-                </p>
-
-                <div class="price">
-                    1,000,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Diamond Club',
-                        1000000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-
-            <div class="card">
-
-                <span class="tag">
-                    ULTIMATE PRESTIGE
-                </span>
-
-                <h3>
-                    Casino Ownership
-                </h3>
-
-                <p>
-                    The ultimate fictional status symbol
-                    inside The Gilded Ace.
-                </p>
-
-                <div class="price">
-                    10,000,000 AC
-                </div>
-
-                <button
-                    type="button"
-                    onclick="buyItem(
-                        'Casino Ownership',
-                        10000000
-                    )"
-                >
-                    PURCHASE
-                </button>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     COLLECTION LINK
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-        <div
-            class="card"
-            style="
-                text-align:center;
-                padding:50px 25px;
-            "
-        >
-
-            <span class="eyebrow">
-                YOUR PRIVATE VAULT
-            </span>
-
-            <h2>
-                View Your Collection
-            </h2>
-
-            <p
-                style="
-                    max-width:600px;
-                    margin:12px auto 25px;
-                "
-            >
-                Items purchased from the store can be tracked
-                inside your Gilded Ace collection.
-            </p>
-
-            <a
-                href="collection.html"
-                class="btn"
-            >
-                OPEN COLLECTION
-            </a>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     DISCLAIMER
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="container notice">
-
-        <h3>
-            VIRTUAL ITEMS ONLY
-        </h3>
+<section class="ga-store-hero">
+    <div class="ga-store-shell">
+        <span class="eyebrow">THE GILDED STORE</span>
+        <h1>BUILD YOUR LEGACY.</h1>
 
         <p>
-            All merchandise shown in The Gilded Store is
-            fictional digital content for this play-money
-            website. Ace Credits and virtual items have
-            no real-world monetary value.
+            Browse 60 fictional virtual items across profile cosmetics,
+            collectibles, vehicles, property, casino cosmetics, club spaces,
+            trophies, and prestige rewards.
         </p>
 
+        <div class="ga-store-balance">
+            <span>AVAILABLE BALANCE</span>
+            <strong data-balance>— AC</strong>
+        </div>
     </div>
-
 </section>
 
+<section class="ga-store-tools">
+    <div class="ga-store-shell ga-store-tools-row">
 
+        <div class="ga-store-filters" aria-label="Store categories">
+            <button type="button" class="ga-store-filter active" data-category="all">ALL</button>
+<button type="button" class="ga-store-filter" data-category="profile">PROFILE</button>
+<button type="button" class="ga-store-filter" data-category="collectibles">COLLECTIBLES</button>
+<button type="button" class="ga-store-filter" data-category="vehicles">VEHICLES</button>
+<button type="button" class="ga-store-filter" data-category="property">PROPERTY</button>
+<button type="button" class="ga-store-filter" data-category="casino">CASINO</button>
+<button type="button" class="ga-store-filter" data-category="lounge">CLUB & LOUNGE</button>
+<button type="button" class="ga-store-filter" data-category="trophies">TROPHIES</button>
+<button type="button" class="ga-store-filter" data-category="prestige">PRESTIGE</button>
+        </div>
 
-<!-- =========================================================
-     FOOTER
-     ========================================================= -->
+        <div class="ga-store-search-wrap">
+            <input
+                id="gaStoreSearch"
+                type="search"
+                autocomplete="off"
+                placeholder="Search store items..."
+                aria-label="Search store items"
+            >
+        </div>
 
-<footer>
+    </div>
+</section>
 
-    <strong>
-        THE GILDED ACE
-    </strong>
+<main class="ga-store-main">
+    <div class="ga-store-shell">
 
-    CASINO & SOCIAL CLUB
+        <div class="ga-store-head">
+            <div>
+                <span class="eyebrow">VIRTUAL COLLECTION</span>
+                <h2>STORE CATALOG</h2>
+            </div>
 
-    <br>
+            <span id="gaStoreCount">60 ITEMS SHOWN</span>
+        </div>
 
-    PLAY-MONEY ENTERTAINMENT ONLY
-    •
-    ACE CREDITS HAVE NO CASH VALUE
+        <div id="gaStoreGrid" class="ga-store-grid"></div>
 
+        <div class="ga-store-notice">
+            All merchandise in The Gilded Store is fictional virtual content.
+            Ace Credits and virtual items have no cash value and cannot be
+            redeemed for money, prizes, goods, or services.
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div>
+            <strong>THE GILDED ACE</strong>
+            <p>A fictional virtual casino and social club.</p>
+        </div>
+
+        <div>
+            <p>Ace Credits are virtual entertainment credits with no cash value.</p>
+        </div>
+    </div>
 </footer>
 
-
-
-<!-- =========================================================
-     JAVASCRIPT
-     ========================================================= -->
-
-<script src="script.js?v=31"></script>
-
+<script src="store-catalog.js?v=41"></script>
+<script src="script.js?v=41"></script>
+<script src="compliance.js?v=2"></script>
 
 </body>
-
 </html>
