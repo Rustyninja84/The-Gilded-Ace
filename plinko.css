@@ -604,3 +604,29 @@ body.ga-plinko-page{
    PLINKO v4
    Invisible triangle collision walls + reachable 10x edges.
 ========================================================= */
+
+
+/* =========================================================
+   PLINKO v6 — EXACT PAYOUT-SLOT ALIGNMENT
+   JS sets the left/right padding to match the actual physics
+   slot boundaries inside the responsive canvas.
+========================================================= */
+
+.plinko-multiplier-strip{
+    box-sizing:border-box;
+    width:100%;
+    padding-top:8px;
+    padding-bottom:17px;
+    /* horizontal padding is calculated by plinko.js */
+}
+
+.plinko-multiplier.hit{
+    position:relative;
+    border-color:#f3d675 !important;
+    color:#fff0a8 !important;
+    background:
+        linear-gradient(180deg,#6f0a1a,#33050c) !important;
+    box-shadow:
+        0 0 0 1px rgba(243,214,117,.25),
+        0 0 18px rgba(212,166,50,.22) !important;
+}

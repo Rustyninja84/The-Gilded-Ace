@@ -456,9 +456,93 @@ function renderHistory(){
     });
 }
 
+function alignMultiplierStripToCanvasSlots(){
+    const strip = $("plinkoMultiplierStrip");
+
+    if(!strip || !canvas){
+        return;
+    }
+
+    const boardCard = strip.closest(".plinko-board-card");
+
+    if(!boardCard){
+        return;
+    }
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const cardRect = boardCard.getBoundingClientRect();
+
+    if(canvasRect.width <= 0 || cardRect.width <= 0){
+        return;
+    }
+
+    /*
+     * The physics board does NOT use the entire canvas width for payout slots.
+     *
+     * Internal slot boundaries:
+     *   left  = slotX(0) - pegGap/2
+     *   right = slotX(last) + pegGap/2
+     *
+     * The multiplier strip used to span the full card width, which made the
+     * visible labels drift away from the actual physics slots. That is why a
+     * ball could LOOK like it landed on 4x while the physics correctly resolved
+     * the far-right 10x slot.
+     *
+     * This converts the real canvas slot boundaries into browser pixels and
+     * applies matching left/right padding to the DOM multiplier strip.
+     */
+
+    const scale = canvasRect.width / W;
+
+    const leftBoundary =
+        slotX(0) -
+        board.pegGap / 2;
+
+    const rightBoundary =
+        slotX(SLOT_COUNT - 1) +
+        board.pegGap / 2;
+
+    const leftInsetInsideCanvas =
+        leftBoundary * scale;
+
+    const rightInsetInsideCanvas =
+        (W - rightBoundary) * scale;
+
+    const canvasLeftInsideCard =
+        canvasRect.left -
+        cardRect.left;
+
+    const canvasRightInsideCard =
+        cardRect.right -
+        canvasRect.right;
+
+    const leftPadding =
+        Math.max(
+            0,
+            canvasLeftInsideCard +
+            leftInsetInsideCanvas
+        );
+
+    const rightPadding =
+        Math.max(
+            0,
+            canvasRightInsideCard +
+            rightInsetInsideCanvas
+        );
+
+    strip.style.paddingLeft =
+        `${leftPadding}px`;
+
+    strip.style.paddingRight =
+        `${rightPadding}px`;
+}
+
+
 function renderMultiplierStrip(hitIndex=-1){
     const strip = $("plinkoMultiplierStrip");
     strip.innerHTML = "";
+
+    alignMultiplierStripToCanvasSlots();
 
     MULTIPLIERS.forEach((m,i)=>{
         const d = document.createElement("div");
@@ -735,7 +819,23 @@ async function dropBall(){
 
     const landedSlot = await animatePhysicalBall();
 
+    /*
+     * landedSlot is the single source of truth for:
+     * - visual highlighted multiplier
+     * - result popup
+     * - payout calculation
+     */
     const multiplier = MULTIPLIERS[landedSlot];
+
+    if(
+        !Number.isInteger(landedSlot) ||
+        landedSlot < 0 ||
+        landedSlot >= MULTIPLIERS.length
+    ){
+        throw new Error(
+            `Invalid Plinko landing slot: ${landedSlot}`
+        );
+    }
     const payout = Math.floor(wager*multiplier);
     const profit = payout-wager;
 
@@ -785,6 +885,13 @@ async function dropBall(){
 }
 
 function bind(){
+    window.addEventListener(
+        "resize",
+        ()=>{
+            alignMultiplierStripToCanvasSlots();
+        }
+    );
+
     $("plinkoBetDown").addEventListener("click",()=>changeBet(-1));
     $("plinkoBetUp").addEventListener("click",()=>changeBet(1));
 
